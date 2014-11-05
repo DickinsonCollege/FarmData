@@ -1,0 +1,627 @@
+.imgClass {
+    background-image: url(http://inspectelement.com/wp-content/themes/inspectelementv2/style/images/button.png);
+    background-position:  0px 0px;
+    background-repeat: no-repeat;
+    width: 186px;
+    height: 53px;
+    border:  0px;
+
+}
+.imgClass: hover {
+      background-position:  0px -52px;
+}
+
+.imgClass: active {
+      background-position:  0px -104px;
+}
+
+
+#overlay {
+     visibility: hidden;
+     position: absolute; 
+     left: 0px;
+     top: -70px;
+     width:auto;
+     height:100%;
+     text-align:center;
+     z-index: 1000;
+}
+#overlay div {
+     width:auto;
+     margin: 100px auto;
+     background-color: #fff;
+     border:1px solid #000;
+/*
+     padding:15px;
+*/
+     text-align:left;
+}
+
+body{ font-size: 2em;
+	background-color: Ivory;
+	font-family: "omnes-pro",sans-serif;
+	color: #34495E;
+}
+a{
+color:#34495E;
+}
+h4 {
+  margin-top: 5px;
+  font-size: 30pt;
+  margin-bottom: -20px;
+}
+h3 {
+   font-size: 35pt;
+   margin-top: 5px;
+   font-weight: bold;
+   margin-bottom: -20px;
+}
+h1 {
+   font-size: 30pt;
+}
+
+.gx1{
+margin-right:1.0em;
+font-size:35pt;
+font-weight: none
+margin-bottom: 200px;
+}
+  .gx1:link {
+/* Applies to links under the pointer */
+/* color: #000080; */
+color: brown;
+text-decoration: none;
+ }
+  .gx1:visited {
+/* Applies to links under the pointer */
+/* color: #333399; */
+color: brown;
+text-decoration: none;
+ }
+.gx1:hover {
+/* Applies to links under the pointer */
+/* color: #c00000; */
+color: maroon;
+ text-decoration: underline;
+ }
+
+  .gx2:link {
+/* Applies to links under the pointer */
+/* color: #000080; */
+color: brown;
+text-decoration: none;
+ }
+  .gx2:visited {
+/* Applies to links under the pointer */
+/* color: #333399; */
+color: brown;
+text-decoration: none;
+ }
+.gx2:hover {
+/* Applies to links under the pointer */
+/* color: #c00000; */
+color: maroon;
+ text-decoration: underline;
+ }
+
+ul {
+padding-left: 100px;
+}
+
+textarea.comments{
+width: 1000px;
+margin-left: 6px;
+height: 100px;
+}
+
+/* input[type="submit"] { */
+.submitbutton {
+	color: white;
+	font-size: 15pt;
+	-moz-border-radius: 20px;
+	border-radius: 6px;
+	/*
+	background-color: #CA1F1F;
+	*/
+	background-color: peru;
+	/*width: 200px;
+	height: 40px;*/
+	border: solid  thin wheat;
+	margin: 2;
+	padding: 0.5em 1em;
+	position: relative;
+	/*text-shadow: 1px 1px 1px #000;*/
+	outline: none;
+}
+.secondbutton {
+	color: #523d19;
+	font-size: 15pt;
+	-moz-border-radius: 20px;
+	border-radius: 6px;
+	background-color: wheat;
+	border: solid  thin wheat;
+	margin: 2;
+	padding: 0.5em 1em;
+	position: relative;
+	outline: none;
+}
+.button-warning {
+   color: white !important;
+	font-size : 15pt !important;
+   border-radius: 4px;
+   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+   background-color: peru !important; /* this is an orange */
+}
+.largesubmitbutton {
+	color: #FFF;
+	font-size: 15pt;
+	-moz-border-radius: 20px;
+	border-radius: 10px;
+	/*
+ 	* background-color: #CA1F1F;
+ 	* */
+	background-color: peru;
+	width: 500px;
+	height: 40px;
+	border: solid  thin wheat;
+	margin: 2;
+	padding: 1;
+	position: relative;
+	outline: none;
+}
+.deletebutton {
+   color: white;
+   font-size: 10pt;
+   -moz-border-radius: 20px;
+   border-radius: 10px;
+   /*
+ *    background-color: #CA1F1F;
+ *       */
+   background-color: rgb(202, 60, 60);
+   width: 50;
+   height: 40;
+   border: solid  thin rgb(202, 60, 60);
+   margin-top: 10px;
+   padding: 1;
+   position: relative;
+   /*text-shadow: 1px 1px 1px #000;*/
+}
+
+.editbutton {
+   color: white;
+   font-size: 10pt;
+   -moz-border-radius: 20px;
+   border-radius: 10px;
+   /*
+ *    background-color: #CA1F1F;
+   background-color: rgb(202, 60, 60);
+ *       */
+   background-color: blue;
+   width: 50;
+   height: 40;
+   border: solid  thin rgb(202, 60, 60);
+   margin-top: 10px;
+   padding: 1;
+   position: relative;
+   /*text-shadow: 1px 1px 1px #000;*/
+}
+
+.addbutton {
+   color: white;
+   font-size: 10pt;
+   -moz-border-radius: 20px;
+   border-radius: 10px;
+   /*
+ *  *    background-color: #CA1F1F;
+ *   *       */
+   background-color: rgb(28, 184, 65);
+   width: 50;
+   height: 40;
+   border: solid  thin rgb(28, 184, 65);
+   margin-top: 10px;
+   padding: 1;
+   position: relative;
+   /*text-shadow: 1px 1px 1px #000;*/
+}
+.genericbutton {
+ /*color: #000000;
+ font-size: 30pt;
+-moz-border-radius: 20px;
+border-radius: 20px;
+background-color: wheat;
+ width: auto;
+ height: 40;
+ border: solid  thin black;
+ margin: 2;
+ padding: 1;
+ position: relative;*/
+	color: #523d19;
+   font-size: 15pt;
+   -moz-border-radius: 20px;
+   border-radius: 6px;
+   background-color: wheat;
+   border: solid  thin wheat;
+   margin: 2;
+   padding: 0.5em 1em;
+   position: relative;
+   outline: none;
+
+}
+
+.choosecrop {
+ color: #000000;
+ font-size: 20pt;
+/*
+-moz-border-radius: 20px;
+border-radius: 20px;
+*/
+background-color: wheat;
+ width: 300px;
+ height: 50;
+ border: solid  thin black;
+ margin: 2;
+ padding: 1;
+ position: relative;
+/*text-shadow: 1px 1px 1px #000;*/
+display: block;
+}
+
+label {
+margin: 0 auto;
+color: #34495E;
+/*font-weight: bold;*/
+display: block;
+width: auto;
+font-size: 30pt;
+float: left;
+margin-top: 6px;
+}
+
+caption {
+  font-size: 20pt;
+}
+.textbox {
+	text-align: center;
+	border-radius: 10px;
+	border: 2px solid wheat !important;
+	width: 70px; 
+	height: 40px;
+	font-size: 15pt;
+	float:left;
+	display:block;
+	font-weight: bold;
+	background-color: #F8F8F8;
+	outline: none;
+}
+.textbox:focus{
+	border-radius: 10px;
+   border: 2px solid peru;
+}
+.textbox2 {
+	text-align: center;
+	border-radius: 10px;
+   border: 2px solid wheat !important;
+	width: 60px; 
+	height: 40px;
+	font-size: 15pt;
+	float: left;
+	margin-top: 10px;
+	background-color: #F8F8F8;
+	outline: none;
+}
+.textbox2:focus{
+	border-radius: 10px !important;
+   border: 2px solid peru !important;
+}
+.textbox25 {
+	text-align: center;
+	border-radius: 10px;
+   border: 2px solid wheat !important;
+	width: 120px; 
+	height: 40px;
+	font-size: 15pt;
+	float: left;
+	margin-top: 10px;
+	background-color:#F8F8F8;
+	outline: none;
+}
+.textbox25:focus{
+	border-radius: 10px !important;
+   border: 2px solid peru !important;
+}
+
+.textbox3 {
+	text-align: center;
+	border-radius: 10px;
+   border: 2px solid wheat;
+	width: 200px; 
+	height: 40px;
+	font-size: 15pt;
+	float:left;
+	display:block;
+	font-weight: bold;
+	margin-top: 10px;
+	background-color:#F8F8F8;
+	outline: none;
+}
+.textbox3:focus{
+	border-radius: 10px;
+   border: 2px solid peru;
+}
+.textbox4 {
+	text-align: center;
+	border-radius: 10px;
+   border: 2px solid wheat;
+	width: 100px;
+	height: 40px;
+	font-size: 15pt;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	clear:both;
+	background-color:#F8F8F8;
+	outline: none;
+}
+.textbox4:focus{
+	border-radius: 10px;
+   border: 2px solid peru;
+}
+.textbox5 {
+	text-align: center;
+	width: 250px; 
+	height: 40px;
+	font-size: 15pt;
+	float: left;
+	margin-top: 10px;
+	background-color: wheat;
+	outline: none;
+}
+.textbox5:focus{
+	border-radius: 10px;
+   border: 2px solid peru;
+}
+textarea {
+	border-radius: 10px;
+   border: 2px solid wheat !important;
+   width: 400px !important;
+   height: 200px !important;
+   font-size: 20pt !important;
+	resize: none !important;
+   font-family: sans-serif;
+	background-color: #F8F8F8;
+	outline: none !important;
+}
+textarea:focus{
+   border-radius: 10px !important;
+   border: 2px solid peru !important;
+}
+/*input:focus{
+	border-radius: 10px;
+   border: 2px solid peru;
+}*/
+input.largecheckbox
+
+{
+
+width:50px;
+
+height:50px;
+
+}
+
+.styled-select2 select {
+	text-align: center;
+	width: auto;
+	background: green;
+	margin-bottom: 0;
+	position: relative;
+	display: inline-block;
+   padding: 3.5px;
+   font-size: 18pt;
+   line-height: 1.5;
+  	/*text-shadow: 1px 1px 1px #000;*/
+	border: solid thin wheat;
+	-webkit-border-radius: 10px !important;
+	-moz-border-radius: 20px;
+	border-radius: 10px;
+	/*
+	background-color: #ce401c;
+	*/
+	background-color: wheat;
+	background-image: -webkit-gradient(type, point, point, from(color), to(color),color-stop(where, color));
+   height: 40px;
+   overflow:hidden;
+   /*-moz-appearance: button;
+   -webkit-appearance: button;*/
+  	-webkit-border-radius: 2px;
+  	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  	-webkit-padding-end: 20px;
+  	-webkit-padding-start: 2px;
+  	-webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+	outline: none;
+
+}
+.styled-select select {
+	margin-top: 8px;
+	margin-right: 5px;
+	text-align: center;
+	width: auto;
+	background: green;
+	margin-bottom: 0;
+	float: left;
+	position: relative;
+	display: inline-block;
+   padding: 0 !important;
+   font-size: 18pt;
+   line-height: 1.5;
+	border: 1px solid wheat !important;
+	/*text-shadow: 1px 1px 1px #000;*/
+	/*border: solid thin #882d13;*/
+	-webkit-border-radius: 10px !important;
+	-moz-border-radius: 20px;
+	border-radius: 10px;
+	background-color: wheat !important;
+	background-image: -webkit-gradient(type, point, point, from(color), to(color),color-stop(where, color));
+   height: 40px; 
+   overflow:hidden;
+   /*-moz-appearance: button;
+   -webkit-appearance: button;*/
+	-webkit-border-radius: 2px;
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+	-webkit-padding-end: 20px;
+	-webkit-padding-start: 2px;
+	-webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+	outline:none;
+}
+select:disabled{
+	color: #7C7974 !important;
+}
+.tabs ul {
+width: auto;
+padding: 0;
+margin: 0;
+/*margin: 0px;
+ * margin-left: 10px;*/
+list-style-type: none;
+}
+
+.tabs ul li {
+float: left;
+display: inline-block;
+/*
+width: auto;
+*/
+clear: none;
+height: 12px;
+text-align: center;
+}
+
+.tabs ul li a {
+position: relative;
+margin-top: 0px;
+display: block;
+/*margin-left: 6px;*/
+line-height: 35px;
+/*
+padding-left: 10px;
+*/
+/*
+background: #f6f6f6;
+color: #000000;
+z-index: 9999;
+*/
+border: 2px solid black;
+/*
+border: 3px solid #ccc;
+*/
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+width: auto;
+text-decoration: none;
+/*font-weight: bold;*/
+}
+
+.tabs ul li a:hover {
+text-decoration: underline;
+}
+
+/*
+.tabs {
+  border:3px solid;
+  width: 1000px;
+    display:-webkit-box;
+    -webkit-box-pack:justify;
+    -webkit-box-align:center;
+
+    display:-moz-box;
+    -moz-box-pack:justify;
+    -moz-box-align:center;
+
+    display:-ms-flexbox;
+    -ms-flex-pack:justify;
+    -ms-flex-align:center;
+
+    display:box;
+    box-pack:justify;
+    box-align:center;
+} 
+*/
+
+.table-input {
+	height: 100% !important;
+	width: 100% !important;
+	padding: 0px !important;
+	margin: 0px !important;
+	border: 0px !important;
+}
+
+/***** CSS for styled Toggle *******/
+.toggle {
+  	position: absolute;
+  	margin-left: -9999px;
+  	visibility: hidden;
+}
+.toggle + label {
+  	display: block;
+  	position: relative;
+  	cursor: pointer;
+  	outline: none;
+  	user-select: none;
+}
+input.toggle + label {
+  	/*padding: 2px;*/
+  	width: 104px !important;
+  	height: 40px;
+  	background-color: #f1f1f1;
+  	border-radius: 10px;
+  	font-size: 15;
+}
+input.toggle + label:before,
+input.toggle + label:after {
+  	display: block;
+  	position: absolute;
+  	top: 1px;
+  	left: 1px;
+  	bottom: 1px;
+  	padding-top: 10px;
+  	content: "";
+	text-align: left;
+}
+input.toggle + label:before {
+  	content: "OFF";
+  	color: grey;
+  	padding-left: 57px;
+}
+input.toggle + label:before {
+  	right: 1px;
+  	background-color: #f1f1f1;
+  	border-radius: 10px;
+  	transition: background 0.4s;
+}
+input.toggle + label:after {
+  	width: 45px;
+  	background-color: peru;
+  	border-radius: 10px;
+  	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  	transition: margin 0.4s;
+}
+input.toggle:checked + label:before {
+  	background-color: wheat;
+  	content: "ON";
+  	color: #523d19;
+  	padding-left: 17px;
+}
+input.toggle:checked + label:after {
+  	margin-left: 55px;
+}
+input.toggle:disabled +label:after {
+	background-color: grey;
+}
+/****** END CSS FOR STYLED TOGGLE  *******/

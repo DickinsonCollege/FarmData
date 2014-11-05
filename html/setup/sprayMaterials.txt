@@ -1,0 +1,14 @@
+Spray_Material;Tractor Spraying Unit;Tractor Spray Rate Minimum (units/acre);Tractor Spray Rate Maximum (units/acre);Default Tractor Spray Rate (units/acre);Backpack Spraying Unit;Backpack Spray Rate Minimum (units/gallon);Backpack Spray Rate Maximum (units/gallon);Default Backpack Spray Rate (units/gallon);Restricted Entry Interval (hours);Personal Protective Equipment
+ACTINOVATE;OUNCE;3;12;12;TEASPOON;1;1;1;1;Glove,Suit
+AZAGUARD;OUNCE;8;16;12;TEASPOON;0.5;1;1;4;Coveralls,Gloves
+CHAMP WG;POUND;1;2;1;TABLESPOON;2;4;2;48;Glove,Suit,Goggles,Mask
+COMPTEA;GALLON;50;150;150;GALLON;1;1;1;0;None
+DIPEL DF;POUND;0.25;1;0.75;TEASPOON;0.5;4;2;4;Glove,Suit
+ENTRUST;OUNCE;3;10;10;OUNCE;0.25;0.5;0.5;12;None
+FERTRELL343;QUART;1;4;3;CUP;0.25;1;0.25;0;None
+MAGNA-BON;OUNCE;19;32;24;TABLESPOON;0.1;1;0.5;48;Goggles,Gloves,Coveralls
+OXIDATE;QUART;1.3;4;3;TEASPOON;2.5;7.5;5;1;Glove,Suit,Goggles,Mask
+PYGANIC;OUNCE;4.5;17;7;TEASPOON;0.25;1;0.5;12;Glove,Suit,Goggles,Mask
+REGALIA;QUART;1;4;2;TEASPOON;2;7;4;4;Glove,Suit,Goggles
+SERENADE;POUND;1;3;3;TABLESPOON;1;1;1;4;Glove,Suit
+STIMPLEX;PINT;1.5;3;3;TABLESPOON;1;1;1;4;Glove,Suit

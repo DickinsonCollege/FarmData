@@ -1,0 +1,77 @@
+caption {
+font-size: 40pt;
+}
+table {
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+         margin-left : 6px;
+/*
+	background-color: #00FF00;
+*/
+	background-color: white;
+        border-collapse:collapse;
+	width: 99%;
+	margin-top: 50px;
+}
+/*
+@media (max-width: 799px) {
+	table {
+		width: 790px;
+	}
+}
+@media (min-width: 800px) and (max-width: 899px) {
+	table {
+		width: 790px;
+	}
+}
+@media (min-width: 900px) and (max-width: 999px) {
+	table {
+		width: 890px;
+	}
+}
+@media (min-width:1000px) and (max-width: 1099px) {
+	table {
+		width: 990px;
+	}
+}
+@media (min-width:1100px) and (max-width: 1199px) {
+	table {
+		width: 1090px;
+	}
+}
+@media (min-width:1200px) {
+	table {
+		width: 1200px;
+	}
+}
+*/
+th,td {	
+        font-size: 25pt !important;
+	font-weight: bold;
+	border:2px solid #006400;
+	padding: 3px 7px 2px 7px;
+	height: 200px;
+        }
+th {
+	font-size:20pt;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:4px;
+/*
+	background-color:#ADFF2F;
+*/
+	background-color:wheat;
+	color:#000000;
+	height: 20px;
+}
+tr.alt td 
+{
+color:#000000;
+background-color:#EAF2D3;
+}
+td {	
+	padding: 10px;
+	text-align: center;
+}
+#col1 {
+  width: 1px;
+}

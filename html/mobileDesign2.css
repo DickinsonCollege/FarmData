@@ -1,0 +1,522 @@
+#overlay {
+     visibility: hidden;
+     position: absolute; 
+     left: 0px;
+     top: -20px;
+     width:auto;
+     height:100%;
+     text-align:center;
+     z-index: 1000;
+}
+#overlay div {
+     width:auto;
+     margin: 100px auto;
+ /*    background-color: #fff; */
+     background-color: #FFD700;
+     border:1px solid #000;
+     padding:15px;
+     text-align:left;
+}
+
+.choosecrop {
+ color: #000000;
+ font-size: 40pt;
+-moz-border-radius: 20px;
+border-radius: 20px;
+/*
+ background-color: #FFD700; 
+*/
+ background-color: wheat;
+ width: 500px;
+ height: 70;
+ border: solid  thin black;
+ margin: 2;
+ padding: 1;
+ position: relative;
+text-shadow: 1px 1px 1px #000;
+display: block;
+}
+
+.submitbutton {
+-moz-border-radius: 20px;
+border-radius: 20px;
+ border: solid  thin black;
+ margin: 2;
+ padding: 1;
+ position: relative;
+text-shadow: 1px 1px 1px #000;
+display: block;
+    color: #15C354;
+/*
+    background-color: #1E5B34;
+*/
+    background-color: wheat;
+	width: 100%;
+	height: 200px;
+	font-size: 72px;
+	font-weight: bold;
+	margin-top: 10px;
+
+	border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	-o-border-radius: 0px;
+}
+
+.genericbutton {
+ font-size: 40pt;
+-moz-border-radius: 20px;
+border-radius: 20px;
+ height: 70;
+ border: solid  thin black;
+ margin: 2;
+ padding: 1;
+ position: relative;
+text-shadow: 1px 1px 1px #000;
+display: block;
+    color: #15C354;
+/*
+    background-color: #1E5B34;
+*/
+    background-color: wheat;
+	width: 100%;
+	height: 150px;
+	font-size: 52px;
+	font-weight: bold;
+	margin-top: 25px;
+}
+.secondbutton {
+   color: #523d19;
+   font-size: 40pt;
+	width: 50%;
+   -moz-border-radius: 20px;
+   border-radius: 6px;
+   background-color: wheat;
+   border: solid  thin wheat;
+   margin: 2;
+   padding: 0.5em 1em;
+   position: relative;
+   outline: none;
+}
+
+body{ 
+/*-moz-transform: rotate(-90deg);
+-o-transform: rotate(-90deg);
+-webkit-transform: rotate(-90deg);
+-ms-transform: rotate(-90deg);*/
+/* set to make tabs work in mobile - no idea why this works */
+font-size: 0em;
+/*
+font-size: 1.5em;
+ background-color: #19C0BF;
+*/
+ background-color: ivory;
+ }
+
+.gx1{
+margin-right:1.0em;
+font-size:35pt;
+font-weight: none 
+margin-bottom: 200px;
+}
+  .gx1:link {
+/* Applies to links under the pointer */
+/*
+color: #333399;
+*/
+color: brown;
+text-decoration: none; 
+ }
+  .gx1:visited {
+/* Applies to links under the pointer */
+/*
+color: #333399;
+*/
+color: brown;
+text-decoration: none;  
+ }
+.gx1:hover {
+/* Applies to links under the pointer */
+/*
+color: #c00000;
+*/
+color: maroon;
+ text-decoration: underline;
+ }
+
+  .gx2:link {
+/* Applies to links under the pointer */
+color: #333399;
+text-decoration: none; 
+ }
+  .gx2:visited {
+/* Applies to links under the pointer */
+/*
+color: #333399;
+*/
+color: brown;
+text-decoration: none;  
+ }
+.gx2:hover {
+/* Applies to links under the pointer */
+/*
+color: #c00000;
+*/
+color: maroon;
+ text-decoration: underline;
+ }
+
+#col1 {
+width: 300px;
+}
+#col2 {
+width : 30px;
+}
+
+h4 {
+  font-size: 30pt;
+}
+h3 {
+   font-size: 35pt;
+    margin-top: -10px;
+}
+h1 {
+   font-size: 35pt;
+
+}
+h1.hi {
+   font-size: 35pt;
+   margin-top: -10px;
+}
+p {
+  font-size: 30pt;
+}
+.imgClass { 
+    background-image: url("submit.gif");
+    background-position:  0 0;
+    background-repeat: no-repeat;
+    width: auto;
+    height: 53px;
+    border:  0;
+    color: #15C354;
+    font-size: 30pt;
+    background-color: #1E5B34;
+}
+.imgClass: hover{ 
+      background-position:  0 -52px;
+}
+.label2 {
+  font-size: 30pt;
+}
+.imgClass: active{
+      background-position:  0 -104px;
+}
+label {
+margin: 0 auto;
+color: Black;
+font-weight: bold;
+display: block;
+width: auto;
+float:left;
+font-size: 50pt;
+margin-right: 25px;
+}
+
+.textbox {
+width:75px;
+height: 75px;
+font-size:30pt;
+margin-left: -15px;
+float: left;
+display:block;
+background-color: white;
+text-align: center;
+}
+
+.textbox2{
+float:left;
+width: 72px;
+height: 75px;
+font-size: 30pt;
+margin-top: 8px;
+padding-top: 5px;
+margin-left: -30px;
+text-align: center;
+background-color: white;
+}
+
+.textbox25 {
+float:left;
+width: 150px;
+height: 75px;
+font-size: 30pt;
+margin-top: 8px;
+padding-top: 5px;
+margin-left: -30px;
+text-align: center;
+background-color: white;
+}
+
+.textbox3 {
+text-align: center;
+margin-top: 8px;
+width: 200px;
+height: 75px;
+display:block;
+font-weight: bold;
+float:left;
+font-size: 30pt;
+background-color: white;
+}
+
+.textbox4 {
+width: 100px;
+height: 75px;
+padding: 5px;
+text-align: center;
+font-size: 30pt;
+margin-top: 8px;
+margin-bottom: 8px;
+clear:both;
+background-color: white;
+}
+
+.textbox5{
+float:left;
+width: 300px;
+height: 75px;
+font-size: 30pt;
+margin-top: 8px;
+padding-top: 5px;
+margin-left: -30px;
+text-align: center;
+/*
+ background-color: #FFD700; 
+*/
+background-color: wheat;
+}
+
+.textbox25 {
+	width: 100%;
+	height: 150px;
+	position: relative;
+	left: 4%;
+}
+
+input[type='checkbox'] {
+	-ms-transform: scale(5);
+	-moz-transform: scale(5);
+	-webkit-transform: scale(5);
+	-o-transform: scale(5);
+	position: relative;
+	top: 20px;
+}
+
+textarea {
+   width: 100%;
+   height: 130px;
+   font-size: 12pt;
+   font-family: Arial;
+	margin-bottom: 100px;
+} 
+textarea.comments {
+   width: 965px;
+   font-size: 25pt;
+   font-family: Arial;
+   height: 400px;
+   font-weight: bold;
+   margin-left:8px;
+}
+textarea.comments2 {
+   width: 1145px;
+   font:size: 16pt;
+   font-family: Arial;
+   height: 400px;
+   margin-left:8px;
+}
+.styled-select select {
+/*float: left;*/
+text-align: center;
+/*width:  auto;
+position: relative;*/
+background:green;   
+adding: 0px;
+margin-bottom: 8px;
+   font-size: 40pt;
+   font-weight: bold;
+/*   line-height: 70px;
+display: inline-block;*/
+  text-shadow: 1px 1px 1px #000;
+border: solid thin #882d13;
+-webkit-border-radius: 20px;
+border-radius: 20px;
+/*
+background-color: #FFD700;
+*/
+background-color: wheat;
+  /* height: 75px;
+   overflow:hidden;*/
+background-image: -webkit-gradient(type, point, point, from(color), to(color),color-stop(where, color)) 
+ -moz-appearance: button;
+   -webkit-appearance: button;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  -webkit-padding-end: 20px;
+ -moz-padding-end: 20px;
+  -WEBKIt-padding-start: 2px;
+  user-select: none;
+-webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.styled-select2 select {
+text-align: center;
+width: auto;
+background: green;
+margin-bottom: 0;
+position: relative;
+        display: inline-block;
+   padding: 3.5px;
+   font-size: 40pt;
+   line-height: 1.5;
+   border: 1px solid;
+  text-shadow: 1px 1px 1px #000;
+border: solid thin #882d13;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border-radius: 20px;
+/*
+background-color: #ce401c;
+*/
+background-color: wheat;
+background-image: -webkit-gradient(type, point, point, from(color), to(color),color-stop(where, color));
+/*
+   height: 60px;
+*/
+   -webkit-appearance: none;
+   overflow:hidden;
+   -moz-appearance: button;
+   -webkit-appearance: button;
+  -webkit-border-radius: 2px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  -webkit-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+
+}
+
+.tabs ul {
+width: auto;
+padding: 0;
+margin: 0;
+position: relative;
+padding-top: 60px; /*178px;*/
+/*margin: 0px;
+margin-left: 10px;*/
+list-style-type: none;
+}
+
+.tabs ul li {
+display: inline-block;
+/*
+width: auto;
+*/
+clear: none;
+float: left;
+height: 8px;
+}
+
+.tabs ul li a {
+position: relative;
+padding-left: 5%;
+display: block;
+line-height: 55px; /*160px;*/
+/*
+padding-left: 10px;
+background: #f6f6f6;
+z-index: 9999;
+border: 2px solid #ccc;
+color: #000000;
+*/
+border-top: 1px solid #f6f6f6; /*4px solid #f6f6f6;*/
+border-bottom: 1px solid #f6f6f6; /*4px solid #f6f6f6;*/
+width: auto;
+text-decoration: none;
+font-weight: bold;
+font-size: 18pt; /*54pt;*/
+}
+
+.tabs ul li a:hover {
+text-decoration: underline;
+}
+
+/***** CSS for styled Toggle *******/
+.toggle {
+   position: absolute;
+   margin-left: -9999px;
+   visibility: hidden;
+}
+.toggle + label {
+   display: block;
+   position: relative;
+   cursor: pointer;
+   outline: none;
+   user-select: none;
+}
+input.toggle + label {
+   /*padding: 2px;*/
+   width: 208px !important;
+   height: 120px;
+   background-color: #f1f1f1;
+   border-radius: 10px;
+   font-size: 40;
+}
+input.toggle + label:before,
+input.toggle + label:after {
+   display: block;
+   position: absolute;
+   top: 1px;
+   left: 1px;
+   bottom: 1px;
+   padding-top: 30px;
+   content: "";
+   text-align: left;
+}
+input.toggle + label:before {
+   content: "OFF";
+   color: grey;
+   padding-left: 114px;
+}
+input.toggle + label:before {
+   right: 1px;
+   background-color: #f1f1f1;
+   border-radius: 10px;
+   transition: background 0.4s;
+}
+input.toggle + label:after {
+   width: 90px;
+   background-color: peru;
+   border-radius: 10px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+   transition: margin 0.4s;
+}
+input.toggle:checked + label:before {
+   background-color: wheat;
+   content: "ON";
+   color: #523d19;
+   padding-left: 34px;
+}
+input.toggle:checked + label:after {
+   margin-left: 110px;
+}
+input.toggle:disabled +label:after {
+   background-color: grey;
+}
+/****** END CSS FOR STYLED TOGGLE  *******/
+

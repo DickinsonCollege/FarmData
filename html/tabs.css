@@ -1,0 +1,54 @@
+/* #tabs :link, #tabs:visited {background:#f00; color:#fff}*/
+/*
+#tabs :link {
+   background:WHEAT;
+   color:BLACK;
+}
+#tabs :visited {background:WHEAT;}
+#tabs :hover {background:WHEAT;}
+#tabs :active {background:teal;}
+*/
+/*
+#harvestInput #harvestInput, #harvest #harvest, #seeding #seeding, #soil #soil, #notes #notes, #labor #labor, #logout #logout {
+color: #fff;
+background: peru;
+}
+*/
+
+.activetab {
+   background: peru;
+   color: ivory;
+}
+
+.inactivetab {
+   background: wheat;
+   color: black;
+}
+
+.tabs7 ul li {
+   width: 14.28%;
+}
+
+.tabs6 ul li {
+   width: 16.66%;
+}
+
+.tabs5 ul li {
+   width: 20%;
+}
+
+.tabs4 ul li {
+   width: 25%;
+}
+
+.tabs3 ul li {
+   width: 33.33%;
+}
+
+.tabs2 ul li {
+   width: 50%;
+}
+
+.tabs1 ul li {
+   width: 100%;
+}
