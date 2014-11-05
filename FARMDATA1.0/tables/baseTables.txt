@@ -1,0 +1,180 @@
+create table task(task varchar(30) primary key) ENGINE=INNODB;
+insert into task values('WEEDING');
+insert into task values('IRRIGATING');
+insert into task values('THINNING');
+insert into task values('SUCKERING');
+insert into task values('STAKING');
+insert into task values('MULCHING');
+insert into task values('CULTIVATING');
+insert into task values('MISC');
+create table field_GH(
+	fieldID varchar(30) primary key,
+       size float  not null, 
+       numberOfBeds float, 
+       length float,
+       active tinyint(1) default 1) ENGINE=INNODB;
+create table plant(
+	crop varchar(30) primary key,
+	units varchar(30) not null,units_per_case float default 2,
+	dh_units varchar(30) not null,
+        active tinyint(1) default 1) ENGINE=INNODB;
+create table labor(
+        id int NOT NULL AUTO_INCREMENT primary key, 
+	username varchar(30) not null, 
+        ldate date not null,
+        crop varchar(30) not null,
+        fieldID varchar(30) not null,
+        task varchar(30) not null,
+        hours float not null default 0,
+        comments text,
+        foreign key(task) references task(task) on update cascade
+) ENGINE=INNODB;
+
+create table flat (
+        cells int primary key) ENGINE =INNODB;
+insert into flat values (0);
+insert into flat values (50);
+insert into flat values (72);
+insert into flat values (128);
+insert into flat values (200);
+
+create table transferred_to(       
+	username varchar(30), fieldID varchar(30),crop varchar(30),seedDate date,
+        transdate date,bedft float not null,comments text,
+        rowsBed int, hours float not null default 0,
+        flats float,
+	id int NOT NULL AUTO_INCREMENT,
+	foreign key(fieldID) references field_GH(fieldID) on update cascade,
+        foreign key(crop) references plant(crop)on update cascade, 
+	primary key(id)) ENGINE=INNODB;
+
+create table dir_planted(
+	username varchar(30), plantdate date ,crop varchar(30),fieldID varchar(30),
+        bedft float not null, comments text,id int NOT NULL AUTO_INCREMENT,
+        rowsBed int,
+        hours float not null default 0,
+	foreign key(fieldID) references field_GH(fieldID)
+	on update cascade,
+	foreign key(crop) references plant(crop) on update cascade,
+	primary key(id))ENGINE=INNODB;
+
+create table harvested(
+	 username varchar(30), hardate date,crop varchar(30),
+         fieldID varchar(30),yield float not null, comments text, 
+         id int NOT NULL AUTO_INCREMENT, 
+         hours float not null default 0,
+         unit varchar(30) not null,
+         foreign key(fieldID) references field_GH(fieldID)on update cascade,
+         foreign key(crop) references plant(crop) on update cascade,
+         primary key(id))ENGINE=INNODB;
+
+create view laborview as
+  (select username, ldate, crop, fieldID, task, hours, comments
+  from labor)
+     union
+  (select username, hardate as ldate, crop, fieldID, 'HARVESTING', hours, comments
+  from harvested)
+     union
+  (select username, transdate as ldate, crop, fieldID, 'TRANSPLANTING', hours, comments
+  from transferred_to)
+     union 
+  (select username, plantdate as ldate, crop, fieldID, 'DIRECT PLANTING',
+hours, comments
+   from dir_planted);
+
+create table comments(
+	username varchar(30),comDate date not null, comments text) ENGINE=INNODB;
+
+create table gh_seeding(
+	username varchar(30), crop varchar(30), seedDate date,
+        flats float,
+        cellsFlat int,
+	numseeds_planted int not null,comments text,
+        varieties text,
+        id int NOT NULL AUTO_INCREMENT,
+	primary key(id),unique(crop, seedDate, varieties(100)),
+        foreign key(cellsFlat) references flat(cells) on update cascade,
+	foreign key(crop) references plant(crop) on update cascade) ENGINE=INNODB;
+
+create table extUnits (
+        unit varchar(30) primary key) ENGINE=INNODB;
+
+create table config(
+ notes tinyint(1) default 1,
+ labor tinyint(1) default 1,
+ harvlist tinyint(1) default 1,
+ soil tinyint(1) default 1,
+ fertility tinyint(1) default 1,
+ cover tinyint(1) default 1,
+ compost tinyint(1) default 1,
+ fertilizer tinyint(1) default 1,
+ liquidfertilizer tinyint(1) default 1,
+ dryfertilizer tinyint(1) default 1,
+ tillage tinyint(1) default 1,
+ spraying tinyint(1) default 1,
+ backspray tinyint(1) default 1,
+ tractorspray tinyint(1) default 1,
+ scouting tinyint(1) default 1,
+ insect tinyint(1) default 1,
+ weed tinyint(1) default 1,
+ disease tinyint(1) default 1,
+ irrigation tinyint(1) default 1,
+ pump tinyint(1) default 1,
+ sales tinyint(1) default 1,
+ sales_packing tinyint(1) default 1,
+ sales_invoice tinyint(1) default 1,
+ bedft tinyint(1) default 1,
+ num_top int,
+ num_harvest int,
+ num_soil int,
+ num_fertility int,
+ num_fertilizer int,
+ num_spray int,
+ num_scout int,
+ num_admin int,
+ num_add int,
+ num_add_crop int,
+ num_add_equip int,
+ num_add_soil int,
+ num_add_species int,
+ num_add_other int,
+ num_edit int,
+ num_edit_soil int,
+ num_edit_soil_fertility int,
+ num_edit_soil_material int,
+ num_edit_other int,
+ num_view_graphs int,
+ num_sales int,
+ num_add_sales int,
+ num_edit_sales int,
+ farmname varchar(255) default '',
+ farmemail varchar(100) default '',
+ sig text 
+) ENGINE = INNODB;
+
+insert into config values(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+ 7, /* top */
+ 3,
+ 4, 
+ 4, /* fertility */
+ 2,
+ 2,
+ 3,
+ 6, /* admin */
+ 6, 
+ 3, 
+ 4, /* add_equip */
+ 5, 
+ 3, /* add_species */
+ 3,
+ 5,
+ 5,
+ 4, /* edit_soil_fertility */
+ 3, 
+ 6,
+ 4,
+ 4,
+ 4,
+ 5,
+ 'FARM', '', ''
+);
