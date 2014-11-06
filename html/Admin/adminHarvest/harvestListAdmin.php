@@ -16,6 +16,7 @@ $targs = array();
 $result = mysql_query($sql);
 echo mysql_error();
 while ($row = mysql_fetch_array($result)) {
+   // $targs[] = str_replace(" ", "_", $row['targetName']);
    $targs[] = $row['targetName'];
 }
 ?>
@@ -36,7 +37,7 @@ while ($row = mysql_fetch_array($result)) {
 	var responseVar=xmlhttp.responseText;
         <?php
         for ($i = 0; $i < count($targs); $i++) {
-            echo 'document.getElementById("'.$targs[$i].'").value=0;';
+            echo 'document.getElementById("'.str_replace(" ", "_",$targs[$i]).'").value=0;';
         }
         ?>
 	if(responseVar){	
@@ -99,7 +100,7 @@ while ($row1 =  mysql_fetch_array($result)){
           sum = 0;
         <?php
           for ($i = 0; $i < count($targs); $i++) {
-              echo 'sum += parseFloat(document.getElementById("'.$targs[$i].
+              echo 'sum += parseFloat(document.getElementById("'.str_replace(" ", "_",$targs[$i]).
                    '").value);';
           }
         ?>
@@ -118,7 +119,8 @@ while ($row1 =  mysql_fetch_array($result)){
 <?php
 for ($i = 0; $i < count($targs); $i++) {
    echo '<td><input class="textbox4 mobile-input inside_table" type= "text"';
-   echo ' name="'.$targs[$i].'" id="'.$targs[$i].'" value=0 oninput="addall();"></td>';
+   echo ' name="'.str_replace(" ", "_",$targs[$i]).'" id="'.str_replace(" ", "_",$targs[$i]).
+       '" value=0 oninput="addall();"></td>';
 
 }
 ?>
@@ -152,10 +154,13 @@ if(isset($_POST['form'])&& isset($_POST['crop'])&& isset($_POST['fieldID']) &&
    mysql_query("delete from harvestListItem where crop='".$crop."' and id =".$currentID);
 echo mysql_error();
   for ($i = 0; $i < count($targs); $i++) {
-     if (isset($_POST[$targs[$i]]) && $_POST[$targs[$i]] > 0) {
+echo "<script>console.log(\"".$targs[$i]."\");</script>";
+echo "<script>console.log(\"".$_POST[$targs[$i]]."\");</script>";
+     if (isset($_POST[str_replace(" ", "_",$targs[$i])]) && $_POST[str_replace(" ", "_",$targs[$i])] > 0) {
        $sql = "insert into harvestListItem VALUES(".$currentID.", '".$crop.
-          "', ".$_POST[$targs[$i]].", '".$units."', '".$fieldID."', '".
+          "', ".$_POST[str_replace(" ", "_",$targs[$i])].", '".$units."', '".$fieldID."', '".
           $targs[$i]."')"; 
+echo "<script>console.log(\"".$sql."\");</script>";
        $res = mysql_query($sql);
        if (!$res){
          echo "<script type=\"text/javascript\"> alert('Could not enter data: please try again!\n"+

@@ -6,7 +6,7 @@ $result=mysql_query($sql);
 
 $values=array();
 while ($row=mysql_fetch_array($result)) {
-   $values[$row['target']]=$row['amt'];
+   $values[str_replace(" ", "_",$row['target'])]=$row['amt'];
    $values['fieldID'] = $row['fieldID'];
 /*
    if(isset($row['crop'])){

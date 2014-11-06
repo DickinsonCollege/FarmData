@@ -49,7 +49,11 @@ th,td {
 	font-weight: bold;
 	border:2px solid #006400;
 	padding: 3px 7px 2px 7px;
+/*
+ * TAW
 	height: 200px;
+*/
+	height: 30px;
         }
 th {
 	font-size:20pt;

@@ -12,12 +12,14 @@ if($_SERVER["HTTPS"] != "on") {
 // HTTPSOFF
 $farm = $_SESSION['db'];
 date_default_timezone_set('America/New_York');
-//$_SESSION['mobile']=1;
+$_SESSION['mobile']=1;
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 
 if ($_SESSION['mobile']) {
 	// Set initial-scale=0.3 and minimum-scale=0.3 when pushing to production server
-	echo "<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>";
+// TAW
+	// echo "<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>";
+	echo "<meta name='viewport' content='width=device-width, initial-scale=0.3, minimum-scale=0.3, maximum-scale=1'>";
 	include $_SERVER['DOCUMENT_ROOT'].'/header.php';
 	echo '<link type="text/css "href="/mobileTabs.css" rel = "stylesheet">';
 //   echo '<link type="text/css" href="/tabs.css" rel="stylesheet">';
@@ -93,6 +95,8 @@ if (!$_SESSION['mobile']) {
 
 // Sets position of menubar for mobile
 echo "<script type='text/javascript'>";
+/*
+TAW - switch back with viewport set to 1
 if (!$_SESSION['mobile']) {
 	// Nothing
 } else if ($tab=='harvest') {
@@ -107,6 +111,22 @@ if (!$_SESSION['mobile']) {
 	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-32px;');";
 } else if ($tab=='admin') {
 	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-40px;');";
+}
+*/
+if (!$_SESSION['mobile']) {
+    // Nothing
+} else if ($tab=='harvest') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:0px;');";
+} else if ($tab=='seeding') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-12px;');";
+} else if ($tab=='soil') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-24px;');";
+} else if ($tab=='notes') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-36px;');";
+} else if ($tab=='labor') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-48px;');";
+} else if ($tab=='admin') {
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-60px;');";
 }
 echo "</script>"; 
 ?>
