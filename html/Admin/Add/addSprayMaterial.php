@@ -54,9 +54,11 @@ function show_confirm() {
 	} else if (ppe === "") {
 		alert("Enter Personal Protection Equipment!");
 		return false;
+/*
 	} else if (active === "") {
 		alert("Check an Active Status!");
 		return false;
+*/
 	} else {
 		return true;
 	}
@@ -113,6 +115,8 @@ function show_confirm() {
 
 <label for="ppe">Personal Protection Equipment:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox25 mobile-input" type="text" name="ppe" id="ppe">
+
+<!--
 <br clear="all">
 
 <label for="active">Active Status:</label>
@@ -122,6 +126,8 @@ function show_confirm() {
 	<option value="0">Inactive</option>
 <select>
 </div>
+-->
+
 <br clear="all">
 <br clear="all">
 
@@ -140,7 +146,8 @@ if (isset($_POST['add'])) {
 	$bratedefault = escapehtml($_POST['bratedefault']);
 	$rei = escapehtml($_POST['rei']);
 	$ppe = escapehtml($_POST['ppe']);
-	$active = escapehtml($_POST['active']);
+	// $active = escapehtml($_POST['active']);
+	$active = 1;
 
    $sql="INSERT into tSprayMaterials
 		(sprayMaterial, TRateUnits, TRateMin, TRateMax, TRateDefault, 

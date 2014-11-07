@@ -23,9 +23,9 @@ echo "<tr>
 	<th>Crop</th>
 	<th>Default Unit</th>";
 // If Dickinson Version Database, include units_per_case and dh_units
-if ($farm == "dfarm") {
+if ($_SESSION['sales_invoice']) {
 	echo "<th>Units Per Case</th>
-		<th>DH Units</th>";
+		<th>Invoice Units</th>";
 }
 echo "<th>Active?</th></tr>";
 
@@ -37,8 +37,7 @@ while($row = mysql_fetch_array($result)) {
         echo "</td><td>";
         echo $row['units'];
         echo "</td>";
-	// If Dickinson Version Database, include units_per_case and dh_units
-	if ($farm == "dfarm") {
+	if ($_SESSION['sales_invoice']) {
 		echo "<td>";
 		echo $row['units_per_case'];
 		echo "</td><td>";

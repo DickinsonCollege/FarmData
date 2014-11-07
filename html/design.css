@@ -186,6 +186,23 @@ height: 100px;
    position: relative;
    /*text-shadow: 1px 1px 1px #000;*/
 }
+.editbutton {
+   color: white;
+   font-size: 10pt;
+   -moz-border-radius: 20px;
+   border-radius: 10px;
+   /*
+ *    background-color: #CA1F1F;
+ *       */
+   background-color: blue;
+   width: 50;
+   height: 40;
+   border: solid  thin rgb(202, 60, 60);
+   margin-top: 10px;
+   padding: 1;
+   position: relative;
+   /*text-shadow: 1px 1px 1px #000;*/
+}
 .addbutton {
    color: white;
    font-size: 10pt;

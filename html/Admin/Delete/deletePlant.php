@@ -68,9 +68,9 @@ $result = mysql_query("SELECT crop from plant");
 </div>
 
 <?php
-if ($farm == "dfarm") {
+if ($_SESSION['sales_invoice']) {
    echo "<br clear='all'>";
-   echo "<label for='dh_units'>Change Dining Hall Units: </label>";
+   echo "<label for='dh_units'>Change Invoice Units: </label>";
 
    echo "<div id='dhdiv' class='styled-select'><select name='dh_units' id='dh_units' class='mobile-select'> </select></div>";
 
@@ -99,7 +99,7 @@ if(!empty($_POST['submit'])) {
    $crop = escapehtml($_POST['crop']);
    $rename = escapehtml($_POST['rename']);
    $active = $_POST['active'];
-   if ($farm == "dfarm") {
+   if ($_SESSION['sales_invoice']) {
       $dh_units = escapehtml($_POST['dh_units']);
       $units_per_case = escapehtml($_POST['units_per_case']);
       $query = "UPDATE plant SET crop=upper('".$rename."'), dh_units='".$dh_units."', units_per_case=".

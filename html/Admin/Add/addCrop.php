@@ -21,20 +21,23 @@ while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[uni
 }
 ?>
 </select>
-<br clear="all"/>
-<label for="dh_unit">Invoice Unit:&nbsp;</label> 
-<select name="dh_unit" id="dh_unit" class='mobile-select'>
-<option value=0 selected>Unit </option>
 <?php
-$result=mysql_query("Select distinct unit from extUnits");
-while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
+if ($_SESSION['sales_invoice']) {
+   echo '<br clear="all"/>';
+   echo '<label for="dh_unit">Invoice Unit:&nbsp;</label> ';
+   echo '<select name="dh_unit" id="dh_unit" class="mobile-select">';
+   echo '<option value=0 selected>Unit </option>';
+   $result=mysql_query("Select distinct unit from extUnits");
+   while ($row1 =  mysql_fetch_array($result)){
+      echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
+   }
+   echo '</select>';
+   echo '<br clear="all"/>';
+   echo '<label for="dh_case">Units per Case:&nbsp;</label> ';
+   echo '<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox3 mobile-input" type="text" name="dh_case" id="dh_case">';
+   echo '</div>';
 }
 ?>
-</select>
-<br clear="all"/>
-<label for="dh_case">Units per Case:&nbsp;</label> 
-<input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3 mobile-input" type="text" name="dh_case" id="dh_case">
-</div>
 <br clear="all"/>
 <br clear="all"/>
 <input class="submitbutton" type="submit" name="done" value="Add">
@@ -43,24 +46,22 @@ while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[uni
 <?php
 if (isset($_POST['done'])) {
    $name = escapehtml(strtoupper($_POST['name']));
-/*
-echo '<br>';
-echo $name;
-echo '<br>';
-*/
    $default_unit = escapehtml($_POST['default_unit']);
-   $dh_case = escapehtml($_POST['dh_case']);
-   $dh_unit = escapehtml($_POST['dh_unit']);
+   if ($_SESSION['sales_invoice']) {
+      $dh_case = escapehtml($_POST['dh_case']);
+      $dh_unit = escapehtml($_POST['dh_unit']);
+   } else {
+      $dh_unit = $default_unit;
+      $dh_case = 1;
+   }
    if (!empty($name) && !empty($default_unit) && !empty($dh_unit) && !empty($dh_case) && $dh_case > 0) {
       $sql="Insert into plant values ('".$name."','".$default_unit.
          "',".$dh_case.",'".  $dh_unit."', 1)";
       $result=mysql_query($sql);
-      echo mysql_error();
       if ($result) {
          $sql2="Insert into units(crop,default_unit,unit,conversion) values ('".$name."','".
             $default_unit."','".$default_unit."','1')";
          $result2=mysql_query($sql2);
-        echo mysql_error();
       }
       if (!$result || !$result2) {
 	echo "<script>alert(\"Could not add crop: Please try again!\\n".mysql_error()."\");</script> \n";

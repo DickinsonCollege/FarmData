@@ -44,9 +44,6 @@ echo '<li id="li_admin_harvestlist">
 }
 echo '<li id="li_admin_addcrop">  
    <a href="/design.php?tab=admin:admin_add:admin_addcrop" id = "admin_addcrop_a" class="inactivetab">Crop';
-if ($_SESSION['sales']) {
-   echo '/Prod';
-}
 echo '</a> </li>';
 echo '<li id="li_admin_addequip">  
    <a href="/design.php?tab=admin:admin_add:admin_addequip" id = "admin_addequip_a" class="inactivetab">Equipment</a> </li>';
@@ -301,7 +298,7 @@ echo '<li id="li_deletescout">
 }
 if ($_SESSION['compost']) {
 echo '<li id="li_deletecompostpile">
-	<a href="/Admin/Delete/compostPileTable.php?tab=admin:admin_delete:deletesoil:deletecompostpile" id="deletecompostpile_a" class="inactivetab">Compost Pile</a></li>';
+	<a href="/Admin/Delete/compostPileTable.php?tab=admin:admin_delete:deletesoil:deletecompostpile" id="deletecompostpile_a" class="inactivetab">Compost&nbsp;Pile</a></li>';
 }
 if ($_SESSION['spraying'] || $_SESSION['fertilizer']) {
 echo '<li id="li_deletematerials">

@@ -1,18 +1,5 @@
 <?php session_start();?>
 <?php
-$farm = $_SESSION['db'];
-if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
-   $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
-   $useropts='';
-   while ($row = mysql_fetch_array($result)) {
-      $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
-   }
-}
 
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';

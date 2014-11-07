@@ -23,22 +23,7 @@ $farm = $_SESSION['db'];
 </div>
 
 
-<?php
-/*$tables = mysql_query("show tables from ".$farm);
-
-   while ($row = mysql_fetch_array($tables)) {
-      echo "\n <option value='".$row[Tables_in_dfarm]."'> ".$row[Tables_in_dfarm]."</option>";
-   }
-        echo "</select></div>";
-
-*/
-?>
-
 <br clear="all">
-
-
-
-
 
 <script type="text/javascript">
 

@@ -30,7 +30,7 @@ if(!empty($_GET['submit'])){
          echo "<caption> Compost Records for Field: ".$fieldID."</caption>";
       }
       echo "<tr><th>Utilized Date</th><th>Field ID</th><th>Pile ID</th><th>Incorporation Tool</th><th>Incorporation Timing</th>
-		<th>Tons per Acre</th><th>Percent Field Spread</th><th>Comments</th><th>Edit</th><th>Delete</th></tr>";
+		<th>Tons per Acre</th><th>Acreage Spread</th><th>Comments</th><th>Edit</th><th>Delete</th></tr>";
       while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         echo $row['util_date'];

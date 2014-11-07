@@ -38,16 +38,6 @@ echo "<tr class=\"other\">
    for ($i = 0; $i < count($targs); $i++) {
       echo '<th>'.$targs[$i].'</th>';
    }
-/*
-        <th> CSA</th>";
-if ($farm == 'dfarm') {
-   echo '<th>Dining Services</th>';
-} else {
-   echo '<th>Wholesale</th>';
-}
-echo "<th> Market</th>
-        <th>Other</th>
-*/
 echo "<th>Total</th> <th>Harvested</th> </tr>";
 }else{
 echo "<tr>

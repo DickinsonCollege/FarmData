@@ -64,20 +64,24 @@ echo '</label>';
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="length" id="length" onkeyup="updateSize();updateBeds();">';
 if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;feet</label>'; 
 echo '<br clear="all"/>';
-echo'<label for="beds">Number of beds:&nbsp;</label>'; 
-echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="beds" id="beds" onkeyup="updateSize();">';
-echo '<br clear="all"/>';
+
 echo'<label for="bspace">Bed spacing on center:&nbsp;';
 if ($_SESSION['mobile']) echo "(inches)";
 echo "</label>";
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; value = 60 class="textbox2 mobile-input" type="text" name="bspace" id="bspace" onkeyup = "updateSize();updateBeds();">';
 if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;inches</label>'; 
 echo '<br clear="all"/>';
+
 echo'<label for="size">Size:&nbsp;';
 if ($_SESSION['mobile']) echo "(acres)";
 echo '</label>'; 
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="size" id="size" onkeyup = "updateBeds();">';
 if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>'; 
+echo '<br clear="all"/>';
+
+echo'<label for="beds">Number of beds:&nbsp;</label>'; 
+echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="beds" id="beds" onkeyup="updateSize();">';
+
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 echo'<input class="submitbutton" type="submit" name="add" value="Add" onclick = "return show_confirm();">';
