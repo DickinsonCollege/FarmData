@@ -1,6 +1,6 @@
 <?php session_start();?>
 <link rel="stylesheet" href="/pure-release-0.5.0/pure-min.css">
-<form class="pure-form pure-form-aligned" name='form' method='GET' action='packingTable.php?tab=admin:admin_delete:deletesales:delete_packing'>
+<form class="pure-form pure-form-aligned" name='form' method='GET' action='distributionTable.php?tab=admin:admin_delete:deletesales:delete_dist'>
 
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
@@ -8,17 +8,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 <div class="pure-controls">
-	<h3>Packing Record</h3>
+<h3>Distribution Report</h3>
 </div>
 <br clear='all'>
-
-<input type="hidden" name = "tab" value = "admin:admin_delete:deletesales:delete_packing">
-
+<input type="hidden" name = "tab" value = "admin:admin_delete:deletesales:delete_dist">
 <?php
 echo "<div class='pure-control-group'>";
 echo "<label for='from'>From:&nbsp;</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo"</div>";
+echo "</div>";
 echo "<br clear='all'>";
 echo "<div class='pure-control-group'>";
 echo "<label for='to'>To:&nbsp;</label>";
@@ -39,8 +37,8 @@ while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".$row[0]."'>".$row[0]."</option>";
 }
 ?>
-</select></div>
-</div>
+</select></div></div>
+
 <br clear='all'>
 <div class='pure-control-group'>
 <label>Target:&nbsp;</label>
@@ -54,8 +52,8 @@ while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".$row[0]."'>".$row[0]."</option>";
 }
 ?>
-</select><div>
-</div>
+</select><div></div>
+
 <br clear='all'>
 <div class='pure-control-group'>
 <label>Grade:&nbsp;</label>
@@ -66,18 +64,9 @@ while ($row = mysql_fetch_array($result)) {
 <option value='2'>2</option>
 <option value='3'>3</option>
 <option value='4'>4</option>
-</select></div>
-</div>
+</select></div></div>
+
 <br clear='all'>
-<div class='pure-control-group'>
-<label>Bringback:&nbsp;</label>
-<div class='styled-select'>
-<select name='bringback' id='bringback' class='mobile-select'>
-<option value='%'>All</option>
-<option value='1'>Bringback</option>
-<option value='0'>Non-Bringback</option>
-</select></div>
-</div>
 <br clear='all'>
 <div class='pure-controls'>
 <input class='submitbutton' type='submit' name='submit' value='Submit'>

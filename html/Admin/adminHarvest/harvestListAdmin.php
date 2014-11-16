@@ -104,13 +104,6 @@ while ($row1 =  mysql_fetch_array($result)){
                    '").value);';
           }
         ?>
-/*
-	var cas=parseInt(document.getElementById('CSA').value,10);
-	var dining=parseInt(document.getElementById('dining').value,10);
-	var market=parseInt(document.getElementById('market').value,10);
-	var other=parseInt(document.getElementById('other').value,10);
-	var sum=cas+dining+market+other;
-*/
 	document.getElementById('total').value = sum;
 	
 	}	

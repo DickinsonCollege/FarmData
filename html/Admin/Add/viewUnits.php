@@ -11,7 +11,7 @@ if (isset($_GET['crop']) && isset($_GET['unit'])) {
    $crop = $_GET['crop'];
    $unit = $_GET['unit'];
    if (isset($_GET['delete'])) {
-echo      $sql = "delete from  units where crop='".$crop."' and unit='".$unit."'";
+     $sql = "delete from  units where crop='".$crop."' and unit='".$unit."'";
    } else if (isset($_GET['edit']) && isset($_GET['rowNum'])) {
       $sql = "update units set conversion=".$_POST['conv'.$_GET['rowNum']]." where crop='".$crop.
         "' and unit='".$unit."'";

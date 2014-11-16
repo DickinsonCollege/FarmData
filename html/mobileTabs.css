@@ -48,7 +48,7 @@ background: peru;
    width: 102%;
 	position: relative;
 	right: 1%;
-	padding-bottom: 155px;
+	padding-bottom: 45px; /*155px;*/
 }
 
 .tabs7nospace ul li,
@@ -80,7 +80,7 @@ background: peru;
  * ****************/
 .header {
 	width: 101%;
-	height: 180px;
+	height: 55px; /*180px;*/
 	position: fixed;
 	left: 0px;
 	top: 0px;
@@ -90,9 +90,9 @@ background: peru;
 
 .header_container {
 	width: 18.8%;
-	height: 170px;
+	height: 50px; /*170px;*/
 	z-index: 10001;
-	font-size: 42px;
+	font-size: 14px; /*42px*/
 	text-align: center;
 	background: #444444;
 	background: linear-gradient(#555555, #333333);
@@ -113,26 +113,26 @@ background: peru;
 .header_back {
 	position: relative;
 	left: .4%;
-	bottom: -4px;
+	bottom: -2px; /*-4px;*/
 }
 
 .header_home {
 	position: relative;
 	left: 19.6%;
-	bottom: 166px;
+	bottom: 48px; /*166px;*/
 }
 
 .header_middle {
 	position: relative;
 	left: 38.8%;
-	bottom: 336px;
+	bottom: 98px; /*336px;*/
 	width: 40.8%;
 }
 
 .header_logout {
 	position: relative;
 	left: 80%;
-	bottom: 506px;
+	bottom: 148px; /*506px;*/
 }
 
 /******************

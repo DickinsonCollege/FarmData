@@ -17,16 +17,6 @@ $dateResult = mysql_query($dateSQL);
 $dateRow = mysql_fetch_array($dateResult);
 $date = $dateRow['harDate'];
 
-/*
-$sql = "select * from targets order by targetName";
-$targs = array();
-$resultt = mysql_query($sql);
-echo mysql_error();
-while ($rowt = mysql_fetch_array($resultt)) {
-   $targs[] = $rowt['targetName'];
-}
-*/
-
 $harvestListArray = array();
 //$i = 0;
 
@@ -37,6 +27,7 @@ while ($row = mysql_fetch_array($result)) {
    $yield = $totalRow['yield'];
    $unit = $totalRow['unit'];
    $convert = false;
+   $conversion = 1;
    if ($yield == null) {
       $yield = 0;
       $unit = $row['units'];
@@ -52,11 +43,6 @@ while ($row = mysql_fetch_array($result)) {
    }
    
    $rowArray = array();
-/*
-   for ($i = 0; $i < count($targs); $i++) {
-      $rowArray[$targs[$i]] = 0;
-   }
-*/
    $sql = "select * from harvestListItem where crop='".$row['crop']."' AND id=".$lastHarvest;
    $resultc = mysql_query($sql);
    echo mysql_error();
@@ -64,34 +50,43 @@ while ($row = mysql_fetch_array($result)) {
    while ($rowc = mysql_fetch_array($resultc)) {
       $targ = $rowc['target'];
       $rowArray[$targ] = $rowc['amt'];
-      if ($convert) {
+      $hunit = $rowc['units'];
+      if ($unit != $hunit) {
+        $conversion = 1;
+        $defsql = "select units from plant where crop = '".$row['crop']."'";
+        $defres = mysql_query($defsql);
+        $defrow = mysql_fetch_array($defres);
+        $defunit = $defrow['units']; 
+        if ($unit == $defunit) {
+           // convert to default unit
+           $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$hunit."'";
+           $convres1 = mysql_query($convsql1);
+           $convrow1 = mysql_fetch_array($convres1);
+           $conversion = 1 / $convrow1['conversion'];
+        } else if ($hunit == $defunit) {
+           // convert from default unit
+           $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$unit."'";
+           $convres1 = mysql_query($convsql1);
+           $convrow1 = mysql_fetch_array($convres1);
+           $conversion = $convrow1['conversion'];
+        } else {
+           // convert to default unit
+           $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$hunit."'";
+           $convres1 = mysql_query($convsql1);
+           $convrow1 = mysql_fetch_array($convres1);
+           $conversion1 = 1 / $convrow1['conversion'];
+           // convert from default unit
+           $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$unit."'";
+           $convres1 = mysql_query($convsql1);
+           $convrow1 = mysql_fetch_array($convres1);
+           $conversion2 = $convrow1['conversion'];
+           $conversion = $conversion1 * $conversion2;
+        }
         $rowArray[$targ] = $rowArray[$targ] * $conversion;
       }
       $tot += $rowArray[$targ];
    }
    
-/*
-   if ($convert) {
-      $rowArray[0] = $row['CSA'] * $conversion;
-      $rowArray[1] = $row['dining'] * $conversion;
-      $rowArray[2] = $row['market'] * $conversion;
-      $rowArray[3] = $row['other'] * $conversion;
-   } else {
-      $rowArray[0] = $row['CSA'];
-      $rowArray[1] = $row['dining'];
-      $rowArray[2] = $row['market'];
-      $rowArray[3] = $row['other'];
-   }
-
-   $rowArray[4] = $unit;
-   $rowArray[5] = $yield;
-
-//   $rowArray[4] = $row['Total'];
-   $rowArray[6] = $row['crop'];
-   // $rowArray[7] = $row['units'];
-   $rowArray[7] = $unit;
-   $rowArray[8] = $date;
-*/
    $rowArray['FARMDATA_unit'] = $unit;
    $rowArray['FARMDATA_total'] = $tot;
    $rowArray['FARMDATA_date'] = $date;
