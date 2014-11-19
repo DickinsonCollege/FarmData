@@ -23,10 +23,9 @@ if(isset($_GET['submit'])) {
 	$target = escapehtml($_GET['target']);
 	$grade = $_GET['grade'];
 
-	$sql = "SELECT id, distDate, crop_product, grade, amount, unit, comments, target FROM distribution 
+ 	$sql = "SELECT id, distDate, crop_product, grade, amount, unit, comments, target FROM distribution 
 		WHERE distDate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
-		AND crop_product like '".$crop_product."' AND target like '".$target."' AND grade like '".$grade."' 
-		ORDER by distDate, crop_product, target, grade";
+		AND crop_product like '".$crop_product."' AND target like '".$target."' AND grade like '".$grade."'" ;
 	echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
 	$result = mysql_query($sql);
 	echo "<center>";
@@ -116,6 +115,4 @@ if(isset($_GET['submit'])) {
 	echo "</center>";
 	echo "<br clear='all'>";
 }
-echo "<form method='POST' action='distributionReport.php?tab=admin:admin_sales:distribution:distribution_report'>";
-echo "<input type='submit' class='submitbutton' value='Run Another Report'></form>";
 ?>

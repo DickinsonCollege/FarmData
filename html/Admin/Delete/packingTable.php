@@ -29,7 +29,7 @@ if(isset($_GET['submit'])) {
 	if ($bringback != "%") {
 		$sql .= " AND bringback=".$bringback;
 	}
-	$sql .= " ORDER BY packDate, crop_product, target, grade";
+	//$sql .= " ORDER BY packDate, crop_product, target, grade";
 	echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
 	
 	$result = mysql_query($sql);
@@ -126,6 +126,4 @@ if(isset($_GET['submit'])) {
 	echo "</table></center>";
 	echo "<br clear='all'>";
 }
-echo "<form method='POST' action='packingReport.php?tab=admin:admin_sales:packing:packing_report'>";
-echo "<input type='submit' class='submitbutton' value='Run Another Report'></form>";
 ?>

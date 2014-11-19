@@ -1,5 +1,16 @@
 <?php session_start();?>
 <link rel="stylesheet" href="/pure-release-0.5.0/pure-min.css">
+<script type="text/javascript">
+function getUnit(){
+   var newdiv = document.getElementById('unitDiv');
+   var crp = encodeURIComponent(document.getElementById("crop").value);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "getDefUnit.php?crop="+crp, false);
+   xmlhttp.send();
+   newdiv.innerHTML= '<div id="unitDiv"> <input type="text" class="textbox25" readonly name="unit" ' + 
+    ' id="unit" value="' + xmlhttp.responseText + '"></div>';
+}
+</script>
 
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
@@ -54,8 +65,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo"</div>";
 echo '<br clear="all"/>';
 echo '<div class="pure-control-group">';
-echo '<label>Crop:&nbsp</label>';
-echo '<div class="styled-select"><select name="crop" id="crop">';
+echo '<label>Crop/Product:&nbsp</label>';
+echo '<div class="styled-select"><select name="crop" id="crop" onchange="getUnit();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant';
 $sqldata = mysql_query($sql) or die("ERROR2");
@@ -83,7 +94,8 @@ echo '<br clear="all"/>';
 
 echo '<div class="pure-control-group">';
 echo '<label>Unit:&nbsp</label>';
-echo '<input type="text" class="textbox25" readonly name="unit" id="unit" value="'.$unit.'"></div>';
+echo '<div id="unitDiv"> <input type="text" class="textbox25" readonly name="unit" id="unit" value="'.
+  $unit.'"></div></div>';
 /*
 echo '<div class="styled-select"><select name="unit" id="unit">';
 echo '<option value="'.$unit.'" selected>'.$unit.' </option>';
@@ -147,7 +159,7 @@ if ($_POST['submit']) {
    $sql = "update pack set unit='".$unit."', grade=".$updateGrade.", packDate='".$year."-".
      $month."-".$day."', amount=".$amount.",bringBack=".$bringback.",target='".$target."', comments='".
      $comSanitized."',crop_product='".$crop."' where id=".$id;
-   echo $sql;
+ //  echo $sql;
 	$result = mysql_query($sql);
    if(!$result){
        echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";

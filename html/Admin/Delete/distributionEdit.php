@@ -1,22 +1,18 @@
 <?php session_start();?>
 <link rel="stylesheet" href="/pure-release-0.5.0/pure-min.css">
+<script type="text/javascript">
+function getUnit(){
+   var newdiv = document.getElementById('unitDiv');
+   var crp = encodeURIComponent(document.getElementById("crop").value);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "getDefUnit.php?crop="+crp, false);
+   xmlhttp.send();
+   newdiv.innerHTML= '<div id="unitDiv"> <input type="text" class="textbox25" readonly name="unit" ' +
+      ' id="unit" value="' + xmlhttp.responseText + '"></div>';
+}
+</script>
 
 <?php
-/*
-$farm = $_SESSION['db'];
-if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_unitcheck', 'unitcheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_units');
-   $sql="select unitname from units where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
-   $unitopts='';
-   while ($row = mysql_fetch_array($result)) {
-      $unitopts.='<option value="'.$row['unitname'].'">'.$row['unitname'].'</option>';
-   }
-}
-*/
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
@@ -67,8 +63,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo"</div>";
 echo '<br clear="all"/>';
 echo '<div class="pure-control-group">';
-echo '<label>Crop:&nbsp</label>';
-echo '<div class="styled-select"><select name="crop" id="crop">';
+echo '<label>Crop/Product:&nbsp</label>';
+echo '<div class="styled-select"><select name="crop" id="crop" onchange="getUnit();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant';
 $sqldata = mysql_query($sql) or die("ERROR2");
@@ -96,7 +92,8 @@ echo '<br clear="all"/>';
 
 echo '<div class="pure-control-group">';
 echo '<label>Unit:&nbsp</label>';
-echo '<input type="text" class="textbox25" readonly name="unit" id="unit" value="'.$unit.'"></div>';
+echo '<div id="unitDiv"><input type="text" class="textbox25" readonly name="unit" id="unit" value="'.
+   $unit.'"></div></div>';
 /*
 echo '<div class="styled-select"><select name="unit" id="unit">';
 echo '<option value="'.$unit.'" selected>'.$unit.' </option>';
