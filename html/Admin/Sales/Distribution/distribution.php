@@ -273,7 +273,6 @@ function createNewTable() {
 
    // Create Hidden Inputs
    createHiddenInputs(numTables, numRows, crop_product_amounts_array[0], crop_product_amounts_array[1], eCropProd, grade);
-console.log("crop: " + eCropProd);
 
    // Checks for Crops/Products with inventory values in the negatives
    checkInventoryAmounts(numTables);
@@ -731,7 +730,7 @@ console.log(packing_array[i]);
          document.body.appendChild(tbl);
          // createHiddenInputs(numTables, numRows, inventory_array[0], inventory_array[1], packing_array[currIndex-1][2], packing_array[currIndex-1][4]);
          createHiddenInputs(numTables, numRows, inventory_array[0], inventory_array[1], packing_array[currIndex-1][2], packing_array[currIndex-1][4]);
-console.log("crop in pop from pack: " + packing_array[currIndex-1][2]);
+// console.log("crop in pop from pack: " + packing_array[currIndex-1][2]);
          calculateTotalSoFar(numTables);
          checkInventoryAmounts(numTables);
 
@@ -874,7 +873,7 @@ function insertAllRows() {
 
                // Adds a warning in comments if value in distribution exceeds inventory amount
                if (amountsMessage) {
-                  values[6] += "\nDistributed amount exceeded amount that was in inventory";
+                  values[6] += "\nDistributed amount exceeded amount that was in inventory by more than 40%.";
                }
 
                // Performs unit conversion
