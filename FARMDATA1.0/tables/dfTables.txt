@@ -567,3 +567,71 @@ CREATE TABLE utilized_on (
    FOREIGN KEY (fieldID) REFERENCES field_GH (fieldID) ON UPDATE CASCADE,
    FOREIGN KEY (pileID) REFERENCES compost_pile (pileID) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+/*
+create table seedunit(unit varchar(30) not null primary key) ENGINE=InnoDB;
+insert into seedunit values('SEEDS');
+insert into seedunit values('GRAM');
+insert into seedunit values('OUNCE');
+insert into seedunit values('POUND');
+*/
+
+create table seedInfo (
+   crop varchar(30) not null primary key,
+   seedsGram float,
+   seedsRowFt float,
+   defUnit varchar(10),
+   foreign key (crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table variety (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   foreign key (crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table source (
+   source varchar(50) not null primary key) ENGINE=InnoDB;
+
+create table toOrder (
+   crop varchar(30) not null,
+   year int not null,
+   rowFt float not null default 0,
+   nextNum int not null default 1,
+   foreign key (crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table orderItem (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   year int not null,
+   source varchar(50) not null,
+   catalogOrder varchar(30),
+   organic tinyint(1) default 1,
+   catalogUnit varchar(30),
+   price float,
+   unitsPerCatUnit real,
+   catUnitsOrdered int,
+   status varchar(10) default 'PENDING',
+   source1 varchar(50),
+   sdate1 date,
+   source2 varchar(50),
+   sdate2 date,
+   source3 varchar(50),
+   sdate3 date,
+   id int not null,
+/*
+   foreign key (source) references source(source) on update cascade,
+*/
+   foreign key (crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table seedInventory (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   year int not null,
+   code varchar(20) not null,
+   rowFt float not null default 0,
+   inInventory float not null default 0,
+   foreign key(crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
