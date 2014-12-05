@@ -52,8 +52,8 @@ display: block;
 */
     background-color: wheat;
 	width: 100%;
-	height: 200px;
-	font-size: 72px;
+	height: 60px; /*200px;*/
+	font-size: 24px; /*72px;*/
 	font-weight: bold;
 	margin-top: 10px;
 
@@ -64,10 +64,10 @@ display: block;
 }
 
 .genericbutton {
- font-size: 40pt;
+ font-size: 15pt; /*40pt;*/
 -moz-border-radius: 20px;
 border-radius: 20px;
- height: 70;
+ height: 20; /*70;*/
  border: solid  thin black;
  margin: 2;
  padding: 1;
@@ -80,8 +80,8 @@ display: block;
 */
     background-color: wheat;
 	width: 100%;
-	height: 150px;
-	font-size: 52px;
+	height: 50px; /*150px;*/
+	font-size: 18px; /*52px;*/
 	font-weight: bold;
 	margin-top: 25px;
 }
@@ -314,7 +314,7 @@ input[type='checkbox'] {
 
 textarea {
    width: 100%;
-   height: 400px;
+   height: 130px; /*400px;*/
    font-size: 26pt;
    font-family: Arial;
 	margin-bottom: 100px;
@@ -323,7 +323,7 @@ textarea.comments {
    width: 965px;
    font-size: 25pt;
    font-family: Arial;
-   height: 400px;
+   height: 130px; /*400px;*/
    font-weight: bold;
    margin-left:8px;
 }
@@ -331,7 +331,7 @@ textarea.comments2 {
    width: 1145px;
    font:size: 16pt;
    font-family: Arial;
-   height: 400px;
+   height: 130px; /*400px;*/
    margin-left:8px;
 }
 .styled-select select {

@@ -60,10 +60,20 @@ if($_GET['deleteProduct']){
 }
 </script>
 
-
-
-<form name='sendValue' method='POST'>
-
+<?php
+echo "<form name='sendValue' method='POST' action='".$_SERVER['PHP_SELF']."?year=".$listYear.
+  "&month=".$listMonth."&day=".$listDay."&currentID=".$currentID."&invoiceID=".$invoiceID.
+  "&target=".$target."&tab=admin:admin_sales:invoice:editinvoice'>";
+/*
+$listYear=$_GET['year'];
+$listMonth=$_GET['month'];
+$listDay=$_GET['day'];
+$listDate=$_GET['year']."-".$_GET['month']."-".$_GET['day'];
+$currentID=$_GET['currentID'];
+$invoiceID=$_GET['invoiceID'];
+$target=$_GET['target'];
+*/
+?>
 
 
 <tr>

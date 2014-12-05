@@ -7,6 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 ?>
 <center>
 <h1> Welcome to FARMDATA! <br> Click one of the tabs to begin. </h1>
+<br clear="all"/>
+<img src='farmdata.png'>
 </center>
 </body>
 

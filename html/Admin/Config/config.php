@@ -3,8 +3,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
-$ids = array("notes", "labor", "harvlist", "soil", "fertility", "cover", "compost", "fertilizer",
-  "liquidfertilizer", "dryfertilizer", "tillage", "spraying", "backspray", "tractorspray",
+$ids = array("notes", "labor", "seed_order", "harvlist", "soil", "fertility", "cover", "compost",
+   "fertilizer", "liquidfertilizer", "dryfertilizer", "tillage", "spraying", "backspray", "tractorspray",
   "scouting", "insect", "weed", "disease", "irrigation", "pump", "sales", "sales_packing", "sales_invoice",
   "bedft");
 $tabsize = array("num_top"=>7, "num_harvest"=>3, "num_soil"=>4, "num_fertility"=>4, "num_fertilizer"=>2,
@@ -37,6 +37,8 @@ In the list below, check each FARMDATA component that you wish to include:
  observations by any user) </input>
 <li> <input type="checkbox" name="labor" id="labor"><b>Labor</b>
   (tracking labor hours for direct seeding, transplanting, harvesting and any other tasks)</input>
+<li> <input type="checkbox" name="seed_order" id="seed_order"><b>Seed Ordering and Inventory</b>
+  (tracking seed orders and inventory, including seed usage during planting)</input>
 <li> <input type="checkbox" name="harvlist" id="harvlist"><b>Harvest List</b> (entering and editing a harvest
  plan for a specific day plus real time harvest tracking)</input>
 <li> <input type="checkbox" name="soil" class="soil" id="soil" 

@@ -1,5 +1,12 @@
 <div id="seeding" style="display:none;">
-<div class="tabs tabs3">
+<?php
+$order = $_SESSION['admin'] && $_SESSION['seed_order'];
+if ($order) {
+   echo '<div class="tabs tabs4">';
+} else {
+   echo '<div class="tabs tabs3">';
+}
+?>
 <ul>
 <li id="li_direct">  
    <a id = "direct_a" href="/design.php?tab=seeding:direct" class="inactivetab">Direct Seeding</a> </li>
@@ -7,7 +14,28 @@
    <a id = "flats_a" href="/design.php?tab=seeding:flats" class="inactivetab">Flats Seeding</a> </li>
 <li id="li_transplant">  
    <a id = "transplant_a" href="/design.php?tab=seeding:transplant" class="inactivetab">Transplanting</a> </li>
+<?php
+if ($order) {
+echo '<li id="li_ordert">  
+   <a id = "ordert_a" href="/design.php?tab=seeding:ordert" class="inactivetab">Order</a> </li>';
+}
+?>
 </ul>
+<?php createBR(); ?>
+</div>
+</div>
+
+<div id="ordert" style="display:none;">
+<div class="tabs tabs2">
+<ul>
+<li id="li_ordert_input">  
+   <a id = "ordert_input_a" class="inactivetab" a href="/Seeding/Order/order.php?tab=seeding:ordert:ordert_input">Input Form</a> </li>
+<li id="li_ordert_report">  
+   <a id = "ordert_report_a" class="inactivetab" a href="/Seeding/Order/orderReport.php?tab=seeding:ordert:ordert_report">Report</a> </li>
+</ul>
+<!--
+<br clear="all"/>
+-->
 <?php createBR(); ?>
 </div>
 </div>

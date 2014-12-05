@@ -25,7 +25,7 @@ function overlay() {
            but.value="";
         }
         but.innerHTML="<div class=\"styled-select\">" + 
-           '<select name="crop" id="cropButton" onChange="update()";>' +
+           '<select name="crop" id="cropButton" onChange="update();">' +
            '<option disabled selected="selected"  value = 0> Crop </option>' +
            xmlhttp.responseText + "</select></div>";
 }
@@ -39,9 +39,9 @@ function update() {
    }
 }
 </SCRIPT>
-<label for="cropButton"><b>Crop:&nbsp;</b></label>
+<label for="cropButton">Crop:&nbsp;</label>
 <div class="styled-select">
-<select name="crop" id="cropButton" class='mobile-select' onChange="update()";>
+<select name="crop" id="cropButton" class='mobile-select' onChange="update();">
 <option disabled selected="selected"  value = 0> Crop </option>
 </select>
 </div>

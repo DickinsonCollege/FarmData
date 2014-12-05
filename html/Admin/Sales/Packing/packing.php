@@ -181,7 +181,7 @@ function addRow(crp, crpArr) {
         " <input type='text' style='width:100%;'";
       if (crp != "") {
          if (crpArr[targs[i]]) {
-            htm += " value = '" + crpArr[targs[i]] + "' ";
+            htm += " value = '" + parseFloat(crpArr[targs[i]]).toFixed(2) + "' ";
          } else {
             htm += " value = '0' ";
          }

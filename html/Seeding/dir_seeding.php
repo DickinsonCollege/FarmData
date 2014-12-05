@@ -28,62 +28,155 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <option disabled selected="selected" value = 0  style="display:none; width: auto;"> Field ID  </option>
 <?php
 $result=mysql_query("Select fieldID from field_GH where active = 1");
-while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
+while ($row1 =  mysql_fetch_array($result)){
+  echo "\n<option value= \"".$row1['fieldID']."\">".$row1['fieldID']."</option>";
 }
 ?>
 </select>
 </div>
+<input type="hidden" name="numRows" id="numRows" value=0>
 <?php 
 if (!$_SESSION['mobile']) {
-	echo "<label> &nbsp;</label>";
-	echo "<br clear='all'>";
+   echo "<label> &nbsp;</label>";
+   echo "<br clear='all'>";
 }
-include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
+//include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
-<!--
 <div class="styled-select">
-<select name="crop" id="crop">
-<option disabled selected="selected"  value = 0> Crop </option>
+<select name="cropButton" id="cropButton" class="mobile-select">
+<option disabled selected value="0">Crop</option>
 <?php
-$result=mysql_query("Select crop from plant");
-while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
+$sql = "select distinct crop from plant";
+$res = mysql_query($sql);
+while ($row = mysql_fetch_array($res)) {
+  echo '<option value="'.$row['crop'].'">'.$row['crop'].'</option>';
 }
 ?>
-</select>
-</div>
--->
+</select></div>
+
+<script type="text/javascript">
+var numRows = 0;
+
+function update_feet() {
+   var tot = 0;
+   for (var i = 1; i <= numRows; i++) {
+      if (document.getElementById("row" + i) != null &&
+          document.getElementById("row" + i).innerHTML != "") {
+         tot += parseFloat(document.getElementById("bedft" + i).value);
+      }
+   }
+   document.getElementById("bedft").value = tot;
+}
+
+function addRow() {
+   var cb = document.getElementById("cropButton");
+   if (cb.value=="0") {
+      alert("Error: choose crop first!");
+   } else {
+      cb.disabled=true;
+      numRows++;
+      var nr = document.getElementById("numRows");
+      nr.value = numRows;
+      var table = document.getElementById("seedTable");
+      var row = table.insertRow(numRows);
+      row.id = "row"+numRows;
+      row.name = "row"+numRows;
+      var cell0 = row.insertCell(0);
+      var crop = encodeURIComponent(cb.value);
+      xmlhttp= new XMLHttpRequest();
+      xmlhttp.open("GET", "get_code.php?crop="+crop, false);
+      xmlhttp.send();
+      if(xmlhttp.responseText=="\n") {
+         cb.value="";
+      }
+      cell0.innerHTML="<div class='styled-select' id ='codediv" + numRows + "''>  <select name= 'code" +
+         numRows + "' id= 'code" + numRows + "' class='mobile-select' style='width:100%'>" +
+         xmlhttp.responseText+"</select> </div>";
+
+      var cell1 = row.insertCell(1);
+      cell1.innerHTML = "<input onkeypress= 'stopSubmitOnEnter(event);' type = 'text' name='bedft" + numRows
+         + "' id='bedft"+numRows+"' class='textbox mobile-input inside_table' style='width:100%' " +
+         "oninput='update_feet();' value='0'>";
+   }
+}
+
+function removeRow() {
+   if (numRows > 0) {
+      var row = document.getElementById("row" + numRows);
+      row.innerHTML = "";
+      numRows--;
+      update_feet();
+   }
+   if (numRows == 0) {
+      var cb = document.getElementById("cropButton");
+      cb.disabled=false;
+   }
+   var nr = document.getElementById("numRows");
+   nr.value=numRows;
+}
+</script>
+
 <br clear = "all"/>
 <?php
-$farm = $_SESSION['db'];
-if (!$_SESSION['bedft']) {
-  echo '<label for="bed"><b>';
-  echo "Beds Seeded:&nbsp;</b>";
-  echo '</label>';
-} else {
-  if ($_SESSION['mobile']) {
-    echo '<div class="styled-select" style="margin-bottom:-100px; margin-top:50px;">';
+if ($_SESSION['seed_order']) {
+   echo '<br clear = "all"/>';
+   echo '<table id="seedTable" name="seedTable">';
+   echo '<tr><th>Seed&nbsp;Code</th><th>';
+   if (!$_SESSION['bedft']) {
+     echo "Beds Seeded</th></tr>";
+   } else {
+     echo '<div class="styled-select">';
+     echo '<select name ="rowBed" id="rowBed" class="mobile-select">';
+     echo '<option value = "bed" selected>Bed Feet Seeded: </option>';
+     echo '<option value = "row">Row Feet Seeded: </option>';
+     echo '</select>';
+     echo '</div></th></tr>';
+   }
+   echo '</table>';
+   echo '<br clear = "all"/>';
+   echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton" onClick="addRow();"';
+   echo ' value="Add Variety">';
+   echo '&nbsp;&nbsp';
+   echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton" ';
+   echo 'onClick="removeRow();" value="Remove Variety">';
+   echo '<br clear = "all"/>';
+   echo '<br clear = "all"/>';
+}
+
+if ($_SESSION['seed_order']) {
+  echo '<label>Total ';
+  if ($_SESSION['bedft']) {
+     echo 'Feet';
   } else {
-    echo '<div class="styled-select">';
+     echo 'Beds';
   }
+  echo ' Seeded:&nbsp;</label>';
+} else if ($_SESSION['bedft']) {
+  echo '<div class="styled-select">';
   echo '<select name ="rowBed" id="rowBed" class="mobile-select">';
   echo '<option value = "bed" selected>Bed Feet Seeded: </option>';
   echo '<option value = "row">Row Feet Seeded: </option>';
   echo '</select>';
   echo '</div>';
+} else {
+  echo '<label for="bed">';
+  echo "Beds Seeded:&nbsp;";
+  echo '</label>';
 }
 ?>
-<label> &nbsp;</label>
-<input class="textbox2 mobile-input" type="text" onkeypress= 'stopSubmitOnEnter(event);' name ="bedft" id="bedft">
+<input class="textbox2 mobile-input" type="text" onkeypress= 'stopSubmitOnEnter(event);' 
+<?php if ($_SESSION['seed_order']) { echo ' readonly '; } ?>
+name ="bedft" id="bedft" value ="0">
 <br clear = "all"/>
 <div class="styled-select">
-<label for="rowbd"><b>Rows per bed:&nbsp;</b></label>
+<label for="rowbd">Rows per bed:&nbsp;</label>
 <select name ="rowbd" id="rowbd" class='mobile-select'>
 <option value = 1 selected>1</option>
 <?php
 $cons=2;
 while ($cons<8) {
     if ($cons != 6) {
-	echo "\n<option value =\"$cons\">$cons</option>";
+   echo "\n<option value =\"$cons\">$cons</option>";
     }
    $cons++;
 }
@@ -94,7 +187,7 @@ while ($cons<8) {
 <?php
 if ($_SESSION['labor']) {
 echo '
-<label for="numWorkers"><b>Number of workers (optional):&nbsp;</b></label>
+<label for="numWorkers">Number of workers (optional):&nbsp;</label>
 <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input">
 <br clear="all"/>
 
@@ -112,79 +205,95 @@ echo '
 ?>
 
 <div>
-<label for="comments"><b>Comments:</b></label>
+<label for="comments">Comments:</label>
 <br clear = "all"/>
 <textarea name ="comments"
 rows="10" cols="30">
 </textarea>
 </div>
 <script type="text/javascript">
-        function show_confirm() {
-        var i = document.getElementById("cropButton");
-	if(checkEmpty(i.value) || i.value == "Crop") {
-           alert("Please Select a Crop");
-           return false;
-        }
+function show_confirm() {
+   var fld = document.getElementById("fieldID").value;
+   if (checkEmpty(fld)) {
+      alert("Please Select a FieldID");
+      return false;
+   }
 
-        var strUser3 = i.value;
-        var con="Crop: "+ strUser3+ "\n";
-	var i = document.getElementById("fieldID");
-	if(checkEmpty(i.value)) {
-           alert("Please Select a FieldID");
-           return false;
-        }
+   var con="FieldID: "+ fld + "\n";
+   var crp = document.getElementById("cropButton").value;
+   if (checkEmpty(crp) || crp == "Crop") {
+      alert("Please Select a Crop");
+      return false;
+   }
+   con += "Crop: "+ crp + "\n";
+<?php
+if ($_SESSION['seed_order']) {
+   echo '
+   var count = 1;
+   for (var i = 1; i <= numRows; i++) {
+      if (document.getElementById("row" + i) != null &&
+          document.getElementById("row" + i).innerHTML != "") {
+         var code = document.getElementById("code" + i).value;
+         if (checkEmpty(code)) {
+            alert("Please select a seed code in row: " + count);
+            return false;
+         }
+         count++;
+      }
+   }';
+}
+?>
 
-	var strUser3 = i.options[i.selectedIndex].text;
-	var con=con+"FieldID: "+ strUser3+ "\n";
-	var i = document.getElementById("month");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+strUser3+"-";
-	var i = document.getElementById("day");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+strUser3+"-";
-	var i = document.getElementById("year");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+strUser3+"\n";
-	var i = document.getElementById("bedft").value;
-	console.log(i);
-	var r = document.getElementById("rowbd").value;
-        if (checkEmpty(r)) {
-                alert("Please Select Rows Per Bed");
-                return false;
-        } 
-        var rowBed = document.getElementById("rowBed");
-        var div = 1;
-        if (rowBed && rowBed.value == "row") {
-            div = r;
-        }
-        var bed = <?php if (!$_SESSION['bedft']) {
+   var mth = document.getElementById("month").value;
+   con += mth + "-";
+   var dy = document.getElementById("day").value;
+   con += dy + "-";
+   var yr = document.getElementById("year").value;
+   con += yr + "\n";
+   var i = document.getElementById("bedft").value;
+   var r = document.getElementById("rowbd").value;
+   if (checkEmpty(r)) {
+      alert("Please Select Rows Per Bed");
+      return false;
+   } 
+   var rowBed = document.getElementById("rowBed");
+   var div = 1;
+   if (rowBed && rowBed.value == "row") {
+       div = r;
+   }
+   var bed = <?php if (!$_SESSION['bedft']) {
                echo '"Number of Beds";';
-            } else { 
+        } else { 
                echo '"Number of Bed Feet";';
          } ?>
-	if (checkEmpty(i) || isNaN(i) || i<=0) {
-		alert("Enter valid "+bed+"!");
-		return false;
-	} 
-	var con=con+bed+": "+ Math.round(i/div) + "\n";
+   if (checkEmpty(i) || isNaN(i) || i<0) {
+      alert("Enter valid "+bed+"!");
+      return false;
+   } 
+   var con=con+bed+": "+ Math.round(i/div) + "\n";
 
-	var con=con+"Rows/Bed: "+ r+ "\n";
+   var con=con+"Rows/Bed: "+ r+ "\n";
 
 <?php
   if ($_SESSION['labor']) {
      echo '
         var tme = document.getElementById("time").value;
-	var unit = document.getElementById("timeUnit").value;
+   var unit = document.getElementById("timeUnit").value;
         if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
            alert("Enter a valid number of " + unit + "!");
            return false;
         }
-	con = con+"Number of " + unit + ": " + tme + "\n";';
+   con = con+"Number of " + unit + ": " + tme + "\n";';
    } 
-   ?>
+?>
 
-        return confirm("Confirm Entry:"+"\n"+con);
-        }
+    var ret = confirm("Confirm Entry:"+"\n"+con);
+    if (ret) {
+       document.getElementById('cropButton').disabled=false;
+       document.getElementById('bedft').disabled=false;
+    }
+    return ret;
+}
 </script>
 <br clear = "all"/>
 <input class="submitbutton" type="submit" name="submit" value="Submit" onclick= "return show_confirm();">
@@ -195,14 +304,13 @@ rows="10" cols="30">
 <input type="submit" class="submitbutton" value = "View Table"></form>
 <?php
 if(isset($_POST['submit'])) {
-   $comSanitized=escapehtml($_POST['comments']);
    $bedft = escapehtml($_POST['bedft']);
    $numrows = escapehtml($_POST['rowbd']);
+   $crop = escapehtml($_POST['cropButton']);
    if ($_SESSION['bedft'] && $_POST['rowBed'] == "row") {
       $bedft = $bedft / $numrows;
    }
    $fld = escapehtml($_POST['fieldID']);
-   $crop = escapehtml($_POST['crop']);
 
    if ($_SESSION['labor']) {
       // Check if given time is in minutes or hours
@@ -230,9 +338,60 @@ if(isset($_POST['submit'])) {
       $len = $row['length'];
       $bedft = $bedft * $len;
    } 
+
+   $comSanitized=escapehtml($_POST['comments']);
+
+   if ($_SESSION['seed_order']) {
+      $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
+      $res = mysql_query($sql);
+      if ($row = mysql_fetch_array($res)) {
+         $seedsGram = $row['seedsGram'];
+         $seedsRowFt = $row['seedsRowFt'];
+      } else {
+          echo "<script>alert(\"No seeding information found!\");</script>\n";
+      }
+      $numRows = $_POST['numRows'];
+      for ($i = 1; $i <= $numRows; $i++) {
+         if (isset($_POST['code'.$i])) {
+            $code = escapehtml($_POST['code'.$i]);
+            $bf = $_POST['bedft'.$i];
+            $bd = " beds";
+            if ($_SESSION['bedft']) {
+               if ($_POST['rowBed'] == "row") {
+                  $bf = $bf / $numrows;
+               }
+               $bd = " bed feet";
+            }
+            if ($comSanitized != "") {
+               $comSanitized .= "<br>";
+            }
+            $var = "select variety from seedInventory where code ='".$code."' and crop = '".$crop."'";
+            $vr = mysql_query($var);
+            echo mysql_error();
+            if ($vrow = mysql_fetch_array($vr)) {
+               $variety = $vrow['variety'];
+            } else {
+               $variety = "No Variety";
+            }
+            $comSanitized .= "Seed Code: ".escapehtml($_POST['code'.$i])." (".$variety.") - ".
+               number_format((float) $bf, 1, '.', '').$bd;
+            if (!$_SESSION['bedft']) {
+               $bf = $bf * $len;
+            }
+            $seedsPlanted = $seedsRowFt * $numrows * $bf;
+            $grams = $seedsPlanted / $seedsGram;
+            $dec = "update seedInventory set inInventory = inInventory - ".$grams." where crop = '".
+               $crop."' and code = '".$code."'";
+            $decres = mysql_query($dec);
+            echo mysql_error();
+         }
+     }
+   }
+
    $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments)
    VALUES
-   ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedft.", ".$numrows.", ".$totalHours.", '".$comSanitized."')";
+   ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
+      $_POST['day']."',".$bedft.", ".$numrows.", ".$totalHours.", '".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 
        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";

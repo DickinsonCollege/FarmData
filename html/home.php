@@ -15,6 +15,15 @@ if (!$_SESSION['mobile']) {
 	echo '<font size=4> Welcome to the College Farm! <br clear="all"/> Select One of the Tabs Above. </font>';
 }
 ?>
+<?php
+if (!$_SESSION['mobile']) {
+	echo "<img src='farmdata.png'>"; 
+} else { 
+	echo "<img src='farmdata.png' style='padding-top:20px;' width='100%'>";
+}
+?>
+<!--
 <?php if (!$_SESSION['mobile']) echo "<img src='FOTS.jpg'>"; ?>
+-->
 </center>
 </body>

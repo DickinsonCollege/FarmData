@@ -81,15 +81,15 @@ if (!$_SESSION['mobile']) {
 } else if ($tab=='harvest') {
 	echo "<div style='padding-bottom: 0px;'></div>";
 } else if ($tab=='seeding') {
-	echo "<div style='padding-bottom: 8px;'></div>";
+	echo "<div style='padding-bottom: 0px;'></div>";
 } else if ($tab=='soil') {
-	echo "<div style='padding-bottom: 16px;'></div>";
+	echo "<div style='padding-bottom: 18px;'></div>";
 } else if ($tab=='notes') {
-	echo "<div style='padding-bottom: 24px;'></div>";
+	echo "<div style='padding-bottom: 36px;'></div>";
 } else if ($tab=='labor') {
-	echo "<div style='padding-bottom: 32px;'></div>";
+	echo "<div style='padding-bottom: 48px;'></div>";
 } else if ($tab=='admin') {
-	echo "<div style='padding-bottom: 40px;'></div>";
+	echo "<div style='padding-bottom: 60px;'></div>";
 }
 
 // Sets position of menubar for mobile
@@ -97,35 +97,19 @@ echo "<script type='text/javascript'>";
 
 //switch back with viewport set to 1
 if (!$_SESSION['mobile']) {
-	// Nothing
-} else if ($tab=='harvest') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:0px;');";
-} else if ($tab=='seeding') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-8px;');";
-} else if ($tab=='soil') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-16px;');";
-} else if ($tab=='notes') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-24px;');";
-} else if ($tab=='labor') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-32px;');";
-} else if ($tab=='admin') {
-	echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-40px;');";
-}
-
-if (!$_SESSION['mobile']) {
     // Nothing
 } else if ($tab=='harvest') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-12px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-2px;');";
 } else if ($tab=='seeding') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-24px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-14px;');";
 } else if ($tab=='soil') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-36px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-26px;');";
 } else if ($tab=='notes') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-48px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-38px;');";
 } else if ($tab=='labor') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-60px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-50px;');";
 } else if ($tab=='admin') {
-    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-72px;');";
+    echo "document.getElementById('menubar').setAttribute('style', 'position:relative; top:-62px;');";
 }
 echo "</script>"; 
 ?>
@@ -136,26 +120,27 @@ echo "</script>";
 // Include appropriate tab
 if ($tab=='harvest') {
    include $_SERVER['DOCUMENT_ROOT'].'/hartab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:120px'></div>";
 } else if ($tab=='seeding') {
    include $_SERVER['DOCUMENT_ROOT'].'/seedtab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:90px'></div>";
 } else if ($tab=='soil') {
 	include $_SERVER['DOCUMENT_ROOT'].'/soiltab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:70px'></div>";
 } else if ($tab=='notes') {
 	include $_SERVER['DOCUMENT_ROOT'].'/notetab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:20px'></div>";
 } else if ($tab=='labor') {
 	include $_SERVER['DOCUMENT_ROOT'].'/labortab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:30px'></div>";
 } else if ($tab=='admin') {
 	include $_SERVER['DOCUMENT_ROOT'].'/admintab.php';
+	if ($_SESSION['mobile']) echo "<div style='padding-bottom:0px'></div>";
 }
 ?>
 <!-- to end menubar div
 -->
 </div>
-
-<?php
-if ($_SESSION['mobile'])
-	echo "<div style='padding-bottom:200px'></div>";
-?>
 
 <div id="alert" style="display:block;border:2px solid;border-color:ivory;">
 <center>&nbsp;</center>

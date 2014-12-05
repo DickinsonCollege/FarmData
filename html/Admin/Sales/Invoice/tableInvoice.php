@@ -9,7 +9,7 @@ echo "<table border>";
 # List date: ".$listDate;
 echo "<tr><th>Product</th><th><center>Cases</center></th><th>Unit</th><th>Units/Case</th><th>Total Units</th><th><center>Price per Case</center></th><th>Total</th><th>Delete</td></tr>";
 while ($row= mysql_fetch_array($result2)) {
-   $deleteProduct=$row['product'];
+   // $deleteProduct=$row['product'];
    echo "<tr><td>";
    echo $row['product'];
    echo "</td><td>";
