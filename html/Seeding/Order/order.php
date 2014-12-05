@@ -805,6 +805,8 @@ function convertToGram($amt, $unit) {
 }
 
 if (isset($crop) && $seeds != "") {
+   echo "<h3>Seed Calculator</h3>";
+   echo '<br clear="all"/>';
    echo "<table>";
    echo "<tr><th>Unit</th><th>".$crop." Seeds Per Unit</th><th>Row Feet Per Unit</th><th>";
    echo "Calculator: Enter A Number In Any Row To Convert To Other Units</th></tr>";
@@ -846,6 +848,8 @@ function fromGram($unit, $amt) {
 }
 
 if (isset($crop) && isset($rowftToPlant) && $seeds != "" && $rowft != "" && $defUnit != "") {
+   echo '<br clear="all"/>';
+   echo "<h3>Seed Summary</h3>";
    echo '<br clear="all"/><table><tr><td>';
    $needed = number_format((float) ($rowftToPlant * $rowft)/ convertFromGram($defUnit, $seeds), 2, '.', '');
    echo 'Total '.$crop.' seed needed:&nbsp; </td><td>'.$needed.'</td><td> '.$defUnit.'(S)</td></tr>';
@@ -928,7 +932,6 @@ if (isset($crop) && isset($rowftToPlant) && $seeds != "" && $rowft != "" && $def
    echo "</select></div></td><td><div id='orgdiv' class='styled-select'><select name='varOrg' id='varOrg' class='mobile-select'>";
    echo "<option value='1' selected>OG</option><option value='0'>UT</option>";
    echo '</select></div></td></tr></table>';
-   echo '<br clear="all"/>';
    echo '<input type="button" class="submitbutton" id="addInven" name="addInven"';
    echo ' value="Add To Inventory" onclick="return add_inven(\''.$defUnit.'\');">';
    echo '<br clear="all"/>';
