@@ -344,11 +344,13 @@ if(isset($_POST['submit'])) {
    if ($_SESSION['seed_order']) {
       $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
       $res = mysql_query($sql);
+      $seedInfo = true;
       if ($row = mysql_fetch_array($res)) {
          $seedsGram = $row['seedsGram'];
          $seedsRowFt = $row['seedsRowFt'];
       } else {
-          echo "<script>alert(\"No seeding information found!\");</script>\n";
+          // echo "<script>alert(\"No seeding information found!\");</script>\n";
+         $seedInfo = false;
       }
       $numRows = $_POST['numRows'];
       for ($i = 1; $i <= $numRows; $i++) {
@@ -378,12 +380,14 @@ if(isset($_POST['submit'])) {
             if (!$_SESSION['bedft']) {
                $bf = $bf * $len;
             }
-            $seedsPlanted = $seedsRowFt * $numrows * $bf;
-            $grams = $seedsPlanted / $seedsGram;
-            $dec = "update seedInventory set inInventory = inInventory - ".$grams." where crop = '".
-               $crop."' and code = '".$code."'";
-            $decres = mysql_query($dec);
-            echo mysql_error();
+            if ($seedInfo && $code != "N/A") {
+               $seedsPlanted = $seedsRowFt * $numrows * $bf;
+               $grams = $seedsPlanted / $seedsGram;
+               $dec = "update seedInventory set inInventory = inInventory - ".$grams." where crop = '".
+                  $crop."' and code = '".$code."'";
+               $decres = mysql_query($dec);
+               echo mysql_error();
+            }
          }
      }
    }

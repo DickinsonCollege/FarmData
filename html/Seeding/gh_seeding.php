@@ -208,6 +208,7 @@ echo '<form method="POST" action = "/Seeding/gh_seedingReport.php?tab=seeding:fl
 if(isset($_POST['submit'])) {
    $crop = escapehtml($_POST['crop']);
    $comSanitized=escapehtml($_POST['comments']);
+   $seedInfo = true;
    if ($_SESSION['seed_order']) {
       $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
       $res = mysql_query($sql);
@@ -215,7 +216,8 @@ if(isset($_POST['submit'])) {
          $seedsGram = $row['seedsGram'];
          $seedsRowFt = $row['seedsRowFt'];
       } else {
-         echo "<script>alert(\"No seeding information found!\");</script>\n";
+         $seedInfo = false;
+         //echo "<script>alert(\"No seeding information found!\");</script>\n";
       }
       $varsSanitized="";
       $numRows = $_POST['numRows'];
@@ -235,11 +237,13 @@ if(isset($_POST['submit'])) {
                 $variety = "No Variety";
              }
              $varsSanitized .="Seed Code: ".$code." (".$variety.") - ".$sds." seeds";
-             $grams = $sds / $seedsGram;
-             $dec = "update seedInventory set inInventory = inInventory - ".$grams.
+             if ($seedInfo && $code != "N/A") {
+                $grams = $sds / $seedsGram;
+                $dec = "update seedInventory set inInventory = inInventory - ".$grams.
                " where crop = '".$crop."' and code = '".$code."'";
-             $decres = mysql_query($dec);
-             echo mysql_error();
+                $decres = mysql_query($dec);
+                echo mysql_error();
+             }
          }
       }
    } else {

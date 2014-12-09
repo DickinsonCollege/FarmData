@@ -467,7 +467,7 @@ while ($row = mysql_fetch_array($res)) {
    var day, month, year;
    if (sdate == "") {
       var dt = new Date();
-      day = dt.getDay();
+      day = dt.getDate();
       month = dt.getMonth() + 1;
       year = dt.getFullYear();
    } else {
@@ -497,18 +497,15 @@ while ($row = mysql_fetch_array($res)) {
    }
    htm += '</select></div>';
    htm += '<div class="styled-select"><select name="year' + num + '_' + row + '" id="year' +
-    num + '_' + row + '" class="mobile-select"><option value=' + year + ' selected>' + year + ' </option>';
+    num + '_' + row + '" class="mobile-select">'
+   for (var i = year - 4; i <= year + 3; i++) {
+      htm += '<option value=' + i;
+      if (i == year) {
+         htm +=  ' selected';
+      }
+      htm += '>' + i + ' </option>';
+   }
    htm += '</select></div>';
-/*
-for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
-}
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year" class="mobile-select">';
-echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
-for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
-}
-echo '</div></select>';
-*/
    cellDate.innerHTML = htm;
 }
 
@@ -548,6 +545,36 @@ function update_def_units(row) {
    updateUnits();
 }
 
+function load_order(row) {
+   var variety = document.getElementById("varOrder" + row).value;
+   var xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "load_order.php?crop=" + encodeURIComponent(crop)
+     + "&variety=" + encodeURIComponent(variety), false);
+   xmlhttp.send();
+   if (xmlhttp.responseText != "") {
+      var resp = JSON.parse(xmlhttp.responseText);
+      document.getElementById("catalogOrder" + row).value = 
+         resp['catalogOrder'];
+      document.getElementById("catalogUnit" + row).value = 
+         resp['catalogUnit'];
+      document.getElementById("price" + row).value = 
+         resp['price'];
+      document.getElementById("unitsPerCatUnit" + row).value = 
+         resp['unitsPerCatUnit'];
+      document.getElementById("catUnitsOrdered" + row).value = 
+         resp['catUnitsOrdered'];
+      document.getElementById("varSource" + row).value = 
+         resp['source'];
+      if (resp['organic'] == 'OG') {
+         document.getElementById("organic" + row).value = 1;
+      } else {
+         document.getElementById("organic" + row).value = 0;
+      }
+      update_def_units(row);
+      update_price(row);
+   } 
+}
+
 function addRowOrder(variety, source, catalogOrder, organic, catalogUnit, price, unitsPerCatUnit,
    catUnitsOrdered, status, defUnit, source1, sdate1, source2, sdate2, source3, sdate3) {
    var table = document.getElementById("order");
@@ -571,7 +598,8 @@ function addRowOrder(variety, source, catalogOrder, organic, catalogUnit, price,
 
    var cell = row.insertCell(0);
    var htm = "<div id='vardiv' class='styled-select'> <select name='varOrder" + orderRows + 
-       "' id='varOrder" + orderRows + "' class='mobile-select'><option value='0' disabled";
+       "' id='varOrder" + orderRows + "' onChange='load_order(" + 
+       orderRows + ");' class='mobile-select'><option value='0' disabled";
    if (variety == "") {
        htm += " selected";
    }
@@ -731,6 +759,15 @@ function confirm_order_row(j, count) {
    if (count > 0) {
      ct = " in row: " + count;
    }
+   var status = document.getElementById("status" + j).value;
+   if (status == 0) {
+      alert("Please select a status" + ct);
+      return false;
+   } else if (status == "PENDING" && count == 0) {
+      alert("An order row can only added to inventory if it has status " +
+            "ORDERED");
+      return false;
+   }
    var variety = document.getElementById("varOrder" + j).value;
    if (variety == 0) {
       alert("Please select a variety" + ct);
@@ -764,11 +801,6 @@ function confirm_order_row(j, count) {
    var catUnitsOrdered = document.getElementById("catUnitsOrdered" + j).value;
    if (catUnitsOrdered == "" || !isFinite(catUnitsOrdered) || catUnitsOrdered <= 0) {
       alert("Catalog units ordered must be a positive number" + ct);
-      return false;
-   }
-   var status = document.getElementById("status" + j).value;
-   if (status == 0) {
-      alert("Please select a status" + ct);
       return false;
    }
    return true;

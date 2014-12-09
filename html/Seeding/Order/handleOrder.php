@@ -141,6 +141,43 @@ function order_arrived($row) {
    echo mysql_error();
 }
 
+function convert_units($from, $to) {
+   if ($from == 'GRAM') {
+      if ($to == 'GRAM') {
+         $res = 1;
+      } else if ($to == 'OUNCE') {
+         $res = 0.035274;
+      } else if ($to == 'POUND') {
+         $res = 0.00220462;
+      } else {
+         $res = 0;
+      }
+   } else if ($from == 'OUNCE') {
+      if ($to == 'GRAM') {
+         $res = 28.3495;
+      } else if ($to == 'OUNCE') {
+         $res = 1;
+      } else if ($to == 'POUND') {
+         $res = 1.0 / 16.0;
+      } else {
+         $res = 0;
+      }
+   } else if ($from == 'POUND') {
+      if ($to == 'GRAM') {
+         $res = 453.592;
+      } else if ($to == 'OUNCE') {
+         $res = 16;
+      } else if ($to == 'POUND') {
+         $res = 1;
+      } else {
+         $res = 0;
+      }
+   } else {
+      $res = 0;
+   }
+   return $res;
+}
+
 if (isset($_POST['updateSeedInfo'])) {
   if (isset($_POST['crop'])) {
      $crop = $_POST['crop'];
@@ -154,6 +191,17 @@ if (isset($_POST['updateSeedInfo'])) {
      echo mysql_error();
      if (mysql_num_rows($res) == 0) {
         $sql = "insert into seedInfo values('".$crop."', 0, 0, 'GRAM')";
+        $res = mysql_query($sql);
+        echo mysql_error();
+        $oldDefUnit = "";
+     } else {
+         $row = mysql_fetch_array($res);
+         $oldDefUnit = $row['defUnit'];
+     }
+     if ($defUnit != $oldDefUnit) {
+        $convert = convert_units($oldDefUnit, $defUnit);
+        $sql = "update orderItem set unitsPerCatUnit = unitsPerCatUnit * ".
+          $convert." where crop = '".$crop."'";
         $res = mysql_query($sql);
         echo mysql_error();
      }
