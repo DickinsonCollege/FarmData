@@ -19,7 +19,7 @@
       cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select class=\"mobile-select\" id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
                         "<option> Beds </option> </select></div></center>";
       var cell2 = row.insertCell(2);
-      cell2.innerHTML = "<center><div id=\"acreDiv"+numRows+"\"><input class='textbox4 mobile-input inside_table' type=\"text\" id=\"acre"+numRows+"\" value=0 readonly></div> </center>";
+      cell2.innerHTML = "<center><div id=\"acreDiv"+numRows+"\"><input class='textbox mobile-input inside_table' type=\"text\" id=\"acre"+numRows+"\" value=0 readonly style='width:100%'></div> </center>";
    }
    addRow();
    function removeRow(){
@@ -48,7 +48,9 @@
          }?>";
 
       var cell0 = row.insertCell(0);
-      cell0.innerHTML =  "<center><div id =\"material"+numRowsMat+"\" class='styled-select2'><select class=\"mobile-select\" id=\"material2"+numRowsMat+"\" name=\"material2"+numRowsMat+"\"  onChange=\"addInputRates("+numRowsMat+"); calculateSuggested("+numRowsMat+"); addUnit("+numRowsMat+");  addPPE("+numRowsMat+"); addREI("+numRowsMat+"); \"\n>"+ "<option value=0> MaterialList</option>\n"+materialSprayed+"</select></div></center>";
+      cell0.innerHTML =  "<center><div id =\"material"+numRowsMat+"\" class='styled-select2'><select class=\"mobile-select\" id=\"material2"+numRowsMat+"\" name=\"material2"+numRowsMat+"\"  onChange=\"addInputRates("+numRowsMat+"); calculateSuggested("+numRowsMat+"); addUnit("+numRowsMat+");  addPPE("+numRowsMat+"); addREI("+numRowsMat+"); \">"+ 
+  "<option value=0> Material</option>\n"+
+        materialSprayed+"</select></div></center>";
       var cell1 = row.insertCell(1);
       cell1.innerHTML =  "<center><div id =\"rate"+numRowsMat+
             "\" class='styled-select2'><select class=\"mobile-select\" id='rate2"+numRowsMat+
@@ -57,17 +59,23 @@
       var cell2 = row.insertCell(2);
        cell2.innerHTML = "<div id=\"unitDiv"+numRowsMat+"\"><label style=\"font-size:12pt\" id='unit"+ numRowsMat+"'> Unit </label></div>";
       var cell3 = row.insertCell(3);
-      cell3.innerHTML = "<center><div id=\"calculatedTotalDiv"+numRowsMat+"\"><input type=\"text\" id=\"calculatedTotal"+numRowsMat+"\" class='textbox4 mobile-input inside_table' value=0 readonly></div></center>";
+      cell3.innerHTML = "<center><div id=\"calculatedTotalDiv"+numRowsMat+"\"><input type=\"text\" id=\"calculatedTotal"+numRowsMat+"\" class='textbox mobile-input inside_table' value=0 readonly style='width:100%'></div></center>";
       var cell4 = row.insertCell(4);
-      cell4.innerHTML = "<center><div id=\"actualTotalDiv"+numRowsMat+"\"><input class='textbox4 mobile-input inside_table' type=\"text\" id=\"actuarialTotal"+numRowsMat+"\" name=\"actuarialTotal"+numRowsMat+"\" value=0></div></center>";
+      cell4.innerHTML = "<center><div id=\"actualTotalDiv"+numRowsMat+
+         "\"><input class='textbox mobile-input inside_table' type=\"text\" id=\"actuarialTotal"+numRowsMat+
+         "\" name=\"actuarialTotal"+numRowsMat+"\" value=0 style='width:100%'></div></center>";
       var cell5 = row.insertCell(5);
-      cell5.innerHTML = "<center><div id=\"ppe"+numRowsMat+"\" class='styled-select2'>" + 
-            "<select class='mobile-select' id='ppe2"+numRowsMat+"' name='ppe2"+numRowsMat+"'>" + 
-            "<option value=0 selected disabled> PPE </option></select></div></center>";
+//      cell5.innerHTML = "<center><div id=\"ppe"+numRowsMat+"\" class='styled-select2'>" + 
+ //           "<select class='mobile-select' id='ppe2"+numRowsMat+"' name='ppe2"+numRowsMat+"'>" + 
+  //          "<option value=0 selected disabled> PPE </option></select></div></center>";
+      cell5.innerHTML = "<center><div id=\"ppe"+numRowsMat+"\" >" + 
+        "<input class='textbox mobile-input inside_table' readonly type='text' id='ppe2"+numRowsMat+
+       "' name='ppe2"+numRowsMat + "' value='' style='width:100%'>" + 
+         "</div></center>";
       var cell6 = row.insertCell(6);
       cell6.innerHTML = "<center><div id=\"rei"+numRowsMat+"\" >" + 
-        "<input class='textbox4 mobile-input inside_table' type='text' id='rei2"+numRowsMat+"' name='rei2"+numRowsMat+"' value='0'>" + 
-//            "<option value=0 selected disabled> REI </option></select>
+        "<input class='textbox mobile-input inside_table' readonly type='text' id='rei2"+
+         numRowsMat+"' name='rei2"+numRowsMat+"' value='0' style='width:100%'>" + 
          "</div></center>";
    }
    addRowMat();
@@ -133,11 +141,15 @@
       xmlhttp = new XMLHttpRequest();
       xmlhttp.open("GET", "getPPE.php?material="+mU, false);
       xmlhttp.send();
-console.log("PPE");
-      console.log(xmlhttp.responseText);
+// console.log("PPE");
+      // console.log(xmlhttp.responseText);
       
-      newDivP.innerHTML = "<div class='styled-select2 id='ppe"+numU+"'>" + 
-         "<select class='mobile-select' id='ppe"+numU+"' name='ppe"+numU+"'>" + xmlhttp.responseText + "</select></div>";
+//      newDivP.innerHTML = "<div class='styled-select2 id='ppe"+numU+"'>" + 
+//         "<select class='mobile-select' id='ppe"+numU+"' name='ppe"+numU+"'>" + xmlhttp.responseText + "</select></div>";
+      newDivP.innerHTML = "<center><div id=\"ppe"+numU+"\" >" + 
+        "<input class='textbox mobile-input inside_table' readonly type='text' id='ppe2"+numU+"' name='ppe"+numU+"' value='"
+         + xmlhttp.responseText + "' style='width:100%'>" + 
+         "</div></center>";
    }
 
    function addREI(numU) {
@@ -149,8 +161,8 @@ console.log("PPE");
       console.log(xmlhttp.responseText);
 
       newDivP.innerHTML = "<center><div id=\"rei"+numU+"\" >" + 
-        "<input class='textbox4 mobile-input inside_table' type='text' id='rei2"+numU+"' name='rei2"+numU+"' value='"
-         + xmlhttp.responseText + "'>" + 
+        "<input class='textbox mobile-input inside_table' readonly type='text' id='rei2"+numU+
+         "' name='rei2"+numU+"' style='width:100%' value='" + xmlhttp.responseText + "'>" + 
          "</div></center>";
    }
 

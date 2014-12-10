@@ -12,7 +12,7 @@ if($_SERVER["HTTPS"] != "on") {
 // HTTPSOFF
 $farm = $_SESSION['db'];
 date_default_timezone_set('America/New_York');
-// $_SESSION['mobile']=1;
+//  $_SESSION['mobile']=1;
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 
 if ($_SESSION['mobile']) {

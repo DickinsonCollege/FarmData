@@ -32,7 +32,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 	<th>Unit</th>
 	<th>Suggested Total Material</th>
 	<th>Actual Total Material</th>
-	<th>Personal Protective Equipment</th>
+	<th>Personal&nbsp;Protective Equipment</th>
 	<th>Restricted Entry Interval (Hours)</th>
 </tr>
 </table>
