@@ -52,9 +52,20 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 </table>
 <br clear="all"/>
 <table>
-<tr><th>Crop Group</th></tr>
+<tr><th>Crops</th></tr>
 
+<tr><td>
+<table id="cropTable" align="center">
+</table>
+<br clear="all"/>
+<input type="button" id="addCrop" name="addCrop" class="genericbutton" onClick="addCropRow();"
+value="Add Crop">
+&nbsp;&nbsp;&nbsp;
+<input type="button" id="removeCrop" name="removeCrop" class="genericbutton" onClick="removeCropRow();"
+value="Remove Crop">
+</td></tr>
 
+<!--
 <tr><td><center><div id="cropGroup" class='styled-select2'><select class='mobile-select' name="cropGroup2" id="cropGroup2">
 <option value=0 > Crop Group</option>
 <?php 
@@ -67,6 +78,7 @@ echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n
 }
 ?>
 </select></div></center></td></tr>
+-->
 
 <tr>
 <th>
@@ -90,14 +102,21 @@ echo '<input type="hidden" name = "numMaterial" id="numMaterial" >';
 <?php
 if(!empty($_POST['submit'])) {
 $comSanitized=escapehtml($_POST['textarea']);
-$cropGroup2=escapehtml($_POST['cropGroup2']);
 $waterPerAcre=escapehtml($_POST['waterPerAcre']);
 $username=escapehtml($_SESSION['username']);
 $numField = escapehtml($_POST['numField']);
+$numCrops = $_POST['numCropRows'];
+$crops = "";
+for ($i = 1; $i <= $numCrops; $i++) {
+   if ($crops != "") {
+      $crops .= "; ";
+   }
+   $crops .= escapehtml($_POST['crop'.$i]);
+}
 $numMaterial = escapehtml($_POST['numMaterial']);
-$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,cropGroup, comment, user) VALUES ('"
+$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, comment, user) VALUES ('"
    .$_POST['year']."-".$_POST['month']."-".$_POST['day']."' , ".$numField." , ".
-   $numMaterial." , ".$waterPerAcre." , '".$cropGroup2."' , '".$comSanitized.
+   $numMaterial." , ".$waterPerAcre." , '".$crops."' , '".$comSanitized.
    "' , '".$username. "' )";
 $rusultM=mysql_query($sqlM);
 //echo $sqlM;

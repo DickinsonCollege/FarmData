@@ -28,16 +28,16 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 $material = $_GET['material'];
-$group 	  = $_GET['group'];
+$origCrops 	  = $_GET['crop'];
 //echo $origFieldID. 'material '.$material.' group '.$group;
 $sqlget = "SELECT id,year(inputdate) as yr, month(inputdate) as mth, day(inputdate) as dy, username,".
-   "fertilizer ,fieldID, cropGroup, rate, numBeds, totalApply, comments FROM fertilizer where id = ".$id;
+   "fertilizer ,fieldID, crops, rate, numBeds, totalApply, comments FROM fertilizer where id = ".$id;
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 //$user = $row['username'];
 $field = $row['fieldID'];
 $fertilizer = $row['fertilizer'];
-$cropGroup = $row['cropGroup'];
+$crops = $row['crops'];
 $com = $row['comments'];
 $curYear = $row['yr'];
 $curMonth = $row['mth'];
@@ -49,7 +49,7 @@ $rate = $row['rate'];
 $totalApply = $row['totalApply'];
 echo "<form name='form' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=admin:admin_delete:deletesoil:deletefert:deletefertilizer:deletedryfertilizer&year=".$origYear."&month=".$origMonth."&day=".$origDay.
-   "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&group=".$group."&fieldID=".$origFieldID."&material=".$material."&id=".$id."'>";
+   "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&crop=".$origCrops."&fieldID=".$origFieldID."&material=".$material."&id=".$id."'>";
 /*
 echo '<input type="hidden" name="oldCrop" value="'.$cropGroup.'">';
 echo '<input type="hidden" name="oldField" value="'.$field.'">';
@@ -74,15 +74,8 @@ for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\"
 }
 echo '</div></select>';
 echo '<br clear="all"/>';
-echo '<label>Crop Group:&nbsp</label>';
-echo '<div class="styled-select"><select name="cropGroup" id="cropGroup">';
-echo '<option value="'.$cropGroup.'" selected>'.$cropGroup.' </option>';
-$sql = 'select cropGroup from cropGroupReference';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
-   echo '<option value="'.$row['cropGroup'].'">'.$row['cropGroup'].' </option>';
-}
-echo '</div></select>';
+echo '<label>Crops:&nbsp</label>';
+echo '<textarea name="crops">'.$crops.'</textarea>';
 echo '<br clear="all"/>';
 echo '<label>Fertilizer:&nbsp</label>';
 echo '<div class="styled-select"><select name="fertilizer" id="fertilizer">';
@@ -149,7 +142,7 @@ echo "</form>";
 if (isset($_POST['submit'])) {
    $comSanitized = escapehtml($_POST['comments']);
    $fertilizer = escapehtml($_POST['fertilizer']);
-   $cropGroup = escapehtml($_POST['cropGroup']);
+   $crops = escapehtml($_POST['crops']);
    $fld = escapehtml($_POST['fieldID']);
    $username = escapehtml($_POST['username']);
    $numBeds = escapehtml($_POST['numBeds']);
@@ -161,13 +154,9 @@ if (isset($_POST['submit'])) {
    $day = escapehtml($_POST['day']);
    $rate = escapehtml($_POST['rate']);
    $totalApply = escapehtml($_POST['totalApply']);
-   $sql = "update fertilizer set cropGroup='".$cropGroup."', fieldID='".$fld."', inputdate='".$year."-".
+   $sql = "update fertilizer set crops='".$crops."', fieldID='".$fld."', inputdate='".$year."-".
      $month."-".$day."', fertilizer='".$fertilizer."',username='".$username."',numBeds=".$numBeds.",comments='".
      $comSanitized."',rate=".$rate.", totalApply=".$totalApply." where id=".$id;
-//   echo $sql;
-//   echo '<BR>';
-//   echo $totalApply;
-//echo $origFieldID. 'material '.$material.' group '.$group;
 
    $result = mysql_query($sql);
    if(!$result){
@@ -175,7 +164,7 @@ if (isset($_POST['submit'])) {
    } else {
       echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
       echo '<meta http-equiv="refresh" content=0;URL="fertilizerTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&fieldID='.$origFieldID.'&group='.$group.'&material='.$material.
+        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&fieldID='.$origFieldID.'&crop='.$origCrops.'&material='.$material.
         '&tab=admin:admin_delete:deletesoil:deletefert:deletefertilizer:deletedryfertilizer>';
    }
 }

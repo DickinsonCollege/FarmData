@@ -19,7 +19,7 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 if(!empty($_GET['sprayMaterial']) && !empty($_GET['fieldID'])) {
-   $sql = "Select id, sprayDate, fieldID, water, materialSprayed, rate, totalMaterial, mixedWith, cropGroup, comments from bspray where sprayDate between '"
+   $sql = "Select id, sprayDate, fieldID, water, materialSprayed, rate, totalMaterial, mixedWith, crops, comments from bspray where sprayDate between '"
    .$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".
    escapehtml($_GET['fieldID'])."'and materialSprayed like '".escapehtml($_GET['sprayMaterial']).
   "' order by sprayDate";
@@ -42,7 +42,7 @@ echo "<caption> Backpack Spray Report for ".$_GET['sprayMaterial']." on Field:
 ".$_GET['fieldID']." </caption>";
 }
 echo "<tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th>".
-   "<th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crop Group</th><th> Comments </th>".
+   "<th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th>".
    "<th>Edit</th><th>Delete</th></tr>";
 while($row = mysql_fetch_array($sqldata)) {
 	echo "<tr><td>";
@@ -60,7 +60,7 @@ while($row = mysql_fetch_array($sqldata)) {
 	echo "</td><td>";
 	echo $row['mixedWith'];
 	echo "</td><td>";
-	echo $row['cropGroup'];
+	echo $row['crops'];
 	echo "</td><td>";
 	echo $row['comments'];
 	echo "</td><td>";

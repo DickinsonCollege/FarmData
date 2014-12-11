@@ -16,13 +16,13 @@ $tcurDay = $_GET['tday'];
 $origSprayedMaterial = $_GET['sprayMaterial'];
  
 $sqlget = "SELECT id,year(sprayDate) as yr, month(sprayDate) as mth, day(sprayDate) as dy, materialSprayed,".
-   "sprayDate,fieldID, cropGroup, water, totalMaterial, comments, rate, mixedWith FROM bspray where id = ".$id;
+   "sprayDate,fieldID, crops, water, totalMaterial, comments, rate, mixedWith FROM bspray where id = ".$id;
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 //$user = $row['username'];
 $field = $row['fieldID'];
 $materialSprayed = $row['materialSprayed'];
-$cropGroup = $row['cropGroup'];
+$crops = $row['crops'];
 $com = $row['comments'];
 $curYear = $row['yr'];
 $curMonth = $row['mth'];
@@ -56,6 +56,11 @@ for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\"
 }
 echo '</div></select>';
 echo '<br clear="all"/>';
+echo '<label>Crops:&nbsp</label>';
+echo '<textarea name="crops">';
+echo $crops; 
+echo '</textarea>';
+/*
 echo '<label>Crop Group:&nbsp</label>';
 echo '<div class="styled-select"><select name="cropGroup" id="cropGroup">';
 echo '<option value="'.$cropGroup.'" selected>'.$cropGroup.' </option>';
@@ -65,6 +70,7 @@ while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['cropGroup'].'">'.$row['cropGroup'].' </option>';
 }
 echo '</div></select>';
+*/
 echo '<br clear="all"/>';
 echo '<label>Material Sprayed:&nbsp</label>';
 echo '<div class="styled-select"><select name="materialSprayed" id="materialSprayed">';
@@ -119,7 +125,7 @@ echo "</form>";
 if ($_POST['submit']) {
    $comSanitized = escapehtml($_POST['comments']);
    $materialSprayed = escapehtml($_POST['materialSprayed']);
-   $cropGroup = escapehtml($_POST['cropGroup']);
+   $crops = escapehtml($_POST['crops']);
    $fld = escapehtml($_POST['fieldID']);
    $water = escapehtml($_POST['water']);
    $totalMaterial = escapehtml($_POST['totalMaterial']);
@@ -131,7 +137,7 @@ if ($_POST['submit']) {
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $rate = escapehtml($_POST['rate']);
-   $sql = "update bspray set cropGroup='".$cropGroup."', fieldID='".$fld."', sprayDate='".$year."-".
+   $sql = "update bspray set crops='".$crops."', fieldID='".$fld."', sprayDate='".$year."-".
      $month."-".$day."', materialSprayed='".$materialSprayed."',water=".$water.",totalMaterial=".$totalMaterial.",comments='".
      $comSanitized."',mixedWith='".$mixedWith."', rate='".$rate."' where id=".$id;
    $result = mysql_query($sql);

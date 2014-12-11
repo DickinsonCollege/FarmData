@@ -41,9 +41,6 @@
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tupdate.php?field="+fld, false);
       xmlhttp.send();
-      console.log('the response starts');
-      console.log(xmlhttp.responseText);
-      console.log('the response ends');
 
       newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
    }
@@ -54,9 +51,6 @@
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tAcreUpdate.php?field="+fld+"&beds="+bA, false);
       xmlhttp.send();
-      //console.log('the response starts');
-      //console.log(xmlhttp.responseText);
-      //console.log('the response ends');
       newdiv.value=xmlhttp.responseText;
 //        newdiv.innerHTML="<select id= 'maxBed<?php echo $numFieldInd  ?>' name= 'maxBed'>"+xmlhttp.responseText+"</select>";
    
@@ -74,9 +68,6 @@
       return totalFieldAcre;
    }
 //        var formatTotalFieldAcre=totalFieldAcre.toFixed(2); 
-   //console.log('the Acreresponse starts');
-   //console.log(totalFieldAcre);
-        //console.log('the Acreresponse ends');
    
 //input -1 when just input water
    function calculateWater() {
@@ -95,11 +86,7 @@
       var mC = document.getElementById('rate2'+numS);
       var strUser = mC.options[mC.selectedIndex].value;
       var newdivC=document.getElementById('calculatedTotal'+numS);
-   //console.log('THE NUMBERS STARTS');
-   //console.log(totalFieldAcre);
       var integer= parseFloat(strUser).toFixed(2);
-   //console.log(strUser);
-   //console.log("THE NUMBERS ENDS!!!");
    
       newdivC.value= (calculateTotal() * strUser).toFixed(2);
    }
@@ -109,7 +96,6 @@
       while(fIndex<= numRows){
          var currentF=document.getElementById('field'+fIndex);
          if(currentF.value==0){
-            //console.log('AAAAA undefined!!!');
             return false;
          }
       fIndex++;
@@ -118,20 +104,16 @@
       while(mIndex<= numRowsMat){
          var currentM=document.getElementById('material2'+mIndex);
          var currentAct=document.getElementById('actuarialTotal'+mIndex).value;
-   //console.log("this is the value "+currentM.value);
          if(currentM.value==0 || isNaN(parseFloat(currentAct)) ){
-            //console.log('BBBBB undefined!!!');
             return false;
          }
          mIndex++;
       }   
       var currentCG=document.getElementById("cropGroup2");
       if(currentCG.value==0){
-   //console.log('DDDDD undefined');
          return false;
       }      
 
-   //console.log("DDDDefined");
       return true;
    }
 

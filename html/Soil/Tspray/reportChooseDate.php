@@ -36,6 +36,20 @@ echo "</select>";
 echo "</div>";
 ?>
 <br clear="all"/>
+<label for='from'>Crop:&nbsp;</label>
+<div class="styled-select">
+<select id="crop" name="crop" class="mobile-select"> <option value=%>All</option>
+<?php
+$sqlM="SELECT crop FROM plant";
+$resultM=mysql_query($sqlM);
+//echo mysql_error();
+while($rowM=mysql_fetch_array($resultM)){
+echo "<option value=\"".$rowM['crop']."\">".$rowM['crop']."</option>\n";
+}
+echo "</select>";
+echo "</div>";
+?>
+<br clear="all"/>
 <br clear="all"/>
 <input class="submitbutton" value="Submit" type="submit" name="submit" >
 </body>

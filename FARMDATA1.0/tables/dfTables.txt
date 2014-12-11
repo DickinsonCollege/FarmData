@@ -301,6 +301,7 @@ create table coverKill(
         foreign key(id) references coverKill_master(id)
    ) ENGINE=INNODB;
 
+/*
 create table cropGroupReference(cropGroup varchar(30) primary key) ENGINE=INNODB;
 insert into cropGroupReference values('BRASSICA');
 insert into cropGroupReference values('CUCURBIT');
@@ -315,15 +316,15 @@ insert into cropGroupReference values('POTATO');
 insert into cropGroupReference values('SLOWVEG');
 insert into cropGroupReference values('SPOKRA');
 insert into cropGroupReference values('VEGMIX');
+*/
 
 create table tSprayMaster(
         id int auto_increment primary key,
         sprayDate date,
         noField int,
         noMaterial int,
-        waterPerAcre int, cropGroup varchar(30),
-        comment text, user varchar(30),
-        foreign key (cropGroup) references cropGroupReference(cropGroup) on update cascade
+        waterPerAcre int, crops text,
+        comment text, user varchar(30)
       ) ENGINE=INNODB;
 
 create table tSprayField(
@@ -365,11 +366,10 @@ create table pestScout(
 
 create table bspray(
         sprayDate date,fieldID varchar(30),water float NOT NULL, 
-        materialSprayed varchar(30), rate float NOT NULL, totalMaterial float NOT NULL, mixedWith varchar(30), cropGroup varchar(30),comments text, id int auto_increment primary key,
+        materialSprayed varchar(30), rate float NOT NULL, totalMaterial float NOT NULL,
+         mixedWith varchar(30), crops text, comments text, id int auto_increment primary key,
         foreign key (fieldID) references field_GH(fieldID) on update cascade,
-        foreign key (materialSprayed) references tSprayMaterials(sprayMaterial) on update cascade,
-        foreign key (cropGroup) references cropGroupReference(cropGroup) on
-update cascade
+        foreign key (materialSprayed) references tSprayMaterials(sprayMaterial) on update cascade
         ) ENGINE=INNODB;
 
 create table weed(
@@ -405,17 +405,15 @@ create table liquidFertilizerReference(
    active tinyint(1) default 1) ENGINE=INNODB;
 
 create table fertilizer(
-        id int NOT NULL AUTO_INCREMENT primary key,
+   id int NOT NULL AUTO_INCREMENT primary key,
    username varchar(30), inputDate date, fieldID varchar(30),
-        fertilizer varchar(30),
-        cropGroup varchar(30), rate float not null,
-        numBeds int not null,
+   fertilizer varchar(30),
+   crops text, rate float not null,
+   numBeds int not null,
    totalApply float not null,
    comments varchar(30),
-        foreign key(fieldID) references field_GH(fieldId) on update cascade,
-   foreign key(fertilizer) references fertilizerReference(fertilizerName) on update cascade,
-   foreign key(cropGroup) references cropGroupReference(cropGroup) on
-update cascade
+   foreign key(fieldID) references field_GH(fieldId) on update cascade,
+   foreign key(fertilizer) references fertilizerReference(fertilizerName) on update cascade
    ) ENGINE = INNODB;
 
 create table liquid_fertilizer(
@@ -439,14 +437,12 @@ create table disease (
    diseaseName varchar(30) primary key) ENGINE=INNODB;
 
 create table diseaseScout(
-   sDate date,fieldID varchar(30),cropGroup varchar(30),disease varchar(30),
+   sDate date,fieldID varchar(30),crops text,disease varchar(30),
    infest int,stage varchar(30),comments text,
         id int NOT NULL AUTO_INCREMENT primary key,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(disease) references disease(diseaseName) on update cascade,
-   foreign key(stage) references stage(stage) on update cascade,
-   foreign key(cropGroup) references cropGroupReference(cropGroup) on
-update cascade,
+   foreign key(stage) references stage(stage) on update cascade
    unique(sDate,fieldID,cropGroup, disease)) ENGINE=INNODB;
 
 create table pack (

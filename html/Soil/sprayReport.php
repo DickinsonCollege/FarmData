@@ -54,6 +54,20 @@ while ($row =  mysql_fetch_array($result)){
 </div>
 
 <br clear="all"/>
+<label for="Crop"> Crop: &nbsp; </label>
+<div id="cropDiv" class="styled-select">
+<select id= "crop" name="crop" class="mobile-select">
+<option value="%" selected> All </option>
+<?php
+$result = mysql_query("SELECT crop from plant");
+while ($row =  mysql_fetch_array($result)){
+  echo "\n<option value= '".$row['crop']."'>".$row['crop']."</option>";
+}
+?>
+</select>
+</div>
+
+<br clear="all"/>
 <br clear="all"/>
 <input type="submit" class="submitbutton" name="submit" value="Submit">
 </form>

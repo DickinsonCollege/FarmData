@@ -26,6 +26,7 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 echo '</select>';
 echo '</div>';
 ?>
+<!--
 <br clear="all">
 <label for="Crop"> Crop Group:&nbsp; </label>
 <div class="styled-select">
@@ -40,11 +41,10 @@ echo "\n<option value= \"$row1[cropGroup]\">$row1[cropGroup]</option>";
 </select>
 </div>
 <br clear="all"><br>
-<!--
-<label for="species">Add a new Species of Disease </label>
-
-<br clear="all"/>
 -->
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
+?>
 <br clear="all" />
 <table name="fieldTable" id="fieldTable">
    <tr><th>Disease</th><th>Infestation</th><th>Stage</th></tr>  
@@ -70,21 +70,21 @@ function addRow(){
    var cell1 = row.insertCell(1);                               
    cell1.innerHTML = '<div class="styled-select" id="infestDiv'+numRows+'"><select class="mobile-select" name="infest'+numRows+'" id="infest'+numRows+'"><option value = 0 selected disabled> Infestation</option> <option>0</option> <option>1</option> <option>2</option> <option>3</option><option>4</option></select></div>';
    var cell2 = row.insertCell(2);   
-	cell2.innerHTML = '<div class="styled-select" id="stageDiv'+numRows+'"><select class="mobile-select" name="stage'+numRows+'" id="stage'+numRows+'">'+
-							'<option value = 0 selected disabled>Stage</option>'+
-					'<?php
-						$result = mysql_query("select stage from stage");
-						while($row1 = mysql_fetch_array($result)){
-							echo '<option value="'.$row1['stage'].'">'.$row1['stage'].'</option>';
-						}	
-					?>'+'</select></div>';
-	console.log(numRows);
+   cell2.innerHTML = '<div class="styled-select" id="stageDiv'+numRows+'"><select class="mobile-select" name="stage'+numRows+'" id="stage'+numRows+'">'+
+                     '<option value = 0 selected disabled>Stage</option>'+
+               '<?php
+                  $result = mysql_query("select stage from stage");
+                  while($row1 = mysql_fetch_array($result)){
+                     echo '<option value="'.$row1['stage'].'">'.$row1['stage'].'</option>';
+                  }   
+               ?>'+'</select></div>';
+   console.log(numRows);
 }
 addRow();
 function removeRow() {
    if (numRows > 0) {
       var species=document.getElementById('species' + numRows);
-		//var speciesDiv=document.getElementById('speciesDiv' + numRows);
+      //var speciesDiv=document.getElementById('speciesDiv' + numRows);
       //speciesDiv.removeChild(species);
       species.parentNode.removeChild(species);
       var infest=document.getElementById('infest' + numRows);
@@ -118,80 +118,83 @@ cols=30 rows=10>
 </textarea>
 <script type="text/javascript">
 function show_confirm() {
-	var hid = document.getElementById("hid");
-	hid.value = numRows;  
-	var i = document.getElementById("month");
-	var strUser3 = i.options[i.selectedIndex].text;
-	var con="Scout Date: "+strUser3+"-";
-	var i = document.getElementById("day");
-	var strUser3 = i.options[i.selectedIndex].text;
-	con=con+strUser3+"-";
-	var i = document.getElementById("year");
-	var strUser3 = i.options[i.selectedIndex].text;
-	con=con+strUser3+"\n";
-	var i = document.getElementById("fieldID");
-	var strUser3 = i.value;
-	if(checkEmpty(strUser3)) {
-		alert("Please Select a FieldID");
-		return false;
-	}
-	con+="Field ID: "+ strUser3+ "\n";
-	var grp = document.getElementById("cropGroup").value;
-	if(checkEmpty(grp)) {
-		alert("Please Select a Crop Group");
-		return false;
-	}
-	con+="Crop Group: "+ grp + "\n";
-	if (numRows == 0) {
-		alert("No disease entered.");
-		return false;
-	}
-	var a=1;
-	var alldisease = [];
-	while (a <= numRows) {
-		var i = document.getElementById("species"+a);
-		var disease = i.value;
-		alldisease[a - 1] = disease;
-		if (checkEmpty(disease)) {
-			alert("Please Select a Disease in box: "+a);
-			return false;
-		}
-		con=con+"\nDisease "+a+": "+disease+"\n";
-		var i = document.getElementById("stage"+a);
-		var stage = i.value;
-		if (checkEmpty(stage)) {
-			alert("Please Stage in box: "+a);
-			return false;
-		}
-		con=con+"Stage "+a+": "+stage+"\n";
-		var i = document.getElementById("infest"+a);
-		var infest = i.value;
-		if(checkEmpty(infest) && infest != 0) {
-			alert("Please Select a Infestation level in box: "+a);
-			return false;
-		}
-		con=con+"Infestation Level "+a+": "+infest+"\n";
-		a++;
-	}       
-	alldisease.sort();
-	for (i = 0; i < alldisease.length - 1; i++) {
-		if (alldisease[i] == alldisease[i + 1]) {
-			alert("Error: same disease entered twice!");
-			return false;
-		}
-	}
+   var hid = document.getElementById("hid");
+   hid.value = numRows;  
+   var mth = document.getElementById("month").value;
+   var con="Scout Date: " + mth + "-";
+   var dy = document.getElementById("day").value;
+   con += dy + "-";
+   var yr = document.getElementById("year").value;
+   con += yr + "\n";
+   var fld = document.getElementById("fieldID").value;
+   if (checkEmpty(fld)) {
+      alert("Please Select a FieldID");
+      return false;
+   }
+   con += "Field ID: "+ fld + "\n";
+   var crops = "";
+   var numCrops = document.getElementById("numCropRows").value;
+   for (var i = 1; i <= numCrops; i++) {
+      var crp = document.getElementById("crop" + i).value;
+      if (checkEmpty(crp)) {
+         alert("Please Select a Crop in row " + i);
+         return false;
+      } else {
+         if (crops != "") {
+            crops += "; ";
+         }
+         crops += crp;
+      }
+   }
+   con += "Crops: "+ crops + "\n";
+   if (numRows == 0) {
+      alert("No disease entered.");
+      return false;
+   }
+   var a=1;
+   var alldisease = [];
+   while (a <= numRows) {
+      var i = document.getElementById("species"+a);
+      var disease = i.value;
+      alldisease[a - 1] = disease;
+      if (checkEmpty(disease)) {
+         alert("Please Select a Disease in box: "+a);
+         return false;
+      }
+      con=con+"\nDisease "+a+": "+disease+"\n";
+      var i = document.getElementById("stage"+a);
+      var stage = i.value;
+      if (checkEmpty(stage)) {
+         alert("Please Stage in box: "+a);
+         return false;
+      }
+      con=con+"Stage "+a+": "+stage+"\n";
+      var i = document.getElementById("infest"+a);
+      var infest = i.value;
+      if(checkEmpty(infest) && infest != 0) {
+         alert("Please Select a Infestation level in box: "+a);
+         return false;
+      }
+      con=con+"Infestation Level "+a+": "+infest+"\n";
+      a++;
+   }       
+   alldisease.sort();
+   for (i = 0; i < alldisease.length - 1; i++) {
+      if (alldisease[i] == alldisease[i + 1]) {
+         alert("Error: same disease entered twice!");
+         return false;
+      }
+   }
 
-	var i = document.getElementById("comments").value;
-	var con=con+"Comments: "+ i+ "\n";
+   var i = document.getElementById("comments").value;
+   var con=con+"Comments: "+ i+ "\n";
 
-	return confirm("Confirm Entry:"+"\n"+con);
+   return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
 <br><br>
 <input type="submit" class="submitbutton" name="submit" 
        value="Submit" onclick="return show_confirm();">
-
-
 
 <?php
 echo "</form>";
@@ -201,14 +204,22 @@ if (isset($_POST['submit'])) {
    $success = true;
    $comments = escapehtml( $_POST['comments']);
    $fieldID = escapehtml( $_POST['fieldID']);
-   $cropGroup = escapehtml( $_POST['cropGroup']);
+   $numCrops = $_POST['numCropRows'];
+   $crops = "";
+   for ($i = 1; $i <= $numCrops; $i++) {
+      $crp = escapehtml( $_POST['crop'.$i]);
+      if ($crops != "") {
+         $crops .= "; ";
+      }
+      $crops .= $crp;
+   }
    while ($var>0) {
       $species = escapehtml( $_POST['species'.$var]);
       $infest = escapehtml( $_POST['infest'.$var]);
       $stage = escapehtml( $_POST['stage'.$var]);
-		$sql = "Insert into diseaseScout(sDate, fieldID, cropGroup, disease, infest, stage, comments) values ('".
+      $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
          $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
-         $fieldID."','".$cropGroup."','".$species."','".$infest."','".$stage.
+         $fieldID."','".$crops."','".$species."','".$infest."','".$stage.
          "','".$comments."')";
       $result=mysql_query($sql);
 

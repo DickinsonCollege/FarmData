@@ -26,6 +26,7 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 ?>
 </select>
 </div>
+<!--
 <br clear="all">
 <label for="crop"> Crop Group:&nbsp; </label>
 <div class="styled-select" id="crop2">
@@ -40,6 +41,10 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all"/>
+-->
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
+?>
 
 <label for="crop"> Material: &nbsp; </label>
 <div class="styled-select" id="mat2">
@@ -131,59 +136,64 @@ echo "</div>";
 
 <script> 
 function show_confirm() {
-	var i = document.getElementById("month");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con = "Fertilizer Application Date: "+strUser3+"-";
-        var i = document.getElementById("day");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"-";
-        var i = document.getElementById("year");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"\n";
-	
-	var i = document.getElementById("fieldID");
-	if(checkEmpty(i.value)) {
-	   alert("Please Select a Field");
-	   return false;
-	}
-        con = con + "Field ID: "+ i.value + "\n";
+   var mth = document.getElementById("month").value;
+   var con = "Fertilizer Application Date: " + mth + "-";
+   var dy = document.getElementById("day").value;
+   con += dy + "-";
+   var yr = document.getElementById("year").value;
+   con += yr + "\n";
+   
+   var fld = document.getElementById("fieldID").value;
+   if (checkEmpty(fld)) {
+      alert("Please Select a Field");
+      return false;
+   }
+   con += "Field ID: "+ fld + "\n";
 
-	var i = document.getElementById("crop").value;
-	if(checkEmpty(i)) {
-	alert("Please Select a Crop Group");
-	   return false;
-	}
-        con=con+"Crop Group: "+ i+ "\n";
+   var crps = "";
+   for (var i = 1; i <= numCropRows; i++) { 
+      var crp = document.getElementById("crop" + i).value;
+      if (checkEmpty(crp)) {
+         alert("Please Select a Crop in row " + i);
+         return false;
+      } else {
+         if (crps != "") {
+            crps += "; ";
+         }
+         crps += crp;
+      }
+   }
+   con += "Crops: "+ crps + "\n";
 
-	var i = document.getElementById("mat").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select a Material");
-	   return false;
-	}
-        con=con+"Material: "+ i+ "\n";
+   var mat = document.getElementById("mat").value;
+   if (checkEmpty(mat)) {
+      alert("Please Select a Material");
+      return false;
+   }
+   con += "Material: "+ mat + "\n";
 
-	var i = document.getElementById("rate").value;
-	if(checkEmpty(i)) {
-	   alert("Please Enter Application Rate ");
-	   return false;
-	}
-        con=con+"Rate: "+ i+ " lbs/acre\n";
+   var rt = document.getElementById("rate").value;
+   if (checkEmpty(rt)) {
+      alert("Please Enter Application Rate ");
+      return false;
+   }
+   con += "Rate: "+ rt + " lbs/acre\n";
 
-        var i = document.getElementById("beds").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select Number of Beds");
-	   return false;
-	}
-        con=con+"Beds: "+i+"\n";
+   var bds = document.getElementById("beds").value;
+   if (checkEmpty(bds)) {
+      alert("Please Select Number of Beds");
+      return false;
+   }
+   con += "Beds: " + bds + "\n";
 
-        var i = document.getElementById("width").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select Width");
-	   return false;
-	}
-        con=con+"Width: "+i+" feet\n";
+   var wd = document.getElementById("width").value;
+   if (checkEmpty(wd)) {
+      alert("Please Select Width");
+      return false;
+   }
+   con += "Width: " + wd + " feet\n";
 
-	return confirm("Confirm Entry:"+"\n"+con);
+   return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
 <label for="comments"> Comments: </label>
@@ -202,11 +212,18 @@ if (isset($_POST['submit'])) {
    $username = escapehtml($_SESSION['username']);
    $fieldID = escapehtml($_POST['fieldID']);
    $mat = escapehtml($_POST['mat']);
-   $crop = escapehtml($_POST['crop']);
+   $crops = "";
+   $numCrops = $_POST['numCropRows'];
+   for ($i = 1; $i <= $numCrops; $i++) {
+      if ($crops != "") {
+          $crops .= "; ";
+      }
+      $crops .= escapehtml($_POST['crop'.$i]);
+   }
    echo "<script>addInput3();</script>";
-   $sql="Insert into fertilizer(username,inputDate,fieldID, fertilizer, cropGroup, rate, numBeds, totalApply, comments) values ('".
+   $sql="Insert into fertilizer(username,inputDate,fieldID, fertilizer, crops, rate, numBeds, totalApply, comments) values ('".
       $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$mat.
-      "', '".$crop."',".$_POST['rate'].",".$_POST['beds'].",".$_POST['pounds'] * $_POST['beds'].
+      "', '".$crops."',".$_POST['rate'].",".$_POST['beds'].",".$_POST['pounds'] * $_POST['beds'].
       ",'".$comments."')";
    $result = mysql_query($sql);
    if (!$result) {

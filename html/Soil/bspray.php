@@ -13,63 +13,67 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear="all"/>
 <script>
-        function show_confirm() {
-        var i = document.getElementById("month");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con="Backpack Spray Date: "+strUser3+"-";
-        var i = document.getElementById("day");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"-";
-        var i = document.getElementById("year");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"\n";
-        var i = document.getElementById("fieldID");
-        var strUser3 = i.value;
-       	if(checkEmpty(strUser3)) {
-        alert("Please Select a FieldID");
-        return false;
-        }
-	con=con+"FieldID: "+ strUser3+ "\n";
-        var i = document.getElementById("water");
-        var strUser3 = i.value;
-       	if(checkEmpty(strUser3)) {
-        alert("Please Input How Much Water Was Used in Gallons");
-        return false;
-        }
-        con+="Water (Gallons): "+ strUser3+ "\n";
-        var i = document.getElementById("material");
-        var strUser3 = i.value;
-       	if(checkEmpty(strUser3)) {
-        alert("Please Input Material Sprayed");
-        return false;
-        }
-        con=con+"Material Sprayed: "+ strUser3+ "\n";
-        var i = document.getElementById("rate").value;
-       	if(checkEmpty(i)) {
-        alert("Please Input Rate");
-        return false;
-        }
-        con=con+"Rate: "+ i+ "\n";
-        var i = document.getElementById("tot").value;
-       	if(checkEmpty(i) || i <= 0 || isNaN(i)) {
-        alert("Please Input Total Material Actual");
-        return false;
-        }
-        con=con+"Total Material: "+ i+ "	\n";
-        var i = document.getElementById("mix").value;
-       	if(checkEmpty(i)) {
-        alert("Please Input What the Spray was Mixed With");
-        return false;
-        }
-        con=con+"Mixed With: "+ i+ "\n";
-        var i = document.getElementById("crop").value;
-       	if(checkEmpty(i)) {
-        alert("Please Select the Crop Group Sprayed");
-        return false;
-        }
-        con=con+"Crop Group Sprayed: "+ i+ "\n";
+function show_confirm() {
+   var mth = document.getElementById("month").value;
+   var con="Backpack Spray Date: "+mth+"-";
+   var dy = document.getElementById("day").value;
+   con += dy + "-";
+   var yr = document.getElementById("year").value;
+   con += yr + "\n";
+   var fld = document.getElementById("fieldID").value;
+   if (checkEmpty(fld)) {
+       alert("Please Select a FieldID");
+       return false;
+   }
+   con += "FieldID: "+ fld + "\n";
+   var wat = document.getElementById("water").value;
+   if (checkEmpty(wat)) {
+      alert("Please Input How Much Water Was Used in Gallons");
+      return false;
+   }
+   con += "Water (Gallons): "+ wat + "\n";
+   var mat = document.getElementById("material").value;
+   if (checkEmpty(mat)) {
+       alert("Please Select Material Sprayed");
+       return false;
+   }
+   con=con+"Material Sprayed: "+ mat + "\n";
+   var rt = document.getElementById("rate").value;
+   if (checkEmpty(rt)) {
+       alert("Please Input Rate");
+       return false;
+   }
+   con += "Rate: "+ rt + "\n";
+   var tot = document.getElementById("tot").value;
+   if (checkEmpty(tot) || tot <= 0 || isNaN(tot)) {
+       alert("Please Input Total Material Actual");
+       return false;
+   }
+   con += "Total Material: "+ tot + "   \n";
 
-        return confirm("Confirm Entry:"+"\n"+con);        }
+   var mx = document.getElementById("mix").value;
+   if (checkEmpty(mx)) {
+       alert("Please Input What the Spray was Mixed With");
+       return false;
+   }
+   con += "Mixed With: " + mx + "\n";
+   var crps = "";
+   for (var i = 1; i <= numCropRows; i++) {
+       var crp = document.getElementById("crop" + i).value;
+       if (checkEmpty(crp)) {
+           alert("Please Select the Crop Sprayed in row " + i);
+           return false;
+       } else {
+           if (crps != "") {
+              crps += "; ";
+           }
+           crps += crp;
+       }
+   }
+   con += "Crops Sprayed: "+ crps + "\n";
+
+   return confirm("Confirm Entry:"+"\n"+con);
+}
 </script>
 <label for="fieldID"> Field ID: </label>
 <div class="styled-select" id="field">
@@ -173,20 +177,9 @@ function addInput3() {
 <br clear="all"/>
 <label for="minues"> Mixed With:&nbsp; </label>
 <input type="text" class="textbox2 mobile-input" id="mix" name="mix">
-<br clear="all"/>
-<label for="minues"> Crop Group Sprayed: </label>
-<div class="styled-select" id="crop2">
-<select name ="crop" id="crop" class="mobile-select">
-<option value = 0 selected disabled> Crop Group</option>
 <?php
-$result=mysql_query("Select cropGroup from cropGroupReference");
-while ($row1 =  mysql_fetch_array($result)){
-echo "\n<option value= \"$row1[cropGroup]\">$row1[cropGroup]</option>";
-}
-echo '</select>';
-echo '</div>';
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
-<br clear="all"/>
 
 <div>
 <label for="comments"><b>Comments:</b></label>
@@ -209,12 +202,19 @@ if(!empty($_POST['submit'])) {
    $mix=escapehtml($_POST['mix']);
    $material=escapehtml($_POST['material']);
    $fieldID=escapehtml($_POST['fieldID']);
-   $crop=escapehtml($_POST['crop']);
+   $numCropRows=escapehtml($_POST['numCropRows']);
+   $crops="";
+   for ($i = 1; $i <= $numCropRows; $i++) {
+      if ($crops != "") {
+         $crops .= "; ";
+      }
+      $crops .= escapehtml($_POST['crop'.$i]);
+    }
    $rate=escapehtml($_POST['rate']);
-   $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, cropGroup, comments) values('".
+   echo $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, crops, comments) values('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','" .
       $fieldID."',".$water.",'".$material."',".$rate.",".$tot.",'".$mix.
-      "','".$crop."','".  $comSanitized."');";
+      "','".$crops."','".  $comSanitized."');";
    $result = mysql_query($sql);
    if(!$result){
       echo "<script>alert(\"Could not input Backpack Spray Record: Please try again!\\n".mysql_error()."\");</script>\n";

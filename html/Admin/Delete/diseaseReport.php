@@ -19,14 +19,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 echo "<br clear=\"all\">";
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
-<label for="cropGroup"> Crop Group: &nbsp; </label>
-<div id="cropGroupDiv" class="styled-select">
-<select id= "cropGroup" name="cropGroup" class='mobile-select'>
+<label for="cropDiv"> Crop: &nbsp; </label>
+<div id="cropDiv" class="styled-select">
+<select id= "crop" name="crop" class='mobile-select'>
 <option value="%" selected> All </option>
 <?php
-$result = mysql_query("SELECT cropGroup from cropGroupReference");
+$result = mysql_query("SELECT crop from plant");
 while ($row =  mysql_fetch_array($result)){
-  echo "\n<option value= \"$row[cropGroup]\">$row[cropGroup]</option>";
+  echo "\n<option value= '".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
 </select>

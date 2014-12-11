@@ -34,14 +34,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  echo '</div>';
  ?>
 <br clear="all"/>
-<label for="CropGroup"> Crop Group:&nbsp; </label>
- <div class="styled-select">
- <select name ="cgroup" id="cgroup" class="mobile-select">
+<label for="cropDiv"> Crop:&nbsp; </label>
+ <div class="styled-select" id="cropDiv">
+ <select name ="crop" id="crop" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
- $result=mysql_query("Select cropGroup from cropGroupReference");
+ $result=mysql_query("select crop from plant");
  while ($row1 =  mysql_fetch_array($result)){
- echo "\n<option value= \"$row1[cropGroup]\">$row1[cropGroup]</option>";
+    echo "\n<option value= '".$row1['crop']."'>".$row1['crop']."</option>";
  }
  echo '</select>';
  echo '</div>';

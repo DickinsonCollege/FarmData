@@ -15,11 +15,11 @@ if(!empty($_POST['submit'])){
    $tcurDay = $_POST['tday'];
    $sprayMaterial = escapehtml($_POST['sprayMaterial']);
    $fieldID = escapehtml($_POST['fieldID']);
-   if(!empty($_POST['sprayMaterial']) && !empty($_POST['fieldID'])) {
-      $sql = "Select sprayDate, fieldID, water, materialSprayed, rate, BRateUnits, totalMaterial, mixedWith, cropGroup, comments from bspray, tSprayMaterials where sprayDate between '".
+   $crop = escapehtml($_POST['crop']);
+   $sql = "Select sprayDate, fieldID, water, materialSprayed, rate, BRateUnits, totalMaterial, mixedWith, crops, comments from bspray, tSprayMaterials where sprayDate between '".
         $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".
-        $fieldID."'and materialSprayed like '".$sprayMaterial.
-        "' and materialSprayed = sprayMaterial order by sprayDate";
+        $fieldID."'and materialSprayed like '".$sprayMaterial."' and crops like '%".$crop.
+        "%' and materialSprayed = sprayMaterial order by sprayDate";
       $sqldata = mysql_query($sql) or die(mysql_error());
       echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
       echo "<table>";
@@ -36,7 +36,7 @@ if(!empty($_POST['submit'])){
       } else{
          echo "<caption> Backpack Spray Report for ".$_POST['sprayMaterial']." on Field: ".$fieldID." </caption>";
       }
-      echo "<tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crop Group</th><th> Comments </th></tr>";
+      echo "<tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th></tr>";
       while($row = mysql_fetch_array($sqldata)) {
 	echo "<tr><td>";
 	//echo str_replace("-","/",$row['sprayDate']);
@@ -54,7 +54,7 @@ if(!empty($_POST['submit'])){
 	echo "</td><td>";
 	echo $row['mixedWith'];
 	echo "</td><td>";
-	echo $row['cropGroup'];
+	echo $row['crops'];
 	echo "</td><td>";
 	echo $row['comments'];
         echo "</td></tr>";
@@ -83,7 +83,6 @@ if(!empty($_POST['submit'])){
       echo '<input type="submit" class="submitbutton" name="submit" value="Download Report">';
       echo '</form>';
       echo '<form method="POST" action = "sprayReport.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
-   }
 }
 ?>
 </div>

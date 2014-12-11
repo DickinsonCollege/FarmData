@@ -174,19 +174,27 @@ echo '<br clear="all"/>';
 
 </tr>
 <?php
-$sql = "select waterPerAcre from tSprayMaster where id=".$id;
+$sql = "select * from tSprayMaster where id=".$id;
 $sqldata = mysql_query($sql) or die (mysql_error());
 $row = mysql_fetch_array($sqldata);
 $water = $row['waterPerAcre'];
+$crops = $row['crops'];
+$comment = $row['comment'];
 echo "<tr><td><center><input class='textbox4' type='text' name='waterPerAcre' id='waterPerAcre' value=".$water."  onkeyup='calculateWater();'></center></td>";
 ?>
 <td><center><input type="text" class='textbox4' name="totalWater" id="totalWater" value=0 ></center></td></tr>
 </table>
 <br clear="all"/>
 <table>
-<tr><th>Crop Group</th></tr>
+<tr><th>Crops</th></tr>
 
+<tr><td>
+<textarea name="crops" id="crops">
+<?php echo $crops; ?>
+</textarea>
+</td></tr>
 
+<!--
 <tr><td><center><div id="cropGroup" class='styled-select2'><select class='styled-select' name="cropGroup2" id="cropGroup2"  >
 <option value='<?php echo $crop;?>' ><?php echo $crop;?></option>
 <?php 
@@ -199,12 +207,14 @@ echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n
 }
 ?>
 </select></div></center></td></tr>
+-->
 
 <tr>
 <th>
 Reason For Spray & Comments</th></tr>
 
-<tr><td><textarea style="width: 980px;" name="textarea" rows="4" cols="50" value="<?php $sql=mysql_query("select comment from tSprayMaster where id=".$id); $row=mysql_fetch_array($sql); echo $row[comment];?>"><?php echo $row[comment];?></textarea></td></tr>
+<tr><td><textarea style="width: 980px;" name="textarea" rows="4" cols="50"><?php echo $comment;?>
+</textarea></td></tr>
 </table>
 <br clear="all"/>
 <?php
@@ -235,14 +245,14 @@ echo '<input type="hidden" name = "numMaterial" id="numMaterial" >';
 <?php
 if(!empty($_POST['submit'])) {
 $comSanitized=escapehtml($_POST['textarea']);
-$cropGroup2=escapehtml($_POST['cropGroup2']);
+$crops=escapehtml($_POST['crops']);
 $waterPerAcre=escapehtml($_POST['waterPerAcre']);
 $username=escapehtml($_POST['user']);
 $numField = escapehtml($_POST['numRows']);
 $numMaterial = escapehtml($_POST['numRowsMat']);
 echo "numField: ".$numField." numMaterials: ". $numMaterial;
 $sqlM="update tSprayMaster SET sprayDate='".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',noField=".$numField.",noMaterial=".$numMaterial.
-      ",waterPerAcre=".$waterPerAcre.",cropGroup = '".$cropGroup2."', comment= '".$comSanitized."', user='".$username. "' where id=".$id;
+      ",waterPerAcre=".$waterPerAcre.",crops = '".$crops."', comment= '".$comSanitized."', user='".$username. "' where id=".$id;
 $rusultM=mysql_query($sqlM);
 echo $sqlM or die(mysql_error());
 echo mysql_error();

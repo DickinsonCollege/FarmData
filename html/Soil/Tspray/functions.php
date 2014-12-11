@@ -1,8 +1,43 @@
 <input type="hidden" id="numRows">
 <input type="hidden" id="numRowsMat">
+<input type="hidden" id="numCropRows" name="numCropRows">
+
 <script type="text/javascript">
    var numRows=0;
    var numRowsMat=0;
+   var numCropRows = 0;
+
+   function addCropRow() {
+      numCropRows++;
+      var numCrops = document.getElementById("numCropRows");
+      numCrops.value = numCropRows;
+      var table = document.getElementById("cropTable");
+      var row    = table.insertRow(numCropRows - 1);
+      row.id="cropRow" + numCropRows;
+      var cell0 = row.insertCell(-1);
+      var cropID = '<?php
+         $result=mysql_query("Select crop from plant");
+         while ($row1 =  mysql_fetch_array($result)){
+             echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
+         }
+       ?>';
+      cell0.innerHTML = '<div class="styled-select" id="cropDiv'+numCropRows+
+        '"> <select class="mobile-select" name ="crop' + 
+        numCropRows +'" id="crop' + numCropRows + '" >' +
+       '<option value = 0 selected disabled> Crop </option>' +  cropID + '</select></div>';
+   }
+   addCropRow();
+
+   function removeCropRow(){
+      if (numCropRows >0){
+         var row = document.getElementById("cropRow" + numCropRows);
+         row.innerHTML = "";
+         numCropRows--;
+         var numCrops = document.getElementById("numCropRows");
+         numCrops.value = numCropRows;
+      }
+   }
+
    function addRow(){
       numRows++;
       var table = document.getElementById("fieldTable");
@@ -232,7 +267,7 @@
       while(fIndex<= numRows){
          var currentF=document.getElementById('field'+fIndex);
          if(currentF.value==0){
-            //console.log('AAAAA undefined!!!');
+            alert("Please select a field in row " + fIndex);
             return false;
          }
       fIndex++;
@@ -243,18 +278,18 @@
          var currentAct=document.getElementById('actuarialTotal'+mIndex).value;
    //console.log("this is the value "+currentM.value);
          if(currentM.value==0 || isNaN(parseFloat(currentAct)) ){
-            //console.log('BBBBB undefined!!!');
+            alert("Please select a material in row " + mIndex);
             return false;
          }
          mIndex++;
       }   
-      var currentCG=document.getElementById("cropGroup2");
-      if(currentCG.value==0){
-   //console.log('DDDDD undefined');
-         return false;
-      }      
-
-   //console.log("DDDDefined");
+       
+      for (var i = 1; i <= numCropRows; i++) {
+          if (document.getElementById("crop" + i).value == 0) {
+            alert("Please select a crop in row " + i);
+            return false;
+          }
+      }
       return true;
    }
 
@@ -265,9 +300,8 @@
          var numMat = document.getElementById("numMaterial");
          numMat.value = numRowsMat;
          return confirm("Confirm submit?");
-      }else{
-         alert('Please enter all data!');
-      return false;
+      } else {
+         return false;
       }
    }
 </script>

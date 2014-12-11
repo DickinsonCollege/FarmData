@@ -140,6 +140,7 @@ if ($_SESSION['labor']) {
 <br clear="all"/>
 <input type="button" id="addField" name="addField" class="genericbutton" onClick="addRow();"
 value="Add Field">
+&nbsp;&nbsp;&nbsp;
 <input type="button" id="removeField" name="removeField" class="genericbutton" onClick="removeRow();"
 value="Remove Field">
 <br clear="all"/>

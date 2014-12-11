@@ -15,7 +15,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 	 <th>Units</th>
 	 <th>Rate</th>
 	 <th>Total</th>
-	 <th>CropGroup</th> 
+	 <th>Crops</th> 
 	 <th>User</th>
 	 <th>Comments</th>
 </tr>
@@ -26,20 +26,27 @@ $fromDate=$_POST['year']."-".$_POST['month']."-".$_POST['day'];
 $toDate=$_POST['tyear']."-".$_POST['tmonth']."-".$_POST['tday'];
 $fieldCh=escapehtml($_POST['fieldID']);
 $materialCh=escapehtml($_POST['material']);
-$sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, actualTotalAmount*(SELECT size FROM field_GH WHERE field_GH.fieldID= tSprayField.fieldID)/(SELECT SUM(size) FROM field_GH, tSprayField as tf WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, cropGroup, user, comment
+$crop=escapehtml($_POST['crop']);
+$sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, actualTotalAmount*(SELECT size FROM field_GH WHERE field_GH.fieldID= tSprayField.fieldID)/(SELECT SUM(size) FROM field_GH, tSprayField as tf WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, crops, user, comment
 FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials
-WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".$materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND tSprayMaster.sprayDate BETWEEN '".$fromDate."' AND '".$toDate."'  AND tSprayMaterials.sprayMaterial=tSprayWater.material";
+WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".
+$materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND crops like '%".$crop.
+   "%' and tSprayMaster.sprayDate BETWEEN '".$fromDate."' AND '".$toDate."'  AND tSprayMaterials.sprayMaterial=tSprayWater.material";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
 $count=0;
 $totalMaterial=0;
 $resultM=mysql_query($sql);
+echo mysql_error();
 	while($rowM=mysql_fetch_array($resultM)){
 	$count++;
 	$totalMaterial=$totalMaterial+$rowM['frac'];
 	$theUnit=$rowM['tRateUnits'];	
 	//echo "<tr><td>".str_replace("-","/",$rowM['sprayDate'])."</td><td>".$rowM['fieldID']."</td><td>". number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".$rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate']."</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['cropGroup']."</td><td>".$rowM['user']." </td><td>".$rowM['comment']."</td></tr>";
-	echo "<tr><td>".$rowM['sprayDate']."</td><td>".$rowM['fieldID']."</td><td>". number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".$rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate']."</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['cropGroup']."</td><td>".$rowM['user']." </td><td>".$rowM['comment']."</td></tr>";
-
+	echo "<tr><td>".$rowM['sprayDate']."</td><td>".$rowM['fieldID']."</td><td>".
+             number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".
+             $rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate'].
+             "</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['crops'].
+             "</td><td>".$rowM['user']." </td><td>".$rowM['comment']."</td></tr>";
 	}
 echo '</table>';
 	if($materialCh!='%'){

@@ -35,14 +35,14 @@ while ($row =  mysql_fetch_array($result)){
 </select>
 </div>-->
 
-<label for="fieldID"> Crop Group: &nbsp; </label>
-<div id="fieldID23" class="styled-select">
-<select id= "group" name="group" class='mobile-select'>
+<label for="cropDiv"> Crop: &nbsp; </label>
+<div id="cropDiv" class="styled-select">
+<select id= "crop" name="crop" class='mobile-select'>
 <option value="%" selected> All </option>
 <?php
-$result = mysql_query("SELECT cropGroup from cropGroupReference");
+$result = mysql_query("SELECT crop from plant");
 while ($row =  mysql_fetch_array($result)){
-  echo "\n<option value= \"$row[cropGroup]\">$row[cropGroup]</option>";
+  echo "\n<option value= '".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
 </select>
