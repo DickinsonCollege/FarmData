@@ -8,49 +8,48 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <form name='form' method='POST' action='/down.php'>
 <?php
 if(isset($_POST['submit'])) {
-   if(!empty($_POST['crop'])) {
-      $year = $_POST['year'];
-      $month = $_POST['month'];
-      $day = $_POST['day'];
-      $tcurYear = $_POST['tyear'];
-      $tcurMonth = $_POST['tmonth'];
-      $tcurDay = $_POST['tday'];
-      $crop = escapehtml($_POST['crop']);
-      $fieldID = escapehtml($_POST['fieldID']);
-      $pest = escapehtml($_POST['pest']);
-      $sql="select sDate,crop,fieldID,pest,avgCount,comments from pestScout where sDate between '".
-         $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-         $tcurDay."' and crop like '".$crop."' and fieldID like '".
-         $fieldID."' and pest like '".$pest."' order by sDate";
-   }
+   $year = $_POST['year'];
+   $month = $_POST['month'];
+   $day = $_POST['day'];
+   $tcurYear = $_POST['tyear'];
+   $tcurMonth = $_POST['tmonth'];
+   $tcurDay = $_POST['tday'];
+   $crop = escapehtml($_POST['crop']);
+   $fieldID = escapehtml($_POST['fieldID']);
+   $pest = escapehtml($_POST['pest']);
+   $sql="select sDate,crops,fieldID,pest,avgCount,comments from pestScout where sDate between '".
+      $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
+      $tcurDay."' and crops like '%".$crop."%' and fieldID like '".
+      $fieldID."' and pest like '".$pest."' order by sDate";
    $result=mysql_query($sql);
    if(!$result){
-    echo "<script>alert(\"Could not Generate Insect Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
+      echo "<script>alert(\"Could not Generate Insect Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
    }
    echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
    echo "<table border>";
    if ($crop=="%"){
-      $var="All";
+      $var="All Crops";
    }else {
       $var=$_POST['crop'];
    }
    if ($fieldID=="%") {
-      $var2="All";
+      $var2="All Fields";
    }else {
-      $var2=$_POST['fieldID'];
+      $var2="Field ".$_POST['fieldID'];
    }
    if ($pest=="%") {
-      $var3="All";
+      $var3="All Insects";
    }else {
       $var3=$_POST['pest'];
    }
-   echo "<caption> Insect Scouting Records for ".$var." in Field: ".$var2." Insect: ".$var3."</caption>";
-echo "<tr><th>Scout Date</th><th>Crop</th><th>Field ID</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr>";
+   echo "<caption> Insect Scouting Report for ".$var." in ".
+    $var2." for ".$var3."</caption>";
+echo "<tr><th>Scout Date</th><th>Crops</th><th>Field ID</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr>";
       while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         echo $row['sDate'];
         echo "</td><td>";
-        echo $row['crop'];
+        echo $row['crops'];
         echo "</td><td>";
         echo $row['fieldID'];
         echo "</td><td>";

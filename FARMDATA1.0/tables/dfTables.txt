@@ -358,9 +358,8 @@ create table pest(
    pestName varchar(30) primary key) ENGINE=INNODB;
 
 create table pestScout(
-   id int auto_increment primary key,sDate date,crop varchar(30),
+   id int auto_increment primary key,sDate date,crops text,
    fieldID varchar(30),pest varchar(30),avgCount float,comments text,
-   foreign key (crop) references plant(crop) on update cascade,
    foreign key(pest) references pest(pestName) on update cascade,
    foreign key (fieldID) references field_GH(fieldID) on update cascade) ENGINE=INNODB;
 

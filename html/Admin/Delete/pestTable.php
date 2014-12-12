@@ -11,48 +11,47 @@ if(isset($_GET['submit'])) {
       mysql_query($sqlDel);
       echo mysql_error();
    }
-   if(!empty($_GET['crop'])) {
-      $year = $_GET['year'];
-      $month = $_GET['month'];
-      $day = $_GET['day'];
-      $tcurYear = $_GET['tyear'];
-      $tcurMonth = $_GET['tmonth'];
-      $tcurDay = $_GET['tday'];
-      $crop = escapehtml($_GET['crop']);
-      $fieldID = escapehtml($_GET['fieldID']);
-      $pest = escapehtml($_GET['pest']);
-      $sql="select id,sDate,crop,fieldID,pest,avgCount,comments from pestScout where sDate between '".
+   $year = $_GET['year'];
+   $month = $_GET['month'];
+   $day = $_GET['day'];
+   $tcurYear = $_GET['tyear'];
+   $tcurMonth = $_GET['tmonth'];
+   $tcurDay = $_GET['tday'];
+   $crop = escapehtml($_GET['crop']);
+   $fieldID = escapehtml($_GET['fieldID']);
+   $pest = escapehtml($_GET['pest']);
+   $sql="select id,sDate,crops,fieldID,pest,avgCount,comments from pestScout where sDate between '".
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-         $tcurDay."' and crop like '".$crop."' and fieldID like '".$fieldID.
+         $tcurDay."' and crops like '%".$crop."%' and fieldID like '".$fieldID.
          "' and pest like '".$pest."' order by sDate";
-}
       $result=mysql_query($sql);
       if(!$result){
           echo "<script>alert(\"Could not Generate Insect Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
       }
       echo "<table border>";
       if ($crop=="%"){
-         $var="All";
+         $var="All Crops";
       } else {
          $var=$_GET['crop'];
       }
       if ($fieldID=="%") {
-         $var2="All";
+         $var2="All Fields";
       } else {
-         $var2=$_GET['fieldID'];
+         $var2="Field ".$_GET['fieldID'];
       }
       if ($pest=="%") {
-         $var3="All";
+         $var3="All Insects";
       } else {
          $var3=$_GET['pest'];
       }
-      echo "<caption> Insect Scouting Records for ".$var." in Field: ".$var2." Insect: ".$var3."</caption>";
-      echo "<tr><th>Scout Date</th><th>Crop</th><th>Field ID</th><th>Insect</th><th>Average Count</th><th>Comments</th><th>Edit</th><th> Delete </th></tr>";
+      echo "<caption> Insect Scouting Report for ".$var." in ".
+         $var2." for ".$var3."</caption>";
+      echo "<tr><th>Scout Date</th><th>Crops</th><th>Field ID</th><th>Insect</th><th>Average Count</th><th>Comments</th><th>Edit</th><th> Delete </th></tr>";
       while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         echo $row['sDate'];
         echo "</td><td>";
-        echo $row['crop'];
+        echo $row['crops'];
         echo "</td><td>";
         echo $row['fieldID'];
         echo "</td><td>";

@@ -1,42 +1,9 @@
 <input type="hidden" id="numRows">
 <input type="hidden" id="numRowsMat">
-<input type="hidden" id="numCropRows" name="numCropRows">
 
 <script type="text/javascript">
    var numRows=0;
    var numRowsMat=0;
-   var numCropRows = 0;
-
-   function addCropRow() {
-      numCropRows++;
-      var numCrops = document.getElementById("numCropRows");
-      numCrops.value = numCropRows;
-      var table = document.getElementById("cropTable");
-      var row    = table.insertRow(numCropRows - 1);
-      row.id="cropRow" + numCropRows;
-      var cell0 = row.insertCell(-1);
-      var cropID = '<?php
-         $result=mysql_query("Select crop from plant");
-         while ($row1 =  mysql_fetch_array($result)){
-             echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
-         }
-       ?>';
-      cell0.innerHTML = '<div class="styled-select" id="cropDiv'+numCropRows+
-        '"> <select class="mobile-select" name ="crop' + 
-        numCropRows +'" id="crop' + numCropRows + '" >' +
-       '<option value = 0 selected disabled> Crop </option>' +  cropID + '</select></div>';
-   }
-   addCropRow();
-
-   function removeCropRow(){
-      if (numCropRows >0){
-         var row = document.getElementById("cropRow" + numCropRows);
-         row.innerHTML = "";
-         numCropRows--;
-         var numCrops = document.getElementById("numCropRows");
-         numCrops.value = numCropRows;
-      }
-   }
 
    function addRow(){
       numRows++;
@@ -137,9 +104,6 @@
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tupdate.php?field="+fld, false);
       xmlhttp.send();
-      console.log('the response starts');
-      console.log(xmlhttp.responseText);
-      console.log('the response ends');
 
       newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select class=\"mobile-select\" onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
    }
@@ -156,16 +120,11 @@
    }   
 
    function addUnit(numU){
-      console.log("addUnit");
-      console.log(numU);
       var mU = encodeURIComponent(document.getElementById('material2'+numU).value);
       var newdivU=document.getElementById('unit'+numU);
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tUnitUpdate.php?material="+mU, false);
       xmlhttp.send();
-      console.log('the response starts');
-      console.log(xmlhttp.responseText);
-      console.log('the response ends');
         
       newdivU.innerHTML="<label style=\"font-size:12pt\"  id='unit"+numU+"'>"+ xmlhttp.responseText +" </label>  ";
    }
@@ -176,8 +135,6 @@
       xmlhttp = new XMLHttpRequest();
       xmlhttp.open("GET", "getPPE.php?material="+mU, false);
       xmlhttp.send();
-// console.log("PPE");
-      // console.log(xmlhttp.responseText);
       
 //      newDivP.innerHTML = "<div class='styled-select2 id='ppe"+numU+"'>" + 
 //         "<select class='mobile-select' id='ppe"+numU+"' name='ppe"+numU+"'>" + xmlhttp.responseText + "</select></div>";
@@ -193,7 +150,6 @@
       xmlhttp = new XMLHttpRequest();
       xmlhttp.open("GET", "getREI.php?material="+mU, false);
       xmlhttp.send();
-      console.log(xmlhttp.responseText);
 
       newDivP.innerHTML = "<center><div id=\"rei"+numU+"\" >" + 
         "<input class='textbox mobile-input inside_table' readonly type='text' id='rei2"+numU+
@@ -202,17 +158,12 @@
    }
 
    function addAcre(numA){
-      console.log(numA);
       var fld = encodeURIComponent(document.getElementById('field'+numA).value);
       var bA = document.getElementById('maxBed2'+numA).value;
-      console.log(bA);
       var newdiv=document.getElementById('acre'+numA);
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tAcreUpdate.php?field="+fld+"&beds="+bA, false);
       xmlhttp.send();
-      //console.log('the response starts');
-      //console.log(xmlhttp.responseText);
-      //console.log('the response ends');
       newdiv.value=xmlhttp.responseText;
 //        newdiv.innerHTML="<select id= 'maxBed<?php echo $numFieldInd  ?>' name= 'maxBed'>"+xmlhttp.responseText+"</select>";
    
@@ -231,9 +182,6 @@
       return totalFieldAcre;
    }
 //        var formatTotalFieldAcre=totalFieldAcre.toFixed(2); 
-   //console.log('the Acreresponse starts');
-   //console.log(totalFieldAcre);
-        //console.log('the Acreresponse ends');
    
 //input -1 when just input water
    function calculateWater() {
@@ -252,11 +200,7 @@
       var mC = document.getElementById('rate2'+numS);
       var strUser = mC.options[mC.selectedIndex].value;
       var newdivC=document.getElementById('calculatedTotal'+numS);
-   //console.log('THE NUMBERS STARTS');
-   //console.log(totalFieldAcre);
       var integer= parseFloat(strUser).toFixed(2);
-   //console.log(strUser);
-   //console.log("THE NUMBERS ENDS!!!");
    
       newdivC.value= (calculateTotal() * strUser).toFixed(2);
    }
@@ -276,7 +220,6 @@
       while(mIndex<= numRowsMat){
          var currentM=document.getElementById('material2'+mIndex);
          var currentAct=document.getElementById('actuarialTotal'+mIndex).value;
-   //console.log("this is the value "+currentM.value);
          if(currentM.value==0 || isNaN(parseFloat(currentAct)) ){
             alert("Please select a material in row " + mIndex);
             return false;

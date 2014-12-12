@@ -15,7 +15,7 @@ $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 $origField = $_GET['fieldID'];
 $origPest = $_GET['pest'];
-$sqlget = "SELECT id,year(sDate) as yr, month(sDate) as mth, day(sDate) as dy, crop, pest,".
+$sqlget = "SELECT id,year(sDate) as yr, month(sDate) as mth, day(sDate) as dy, crops, pest,".
    "sDate,fieldID,avgCount, comments FROM pestScout where id = ".$id;
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
@@ -26,7 +26,7 @@ $com = $row['comments'];
 $curYear = $row['yr'];
 $curMonth = $row['mth'];
 $curDay = $row['dy'];
-$curCrop = $row['crop'];
+$curCrops = $row['crops'];
 $comments = $row['comments'];
 
 echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
@@ -53,7 +53,10 @@ for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\"
 }
 echo '</div></select>';
 echo '<br clear="all"/>';
-echo '<label>Crop:&nbsp</label>';
+echo '<label>Crops:&nbsp</label>';
+echo '<br clear="all"/>';
+echo '<textarea name="crops">'.$curCrops.'</textarea>';
+/*
 echo '<div class="styled-select"><select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant';
@@ -62,6 +65,7 @@ while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</div></select>';
+*/
 echo '<br clear="all"/>';
 
 echo '<label>Field:&nbsp</label>';
@@ -103,16 +107,15 @@ if ($_POST['submit']) {
    $comSanitized=escapehtml($_POST['comments']);
    $avgCount = escapehtml($_POST['avgCount']);
    $fld = escapehtml($_POST['fieldID']);
-   $crop = escapehtml($_POST['crop']);
+   $crops = escapehtml($_POST['crops']);
    $year = escapehtml($_POST['year']);
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $pest = escapehtml($_POST['pest']);
    $sql = "update pestScout set pest='".$pest."', fieldID='".$fld."', sDate='".$year."-".
      $month."-".$day."', avgCount=".$avgCount.",comments='".
-     $comSanitized."',crop='".$crop."' where id=".$id;
+     $comSanitized."',crops='".$crops."' where id=".$id;
    $result = mysql_query($sql);
-// START - check if old crop can be deleted first!!!
    if(!$result){
        echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
    } else {

@@ -22,6 +22,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 </table>
 <br clear="all"/>
 <input type="button" value="Add Field" class="submitbutton"  name="Add Field Spray" onclick="addRow()"/>
+&nbsp;&nbsp;&nbsp;
 <input type="button" value="Remove Field" class="submitbutton"  name="Remove Field Spray" onclick="removeRow()"/>
 <br clear="all"/>
 <br clear="all"/>
@@ -38,6 +39,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 </table>
 <br clear="all"/>
 <input type="button" value="Add Material" class="submitbutton" name="Add Material Spray" onclick="addRowMat()"/>
+&nbsp;&nbsp;&nbsp;
 <input type="button" value="Remove Material" class="submitbutton" name="Delete Material Spray" onclick="removeRowMat()"/>
 <br clear="all"/>
 <br clear="all"/>
@@ -50,36 +52,21 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <tr><td><center><input class='textbox4 mobile-input inside_table' type="text" name="waterPerAcre" id="waterPerAcre" value=0  onkeyup="calculateWater();"></center></td>
 <td><center><input type="text" class='textbox4 mobile-input inside_table' name="totalWater" id="totalWater" value=0 ></center></td></tr>
 </table>
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
+?>
+<script type="text/javascript">
+var table = document.getElementById("cropTable");
+table.style = <?php 
+  if ($_SESSION['mobile']) {
+      echo '"width: 99%";';
+  } else {
+      echo '"width:1000px";';
+  } ?>
+</script>
+
 <br clear="all"/>
 <table>
-<tr><th>Crops</th></tr>
-
-<tr><td>
-<table id="cropTable" align="center">
-</table>
-<br clear="all"/>
-<input type="button" id="addCrop" name="addCrop" class="genericbutton" onClick="addCropRow();"
-value="Add Crop">
-&nbsp;&nbsp;&nbsp;
-<input type="button" id="removeCrop" name="removeCrop" class="genericbutton" onClick="removeCropRow();"
-value="Remove Crop">
-</td></tr>
-
-<!--
-<tr><td><center><div id="cropGroup" class='styled-select2'><select class='mobile-select' name="cropGroup2" id="cropGroup2">
-<option value=0 > Crop Group</option>
-<?php 
-$sqlG="SELECT * FROM cropGroupReference";
-$resultG=mysql_query($sqlG);
-//echo mysql_error();
-while($rowG=mysql_fetch_array($resultG)){
-
-echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n";
-}
-?>
-</select></div></center></td></tr>
--->
-
 <tr>
 <th>
 Reason For Spray & Comments</th></tr>
@@ -114,7 +101,7 @@ for ($i = 1; $i <= $numCrops; $i++) {
    $crops .= escapehtml($_POST['crop'.$i]);
 }
 $numMaterial = escapehtml($_POST['numMaterial']);
-$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, comment, user) VALUES ('"
+echo $sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, comment, user) VALUES ('"
    .$_POST['year']."-".$_POST['month']."-".$_POST['day']."' , ".$numField." , ".
    $numMaterial." , ".$waterPerAcre." , '".$crops."' , '".$comSanitized.
    "' , '".$username. "' )";

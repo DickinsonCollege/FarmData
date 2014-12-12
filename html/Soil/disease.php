@@ -78,7 +78,6 @@ function addRow(){
                      echo '<option value="'.$row1['stage'].'">'.$row1['stage'].'</option>';
                   }   
                ?>'+'</select></div>';
-   console.log(numRows);
 }
 addRow();
 function removeRow() {
@@ -105,10 +104,10 @@ function removeRow() {
 <div id="container"></div>
 <br clear="all"/>
 
-<input type="button" class = "genericbutton" 
+<input type="button" class = "submitbutton" 
   id="add" value="Add Species" onclick="addRow();"/>
-
-<input type="button" id="remove" class = "genericbutton" value="Remove Species" onClick="removeRow();"/>
+&nbsp;&nbsp;&nbsp;
+<input type="button" id="remove" class = "submitbutton" value="Remove Species" onClick="removeRow();"/>
 <br clear="all">
 <br clear="all">
 <label for="average">Comments:&nbsp; </label>

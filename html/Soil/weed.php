@@ -104,7 +104,7 @@ echo '</div>';*/
 </table>
 -->
 <br clear="all"/>
-<input style="float:left;" class = "genericbutton" type="button" id="add" value="Add Species" onclick="addRow();"/>
+<input style="float:left;" class = "submitbutton" type="button" id="add" value="Add Species" onclick="addRow();"/>
 <!--<script type="text/javascript">
 var num=0;
 var input=document.createElement('input');
@@ -176,7 +176,8 @@ function remov() {
    num--;
 }
 </script>-->
-<input type="button" id="remove" class="genericbutton"  value="Remove Species" onClick="removeRow();"/>
+&nbsp;&nbsp;&nbsp;
+<input type="button" id="remove" class="submitbutton"  value="Remove Species" onClick="removeRow();"/>
 
 
 <br clear="all"/>
