@@ -441,8 +441,7 @@ create table diseaseScout(
         id int NOT NULL AUTO_INCREMENT primary key,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(disease) references disease(diseaseName) on update cascade,
-   foreign key(stage) references stage(stage) on update cascade
-   unique(sDate,fieldID,cropGroup, disease)) ENGINE=INNODB;
+   foreign key(stage) references stage(stage) on update cascade) ENGINE=INNODB;
 
 create table pack (
    packDate date, 

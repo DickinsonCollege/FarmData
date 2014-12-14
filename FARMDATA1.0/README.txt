@@ -8,6 +8,11 @@ For installation instructions, configuration information and the user's
 manual, visit:
 https://sourceforge.net/p/farmdata/wiki/Home/
 
-To report issues or for new versions and more information, please visit:
+For new versions and more information, please visit:
 https://sourceforge.net/projects/farmdata/
 
+To report bugs in the code, errors in the installation procedure or 
+to suggest new features, submit a ticket at:
+https://sourceforge.net/p/farmdata/tickets/
+You will need to create a sourceforge account (if you don't already
+have on) in order to create a ticket.

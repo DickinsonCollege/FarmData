@@ -25,51 +25,94 @@ if [ $SSL = Y ]; then
   SSL=y
 fi
 
-FIN=0
-while [ $FIN -eq 0 ]; do
-  echo "Enter your domain name (i.e. the hostname of your web server):"
-  read DOMAIN
-  if [[ $DOMAIN == *\ * ]]; then
-    echo "ERROR: domain name must not contain spaces."
-  else 
-    FIN=1
-  fi
-done
-
-FIN=0
-while [ $FIN -eq 0 ]; do
-  echo "Enter the full path to the document root directory for your web server:"
-  read DRPATH
-  if [[ $DRPATH != /* ]]; then
-    echo "ERROR: full path name must start with /"
-  elif [[ $DRPATH == *\ * ]]; then
-    echo "ERROR: path name must not contain spaces."
-  else 
-    FIN=1
-  fi
-done
-
-if [[ $DRPATH != */ ]]; then
-   DRPATH=$DRPATH/
+UPGRADE=n
+if [ -f config ]; then
+   echo "Existing FARMDATA installation detected!"
+   txt=$(< config)
+   ARR=(${txt//:/ })
+   USERDB="${ARR[0]}"
+   USERUSER="${ARR[1]}"
+   USERPASS="${ARR[2]}"
+   FARMDB="${ARR[3]}"
+   FDIR="${ARR[4]}"
+   DOMAIN="${ARR[5]}"
+   FULLPATH="${ARR[6]}"
+#   echo $USERDB
+#   echo $USERUSER
+#   echo $USERPASS
+#   echo $FARMDB
+#   echo $FDIR
+#   echo $DOMAIN
+#   echo $FULLPATH
+   if [ -z $FULLPATH ]; then
+      echo "Config file corrupted - please continue with new installation or"
+      echo "press ^C to terminate installation."
+   else 
+      echo "FARMDATA URL: "$DOMAIN/$FDIR
+      echo "Installation directory: "$FULLPATH
+      echo ""
+      echo "Do you wish to upgrade the existing installation?"
+      echo "(Enter y to upgrade, n to proceed with new installation)."
+      read UPGRADE
+      if [ $UPGRADE = Y ]; then
+        UPGRADE=y
+      fi
+      if [ $UPGRADE = y ]; then
+         echo "Proceeding with FARMDATA upgrade."
+      else
+         echo "Proceeding with new FARMDATA installation."
+         UPGRADE=n
+      fi
+   fi
 fi
 
-FIN=0
-while [ $FIN -eq 0 ]; do
-  echo "Enter the subdirectory of $DRPATH in which to install FARMDATA"
-  echo "(hit Return to install directly in $DRPATH):"
-  read FDIR
-  if [[ $FDIR == /* ]]; then
-    echo "ERROR: subdirectory name must not start with /"
-  elif [[ $FDIR == *\ * ]]; then
-    echo "ERROR: subdirectory name must not contain spaces."
-  else 
-    FIN=1
-  fi
-done
+if [ $UPGRADE = n ]; then
+   FIN=0
+   while [ $FIN -eq 0 ]; do
+     echo "Enter your domain name (i.e. the hostname of your web server):"
+     read DOMAIN
+     if [[ $DOMAIN == *\ * ]]; then
+       echo "ERROR: domain name must not contain spaces."
+     else 
+       FIN=1
+     fi
+   done
 
-FULLPATH=$DRPATH$FDIR
-if [[ $FULLPATH != */ ]]; then
-   FULLPATH=$FULLPATH/
+   FIN=0
+   while [ $FIN -eq 0 ]; do
+     echo "Enter the full path to the document root directory for your web server:"
+     read DRPATH
+     if [[ $DRPATH != /* ]]; then
+       echo "ERROR: full path name must start with /"
+     elif [[ $DRPATH == *\ * ]]; then
+       echo "ERROR: path name must not contain spaces."
+     else 
+       FIN=1
+     fi
+   done
+
+   if [[ $DRPATH != */ ]]; then
+      DRPATH=$DRPATH/
+   fi
+
+   FIN=0
+   while [ $FIN -eq 0 ]; do
+     echo "Enter the subdirectory of $DRPATH in which to install FARMDATA"
+     echo "(hit Return to install directly in $DRPATH):"
+     read FDIR
+     if [[ $FDIR == /* ]]; then
+       echo "ERROR: subdirectory name must not start with /"
+     elif [[ $FDIR == *\ * ]]; then
+       echo "ERROR: subdirectory name must not contain spaces."
+     else 
+       FIN=1
+     fi
+   done
+
+   FULLPATH=$DRPATH$FDIR
+   if [[ $FULLPATH != */ ]]; then
+      FULLPATH=$FULLPATH/
+   fi
 fi
 
 if [ -d $FULLPATH ]; then
@@ -91,82 +134,84 @@ fi
 
 echo "The URL for your FARMDATA installation is: http$S://$DOMAIN/$FDIR"
 
+if [ $UPGRADE = n ]; then
 # :<<'QWERTY'
-echo "If you wish to create the necessary MySQL databases yourself, please do"
-echo "so before continuing with FARMDATA installation."
-echo ""
-echo "Do you want the installation procedure to create the MySQL databases"
-echo "for FARMDATA?  (y/n)"
-read CREATE
-if [[ $CREATE == y || $CREATE == Y ]]; then
-  CREATE=y
-  echo "Enter username for MySQL admin account (not stored after installation exits): "
-  read ADMINUSER
-  echo "Enter password for MySQL admin account (not stored after installation exits):"
-  read ADMINPASS
-  echo ""
-  echo "Creating databases ..."
-  USERDB=users
-  USERUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-  # USERUSER=usercheck
-  USERPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-  FARMDB=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-  FARMUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-  FARMPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+   echo "If you wish to create the necessary MySQL databases yourself, please do"
+   echo "so before continuing with FARMDATA installation."
+   echo ""
+   echo "Do you want the installation procedure to create the MySQL databases"
+   echo "for FARMDATA?  (y/n)"
+   read CREATE
+   if [[ $CREATE == y || $CREATE == Y ]]; then
+     CREATE=y
+     echo "Enter username for MySQL admin account (not stored after installation exits): "
+     read ADMINUSER
+     echo "Enter password for MySQL admin account (not stored after installation exits):"
+     read ADMINPASS
+     echo ""
+     echo "Creating databases ..."
+     USERDB=users
+     USERUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+     # USERUSER=usercheck
+     USERPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+     FARMDB=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+     FARMUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+     FARMPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+   
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $USERDB;" || { 
+         echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $USERUSER identified by '$USERPASS';" || { 
+         echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $USERDB; 
+            grant select, insert, update on $USERDB.* to $USERUSER;" || { 
+         echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $FARMDB;" || { 
+         echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
+         echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
+     mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
+            grant select, delete, insert, update, show view on $FARMDB.* to $FARMUSER;" || { 
+         echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
+     UU=$ADMINUSER
+     UP=$ADMINPASS
+     FU=$ADMINUSER
+     FP=$ADMINPASS
+     echo "Database creation successful!"
+   else 
+     echo "Enter the name of the FARMDATA users database: "
+     read USERDB
+     echo "Enter the name of the users database user: "
+     read USERUSER
+     echo "Enter the password of the users database user: "
+     read USERPASS
+     echo "Enter the name of the FARMDATA farm information database: "
+     read FARMDB
+     echo "Enter the name of the farm information database user: "
+     read FARMUSER
+     echo "Enter the password of the users database user: "
+     read FARMPASS
+     UU=$USERUSER
+     UP=$USERPASS
+     FU=$FARMUSER
+     FP=$FARMPASS
+   fi
+   echo "Enter username for initial FARMDATA user account:";
+   read FIRSTUSER
+   echo "Enter password for initial FARMDATA user account:";
+   read FIRSTPASS
+   FIRSTPASS=`php -r "print crypt('$FIRSTPASS', '123salt');"`
+   
+   mysql -u $UU -p$UP -Bse "use $USERDB; source tables/userTables.txt;
+        insert into farms values('$FARMDB', '$FARMPASS', '$FARMUSER');
+        insert into users values('$FIRSTUSER', '$FIRSTPASS', '$FARMDB', 1, 1);" || { 
+         echo "Setting up user database failed.  Exiting FARMDATA install!"; exit 1; }
 
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $USERDB;" || { 
-      echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $USERUSER identified by '$USERPASS';" || { 
-      echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $USERDB; 
-         grant select, insert, update on $USERDB.* to $USERUSER;" || { 
-      echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $FARMDB;" || { 
-      echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
-      echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
-  mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
-         grant select, delete, insert, update, show view on $FARMDB.* to $FARMUSER;" || { 
-      echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
-  UU=$ADMINUSER
-  UP=$ADMINPASS
-  FU=$ADMINUSER
-  FP=$ADMINPASS
-  echo "Database creation successful!"
-else 
-  echo "Enter the name of the FARMDATA users database: "
-  read USERDB
-  echo "Enter the name of the users database user: "
-  read USERUSER
-  echo "Enter the password of the users database user: "
-  read USERPASS
-  echo "Enter the name of the FARMDATA farm information database: "
-  read FARMDB
-  echo "Enter the name of the farm information database user: "
-  read FARMUSER
-  echo "Enter the password of the users database user: "
-  read FARMPASS
-  UU=$USERUSER
-  UP=$USERPASS
-  FU=$FARMUSER
-  FP=$FARMPASS
+   mysql -u $FU -p$FP -Bse "use $FARMDB; source tables/baseTables.txt;
+         source tables/dfTables.txt;" || { 
+         echo "Setting up farm database failed.  Exiting FARMDATA install!"; exit 1; }
+   
+   echo "Database table creation successful!"
 fi
-echo "Enter username for initial FARMDATA user account:";
-read FIRSTUSER
-echo "Enter password for initial FARMDATA user account:";
-read FIRSTPASS
-FIRSTPASS=`php -r "print crypt('$FIRSTPASS', '123salt');"`
-
-mysql -u $UU -p$UP -Bse "use $USERDB; source tables/userTables.txt;
-     insert into farms values('$FARMDB', '$FARMPASS', '$FARMUSER');
-     insert into users values('$FIRSTUSER', '$FIRSTPASS', '$FARMDB', 1, 1);" || { 
-      echo "Setting up user database failed.  Exiting FARMDATA install!"; exit 1; }
-
-mysql -u $FU -p$FP -Bse "use $FARMDB; source tables/baseTables.txt;
-      source tables/dfTables.txt;" || { 
-      echo "Setting up farm database failed.  Exiting FARMDATA install!"; exit 1; }
-
-echo "Database table creation successful!"
 
 #QWERTY
 
@@ -177,6 +222,10 @@ echo "Database table creation successful!"
 
 
 echo "Configuring files - this will take a few moments."
+
+for file in `find src -name '.svn'`; do
+   rm -rf $file
+done
 
 for file in `find src -name '*.php'`; do
   sed -i "s/wahlst_users/$USERDB/" $file || { echo "Error configuring files.  Exiting FARMDATA install"; 
@@ -294,6 +343,17 @@ chmod 777 $FULLPATH/files/$FARMDB
 
 rm -rf src/*
 
-echo "Successful FARMDATA installation!";
-echo "Please log in to: http$S://$DOMAIN/$FDIR/setup"
-echo "to complete FARMDATA setup."
+if [ $UPGRADE = n ]; then
+   echo "Successful FARMDATA installation!"
+   echo "Please log in to: http$S://$DOMAIN/$FDIR/setup"
+   echo "to complete FARMDATA setup."
+
+   echo $USERDB:$USERUSER:$USERPASS:$FARMDB:$FDIR:$DOMAIN:$FULLPATH > config
+
+   echo ""
+   echo "Please copy file: config"
+   echo "to a safe location. This file contains the information needed"
+   echo "to upgrade your FARMDATA installation to a new version."
+else 
+   echo "Successful FARMDATA upgrade!"
+fi
