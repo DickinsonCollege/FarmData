@@ -15,4 +15,4 @@ To report bugs in the code, errors in the installation procedure or
 to suggest new features, submit a ticket at:
 https://sourceforge.net/p/farmdata/tickets/
 You will need to create a sourceforge account (if you don't already
-have on) in order to create a ticket.
+have one) in order to create a ticket.

@@ -42,8 +42,10 @@ if($_GET['deleteProduct']){
 //        console.log("HIHIHI");  
 //      console.log(id);
         xmlhttp= new XMLHttpRequest();
-        xmlhttp.open("GET", "invoiceCheckInList.php?product="+encodeURIComponent(eValue) +
-           "&currentID="+id, false);
+        xmlhttp.open("GET", "invoiceCheckInList.php?product=" +
+          encodeURIComponent(eValue) + "&currentID=" + id +
+          "&target=" + encodeURIComponent(<?php echo "'".$target."'";?>),
+           false);
         xmlhttp.send();
         var responseVar=xmlhttp.responseText;
 //        console.log(responseVar);

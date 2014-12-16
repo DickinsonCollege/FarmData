@@ -37,13 +37,6 @@ if [ -f config ]; then
    FDIR="${ARR[4]}"
    DOMAIN="${ARR[5]}"
    FULLPATH="${ARR[6]}"
-#   echo $USERDB
-#   echo $USERUSER
-#   echo $USERPASS
-#   echo $FARMDB
-#   echo $FDIR
-#   echo $DOMAIN
-#   echo $FULLPATH
    if [ -z $FULLPATH ]; then
       echo "Config file corrupted - please continue with new installation or"
       echo "press ^C to terminate installation."

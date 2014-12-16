@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $sql="SELECT invoice_entry.invoice_no, product, cases, price_case, salesDate FROM invoice_entry, invoice_master where product= '".
-   escapehtml($_GET['product']).
+   escapehtml($_GET['product'])."' and target = '".escapehtml($_GET['target']).
    "' and invoice_entry.invoice_no= invoice_master.invoice_no  order by salesDate desc";
 $result=mysql_query($sql);
 echo mysql_error();
