@@ -80,6 +80,10 @@ cd ..
 eval chmod -f $dirperm Seeding
 cd Seeding
 eval chmod -f $fileperm *.php *.html *.css
+eval chmod -f $dirperm Order
+cd Order
+eval chmod -f $fileperm *.php *.html *.css
+cd ..
 cd ..
 eval chmod -f $dirperm Soil
 cd Soil

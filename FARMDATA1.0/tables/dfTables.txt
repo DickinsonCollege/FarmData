@@ -1,10 +1,15 @@
 create table tools(tool_name varchar(30) primary key, type varchar(30)) ENGINE=INNODB;
 insert into tools values ('OTHER', 'INCORPORATION');
+/*
 create table product_type(
    prod_type varchar(30) primary key) ENGINE=INNODB;
+*/
 
 create table harvestList(
-        id int NOT NULL AUTO_INCREMENT, harDate date,comment text, primary key(id)) ENGINE=INNODB;
+   id int NOT NULL AUTO_INCREMENT,
+   harDate date,
+   comment text, 
+   primary key(id)) ENGINE=INNODB;
 
 /*
 create table harvestListEntry(
@@ -44,7 +49,9 @@ create table tractor(
    tractorName varchar(30) primary key, active tinyint(1) default 1) ENGINE = INNODB;
 
 create table compost_material(
-   compostID varchar(30) primary key, compostName text, units text, descr text) ENGINE = INNODB;
+   compostID varchar(30) primary key, 
+   compostName text, units text, 
+   descr text) ENGINE = INNODB;
 
 create table compost_pile(
    pileID varchar(30) primary key,
@@ -60,28 +67,46 @@ ENGINE='INNODB';
 create table compost_unit (unit varchar(30) PRIMARY KEY)
 ENGINE='INNODB';
 
-create table compost_units (material varchar(30), unit varchar(30), pounds
-float, cubicYards float, id int NOT NULL AUTO_INCREMENT PRIMARY KEY, foreign
-key (material) references compost_materials(materialName) on update cascade)
+create table compost_units (
+   material varchar(30),
+   unit varchar(30),
+   pounds float,
+   cubicYards float,
+   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   foreign key (material) references compost_materials(materialName) on update cascade)
 ENGINE='INNODB';
 
-create table compost_accumulation (accDate date, pileID varchar(30) NOT NULL,
-material varchar(30), pounds float, cubicyards float, comments text,
-id int NOT NULL
-AUTO_INCREMENT PRIMARY KEY, foreign key (pileID) references
-compost_pile(pileID) on update cascade, foreign key (material) references
-compost_materials(materialName) on update cascade) ENGINE='INNODB';
+create table compost_accumulation (
+   accDate date,
+   pileID varchar(30) NOT NULL,
+   material varchar(30),
+   pounds float,
+   cubicyards float,
+   comments text,
+   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   foreign key (pileID) references compost_pile(pileID) on update cascade,
+   foreign key (material) references compost_materials(materialName) on update cascade)
+ ENGINE='INNODB';
 
-create table compost_activity (actDate date, pileID varchar(30) NOT NULL,
-activity varchar(30), comments text, id int NOT NULL AUTO_INCREMENT PRIMARY
-KEY, foreign key (pileID) references compost_pile(pileID) on update cascade,
-foreign key (activity) references compost_activities (activityName) on update
-cascade) ENGINE='INNODB';
+create table compost_activity (
+   actDate date,
+   pileID varchar(30) NOT NULL,
+   activity varchar(30),
+   comments text,
+   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   foreign key (pileID) references compost_pile(pileID) on update cascade,
+  foreign key (activity) references compost_activities (activityName) on update cascade)
+ENGINE='INNODB';
 
-create table compost_temperature (tmpDate date, pileID varchar(30) NOT NULL,
-temperature float, numReadings int, comments text, id int NOT NULL
-AUTO_INCREMENT PRIMARY KEY, foreign key (pileID) references
-compost_pile(pileID) on update cascade) ENGINE='INNODB';
+create table compost_temperature (
+   tmpDate date,
+   pileID varchar(30) NOT NULL,
+   temperature float,
+   numReadings int,
+   comments text,
+   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   foreign key (pileID) references compost_pile(pileID) on update cascade)
+ENGINE='INNODB';
 
 insert into compost_materials values ('FOODWASTE');
 insert into compost_materials values ('LEAVES');
@@ -135,6 +160,7 @@ create table standard(
         primary key(tractorName,compostID)) ENGINE = INNODB;
 */
 
+/*
 create table fertility_info( 
    fieldID varchar(30) not null, testDate date not null,
         H_percent double, K_percent double, Mg_percent double,
@@ -152,10 +178,13 @@ create table fertility_info(
         Cl_ppm double,Cl_rate text,Al_ppm double,Al_rate text,Cu_ppm double,
         Cu_rate text,Acidity_H_meq_per_100g double,buffer_index double,
         CEC_meq_per_100g double) ENGINE=INNODB;
+*/
 
 create table units(
-   crop varchar(30), default_unit varchar(30) not null,
-        unit varchar(30) not null, conversion float not null,
+   crop varchar(30), 
+   default_unit varchar(30) not null,
+   unit varchar(30) not null,
+   conversion float not null,
    foreign key(crop) references plant(crop) on update cascade,
    primary key(crop,default_unit,unit))ENGINE=INNODB;
 
@@ -166,9 +195,12 @@ create table customer(
 */
 
 create table product(
-        product varchar(30),unit varchar(30),units_per_case float,
+   product varchar(30),
+   unit varchar(30),
+   units_per_case float,
    dh_units varchar(30) not null,
-        primary key(product)) ENGINE=INNODB;
+   primary key(product))
+ ENGINE=INNODB;
 
 create table invoice_master(
         invoice_no int  AUTO_INCREMENT,
@@ -216,9 +248,13 @@ create table email(
    username varchar(50) primary key) ENGINE=INNODB;
 
 create table coverCrop(
-   crop varchar(30) unique,drillRateMin int, drillRateMax int,
-        brcstRateMin int, brcstRateMax int, legume int, 
-        id int NOT NULL AUTO_INCREMENT primary key) ENGINE=INNODB;
+   crop varchar(30) unique,
+   drillRateMin int,
+   drillRateMax int,
+   brcstRateMin int,
+   brcstRateMax int,
+   legume int, 
+   id int NOT NULL AUTO_INCREMENT primary key) ENGINE=INNODB;
 
 create table seedingMethod(
    seed_method varchar(30) primary key) ENGINE=INNODB;
@@ -375,21 +411,33 @@ create table weed(
    weedName varchar(30) primary key) ENGINE=INNODB;
 
 create table weedScout(
-   sDate date,fieldID varchar(30),weed varchar(30),infestLevel int,
-   goneToSeed int,comments text, 
-        id int NOT NULL AUTO_INCREMENT primary key,
+   sDate date,
+   fieldID varchar(30),
+   weed varchar(30),
+   infestLevel int,
+   goneToSeed int,
+   comments text, 
+   id int NOT NULL AUTO_INCREMENT primary key,
    foreign key(weed) references weed(weedName) on update cascade,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
-   unique(sDate,fieldID,weed)) ENGINE=INNODB;
+   unique(sDate,fieldID,weed))
+ ENGINE=INNODB;
 
 create table tillage(
-        tractorName varchar(30), fieldID varchar(30),
-        foreign key (fieldID) references field_GH(fieldID) on update cascade,
-        tilldate date,tool varchar(30), num_passes int,comment text,minutes int,
-        percent_filled float not null, id int not null AUTO_INCREMENT,
-        foreign key(tractorName) references tractor(tractorName) on update
-cascade,
-         UNIQUE(fieldID,tilldate,tool), primary key(id)) ENGINE=INNODB;
+   tractorName varchar(30),
+   fieldID varchar(30),
+   tilldate date,
+   tool varchar(30),
+   num_passes int,
+   comment text,
+   minutes int,
+   percent_filled float not null,
+   id int not null AUTO_INCREMENT,
+   foreign key(tractorName) references tractor(tractorName) on update cascade,
+   foreign key (fieldID) references field_GH(fieldID) on update cascade,
+   UNIQUE(fieldID,tilldate,tool),
+   primary key(id))
+ ENGINE=INNODB;
 
 create table users(
         username varchar(30) primary key,admin tinyint(1) default 0, 
@@ -431,6 +479,12 @@ create table liquid_fertilizer(
 
 create table stage(
    stage varchar(30) primary key) ENGINE=INNODB;
+
+insert into stage values('ESTABLISHING');
+insert into stage values('HARVEST READY');
+insert into stage values('MATURING');
+insert into stage values('NEW PLANTING');
+insert into stage values('POST HARVEST');
 
 create table disease (
    diseaseName varchar(30) primary key) ENGINE=INNODB;
@@ -510,10 +564,18 @@ insert into irrigation_device(irrigation_device) values('KIFCO GUN');
 insert into irrigation_device(irrigation_device) values('OTHER');
 */
 
-create table pump_master ( id int NOT NULL AUTO_INCREMENT primary key,
-pumpDate date, valve_open text, driveHZ float, outlet_psi int,
-pump_kwh float, solar_kwh float, comment text, rain float,
-run_time int) ENGINE=INNODB;
+create table pump_master (
+   id int NOT NULL AUTO_INCREMENT primary key,
+   pumpDate date,
+   valve_open text,
+   driveHZ float,
+   outlet_psi int,
+   pump_kwh float,
+   solar_kwh float,
+   comment text,
+   rain float,
+   run_time int)
+ENGINE=INNODB;
 
 
 create table pump_field ( 
@@ -614,9 +676,6 @@ create table orderItem (
    source3 varchar(50),
    sdate3 date,
    id int not null,
-/*
-   foreign key (source) references source(source) on update cascade,
-*/
    foreign key (crop) references plant(crop) on update cascade)
    ENGINE=InnoDB;
 
