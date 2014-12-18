@@ -3,30 +3,19 @@
 //include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
-?>
-<form name='form' method='POST' action='/down.php'>
-<table >
-<caption> Tractor Spraying Report </caption>
-<tr>
-	<th >Date</th>
-	<th>FieldID</th>
-	<th>%Sprayed</th>
-	 <th>Material</th>
-	 <th>Units</th>
-	 <th>Rate</th>
-	 <th>Total</th>
-	 <th>Crops</th> 
-	 <th>User</th>
-	 <th>Comments</th>
-</tr>
 
-
-<?php
 $fromDate=$_POST['year']."-".$_POST['month']."-".$_POST['day'];
 $toDate=$_POST['tyear']."-".$_POST['tmonth']."-".$_POST['tday'];
 $fieldCh=escapehtml($_POST['fieldID']);
 $materialCh=escapehtml($_POST['material']);
 $crop=escapehtml($_POST['crop']);
+if (!$_POST['inst']) {
+echo "<form name='form' method='POST' action='/down.php'>";
+echo "<table >";
+echo "<caption> Tractor Spraying Report </caption>";
+echo "<tr> <th >Date</th> <th>FieldID</th> <th>%Sprayed</th> <th>Material</th> <th>Units</th>";
+echo "<th>Rate</th> <th>Total</th> <th>Crops</th> <th>Comments</th> </tr>";
+
 $sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, actualTotalAmount*(SELECT size FROM field_GH WHERE field_GH.fieldID= tSprayField.fieldID)/(SELECT SUM(size) FROM field_GH, tSprayField as tf WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, crops, user, comment
 FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials
 WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".
@@ -46,7 +35,9 @@ echo mysql_error();
              number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".
              $rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate'].
              "</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['crops'].
-             "</td><td>".$rowM['user']." </td><td>".$rowM['comment']."</td></tr>";
+             "</td><td>".
+// $rowM['user']."</td><td>".
+             $rowM['comment']."</td></tr>";
 	}
 echo '</table>';
 	if($materialCh!='%'){
@@ -91,6 +82,56 @@ echo '<label for="download"> Please click the button below to download the repor
         echo '<br clear = "all"/>';
         echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
 echo "</form>";
+} else {
+echo "<table >";
+echo "<caption> Tractor Spraying Instructions </caption>";
+echo "<tr> <th >Date</th> <th>Fields</th><th>Materials</th><th>Water</th>";
+echo "<th>Additional Instructions</th></tr>";
+$masterSQL = "select id, sprayDate, waterPerAcre, comment from tSprayMaster where sprayDate BETWEEN '".
+  $fromDate."' AND '".$toDate."'";
+$result = mysql_query($masterSQL);
+echo mysql_error();
+while ($row = mysql_fetch_array($result)) {
+   $id = $row['id'];
+   echo "<tr><td>".$row['sprayDate']."</td><td>";
+   echo "<center><table style='width:5%'><tr><th>FieldID</th><th>Beds to Spray</th></tr>";
+   $sql = "select tSprayField.fieldID, numOfBed, numberOfBeds from tSprayField, field_GH".
+     " where tSprayField.fieldID LIKE '".
+     $fieldCh."' and tSprayField.fieldID = field_GH.fieldID and id = ".$id;
+   $fRes = mysql_query($sql);
+   echo mysql_error();
+   while ($fRow = mysql_fetch_array($fRes)) {
+       echo "<tr><td>".$fRow['fieldID']."</td><td>".$fRow['numOfBed']."&nbsp;(".
+         number_format((float) $fRow['numOfBed'] * 100 / $fRow['numberOfBeds'], 0, '.', '').
+         "%)</td></tr>";
+   }
+   echo "</table></center></td><td>";
+   echo "<center><table style='width:5%'><tr><th>Material</th><th>Amount</th><th>Unit</th></tr>";
+   $sql = "select material, actualTotalAmount, TRateUnits from tSprayWater, tSprayMaterials where id = ".
+      $id." and tSprayWater.material = tSprayMaterials.sprayMaterial and material LIKE'".
+     $materialCh."'";
+   $mRes = mysql_query($sql);
+   echo mysql_error();
+   while ($mRow = mysql_fetch_array($mRes)) {
+       echo "<tr><td>".$mRow['material']."</td><td>".$mRow['actualTotalAmount']."</td><td>";
+       echo $mRow['TRateUnits']."</td></tr>";
+   }
+   echo "</table></center></td><td>";
+   $watersql = "select sum(numOfBed * size/numberOfBeds) as acres from tSprayField, field_GH where".
+     " tSprayField.fieldID = field_GH.fieldID and id=".$id." and tSprayField.fieldID like '".
+     $fieldCh."'";
+   $wRes = mysql_query($watersql);
+   echo mysql_error();
+   while ($wRow = mysql_fetch_array($wRes)) {
+      echo number_format((float) $wRow['acres'] * $row['waterPerAcre'], 1, '.', '');
+      echo " GALLONS";
+   }
+
+   echo "<td>".$row['comment']."</td></tr>";
+}
+echo "</table>";
+echo '<br clear="all"/>';
+}
 
 echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 

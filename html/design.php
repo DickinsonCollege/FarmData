@@ -50,7 +50,11 @@ if ($_SESSION['admin']==1) {
    echo '<div class="tabs tabs6">';
 }
 */
-echo '<div class="tabs tabs'.$_SESSION['num_top'].'">';
+$num_top = $_SESSION['num_top'];
+if (!$_SESSION['admin']) {
+  $num_top--;
+}
+echo '<div class="tabs tabs'.$num_top.'">';
 ?>
 
 <ul>

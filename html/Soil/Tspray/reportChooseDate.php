@@ -50,6 +50,13 @@ echo "</select>";
 echo "</div>";
 ?>
 <br clear="all"/>
+<label for='inst'>Spraying Instructions Format:&nbsp;</label>
+<div class="styled-select">
+<select id="inst" name="inst" class="mobile-select"> 
+<option value=0 selected>No</option>
+<option value=1>Yes</option>
+</select></div>
+<br clear="all"/>
 <br clear="all"/>
 <input class="submitbutton" value="Submit" type="submit" name="submit" >
 </body>

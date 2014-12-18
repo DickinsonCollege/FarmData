@@ -227,9 +227,6 @@ if (!empty($_POST['done'])) {
    }
 
    /* calculate size of each menubar */
-   if (!$_SESSION['admin']) {
-      $tabsize['num_top']--;
-   }
    if (!$_SESSION['notes']) {
       $tabsize['num_top']--;
    }
