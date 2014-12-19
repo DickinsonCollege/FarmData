@@ -84,7 +84,7 @@ echo '<br clear="all"/>';
    $numRows = 0;
    while($row=mysql_fetch_array($sqldata)){
       $numRows++;
-      $result=mysql_query("Select fieldID from field_GH");
+      $result=mysql_query("Select fieldID from field_GH where active=1");
       $option='';
       while ($rowM =  mysql_fetch_array($result)){
          $option = $option. "<option value = \"".$rowM[fieldID]."\">".$rowM[fieldID]."</option>";

@@ -125,7 +125,7 @@ function show_confirm() {
      		'" id="fieldID' + numRows + '" class="mobile-select">' +
      		'<option value = 0 selected disabled> FieldID</option>' +
      		'<?php
-     		$result=mysql_query("Select fieldID from field_GH");
+     		$result=mysql_query("Select fieldID from field_GH where active=1");
      		while ($row1 =  mysql_fetch_array($result)){
      			echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
 			}

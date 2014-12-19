@@ -27,7 +27,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 <select id= "fieldID" name="fieldID" class='mobile-select'>
 <option value="%" selected> All </option>
 <?php
-$result = mysql_query("SELECT fieldID from field_GH");
+$result = mysql_query("SELECT fieldID from field_GH where active=1");
 while ($row =  mysql_fetch_array($result)){
   //echo "\n<option value= \"$row[fieldID]\">$row[fieldID]</option>";
 }

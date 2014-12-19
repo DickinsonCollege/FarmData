@@ -90,7 +90,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <select name ="fieldID" id="fieldID" onChange="callAll();" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
-$result=mysql_query("Select fieldID from field_GH");
+$result=mysql_query("Select fieldID from field_GH where active=1");
 while ($row1 =  mysql_fetch_array($result)){
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }

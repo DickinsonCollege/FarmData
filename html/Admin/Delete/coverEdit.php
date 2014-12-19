@@ -64,7 +64,7 @@ echo '<br clear="all"/>';
 echo "<label>Field ID:&nbsp</label>";
 echo "<div class='styled-select'><select name='fieldID' id='fieldID' onchange='callAll();'>";
 echo "<option value\"=".$fieldID."\" selected>".$fieldID."</option>";
-$sql = "SELECT fieldID FROM field_GH";
+$sql = "SELECT fieldID FROM field_GH where active=1";
 $sqldata = mysql_query($sql) or die();
 while ($row = mysql_fetch_array($sqldata)) {
 	echo "<option value=\"".$row['fieldID']."\">".$row['fieldID']."</option>";
