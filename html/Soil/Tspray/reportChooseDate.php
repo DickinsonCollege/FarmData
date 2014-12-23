@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='POST' action='report.php?tab=soil:soil_spray:tspray:tspray_report'>
+<form name='form' method='GET' action='report.php?tab=soil:soil_spray:tspray:tspray_report'>
+<input type="hidden" name="tab" value="soil:soil_spray:tspray:tspray_report">
 <h3 class="hi"> Tractor Spray Report </h3>
 <br clear="all"/>
 <label for='from'>From:&nbsp;</label>
@@ -50,7 +51,7 @@ echo "</select>";
 echo "</div>";
 ?>
 <br clear="all"/>
-<label for='inst'>Spraying Instructions Format:&nbsp;</label>
+<label for='inst'>Show Spray Queue:&nbsp;</label>
 <div class="styled-select">
 <select id="inst" name="inst" class="mobile-select"> 
 <option value=0 selected>No</option>

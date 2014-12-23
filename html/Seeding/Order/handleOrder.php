@@ -2,7 +2,20 @@
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $crop = $_POST['crop'];
-$year = $_POST['year'];
+$cover = $_POST['cover'];
+if (isset($_POST['submitCrop'])) {
+   $year = $_POST['year'];
+   $isCover = false;
+} else if (isset($_POST['submitCoverCrop'])) {
+   $year = $_POST['coverYear'];
+   $isCover = true;
+} else if (isset($cover) && $cover != "") {
+   $year = $_POST['coverYear'];
+   $isCover = true;
+} else {
+   $year = $_POST['year'];
+   $isCover = false;
+}
 $calc_SEEDS = $_POST['calc_SEEDS'];
 
 $units = array('GRAM', 'OUNCE', 'POUND');
@@ -50,9 +63,17 @@ function getNum($num) {
 }
 
 function update_inventory() {
-   $crop = $_POST['crop'];
+   global $isCover;
    $rowNum = $_POST['invRows'];
-   $sql = "delete from seedInventory where crop = '".$crop."'";
+   if ($isCover) {
+      $crop = $_POST['cover'];
+      $sql = "delete from coverSeedInventory where crop = '".$crop."'";
+      $inTable = "coverSeedInventory";
+   } else {
+      $crop = $_POST['crop'];
+      $sql = "delete from seedInventory where crop = '".$crop."'";
+      $inTable = "seedInventory";
+   }
    $res = mysql_query($sql);
    echo mysql_error();
    for ($i = 1; $i <= $rowNum; $i++) {
@@ -60,11 +81,13 @@ function update_inventory() {
           $variety = escapehtml($_POST['variety'.$i]);
           $code = escapehtml(getString($_POST['code'.$i]));
           $rowft = getNum($_POST['rowft'.$i]);
-          $defUnit = escapehtml(getString($_POST['unit'.$i]));
           $inven = getNum($_POST['inven'.$i]);
-          $inven = convertToGram($inven, $defUnit);
+          if (!$isCover) {
+             $defUnit = escapehtml(getString($_POST['unit'.$i]));
+             $inven = convertToGram($inven, $defUnit);
+          }
           $sYear = getNum($_POST['sYear'.$i]);
-          $sql = "insert into seedInventory values ('".$crop."', '".$variety."', ".$sYear.", '".
+          $sql = "insert into ".$inTable." values ('".$crop."', '".$variety."', ".$sYear.", '".
              $code."', ".$rowft.", ".$inven.")";
           $res = mysql_query($sql);
           echo mysql_error();
@@ -73,6 +96,7 @@ function update_inventory() {
 }
 
 function insert_order_row($crop, $year, $i, $status) {
+   global $isCover;
    $variety = escapehtml($_POST['varOrder'.$i]);
    $source = escapehtml($_POST['varSource'.$i]);
    $catalogOrder = escapehtml($_POST['catalogOrder'.$i]);
@@ -93,7 +117,12 @@ function insert_order_row($crop, $year, $i, $status) {
       $year = $_POST['year'.$j.'_'.$i];
       $search['sdate'.$j] = $year.'-'.$month.'-'.$day;
    }
-   $sql = "insert into orderItem values('".$crop."', '".$variety."', ".$year.", '".$source.
+   if ($isCover) {
+     $tbl = "coverOrderItem";
+   } else {
+     $tbl = "orderItem";
+   }
+   $sql = "insert into ".$tbl." values('".$crop."', '".$variety."', ".$year.", '".$source.
       "', '".$catalogOrder."', ".$organic.", '".$catalogUnit."', ".$price.", ".$unitsPerCatUnit.
       ", ".$catUnitsOrdered.", '".$status."'";
    for ($j = 1; $j < 4; $j++) {
@@ -105,10 +134,16 @@ function insert_order_row($crop, $year, $i, $status) {
 }
 
 function update_order() {
-   $crop = $_POST['crop'];
+   global $isCover;
    $year = $_POST['year'];
    $rowNum = $_POST['orderRows'];
-   $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+   if ($isCover) {
+      $crop = $_POST['cover'];
+      $sql = "delete from coverOrderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+   } else {
+      $crop = $_POST['crop'];
+      $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+   }
    $res = mysql_query($sql);
    echo mysql_error();
    for ($i = 1; $i <= $rowNum; $i++) {
@@ -119,15 +154,27 @@ function update_order() {
 }
 
 function order_arrived($row) {
-   $unitsPerCatUnit = getNum($_POST['unitsPerCatUnit'.$row]);
-   $catUnitsOrdered = getNum($_POST['catUnitsOrdered'.$row]);
+   global $isCover;
+    $unitsPerCatUnit = getNum($_POST['unitsPerCatUnit'.$row]);
+    $catUnitsOrdered = getNum($_POST['catUnitsOrdered'.$row]);
    $inven = $unitsPerCatUnit * $catUnitsOrdered;
-   $defUnit = $_POST['defUnit'];
-   $inven = convertToGram($inven, $defUnit);
+   if (!$isCover) {
+      $defUnit = $_POST['defUnit'];
+      $inven = convertToGram($inven, $defUnit);
+   }
+   $inven = $unitsPerCatUnit * $catUnitsOrdered;
    update_inventory();
    update_order();
-   $crop = $_POST['crop'];
-   $sql = "update orderItem set status = 'ARRIVED' where crop = '".$crop.
+   if ($isCover) {
+      $crop = $_POST['cover'];
+      $ordTbl = "coverOrderItem";
+      $invTbl = "coverSeedInventory";
+   } else {
+      $crop = $_POST['crop'];
+      $ordTbl = "orderItem";
+      $invTbl = "seedInventory";
+   }
+   $sql = "update ".$ordTbl." set status = 'ARRIVED' where crop = '".$crop.
       "' and status <> 'ARRIVED' and id = ".$row;
    $res = mysql_query($sql);
    echo mysql_error();
@@ -135,7 +182,7 @@ function order_arrived($row) {
    $sYear = $_POST['year'];
    $org = $_POST['organic'.$i];
    include 'make_code.php';
-   $sql = "insert into seedInventory values ('".$crop."', '".$variety."', ".$sYear.", '".
+   $sql = "insert into ".$invTbl." values ('".$crop."', '".$variety."', ".$sYear.", '".
       $code."', 0, ".$inven.")";
    $res = mysql_query($sql);
    echo mysql_error();
@@ -178,8 +225,13 @@ function convert_units($from, $to) {
    return $res;
 }
 
+if (isset($_POST['submitCrop'])) {
+   $cover = '';
+} else if (isset($_POST['submitCoverCrop'])) {
+   $crop='';
+}
 if (isset($_POST['updateSeedInfo'])) {
-  if (isset($_POST['crop'])) {
+  if (isset($crop) && $crop != "") {
      $crop = $_POST['crop'];
      $year = $_POST['year'];
      $seedsIn = $_POST['seedsIn'];
@@ -209,7 +261,6 @@ if (isset($_POST['updateSeedInfo'])) {
         $seeds = convertFromGram($seedsIn, $defUnit);
         $sql = "update seedInfo set seedsGram = ".$seeds.", defUnit = '".$defUnit."' where crop = '".
            $crop."'";
-// and year = ".$year;
         $res = mysql_query($sql);
         echo mysql_error();
      }
@@ -233,6 +284,35 @@ if (isset($_POST['updateSeedInfo'])) {
            echo mysql_error();
         }
      }
+  } else if (isset($cover) && $cover != "") {
+     $sql = "select * from coverSeedInfo where crop = '".$cover."'";
+     $res = mysql_query($sql);
+     echo mysql_error();
+     if (mysql_num_rows($res) == 0) {
+        $sql = "insert into coverSeedInfo values('".$cover."', 0)";
+        $res = mysql_query($sql);
+        echo mysql_error();
+     }
+     $sql = "select * from coverToOrder where crop = '".$cover."' and year = ".$year;
+     $res = mysql_query($sql);
+     echo mysql_error();
+     if (mysql_num_rows($res) == 0) {
+        $sql = "insert into coverToOrder values('".$cover."', ".$year.", 0, 1)";
+        $res = mysql_query($sql);
+        echo mysql_error();
+     }
+     $acres = escapehtml($_POST['acres']);
+     $rate = escapehtml($_POST['rate']);
+     if (isset($rate)) {
+        $sql = "update coverSeedInfo set rate = ".$rate." where crop = '".  $cover."'";
+        $res = mysql_query($sql);
+        echo mysql_error();
+     }
+     if (isset($acres)) {
+        $sql = "update coverToOrder set acres = ".$acres.", year = ".$year." where crop = '".  $cover."'";
+        $res = mysql_query($sql);
+        echo mysql_error();
+     }
   } else {
      echo '<script type="text/javascript">alert("Please select a crop!");</script>';
   }
@@ -246,13 +326,16 @@ if (isset($_POST['update_order'])) {
    update_order();
 }
 if (isset($_POST['addVar'])) {
-     $crop = $_POST['crop'];
-     $variety = escapehtml($_POST['newVar']);
+   $variety = escapehtml($_POST['newVar']);
+   if ($isCover) {
+     $sql = "insert into coverVariety values('".$cover."', upper('".$variety."'))";
+   } else {
      $sql = "insert into variety values('".$crop."', upper('".$variety."'))";
-     $res = mysql_query($sql);
-     echo mysql_error();
-     update_inventory();
-     update_order();
+   }
+   $res = mysql_query($sql);
+   echo mysql_error();
+   update_inventory();
+   update_order();
 } 
 if (isset($_POST['addSource'])) {
      $source = escapehtml($_POST['newSource']);
@@ -269,5 +352,6 @@ for ($i = 1; $i <= $rowNum; $i++) {
    }
 }
 echo '<meta http-equiv="refresh" content="0;URL=order.php?year='.$year.'&crop='.encodeURIComponent($crop).
-"&tab=seeding:ordert:ordert_input&calc_SEEDS=".$calc_SEEDS."\">";
+   "&cover=".encodeURIComponent($cover).
+   "&tab=seeding:ordert:ordert_input&calc_SEEDS=".$calc_SEEDS."\">";
 ?>

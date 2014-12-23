@@ -1,26 +1,51 @@
 <?php session_start(); ?>
+<script type="text/javascript">
+
+function complete(row, id) {
+   var init = document.getElementById("initials" + row).value;
+   if (init == "") {
+      alert("Please enter your initials!");
+      return false;
+   }
+   console.log(id);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "complete_tspray.php?id="+id+"&init="+encodeURIComponent(init), false);
+   xmlhttp.send();
+   if (xmlhttp.responseText != "\n") {
+       alert(xmlhttp.responseText);
+   }
+   window.location = window.location.href;
+   return true;
+}
+</script>
 <?php
 //include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
-$fromDate=$_POST['year']."-".$_POST['month']."-".$_POST['day'];
-$toDate=$_POST['tyear']."-".$_POST['tmonth']."-".$_POST['tday'];
-$fieldCh=escapehtml($_POST['fieldID']);
-$materialCh=escapehtml($_POST['material']);
-$crop=escapehtml($_POST['crop']);
-if (!$_POST['inst']) {
+$fromDate=$_GET['year']."-".$_GET['month']."-".$_GET['day'];
+$toDate=$_GET['tyear']."-".$_GET['tmonth']."-".$_GET['tday'];
+$fieldCh=escapehtml($_GET['fieldID']);
+$materialCh=escapehtml($_GET['material']);
+$crop=escapehtml($_GET['crop']);
+if (!$_GET['inst']) {
 echo "<form name='form' method='POST' action='/down.php'>";
 echo "<table >";
 echo "<caption> Tractor Spraying Report </caption>";
 echo "<tr> <th >Date</th> <th>FieldID</th> <th>%Sprayed</th> <th>Material</th> <th>Units</th>";
-echo "<th>Rate</th> <th>Total</th> <th>Crops</th> <th>Comments</th> </tr>";
+echo "<th>Rate</th> <th>Total</th> <th>Crops</th> <th>Comments</th><th>Initials</th> </tr>";
 
-$sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, actualTotalAmount*(SELECT size FROM field_GH WHERE field_GH.fieldID= tSprayField.fieldID)/(SELECT SUM(size) FROM field_GH, tSprayField as tf WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, crops, user, comment
-FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials
-WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".
-$materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND crops like '%".$crop.
-   "%' and tSprayMaster.sprayDate BETWEEN '".$fromDate."' AND '".$toDate."'  AND tSprayMaterials.sprayMaterial=tSprayWater.material";
+$sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH ".
+   "WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, ".
+   "initials, actualTotalAmount*(SELECT size FROM field_GH ".
+       "WHERE field_GH.fieldID= tSprayField.fieldID)/".
+       "(SELECT SUM(size) FROM field_GH, tSprayField as tf ".
+       "WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, crops, user, comment ".
+       "FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials ".
+       "WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".
+       $materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND crops like '%".$crop.
+       "%' and tSprayMaster.sprayDate BETWEEN '".$fromDate."' AND '".$toDate.
+       "' AND tSprayMaterials.sprayMaterial=tSprayWater.material and complete = 1";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
 $count=0;
 $totalMaterial=0;
@@ -37,7 +62,7 @@ echo mysql_error();
              "</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['crops'].
              "</td><td>".
 // $rowM['user']."</td><td>".
-             $rowM['comment']."</td></tr>";
+             $rowM['comment']."</td><td>".$rowM['initials']."</td></tr>";
 	}
 echo '</table>';
 	if($materialCh!='%'){
@@ -83,15 +108,27 @@ echo '<label for="download"> Please click the button below to download the repor
         echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
 echo "</form>";
 } else {
+/*
+   echo '<form method="POST" action = "update_instructions.php">';
+$year=$_POST['year'];
+$month=$_POST['month'];
+$da."-".$_POST['day'];
+$toDate=$_POST['tyear']."-".$_POST['tmonth']."-".$_POST['tday'];
+$fieldCh=escapehtml($_POST['fieldID']);
+$materialCh=escapehtml($_POST['material']);
+$crop=escapehtml($_POST['crop']);
+*/
 echo "<table >";
+$numRows = 0;
 echo "<caption> Tractor Spraying Instructions </caption>";
 echo "<tr> <th >Date</th> <th>Fields</th><th>Materials</th><th>Water</th>";
-echo "<th>Additional Instructions</th></tr>";
-$masterSQL = "select id, sprayDate, waterPerAcre, comment from tSprayMaster where sprayDate BETWEEN '".
-  $fromDate."' AND '".$toDate."'";
+echo "<th>Additional Instructions</th><th>Initials</th><th>Complete</th></tr>";
+$masterSQL = "select id, sprayDate, waterPerAcre, comment, initials from tSprayMaster where sprayDate BETWEEN '".
+  $fromDate."' AND '".$toDate."' and complete=0";
 $result = mysql_query($masterSQL);
 echo mysql_error();
 while ($row = mysql_fetch_array($result)) {
+   $numRows++;
    $id = $row['id'];
    echo "<tr><td>".$row['sprayDate']."</td><td>";
    echo "<center><table style='width:5%'><tr><th>FieldID</th><th>Beds to Spray</th></tr>";
@@ -127,10 +164,19 @@ while ($row = mysql_fetch_array($result)) {
       echo " GALLONS";
    }
 
-   echo "<td>".$row['comment']."</td></tr>";
+   echo "<td>".$row['comment']."</td><td>";
+   echo "<input class='textbox mobile-input inside_table' type='text' id='initials".$numRows.
+      "' name='initials".$numRows."' value='".$row['initials']."' style='width:100%'></td><td>";
+   echo '<input class = "submitbutton" type="button" name="done'.$numRows.
+       '" value="Done" onclick="complete('.$numRows.', '.$id.');"/>';
+   echo "</td></tr>";
 }
 echo "</table>";
+echo "<input type='hidden' name='numRows' value=".$numRows.">";
 echo '<br clear="all"/>';
+/*
+echo "</form>";
+*/
 }
 
 echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';

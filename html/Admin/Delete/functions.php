@@ -109,10 +109,6 @@
          }
          mIndex++;
       }   
-      var currentCG=document.getElementById("cropGroup2");
-      if(currentCG.value==0){
-         return false;
-      }      
 
       return true;
    }

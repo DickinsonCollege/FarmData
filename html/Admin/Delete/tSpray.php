@@ -34,6 +34,8 @@ $origDay = $_GET['day'];
 $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
+$complete=$_GET['complete'];
+$initials=$_GET['initials'];
 ?>
 <label for="date">Date:&nbsp;</label>
 <?php 
@@ -70,9 +72,31 @@ echo '</div></select>';
 echo '<br clear="all"/>';
 
 ?>
+<label for="status">Status:&nbsp;</label>
+<div class="styled-select" id="statusDiv"> <select class="mobile-select" id="status" name="status">
+<?php
+echo '<option value=1';
+if ($complete == 1) {
+   echo ' selected';
+}
+echo '>Completed</option>';
+echo '<option value=0';
+if ($complete == 0) {
+   echo ' selected';
+}
+echo '>Queued</option>';
+?>
+</select>
+</div>
+<br clear="all">
+<label for="initials">Initials:&nbsp;</label>
+<?php
+echo "<input class='textbox mobile-input ' type='text' id='initials' name='initials' value='".
+   $initials."'>";
+?>
+<br clear="all">
 <br clear="all">
 <table name="fieldTable" id="fieldTable">
-<caption> Tractor Spray Input Form </caption>
 <tr>
    <th>Field</th>
    <th>Num Beds Sprayed</th>
@@ -250,11 +274,14 @@ $waterPerAcre=escapehtml($_POST['waterPerAcre']);
 $username=escapehtml($_POST['user']);
 $numField = escapehtml($_POST['numRows']);
 $numMaterial = escapehtml($_POST['numRowsMat']);
-echo "numField: ".$numField." numMaterials: ". $numMaterial;
-$sqlM="update tSprayMaster SET sprayDate='".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',noField=".$numField.",noMaterial=".$numMaterial.
-      ",waterPerAcre=".$waterPerAcre.",crops = '".$crops."', comment= '".$comSanitized."', user='".$username. "' where id=".$id;
+$complete = $_POST['status'];
+$initials = escapehtml($_POST['initials']);
+$sqlM="update tSprayMaster SET sprayDate='".$_POST['year']."-".$_POST['month'].
+   "-".$_POST['day']."',noField=".$numField.",noMaterial=".$numMaterial.
+   ",waterPerAcre=".$waterPerAcre.",crops = '".$crops."', comment= '".
+   $comSanitized."', user='".$username. "', complete = ".$complete.
+   ", initials = '".$initials."' where id=".$id;
 $rusultM=mysql_query($sqlM);
-echo $sqlM or die(mysql_error());
 echo mysql_error();
 
 $fieldInd=1;
@@ -267,7 +294,7 @@ while($fieldInd<= $_POST['numRows']){
    $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
    $sqlF="INSERT INTO tSprayField VALUES(".$id." , '". $field."' , ".$bed.");";
    mysql_query($sqlF) or die (mysql_error());
-   echo $sqlF;
+   $sqlF;
    echo mysql_error();
    $fieldInd++;
 }
@@ -283,7 +310,7 @@ while($materialInd<= $_POST['numRowsMat']){
    $sqlW="INSERT INTO tSprayWater VALUES(".$id." , '". $material."', ".
       $rate." , ".$total."  );";
    mysql_query($sqlW) or die(mysql_error());
-   echo $sqlW;
+   $sqlW;
    echo mysql_error();
    $materialInd++;
 }

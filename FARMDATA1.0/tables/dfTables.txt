@@ -360,7 +360,10 @@ create table tSprayMaster(
         noField int,
         noMaterial int,
         waterPerAcre int, crops text,
-        comment text, user varchar(30)
+        comment text,
+        user varchar(30),
+        complete tinyint(1) default 1,
+        initials varchar(8) default ''
       ) ENGINE=INNODB;
 
 create table tSprayField(
@@ -640,10 +643,31 @@ create table seedInfo (
    foreign key (crop) references plant(crop) on update cascade)
    ENGINE=InnoDB;
 
+create table coverSeedInfo (
+   crop varchar(30) not null primary key,
+   rate float,
+   foreign key (crop) references coverCrop(crop) on update cascade)
+ENGINE=InnoDB;
+
+create table coverToOrder (
+   crop varchar(30) not null,
+   year int,
+   acres float default 0,
+   nextNum int not null default 1,
+   primary key (crop, year),
+   foreign key (crop) references coverCrop(crop) on update cascade)
+ENGINE=InnoDB;
+
 create table variety (
    crop varchar(30) not null,
    variety varchar(50) not null,
    foreign key (crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table coverVariety (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   foreign key (crop) references coverCrop(crop) on update cascade)
    ENGINE=InnoDB;
 
 create table source (
@@ -679,6 +703,28 @@ create table orderItem (
    foreign key (crop) references plant(crop) on update cascade)
    ENGINE=InnoDB;
 
+create table coverOrderItem (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   year int not null,
+   source varchar(50) not null,
+   catalogOrder varchar(30),
+   organic tinyint(1) default 1,
+   catalogUnit varchar(30),
+   price float,
+   unitsPerCatUnit real,
+   catUnitsOrdered int,
+   status varchar(10) default 'PENDING',
+   source1 varchar(50),
+   sdate1 date,
+   source2 varchar(50),
+   sdate2 date,
+   source3 varchar(50),
+   sdate3 date,
+   id int not null,
+   foreign key (crop) references coverCrop(crop) on update cascade)
+   ENGINE=InnoDB;
+
 create table seedInventory (
    crop varchar(30) not null,
    variety varchar(50) not null,
@@ -687,4 +733,14 @@ create table seedInventory (
    rowFt float not null default 0,
    inInventory float not null default 0,
    foreign key(crop) references plant(crop) on update cascade)
+   ENGINE=InnoDB;
+
+create table coverSeedInventory (
+   crop varchar(30) not null,
+   variety varchar(50) not null,
+   year int not null,
+   code varchar(20) not null,
+   acres float not null default 0,
+   inInventory float not null default 0,
+   foreign key(crop) references coverCrop(crop) on update cascade)
    ENGINE=InnoDB;

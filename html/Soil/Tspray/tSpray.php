@@ -3,15 +3,22 @@
 //include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
+$farm = $_SESSION['db'];
 
 ?>
 <form name='form' method='POST'>
 <label for="date">Date:&nbsp;</label>
 <?php include $_SERVER['DOCUMENT_ROOT'].'/date.php'?>
 <br clear="all">
+<label for="status">Status:&nbsp;</label>
+<div class="styled-select" id="statusDiv"> <select class="mobile-select" id="status" name="status">
+<option value=1 selected>Completed</option>
+<option value=0>Queued</option>
+</select>
+</div>
+<br clear="all">
 <br clear="all">
 <table name="fieldTable" id="fieldTable">
-<caption> Tractor Spray Input Form </caption>
 <tr>
 	<th>Field</th>
 	<th>Num Beds Sprayed</th>
@@ -49,8 +56,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 	<th>Total Gallons of Water Used </th>
 
 </tr>
-<tr><td><center><input class='textbox4 mobile-input inside_table' type="text" name="waterPerAcre" id="waterPerAcre" value=0  onkeyup="calculateWater();"></center></td>
-<td><center><input type="text" class='textbox4 mobile-input inside_table' name="totalWater" id="totalWater" value=0 ></center></td></tr>
+<tr><td><center><input class='textbox4 mobile-input inside_table' type="text" name="waterPerAcre" id="waterPerAcre" value=
+<?php
+if ($farm == 'wahlst_spiralpath') {
+   echo 90;
+} else {
+   echo 0;
+}
+?>
+  onkeyup="calculateWater();"></center></td>
+<td><center><input type="text" class='textbox4 mobile-input inside_table' name="totalWater" id="totalWater" value=0></center></td></tr>
 </table>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
@@ -101,10 +116,11 @@ for ($i = 1; $i <= $numCrops; $i++) {
    $crops .= escapehtml($_POST['crop'.$i]);
 }
 $numMaterial = escapehtml($_POST['numMaterial']);
-echo $sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, comment, user) VALUES ('"
+$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, "
+   ."comment, user, complete, initials) VALUES ('"
    .$_POST['year']."-".$_POST['month']."-".$_POST['day']."' , ".$numField." , ".
    $numMaterial." , ".$waterPerAcre." , '".$crops."' , '".$comSanitized.
-   "' , '".$username. "' )";
+   "' , '".$username. "', ".$_POST['status'].", '')";
 $rusultM=mysql_query($sqlM);
 //echo $sqlM;
 echo mysql_error();

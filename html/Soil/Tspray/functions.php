@@ -4,6 +4,7 @@
 <script type="text/javascript">
    var numRows=0;
    var numRowsMat=0;
+   var farm = "<?php echo $_SESSION['db'];?>";
 
    function addRow(){
       numRows++;
@@ -197,12 +198,17 @@
       }
    } 
    function calculateSuggested(numS) {   
-      var mC = document.getElementById('rate2'+numS);
-      var strUser = mC.options[mC.selectedIndex].value;
+      var mC = document.getElementById('rate2'+numS).value;
       var newdivC=document.getElementById('calculatedTotal'+numS);
-      var integer= parseFloat(strUser).toFixed(2);
+      var integer= parseFloat(mC).toFixed(2);
    
-      newdivC.value= (calculateTotal() * strUser).toFixed(2);
+      var total = (calculateTotal() * mC).toFixed(2);
+      newdivC.value = total;
+      if (farm == 'wahlst_spiralpath') {
+         var actual = document.getElementById('actuarialTotal'+numS);
+         actual.value = total;
+      }
+    
    }
    
    function checkIfFilled(){
