@@ -8,26 +8,39 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <?php
 $year = $_POST['year'];
 $crop = escapehtml($_POST['crop']);
+$covercrop = escapehtml($_POST['covercrop']);
 $source = escapehtml($_POST['source']);
 $status = $_POST['status'];
 $order = $_POST['order'];
-
-$sql="select orderItem.crop, variety, year, source, catalogOrder, case when organic = 1 then 'OG' else 'UT' end"
-   ." as organic, catalogUnit, price, defUnit, ".
-   "unitsPerCatUnit, catUnitsOrdered, unitsPerCatUnit * catUnitsOrdered as defUnitsOrdered, ".
-   "catUnitsOrdered * price as totalPrice, status, source1, sdate1, source2, sdate2, source3, sdate3 ".
-   " from orderItem, seedInfo where orderItem.crop = seedInfo.crop and year like ".$year.
-  " and orderItem.crop like '".$crop."' and source like '".$source."' and status like '".$status."'";
-if ($order == 'crop') {
-   $sql .= " order by orderItem.crop, year, variety, source";
+if ($_POST['submitCrop']) {
+  $itemTable = "orderItem";
+  $infoTable = "seedInfo";
+  $isCover = false;
 } else {
-   $sql .= " order by organic, orderItem.crop, year, variety, source";
+  $itemTable = "coverOrderItem";
+  $infoTable = "coverSeedInfo";
+  $isCover = true;
 }
-// echo $sql;
+
+$sql="select ".$itemTable.".crop, variety, year, source, catalogOrder, case when organic = 1 then 'OG' else 'UT' end"
+   ." as organic, catalogUnit, price, ";
+if (!$isCover) {
+   $sql .= "defUnit, ";
+}
+$sql .= "unitsPerCatUnit, catUnitsOrdered, unitsPerCatUnit * catUnitsOrdered as defUnitsOrdered, ".
+   "catUnitsOrdered * price as totalPrice, status, source1, sdate1, source2, sdate2, source3, sdate3 ".
+   " from ".$itemTable.", ".$infoTable." where ".$itemTable.".crop = ".$infoTable.
+   ".crop and year like '".$year.  "' and ".$itemTable.".crop like '".$crop."' and source like '".
+   $source."' and status like '".$status."'";
+if ($order == 'crop') {
+   $sql .= " order by ".$itemTable.".crop, year, variety, source";
+} else {
+   $sql .= " order by organic, ".$itemTable.".crop, year, variety, source";
+}
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
 $result=mysql_query($sql);
 if (!$result) {
-        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
+        echo "<script>alert(\"Could not retrieve report: Please try again!\\n".mysql_error()."\");</script>\n";
 }
 echo "<table>";
 echo "<caption>Seed Order Report for ";
@@ -57,9 +70,24 @@ if ($status == "%") {
 echo "</caption>";
 
 echo "<tr><th>Crop<center></th><th>Variety</th><th>Year</th><th>Source</th><th>Catalog Order #</th>";
-echo "<th>Organic?</th><th>Catalog Unit</th><th>Price Per Catalog Unit</th><th>Default Unit</th>";
-echo "<th>Default Units Per Catalog Unit</th><th>Number of Catalog Units Ordered</th>";
-echo "<th>Default Units Ordered</th><th>Total Price</th><th>Order Status</th>";
+echo "<th>Organic?</th><th>Catalog Unit</th><th>Price Per Catalog Unit</th>";
+if (!$isCover) {
+   echo "<th>Default Unit</th>";
+}
+echo "<th>";
+if ($isCover) {
+   echo "Pounds";
+} else {
+   echo "Default Units";
+}
+echo " Per Catalog Unit</th><th>Number of Catalog Units Ordered</th>";
+echo "<th>";
+if ($isCover) {
+   echo "Pounds";
+} else {
+   echo "Default Units";
+}
+echo " Ordered</th><th>Total Price</th><th>Order Status</th>";
 echo "<th>Search Source 1</th><th>Date Searched 1</th>";
 echo "<th>Search Source 2</th><th>Date Searched 2</th>";
 echo "<th>Search Source 3</th><th>Date Searched 3</th></tr>";
@@ -93,8 +121,10 @@ while ($row= mysql_fetch_array($result)) {
      echo "</td><td>";
      echo number_format((float) $row['price'], 2, '.', '');
      echo "</td><td>";
-     echo $defUnit = $row['defUnit'];
-     echo "</td><td>";
+     if (!$isCover) {
+        echo $defUnit = $row['defUnit'];
+        echo "</td><td>";
+     }
      echo $row['unitsPerCatUnit'];
      echo "</td><td>";
      echo $row['catUnitsOrdered'];

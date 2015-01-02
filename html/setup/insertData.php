@@ -44,6 +44,14 @@
                  echo "<script>alert(\"Could not insert data: Please try again!\\n".mysql_error().
                      "\");</script> \n";
               }
+           } else if ($table == "coverCrop") {
+              $sql = "insert into coverVariety values('".$vals[0]."', '".$vals[0]."')";
+              $result=mysql_query($sql);
+              if (!$result) {
+                 $success = false;
+                 echo "<script>alert(\"Could not insert data: Please try again!\\n".mysql_error().
+                     "\");</script> \n";
+              }
            }
          }
       }

@@ -66,6 +66,12 @@ if (!empty($_POST['done'])) {
       } else {
          echo "<script>showAlert(\"Added Cover Crop Successfully!\");</script> \n";
       }
+      $sql = "insert into coverVariety values('".$cover."', '".$cover."')";
+      $result = mysql_query($sql);
+      if (!$result) {
+         echo "<script>alert(\"Could not add cover crop variety: Please try again!\\n".
+              mysql_error()."\");</script>\n";
+      } 
    }else {
       echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
    }

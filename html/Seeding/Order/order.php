@@ -80,7 +80,7 @@ printYear("year");
 <?php 
 if ($_SESSION['cover']) {
    echo '</td><td>';
-   echo '<label for="cover">Cover Crop:&nbsp;</label>';
+   echo '<label for="cover">Crop:&nbsp;</label>';
    echo "<div id='covercropdiv' class='styled-select'>";
    echo "<select name='cover' id='cover' class='mobile-select'>";
    $sql = "select crop from coverCrop";
