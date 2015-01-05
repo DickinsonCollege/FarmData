@@ -24,21 +24,27 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <?php
 if (isset($_POST['add'])) {
    $product = escapehtml(strtoupper($_POST['product']));
-   $unit = escapehtml(strtoupper($_POST['unit']));
-   $upc = escapehtml($_POST['upc']);
-   $dhunit = escapehtml(strtoupper($_POST['dh_unit']));
-
-   if (!empty($product) && !empty($unit) && !empty($upc) && $upc > 0 && !empty($dhunit)) {
-      $sql="Insert into product(product,unit,units_per_case, dh_units) values ('".
-          $product."','".$unit."','".$upc."', '".$dhunit."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add product: Please try again!\\n".mysql_error()."\");</script>\n";
-      }else {
-         echo "<script>showAlert(\"Added Product Successfully!\");</script> \n";
-      }
+   $sql = "select * from plant where crop = '".$product."'";
+   $result = mysql_query($sql);
+   if (mysql_fetch_array($result)) {
+      echo "<script>alert(\"Can not add a product with the same name as a crop: please try again!.\");</script>\n";
    } else {
-   echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      $unit = escapehtml(strtoupper($_POST['unit']));
+      $upc = escapehtml($_POST['upc']);
+      $dhunit = escapehtml(strtoupper($_POST['dh_unit']));
+
+      if (!empty($product) && !empty($unit) && !empty($upc) && $upc > 0 && !empty($dhunit)) {
+         $sql="Insert into product(product,unit,units_per_case, dh_units) values ('".
+             $product."','".$unit."','".$upc."', '".$dhunit."')";
+         $result=mysql_query($sql);
+         if (!$result) {
+            echo "<script>alert(\"Could not add product: Please try again!\\n".mysql_error()."\");</script>\n";
+         }else {
+            echo "<script>showAlert(\"Added Product Successfully!\");</script> \n";
+         }
+      } else {
+         echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      }
    }
 }
 ?>
