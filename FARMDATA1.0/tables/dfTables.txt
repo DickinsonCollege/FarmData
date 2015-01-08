@@ -280,13 +280,13 @@ update cascade,
 */
 
 create table coverSeed_master(
-        id int NOT NULL AUTO_INCREMENT primary key, 
+   id int NOT NULL AUTO_INCREMENT primary key, 
    seed_method varchar(30),
-        incorp_tool varchar(30),
+   incorp_tool varchar(30),
    comments text,
    seedDate date,
-        fieldID varchar(30),
-        area_seeded float not null, 
+   fieldID varchar(30),
+   area_seeded float not null, 
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(incorp_tool) references tools(tool_name) on update cascade,
    foreign key(seed_method) references seedingMethod(seed_method)
@@ -296,8 +296,8 @@ create table coverSeed_master(
 create table coverSeed(
    crop varchar(30),
    seedRate float,
-        num_pounds float,
-        id int, 
+   num_pounds float,
+   id int, 
    foreign key(crop) references coverCrop(crop) on update cascade,
    foreign key(id) references coverSeed_master(id)
    ) ENGINE=INNODB;
@@ -319,15 +319,15 @@ create table coverKill(
 
 create table coverKill_master(
    id int auto_increment primary key,
-        killDate date,
-        seedDate date,
-        incorpTool varchar(30),
+   killDate date,
+   seedDate date,
+   incorpTool varchar(30),
    totalBiomass float,
-        comments text,
-        fieldID varchar(30),
+   comments text,
+   fieldID varchar(30),
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(incorpTool) references tools(tool_name) on update cascade
-   ) ENGINE=INNODB;
+) ENGINE=INNODB;
 
 create table coverKill(
    id int,
@@ -355,16 +355,16 @@ insert into cropGroupReference values('VEGMIX');
 */
 
 create table tSprayMaster(
-        id int auto_increment primary key,
-        sprayDate date,
-        noField int,
-        noMaterial int,
-        waterPerAcre int, crops text,
-        comment text,
-        user varchar(30),
-        complete tinyint(1) default 1,
-        initials varchar(8) default ''
-      ) ENGINE=INNODB;
+   id int auto_increment primary key,
+   sprayDate date,
+   noField int,
+   noMaterial int,
+   waterPerAcre int, crops text,
+   comment text,
+   user varchar(30),
+   complete tinyint(1) default 1,
+   initials varchar(8) default ''
+) ENGINE=INNODB;
 
 create table tSprayField(
    id int,
@@ -403,12 +403,12 @@ create table pestScout(
    foreign key (fieldID) references field_GH(fieldID) on update cascade) ENGINE=INNODB;
 
 create table bspray(
-        sprayDate date,fieldID varchar(30),water float NOT NULL, 
-        materialSprayed varchar(30), rate float NOT NULL, totalMaterial float NOT NULL,
-         mixedWith varchar(30), crops text, comments text, id int auto_increment primary key,
-        foreign key (fieldID) references field_GH(fieldID) on update cascade,
-        foreign key (materialSprayed) references tSprayMaterials(sprayMaterial) on update cascade
-        ) ENGINE=INNODB;
+   sprayDate date,fieldID varchar(30),water float NOT NULL, 
+   materialSprayed varchar(30), rate float NOT NULL, totalMaterial float NOT NULL,
+   mixedWith varchar(30), crops text, comments text, id int auto_increment primary key,
+   foreign key (fieldID) references field_GH(fieldID) on update cascade,
+   foreign key (materialSprayed) references tSprayMaterials(sprayMaterial) on update cascade
+) ENGINE=INNODB;
 
 create table weed(
    weedName varchar(30) primary key) ENGINE=INNODB;
@@ -443,8 +443,9 @@ create table tillage(
  ENGINE=INNODB;
 
 create table users(
-        username varchar(30) primary key,admin tinyint(1) default 0, 
-        active tinyint(1)) ENGINE=INNODB;
+   username varchar(30) primary key,
+   admin tinyint(1) default 0, 
+   active tinyint(1)) ENGINE=INNODB;
 
 create table fertilizerReference(
     fertilizerName varchar(30) primary key,
@@ -495,7 +496,7 @@ create table disease (
 create table diseaseScout(
    sDate date,fieldID varchar(30),crops text,disease varchar(30),
    infest int,stage varchar(30),comments text,
-        id int NOT NULL AUTO_INCREMENT primary key,
+   id int NOT NULL AUTO_INCREMENT primary key,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(disease) references disease(diseaseName) on update cascade,
    foreign key(stage) references stage(stage) on update cascade) ENGINE=INNODB;
@@ -508,10 +509,10 @@ create table pack (
    unit varchar(30),
    comments text,
    bringBack tinyint(1), 
-        Target varchar(30),
+   Target varchar(30),
    id int NOT NULL AUTO_INCREMENT primary key,
-        foreign key(Target) references targets(targetName) on update cascade
-   ) ENGINE=INNODB;
+   foreign key(Target) references targets(targetName) on update cascade
+) ENGINE=INNODB;
 
 create table distribution (
    distDate date, 
@@ -522,14 +523,19 @@ create table distribution (
    unit varchar(30), 
    comments text, 
    id int NOT NULL AUTO_INCREMENT primary key,
-        foreign key(Target) references targets(targetName) on update cascade
+   foreign key(target) references targets(targetName) on update cascade
 ) ENGINE=INNODB;
 
 
 create table correct (
-   id int auto_increment not null, correctDate date,
-   crop_product varchar(30), grade int, amount float, unit
-   varchar(30), primary key (id));
+   id int auto_increment not null,
+   correctDate date,
+   crop_product varchar(30),
+   grade int,
+   amount float,
+   unit varchar(30),
+   primary key (id)
+) ENGINE=INNODB;
 
 create view unionPackDistribution as 
    (select crop_product, grade, amount, unit 
@@ -553,9 +559,11 @@ create table distribution_temp(
    ) ENGINE=INNODB;
 */
 
-create table irrigation_device( id int primary key not null auto_increment,
-irrigation_device varchar(30) not null,
-unique(irrigation_device)) engine=INNODB; 
+create table irrigation_device(
+   id int primary key not null auto_increment,
+   irrigation_device varchar(30) not null,
+   unique(irrigation_device)
+) ENGINE=INNODB; 
 
 /*
 insert into irrigation_device(irrigation_device) values('2" BALL');

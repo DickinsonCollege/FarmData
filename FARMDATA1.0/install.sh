@@ -127,8 +127,8 @@ fi
 
 echo "The URL for your FARMDATA installation is: http$S://$DOMAIN/$FDIR"
 
-if [ $UPGRADE = n ]; then
 # :<<'QWERTY'
+if [ $UPGRADE = n ]; then
    echo "If you wish to create the necessary MySQL databases yourself, please do"
    echo "so before continuing with FARMDATA installation."
    echo ""
