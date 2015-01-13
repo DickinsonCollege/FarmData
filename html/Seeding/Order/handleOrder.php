@@ -114,8 +114,8 @@ function insert_order_row($crop, $year, $i, $status) {
       $search['source'.$j] = escapehtml($_POST['searchSource'.$j.'_'.$i]);
       $month = $_POST['month'.$j.'_'.$i];
       $day = $_POST['day'.$j.'_'.$i];
-      $year = $_POST['year'.$j.'_'.$i];
-      $search['sdate'.$j] = $year.'-'.$month.'-'.$day;
+      $syear = $_POST['year'.$j.'_'.$i];
+      $search['sdate'.$j] = $syear.'-'.$month.'-'.$day;
    }
    if ($isCover) {
      $tbl = "coverOrderItem";
@@ -135,14 +135,17 @@ function insert_order_row($crop, $year, $i, $status) {
 
 function update_order() {
    global $isCover;
-   $year = $_POST['year'];
    $rowNum = $_POST['orderRows'];
    if ($isCover) {
+      $year = $_POST['year'];
       $crop = $_POST['cover'];
-      $sql = "delete from coverOrderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+      $sql = "delete from coverOrderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
+         $year;
    } else {
+      $year = $_POST['coverYear'];
       $crop = $_POST['crop'];
-      $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+      $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
+         $year;
    }
    $res = mysql_query($sql);
    echo mysql_error();
@@ -309,7 +312,8 @@ if (isset($_POST['updateSeedInfo'])) {
         echo mysql_error();
      }
      if (isset($acres)) {
-        $sql = "update coverToOrder set acres = ".$acres.", year = ".$year." where crop = '".  $cover."'";
+        $sql = "update coverToOrder set acres = ".$acres." where crop = '".  $cover."' and year = ".
+           $year;;
         $res = mysql_query($sql);
         echo mysql_error();
      }

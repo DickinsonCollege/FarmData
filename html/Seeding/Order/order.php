@@ -1188,9 +1188,11 @@ if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $row
    echo "</table>";
    echo "<script type='text/javascript'>";
    if ($isCover) {
-      $sql = "select * from coverOrderItem where crop = '".$cover."' and status <> 'ARRIVED'";
+      $sql = "select * from coverOrderItem where crop = '".$cover."' and status <> 'ARRIVED' and year = ".
+          $year;
    } else {
-      $sql = "select * from orderItem where crop = '".$crop."' and status <> 'ARRIVED'";
+      $sql = "select * from orderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
+          $year;
    }
    $res = mysql_query($sql);
    echo mysql_error();
