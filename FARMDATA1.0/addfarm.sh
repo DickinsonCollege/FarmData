@@ -27,7 +27,7 @@ mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $FARMDB;" || {
 mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
     echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
 mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
-       grant select, delete, insert, update, show view on $FARMDB.* to $FARMUSER;" || { 
+       grant select, delete, insert, update, show view, lock tables on $FARMDB.* to $FARMUSER;" || { 
     echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
 echo "Database creation successful!"
 
@@ -57,4 +57,12 @@ mysql -u $FU -p$FP -Bse "use $FARMDB; source tables/baseTables.txt;
       echo "Setting up farm database failed.  Exiting FARMDATA install!"; exit 1; }
 
 echo "Database table creation successful!"
+
+echo "Enter full path to FARMDATA installation directory:";
+read FULLPATH
+mkdir -p $FULLPATH/files/$FARMDB || { echo "Unable to create files directory - exiting!";
+                                      exit 1; }
+chmod 777 $FULLPATH/files/$FARMDB
+mkdir -p $FULLPATH/files/$FARMDB/wfbtrash
+chmod 777 $FULLPATH/files/$FARMDB/wfbtrash
 echo "Farm added successfully!"

@@ -163,7 +163,7 @@ if [ $UPGRADE = n ]; then
      mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
          echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
      mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
-            grant select, delete, insert, update, show view on $FARMDB.* to $FARMUSER;" || { 
+            grant select, delete, insert, update, show view, lock tables on $FARMDB.* to $FARMUSER;" || { 
          echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
      UU=$ADMINUSER
      UP=$ADMINPASS
@@ -333,6 +333,8 @@ cp -r src/* $FULLPATH
 chmod 777 $FULLPATH/files/
 mkdir -p $FULLPATH/files/$FARMDB
 chmod 777 $FULLPATH/files/$FARMDB
+mkdir -p $FULLPATH/files/$FARMDB/wfbtrash
+chmod 777 $FULLPATH/files/$FARMDB/wfbtrash
 
 rm -rf src/*
 
