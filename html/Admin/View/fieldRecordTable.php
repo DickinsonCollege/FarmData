@@ -261,7 +261,7 @@ if ($_SESSION['liquidfertilizer']) {
 }
 
 if ($_SESSION['dryfertilizer']) {
-   $sql = "select inputDate, fertilizer, cropGroup, rate, numBeds, totalApply, comments ".
+   $sql = "select inputDate, fertilizer, crops, rate, numBeds, totalApply, comments ".
       "from fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".
       $tcurYear."-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' order by inputDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
@@ -450,7 +450,7 @@ if ($_SESSION['cover']) {
 }
 
 if ($_SESSION['insect']) {
-   $sql="select sDate,crop,pest,avgCount,comments from pestScout where sDate between '".$year."-".$month.
+   $sql="select sDate,crops,pest,avgCount,comments from pestScout where sDate between '".$year."-".$month.
       "-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".$fieldID.
       "' order by sDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
@@ -460,12 +460,12 @@ if ($_SESSION['insect']) {
    } else {
       echo "<table>";
       echo "<caption>INSECT SCOUTING</caption>";
-      echo "<tr><th>Date</th><th>Crop</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr>";
+      echo "<tr><th>Date</th><th>Crops</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['sDate'];
          echo "</td><td>";
-         echo $row['crop'];
+         echo $row['crops'];
          echo "</td><td>";
          echo $row['pest'];
          echo "</td><td>";
@@ -511,7 +511,7 @@ if ($_SESSION['weed']) {
 }
 
 if ($_SESSION['disease']) {
-   $sql="Select sDate,cropGroup,disease,infest,stage,comments from diseaseScout where sDate between '".
+   $sql="Select sDate,crops,disease,infest,stage,comments from diseaseScout where sDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".
       $fieldID."'";
    $sqldata = mysql_query($sql) or die(mysql_error());
@@ -521,13 +521,13 @@ if ($_SESSION['disease']) {
    } else {
       echo "<table>";
       echo "<caption>DISEASE SCOUTING</caption>";
-      echo "<tr><th>Date</th><th>Crop Group</th><th>Disease Species</th><th>Infestation Level</th>".
+      echo "<tr><th>Date</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th>".
          "<th>Crop Stage</th><th>Comments</th></tr>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['sDate'];
          echo "</td><td>";
-         echo $row['cropGroup'];
+         echo $row['crops'];
          echo "</td><td>";
          echo $row['disease'];
          echo "</td><td>";
@@ -544,7 +544,7 @@ if ($_SESSION['disease']) {
 }
 
 if ($_SESSION['backspray']) {
-   $sql = "Select sprayDate, materialSprayed, rate, BRateUnits, totalMaterial, cropGroup, comments from ".
+   $sql = "Select sprayDate, materialSprayed, rate, BRateUnits, totalMaterial, crops, comments from ".
      "bspray, tSprayMaterials where sprayMaterial = materialSprayed ".
      "and sprayDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
      "' and fieldID like '".$fieldID."' order by sprayDate";
@@ -556,7 +556,7 @@ if ($_SESSION['backspray']) {
       echo "<table>";
       echo "<caption>BACKPACK SPRAYING</caption>";
       echo "<tr><th>Date</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th>".
-         "<th>Crop Group</th><th> Comments </th></tr>";
+         "<th>Crops</th><th> Comments </th></tr>";
       while($row = mysql_fetch_array($sqldata)) {
          $unit = $row['BRateUnits'];
          echo "<tr><td>";
@@ -568,7 +568,7 @@ if ($_SESSION['backspray']) {
          echo "</td><td>";
          echo $row['totalMaterial'].' '.$unit;
          echo "</td><td>";
-         echo $row['cropGroup'];
+         echo $row['crops'];
          echo "</td><td>";
          echo $row['comments'];
          echo "</td></tr>";
@@ -584,7 +584,7 @@ if ($_SESSION['tractorspray']) {
      "tSprayField.fieldID) as percentSprayed, material, tRateUnits, rate, actualTotalAmount * ".
      "(SELECT size FROM field_GH WHERE field_GH.fieldID= tSprayField.fieldID)/(SELECT SUM(size) FROM ".
      "field_GH, tSprayField as tf WHERE field_GH.fieldID = tf.fieldID AND tf.id=tSprayMaster.id) as frac,".
-      " cropGroup, user, comment FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials".
+      " crops, user, comment FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials".
       " WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND tSprayField.fieldID ".
       "LIKE '".$fieldID."' AND tSprayMaster.sprayDate BETWEEN '".$year."-".$month."-".$day."' AND '".
       $tcurYear."-".$tcurMonth."-".$tcurDay."' AND tSprayMaterials.sprayMaterial=tSprayWater.material".
@@ -597,13 +597,13 @@ if ($_SESSION['tractorspray']) {
       echo "<table>";
       echo "<caption>TRACTOR SPRAYING</caption>";
       echo '<tr><th>Date</th><th>% Sprayed</th> <th>Material</th> <th>Rate</th> <th>Total Material</th>'.
-         '<th>CropGroup</th> <th>Comments</th> </tr>';
+         '<th>Crops</th> <th>Comments</th> </tr>';
       while($rowM=mysql_fetch_array($sqldata)){
          $theUnit=$rowM['tRateUnits'];
          echo "<tr><td>".$rowM['sprayDate']."</td><td>".
             number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".$rowM['material'].
            "</td><td>".$rowM['rate']." ".$theUnit."/Acre</td><td>".
-           number_format($rowM['frac'],2,'.','')." ".$theUnit."</td><td>".$rowM['cropGroup']."</td><td>".
+           number_format($rowM['frac'],2,'.','')." ".$theUnit."</td><td>".$rowM['crops']."</td><td>".
            $rowM['comment']."</td></tr>";
       }
       echo '</table>';

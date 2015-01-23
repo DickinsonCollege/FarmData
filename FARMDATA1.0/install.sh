@@ -181,7 +181,7 @@ if [ $UPGRADE = n ]; then
      read FARMDB
      echo "Enter the name of the farm information database user: "
      read FARMUSER
-     echo "Enter the password of the users database user: "
+     echo "Enter the password of the farm information database user: "
      read FARMPASS
      UU=$USERUSER
      UP=$USERPASS

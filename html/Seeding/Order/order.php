@@ -20,7 +20,16 @@ if (isset($crop) && $crop != "") {
 
 <h3> Seed Order and Inventory </h3>
 <br clear="all"/>
-<form name='form' id = 'form' method='POST' action='handleOrder.php'>
+
+<script type="text/javascript">
+function submitform(isCov) {
+   document.getElementById("isCover").value=isCov;
+   document.forms["seedform"].submit();
+}
+</script>
+
+<form name='form' id = 'seedform' method='POST' action='handleOrder.php'>
+<input type="hidden" id = "isCover" name="isCover">
 <?php
 if ($_SESSION['cover']) {
    echo '<table>';
@@ -29,7 +38,8 @@ if ($_SESSION['cover']) {
 ?>
 <label for="crop">Crop:&nbsp;</label>
 <div id='cropdiv' class='styled-select'>
-<select name='crop' id='crop' class='mobile-select'>
+<select name='crop' id='crop' class='mobile-select' 
+ onchange="submitform(false);">
 <?php
 $sql = "select crop from plant";
 $res = mysql_query($sql);
@@ -54,13 +64,19 @@ echo '</div>';
 <?php
 function printYear($name) {
    global $year;
+   if ($name == "coverYear") {
+      $isCov = "true";
+   } else {
+      $isCov = "false";
+   }
    $curYear = strftime("%Y");
    if (isset($year)) {
       $curYear = $year;
    }
    echo '<label for="'.$name.'">Planting Year:&nbsp;</label>';
    echo "<div id='".$name."div' class='styled-select'>";
-   echo "<select name='".$name."' id='".$name."' class='mobile-select'>";
+   echo "<select name='".$name."' id='".$name."' class='mobile-select' ";
+   echo "onchange='submitform(".$isCov.")';>";
    for ($y = $curYear - 3; $y < $curYear + 5; $y++) {
       echo "<option value='".$y."'";
       if ($y == $curYear) {
@@ -75,14 +91,17 @@ printYear("year");
 ?>
 
 <br clear="all"/>
+<!--
 <br clear="all"/>
 <input type="submit" name="submitCrop" class = "submitbutton" value="Choose Crop and Year" >
+-->
 <?php 
 if ($_SESSION['cover']) {
    echo '</td><td>';
    echo '<label for="cover">Crop:&nbsp;</label>';
    echo "<div id='covercropdiv' class='styled-select'>";
-   echo "<select name='cover' id='cover' class='mobile-select'>";
+   echo "<select name='cover' id='cover' class='mobile-select' ";
+   echo "onchange='submitform(true);'>";
    $sql = "select crop from coverCrop";
    $res = mysql_query($sql);
    echo mysql_error();
@@ -102,8 +121,8 @@ if ($_SESSION['cover']) {
    echo "<br clear='all'/>";
    printYear("coverYear");
    echo '<br clear="all"/>';
-   echo '<br clear="all"/>';
-   echo '<input type="submit" name="submitCoverCrop" class = "submitbutton" value="Choose Crop and Year" >';
+//   echo '<br clear="all"/>';
+//   echo '<input type="submit" name="submitCoverCrop" class = "submitbutton" value="Choose Crop and Year" >';
    echo '</td></tr></table>';
 }
 ?>
@@ -701,7 +720,7 @@ function addRowOrder(variety, source, catalogOrder, organic, catalogUnit, price,
    input.setAttribute("value", orderRows);
 
    //append to form element that you want .
-   document.getElementById("form").appendChild(input);
+   document.getElementById("seedform").appendChild(input);
 
 
 
@@ -1028,9 +1047,11 @@ if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $row
    if ($row = mysql_fetch_array($res)) {
       $inInven = $row['tot'];
    }
-   if (!$isCover) {
+   if ($isCover) {
+      $inInven = number_format((float) $inInven, 2, '.', '');
+   } else {
       $inInven = number_format((float) fromGram($defUnit, $inInven), 2, '.', '');
-   }
+   } 
    echo '<tr><td>Total '.$crop.' seed on hand:&nbsp;</td><td> '.$inInven.'</td><td> '.$defUnit.
       '(S)</td></tr>';
    echo "<tr><td>Quantity to order:&nbsp;</td><td> ".

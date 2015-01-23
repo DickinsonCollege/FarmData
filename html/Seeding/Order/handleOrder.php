@@ -3,12 +3,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $crop = $_POST['crop'];
 $cover = $_POST['cover'];
-if (isset($_POST['submitCrop'])) {
+if (isset($_POST['submitCrop']) || $_POST['isCover'] == "false") {
    $year = $_POST['year'];
    $isCover = false;
-} else if (isset($_POST['submitCoverCrop'])) {
+   $cover = "";
+} else if (isset($_POST['submitCoverCrop']) || $_POST['isCover'] == "true") {
    $year = $_POST['coverYear'];
    $isCover = true;
+   $crop = "";
 } else if (isset($cover) && $cover != "") {
    $year = $_POST['coverYear'];
    $isCover = true;
@@ -16,6 +18,7 @@ if (isset($_POST['submitCrop'])) {
    $year = $_POST['year'];
    $isCover = false;
 }
+
 $calc_SEEDS = $_POST['calc_SEEDS'];
 
 $units = array('GRAM', 'OUNCE', 'POUND');
@@ -355,7 +358,9 @@ for ($i = 1; $i <= $rowNum; $i++) {
       order_arrived($i);
    }
 }
+///*
 echo '<meta http-equiv="refresh" content="0;URL=order.php?year='.$year.'&crop='.encodeURIComponent($crop).
    "&cover=".encodeURIComponent($cover).
    "&tab=seeding:ordert:ordert_input&calc_SEEDS=".$calc_SEEDS."\">";
+//*/
 ?>
