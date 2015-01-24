@@ -32,6 +32,8 @@ newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
  </script>
 <?php
  $transplanting = true;
+ $labor = false;
+ $harvesting = false;
  include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
 <!--

@@ -30,6 +30,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo "<br clear=\"all\">";
 ?>
 <?php
+$labor = false;
+$harvesting = false;
+$transplanting = false;
 include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
 <br clear="all"/>
