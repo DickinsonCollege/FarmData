@@ -68,7 +68,9 @@ function updateSeedDate() {
         var cur = "";
         if (crop == "<?php echo $curCrop;?>") {
            var dt = "<?php echo $seedDate;?>";
-           cur = '<option value="'+dt+'">'+dt+'</option>';
+           if (dt != '0000-00-00') {
+              cur = '<option value="'+dt+'">'+dt+'</option>';
+           }
         }
    var seedDates = document.getElementById('seedDateDiv');
 console.log(xmlhttp.responseText);

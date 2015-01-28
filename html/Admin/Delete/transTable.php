@@ -37,7 +37,12 @@ if(isset($_GET['submit'])){
    echo "<th>Comments</th><th>Edit</th><th>Delete</th></tr>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
-      echo $row['seedDate'];
+      // echo $row['seedDate'];
+      if ($row['seedDate'] == '0000-00-00') {
+         echo "N/A";
+      } else {
+         echo $row['seedDate'];
+      }
       echo "</td><td>";
       echo $row['transDate'];
       echo "</td><td>";

@@ -24,7 +24,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 $sql = "select targetName from targets";
 $result=mysql_query($sql);
 while ($row1 =  mysql_fetch_array($result)){
-  echo '<option value= "'.$row1['targetName'].'">'.$row1['targetName'].'</option>';
+  $targ = $row1['targetName'];
+  if ($targ != 'Loss') {
+     echo '<option value= "'.$targ.'">'.$targ.'</option>';
+  }
 }
 ?>
 </select>

@@ -7,133 +7,27 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $crop = $_GET['crop'];
 $cover = $_GET['cover'];
 $year = $_GET['year'];
+$isCover = $_GET['isCover'];
 $calc_SEEDS = $_GET['calc_SEEDS'];
 if (!isset($calc_SEEDS) || $calc_SEEDS == "") {
   $calc_SEEDS = 1000;
 }
-if (isset($crop) && $crop != "") {
-   $isCover = false;
-} else {
-   $isCover = true;
-}
+echo "<h3> Seed Order and Inventory for ".$crop." in ".$year."</h3>";
 ?>
 
-<h3> Seed Order and Inventory </h3>
 <br clear="all"/>
-
-<script type="text/javascript">
-function submitform(isCov) {
-   document.getElementById("isCover").value=isCov;
-   document.forms["seedform"].submit();
-}
-</script>
 
 <form name='form' id = 'seedform' method='POST' action='handleOrder.php'>
-<input type="hidden" id = "isCover" name="isCover">
-<?php
-if ($_SESSION['cover']) {
-   echo '<table>';
-   echo '<tr><th>Vegetable</th><th>Cover Crop</th></tr><td>';
-}
-?>
-<label for="crop">Crop:&nbsp;</label>
-<div id='cropdiv' class='styled-select'>
-<select name='crop' id='crop' class='mobile-select' 
- onchange="submitform(false);">
-<?php
-$sql = "select crop from plant";
-$res = mysql_query($sql);
-echo mysql_error();
-echo "<option value='Crop' disabled";
-if (!isset($crop) || $crop == "") {
-   echo " selected";
-}
-echo ">Crop</option>";
-while ($row = mysql_fetch_array($res)) {
-   echo "<option value='".$row['crop']."'";
-   if ($row['crop'] == $crop) {
-      echo " selected";
-   }
-   echo ">".$row['crop']."</option>";
-}
-echo '</select>';
-echo '</div>';
-?>
-<br clear="all"/>
-
-<?php
-function printYear($name) {
-   global $year;
-   if ($name == "coverYear") {
-      $isCov = "true";
-   } else {
-      $isCov = "false";
-   }
-   $curYear = strftime("%Y");
-   if (isset($year)) {
-      $curYear = $year;
-   }
-   echo '<label for="'.$name.'">Planting Year:&nbsp;</label>';
-   echo "<div id='".$name."div' class='styled-select'>";
-   echo "<select name='".$name."' id='".$name."' class='mobile-select' ";
-   echo "onchange='submitform(".$isCov.")';>";
-   for ($y = $curYear - 3; $y < $curYear + 5; $y++) {
-      echo "<option value='".$y."'";
-      if ($y == $curYear) {
-         echo " selected";
-      }
-      echo ">".$y."</option>";
-   }
-   echo '</select>';
-   echo '</div>';
-}
-printYear("year");
-?>
-
-<br clear="all"/>
-<!--
-<br clear="all"/>
-<input type="submit" name="submitCrop" class = "submitbutton" value="Choose Crop and Year" >
--->
 <?php 
-if ($_SESSION['cover']) {
-   echo '</td><td>';
-   echo '<label for="cover">Crop:&nbsp;</label>';
-   echo "<div id='covercropdiv' class='styled-select'>";
-   echo "<select name='cover' id='cover' class='mobile-select' ";
-   echo "onchange='submitform(true);'>";
-   $sql = "select crop from coverCrop";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   echo "<option value='Cover Crop' disabled";
-   if (!isset($cover) || $cover == "") {
-      echo " selected";
-   }
-   echo ">Crop</option>";
-   while ($row = mysql_fetch_array($res)) {
-      echo "<option value='".$row['crop']."'";
-      if ($row['crop'] == $cover) {
-         echo " selected";
-      }
-      echo ">".$row['crop']."</option>";
-   }
-   echo "</select></div>";
-   echo "<br clear='all'/>";
-   printYear("coverYear");
-   echo '<br clear="all"/>';
-//   echo '<br clear="all"/>';
-//   echo '<input type="submit" name="submitCoverCrop" class = "submitbutton" value="Choose Crop and Year" >';
-   echo '</td></tr></table>';
-}
-?>
-<br clear="all"/>
-<?php
 $seeds = "";
 $rowft = "";
 $defUnit = "";
 $acres = "";
 $rate = "";
-if (isset($crop) && $crop != "") {
+echo '<input type="hidden" name="year" value="'.$year.'">';
+if (!$isCover) {
+   echo '<input type="hidden" name="isCover" value="false">';
+   echo '<input type="hidden" name="crop" value="'.$crop.'">';
    $sql = "select * from seedInfo where crop='".$crop."'";
    $res = mysql_query($sql);
    echo mysql_error();
@@ -148,7 +42,9 @@ if (isset($crop) && $crop != "") {
    while ($row = mysql_fetch_array($res)) {
       $rowftToPlant = $row['rowFt'];
    }
-} else if (isset($cover) && $cover != "") {
+} else {
+   echo '<input type="hidden" name="isCover" value="true">';
+   echo '<input type="hidden" name="crop" value="'.$cover.'">';
    $sql = "select * from coverSeedInfo where crop='".$cover."'";
    $res = mysql_query($sql);
    echo mysql_error();
@@ -179,26 +75,11 @@ function convertFromGram($unit, $seeds) {
 }
 
    $units = array('GRAM', 'OUNCE', 'POUND');
-if (isset($crop) && $crop != "") {
-   echo '<label for="rowft">Seeds per row foot:&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowft"';
-   echo 'id="rowft" value="'.$rowft.'">';
+if (!$isCover) {
+   echo '<label for="rowft">Seeds per row foot: '.$rowft.'</label>';
    echo '<br clear="all"/>';
-   echo '<input class="textbox25 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" ';
-   echo 'name ="seedsIn" id="seedsIn" value="'.
-     number_format((float) convertFromGram($defUnit, $seeds), 1, '.','').'"> ';
-   echo '<label for="seedsIn">&nbsp; seeds per&nbsp;</label>';
-   echo "<div id='defUnitdiv' class='styled-select'>";
-   echo "<select name='defUnit' id='defUnit' class='mobile-select'>";
-   for ($i = 0; $i < count($units); $i++) {
-      echo "<option value='".$units[$i]."'";
-      if ($units[$i] == $defUnit) {
-         echo " selected";
-      }
-      echo ">".$units[$i]."</option>";
-   }
-   echo '</select>';
-   echo '</div>';
+   echo '<label for="seedsIn">'.number_format((float) convertFromGram($defUnit, $seeds), 1, '.','').
+     ' seeds per '.$defUnit.'</label>';
    echo '<br clear="all"/>';
    echo '<label for="rowftToPlant">Total row feet';
    if (isset($crop)) { 
@@ -208,23 +89,14 @@ if (isset($crop) && $crop != "") {
    if (isset($year)) {
      echo " in ".$year;
    }
-   echo ':&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowftToPlant"';
-     echo 'id="rowftToPlant" value="'.$rowftToPlant.'">';
+   echo ': '.$rowftToPlant.'</label>';
    echo '<br clear="all"/>';
-   echo '<input type="submit" name="updateSeedInfo" class = "submitbutton" value="Update Seeding Information" >';
-} else if (isset($cover) && $cover != "") {
-   echo '<label for="acres">Acres of '.$cover.' to plant in '.$year.':&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="acres"';
-   echo 'id="acres" value="'.$acres.'">';
+} else {
+   echo '<label for="acres">Acres of '.$cover.' to plant in '.$year.': '.$acres.'</label>';
    echo '<br clear="all"/>';
-   echo '<label for="rate">Seeding rate for '.$cover.' (lbs/acre):&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rate"';
-   echo 'id="rate" value="'.$rate.'">';
+   echo '<label for="rate">Seeding rate for '.$cover.': '.$rate.' (lbs/acre)</label>';
    echo '<br clear="all"/>';
-   echo '<input type="submit" name="updateSeedInfo" class = "submitbutton" value="Update Seeding Information" >';
 }
-echo '<br clear="all"/>';
 ?>
 <input type="hidden" id="invRows" name="invRows" value="0">
 <input type="hidden" id="orderRows" name="orderRows" value="0">
@@ -275,8 +147,12 @@ function update_seeds(unit, sdsGram) {
 }
 
 var invRows = 0;
-var crop = "<?php echo $crop;?>";
 <?php
+if ($isCover) {
+  echo 'var crop = "'.$cover.'";';
+} else {
+  echo 'var crop = "'.$crop.'";';
+}
 if (isset($year)) {
    echo 'var year = '.$year.';';
 }
@@ -285,6 +161,9 @@ if ($seeds != "") {
 }
 if ($rowft != "") {
    echo 'var rowft = '.$rowft.';';
+}
+if ($rate != "") {
+   echo 'var rate = '.$rate.';';
 }
 ?>
 
@@ -300,25 +179,12 @@ function fromGram(unit, sdsGram) {
    return res;
 }
 
-/*
-function toGram(unit, sdsGram) {
-   var res = 0;
-   if (unit == "GRAM") {
-       res = sdsGram;
-   } else if (unit == "OUNCE") {
-       res = sdsGram / 28.3495;
-   } else if (unit == "POUND") {
-       res = sdsGram / (28.3495 * 16);
-   }
-   return res;
-}
-*/
-
 function update_rowft(rowNum) {
    var rowftV = document.getElementById('rowft' + rowNum).value;
    var toplant = document.getElementById('toplant' + rowNum);
    if (isCover) {
-      toplant.value = (parseFloat(rowftV) * parseFloat(document.getElementById('rate').value)).toFixed(2);
+      // toplant.value = (parseFloat(rowftV) * parseFloat(document.getElementById('rate').value)).toFixed(2);
+      toplant.value = (parseFloat(rowftV) * parseFloat(rate)).toFixed(2);
    } else {
       var defUnit = document.getElementById('unit' + rowNum).value;
       toplant.value = (rowft * parseFloat(rowftV) / fromGram(defUnit, seeds)).toFixed(2);
@@ -463,19 +329,14 @@ function add_inven(defUnit) {
       var inven = parseFloat(document.getElementById("varInven").value);
       var sYear = parseInt(document.getElementById("varYear").value);
       var org = document.getElementById("varOrg").value;
-      var sCrop = "";
-      if (isCover) {
-         sCrop = document.getElementById("cover").value;
-      } else {
-         sCrop = crop;
-      }
       var xmlhttp= new XMLHttpRequest();
-      xmlhttp.open("GET", "get_code.php?crop="+sCrop+"&org="+org+"&sYear="+sYear+"&isCover="+isCover, false);
+      xmlhttp.open("GET", "get_code.php?crop="+encodeURIComponent(crop)+"&org="+
+          org+"&sYear="+sYear+"&isCover="+isCover, false);
       xmlhttp.send();
       var code = xmlhttp.responseText;
       var amt = 0;
       if (isCover) {
-         var rate = document.getElementById("rate").value;
+         // var rate = document.getElementById("rate").value;
          amt = srowft * rate;
       } else {
          amt = (srowft * rowft) / fromGram(defUnit, seeds);
@@ -564,6 +425,10 @@ function show_inven_confirm() {
       }
    }
    return true;
+}
+
+function confirm_all() {
+  return show_inven_confirm() && show_order_confirm();
 }
 
 var orderRows = 0;
@@ -972,7 +837,7 @@ function convertToGram($amt, $unit) {
    return $res;
 }
 
-if (isset($crop) && $crop != "" && $seeds != "") {
+if (!$isCover && $seeds != "") {
    echo '<br clear="all"/>';
    echo "<h3>Seed Calculator</h3>";
    echo '<br clear="all"/>';
@@ -1016,49 +881,44 @@ function fromGram($unit, $amt) {
    return $res;
 }
 
-if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $rowft != "" && $defUnit != "")
- || (isset($cover) && $cover != "" && isset($rate) && $rate != "" && isset($acres) && $acres != "")) {
-   if (isset($crop) && $crop != "") {
-      $isCover = false;
-      $showCrop = $crop;
-   } else {
-      $isCover = true;
-      $showCrop = $cover;
-      $defUnit = "POUND";
-   }
-   echo '<br clear="all"/>';
-   echo "<h3>Seed Summary</h3>";
-   echo '<br clear="all"/><table><tr><td>';
-   if ($isCover) {
-      $needed = number_format((float) ($acres * $rate), 2, '.', '');
-   } else {
-      $needed = number_format((float) ($rowftToPlant * $rowft)/ convertFromGram($defUnit, $seeds),
-          2, '.', '');
-   }
-   echo 'Total '.$showCrop.' seed needed:&nbsp; </td><td>'.$needed.'</td><td> '.$defUnit.'(S)</td></tr>';
-   $inInven = 0;
-   if ($isCover) {
-      $sql = "select sum(inInventory) as tot from coverSeedInventory where crop = '".$cover."'";
-   } else {
-      $sql = "select sum(inInventory) as tot from seedInventory where crop = '".$crop."'";
-   }
-   $res = mysql_query($sql);
-   echo mysql_error();
-   if ($row = mysql_fetch_array($res)) {
-      $inInven = $row['tot'];
-   }
-   if ($isCover) {
-      $inInven = number_format((float) $inInven, 2, '.', '');
-   } else {
-      $inInven = number_format((float) fromGram($defUnit, $inInven), 2, '.', '');
-   } 
-   echo '<tr><td>Total '.$crop.' seed on hand:&nbsp;</td><td> '.$inInven.'</td><td> '.$defUnit.
-      '(S)</td></tr>';
-   echo "<tr><td>Quantity to order:&nbsp;</td><td> ".
-      number_format((float) ($needed - $inInven), 2, '.', '')."</td><td>".
-      $defUnit.'(S)</td></tr></table>';
-   echo '<br clear="all"/>';
-   echo '<h3>Seed Inventory</h3>';
+$showCrop = $crop;
+if ($isCover) {
+   $showCrop = $cover;
+   $defUnit = "POUND";
+}
+echo '<br clear="all"/>';
+echo "<h3>Seed Summary</h3>";
+echo '<br clear="all"/><table><tr><td>';
+if ($isCover) {
+   $needed = number_format((float) ($acres * $rate), 2, '.', '');
+} else {
+   $needed = number_format((float) ($rowftToPlant * $rowft)/ convertFromGram($defUnit, $seeds),
+       2, '.', '');
+}
+echo 'Total '.$showCrop.' seed needed:&nbsp; </td><td>'.$needed.'</td><td> '.$defUnit.'(S)</td></tr>';
+$inInven = 0;
+if ($isCover) {
+   $sql = "select sum(inInventory) as tot from coverSeedInventory where crop = '".$cover."'";
+} else {
+   $sql = "select sum(inInventory) as tot from seedInventory where crop = '".$crop."'";
+}
+$res = mysql_query($sql);
+echo mysql_error();
+if ($row = mysql_fetch_array($res)) {
+   $inInven = $row['tot'];
+}
+if ($isCover) {
+   $inInven = number_format((float) $inInven, 2, '.', '');
+} else {
+   $inInven = number_format((float) fromGram($defUnit, $inInven), 2, '.', '');
+} 
+echo '<tr><td>Total '.$crop.' seed on hand:&nbsp;</td><td> '.$inInven.'</td><td> '.$defUnit.
+   '(S)</td></tr>';
+echo "<tr><td>Quantity to order:&nbsp;</td><td> ".
+   number_format((float) ($needed - $inInven), 2, '.', '')."</td><td>".
+   $defUnit.'(S)</td></tr></table>';
+echo '<br clear="all"/>';
+echo '<h3>Seed Inventory</h3>';
    echo '<br clear="all"/>';
    echo "<table id='inven'>";
    echo "<tr><th>&nbsp;&nbsp;Seed&nbsp;Code&nbsp;&nbsp;</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variety&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Purchase Year</th>";
@@ -1123,7 +983,7 @@ if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $row
    echo "</script>";
    // echo '<br clear="all"/>';
    echo '<input type="submit" class="submitbutton" id="updateInven" name="updateInven"';
-   echo ' value="Update Inventory" onclick="return show_inven_confirm();">';
+   echo ' value="Save Inventory" onclick="return show_inven_confirm();">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
    echo '<table>';
@@ -1232,7 +1092,7 @@ if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $row
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
    echo '<input type="submit" class="submitbutton" id="update_order" name="update_order"';
-   echo ' value="Update Order" onclick="return show_order_confirm();">';
+   echo ' value="Save Order" onclick="return show_order_confirm();">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
    echo '<label for="newSource">New Source:&nbsp;</label>';
@@ -1241,8 +1101,10 @@ if ((isset($crop) && $crop != "" && isset($rowftToPlant) && $seeds != "" && $row
    echo '<br clear="all"/>';
    echo '<input type="submit" class="submitbutton" id="addSource" name="addSource"';
    echo ' value="Add New Source" onclick="return show_source_confirm();">';
-}
 
 ?>
+<br clear="all"/>
+<br clear="all"/>
+<input type="submit" value="Submit" class="submitbutton" name="submitAll" onclick="return confirm_all();">
 </form>
 

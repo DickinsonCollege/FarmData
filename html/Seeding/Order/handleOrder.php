@@ -1,40 +1,18 @@
 <?php session_start();
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
-$crop = $_POST['crop'];
-$cover = $_POST['cover'];
-if (isset($_POST['submitCrop']) || $_POST['isCover'] == "false") {
-   $year = $_POST['year'];
+$crop = escapehtml($_POST['crop']);
+$cover = $crop;
+$year = $_POST['year'];
+if ($_POST['isCover'] == "false") {
    $isCover = false;
-   $cover = "";
-} else if (isset($_POST['submitCoverCrop']) || $_POST['isCover'] == "true") {
-   $year = $_POST['coverYear'];
-   $isCover = true;
-   $crop = "";
-} else if (isset($cover) && $cover != "") {
-   $year = $_POST['coverYear'];
+} else if ($_POST['isCover'] == "true") {
    $isCover = true;
 } else {
-   $year = $_POST['year'];
-   $isCover = false;
+   die("Neither crop nor cover crop!");
 }
 
 $calc_SEEDS = $_POST['calc_SEEDS'];
-
-$units = array('GRAM', 'OUNCE', 'POUND');
-
-function convertFromGram($amt, $unit) {
-   if ($unit == "GRAM") {
-      $res = $amt;
-   } else if ($unit == "OUNCE") {
-      $res = $amt / 28.3495;
-   } else if ($unit == "POUND") {
-      $res = $amt / (28.3495 * 16);
-   } else {
-      $res = 0;
-   }
-   return $res;
-}
 
 function convertToGram($amt, $unit) {
    if ($unit == "GRAM") {
@@ -67,13 +45,13 @@ function getNum($num) {
 
 function update_inventory() {
    global $isCover;
+   global $crop;
+   global $cover;
    $rowNum = $_POST['invRows'];
    if ($isCover) {
-      $crop = $_POST['cover'];
-      $sql = "delete from coverSeedInventory where crop = '".$crop."'";
+      $sql = "delete from coverSeedInventory where crop = '".$cover."'";
       $inTable = "coverSeedInventory";
    } else {
-      $crop = $_POST['crop'];
       $sql = "delete from seedInventory where crop = '".$crop."'";
       $inTable = "seedInventory";
    }
@@ -138,15 +116,14 @@ function insert_order_row($crop, $year, $i, $status) {
 
 function update_order() {
    global $isCover;
+   global $crop;
+   global $cover;
+   global $year;
    $rowNum = $_POST['orderRows'];
    if ($isCover) {
-      $year = $_POST['year'];
-      $crop = $_POST['cover'];
-      $sql = "delete from coverOrderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
+      $sql = "delete from coverOrderItem where crop = '".$cover."' and status <> 'ARRIVED' and year = ".
          $year;
    } else {
-      $year = $_POST['coverYear'];
-      $crop = $_POST['crop'];
       $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
          $year;
    }
@@ -161,8 +138,10 @@ function update_order() {
 
 function order_arrived($row) {
    global $isCover;
-    $unitsPerCatUnit = getNum($_POST['unitsPerCatUnit'.$row]);
-    $catUnitsOrdered = getNum($_POST['catUnitsOrdered'.$row]);
+   global $crop;
+   global $cover;
+   $unitsPerCatUnit = getNum($_POST['unitsPerCatUnit'.$row]);
+   $catUnitsOrdered = getNum($_POST['catUnitsOrdered'.$row]);
    $inven = $unitsPerCatUnit * $catUnitsOrdered;
    if (!$isCover) {
       $defUnit = $_POST['defUnit'];
@@ -172,21 +151,21 @@ function order_arrived($row) {
    update_inventory();
    update_order();
    if ($isCover) {
-      $crop = $_POST['cover'];
+      $ordcrop = $cover;
       $ordTbl = "coverOrderItem";
       $invTbl = "coverSeedInventory";
    } else {
-      $crop = $_POST['crop'];
+      $ordcrop = $crop;
       $ordTbl = "orderItem";
       $invTbl = "seedInventory";
    }
-   $sql = "update ".$ordTbl." set status = 'ARRIVED' where crop = '".$crop.
+   $sql = "update ".$ordTbl." set status = 'ARRIVED' where crop = '".$ordcrop.
       "' and status <> 'ARRIVED' and id = ".$row;
    $res = mysql_query($sql);
    echo mysql_error();
    $variety = escapehtml($_POST['varOrder'.$row]);
    $sYear = $_POST['year'];
-   $org = $_POST['organic'.$i];
+   $org = $_POST['organic'.$row];
    include 'make_code.php';
    $sql = "insert into ".$invTbl." values ('".$crop."', '".$variety."', ".$sYear.", '".
       $code."', 0, ".$inven.")";
@@ -194,141 +173,8 @@ function order_arrived($row) {
    echo mysql_error();
 }
 
-function convert_units($from, $to) {
-   if ($from == 'GRAM') {
-      if ($to == 'GRAM') {
-         $res = 1;
-      } else if ($to == 'OUNCE') {
-         $res = 0.035274;
-      } else if ($to == 'POUND') {
-         $res = 0.00220462;
-      } else {
-         $res = 0;
-      }
-   } else if ($from == 'OUNCE') {
-      if ($to == 'GRAM') {
-         $res = 28.3495;
-      } else if ($to == 'OUNCE') {
-         $res = 1;
-      } else if ($to == 'POUND') {
-         $res = 1.0 / 16.0;
-      } else {
-         $res = 0;
-      }
-   } else if ($from == 'POUND') {
-      if ($to == 'GRAM') {
-         $res = 453.592;
-      } else if ($to == 'OUNCE') {
-         $res = 16;
-      } else if ($to == 'POUND') {
-         $res = 1;
-      } else {
-         $res = 0;
-      }
-   } else {
-      $res = 0;
-   }
-   return $res;
-}
-
-if (isset($_POST['submitCrop'])) {
-   $cover = '';
-} else if (isset($_POST['submitCoverCrop'])) {
-   $crop='';
-}
-if (isset($_POST['updateSeedInfo'])) {
-  if (isset($crop) && $crop != "") {
-     $crop = $_POST['crop'];
-     $year = $_POST['year'];
-     $seedsIn = $_POST['seedsIn'];
-     $rowft = $_POST['rowft'];
-     $rowftToPlant = $_POST['rowftToPlant'];
-     $defUnit = $_POST['defUnit'];
-     $sql = "select * from seedInfo where crop = '".$crop."'";
-     $res = mysql_query($sql);
-     echo mysql_error();
-     if (mysql_num_rows($res) == 0) {
-        $sql = "insert into seedInfo values('".$crop."', 0, 0, 'GRAM')";
-        $res = mysql_query($sql);
-        echo mysql_error();
-        $oldDefUnit = "";
-     } else {
-         $row = mysql_fetch_array($res);
-         $oldDefUnit = $row['defUnit'];
-     }
-     if ($defUnit != $oldDefUnit) {
-        $convert = convert_units($oldDefUnit, $defUnit);
-        $sql = "update orderItem set unitsPerCatUnit = unitsPerCatUnit * ".
-          $convert." where crop = '".$crop."'";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     if (isset($seedsIn)) {
-        $seeds = convertFromGram($seedsIn, $defUnit);
-        $sql = "update seedInfo set seedsGram = ".$seeds.", defUnit = '".$defUnit."' where crop = '".
-           $crop."'";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     if (isset($rowft)) {
-        $sql = "update seedInfo set seedsRowFt = ".$rowft." where crop = '".  $crop."'";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     if (isset($rowftToPlant) && $rowftToPlant != "") {
-        $sql = "select * from toOrder where crop = '".$crop."' and year = ".$year;
-        $res = mysql_query($sql);
-        echo mysql_error();
-        if (mysql_num_rows($res) == 0) {
-           $sql = "insert into toOrder values('".$crop."', ".$year.", ".$rowftToPlant.", 1)";
-           $res = mysql_query($sql);
-           echo mysql_error();
-        } else {
-           $sql = "update toOrder set rowFt = ".$rowftToPlant." where crop = '".$crop."' and year = ".
-              $year;
-           $res = mysql_query($sql);
-           echo mysql_error();
-        }
-     }
-  } else if (isset($cover) && $cover != "") {
-     $sql = "select * from coverSeedInfo where crop = '".$cover."'";
-     $res = mysql_query($sql);
-     echo mysql_error();
-     if (mysql_num_rows($res) == 0) {
-        $sql = "insert into coverSeedInfo values('".$cover."', 0)";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     $sql = "select * from coverToOrder where crop = '".$cover."' and year = ".$year;
-     $res = mysql_query($sql);
-     echo mysql_error();
-     if (mysql_num_rows($res) == 0) {
-        $sql = "insert into coverToOrder values('".$cover."', ".$year.", 0, 1)";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     $acres = escapehtml($_POST['acres']);
-     $rate = escapehtml($_POST['rate']);
-     if (isset($rate)) {
-        $sql = "update coverSeedInfo set rate = ".$rate." where crop = '".  $cover."'";
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-     if (isset($acres)) {
-        $sql = "update coverToOrder set acres = ".$acres." where crop = '".  $cover."' and year = ".
-           $year;;
-        $res = mysql_query($sql);
-        echo mysql_error();
-     }
-  } else {
-     echo '<script type="text/javascript">alert("Please select a crop!");</script>';
-  }
-} 
-if (isset($_POST['updateInven'])) {
-   update_inventory();
-   update_order();
-}
-if (isset($_POST['update_order'])) {
+if (isset($_POST['updateInven']) || isset($_POST['update_order']) ||
+    isset($_POST['submitAll'])) {
    update_inventory();
    update_order();
 }
@@ -358,9 +204,12 @@ for ($i = 1; $i <= $rowNum; $i++) {
       order_arrived($i);
    }
 }
-///*
-echo '<meta http-equiv="refresh" content="0;URL=order.php?year='.$year.'&crop='.encodeURIComponent($crop).
-   "&cover=".encodeURIComponent($cover).
+if (isset($_POST['submitAll'])) {
+  $page="chooseCrop";
+} else {
+  $page="order";
+}
+echo '<meta http-equiv="refresh" content="0;URL='.$page.'.php?year='.$year.'&crop='.encodeURIComponent($crop).
+   "&cover=".encodeURIComponent($cover)."&isCover=".$isCover.
    "&tab=seeding:ordert:ordert_input&calc_SEEDS=".$calc_SEEDS."\">";
-//*/
 ?>

@@ -17,7 +17,10 @@ $result = mysql_query($sql);
 echo mysql_error();
 while ($row = mysql_fetch_array($result)) {
    // $targs[] = str_replace(" ", "_", $row['targetName']);
-   $targs[] = $row['targetName'];
+   $targ = $row['targetName'];
+   if ($targ != 'Loss') {
+     $targs[] = $targ;
+   }
 }
 ?>
 

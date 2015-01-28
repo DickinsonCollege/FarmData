@@ -29,7 +29,7 @@ echo '<li id="li_ordert">
 <div class="tabs tabs2">
 <ul>
 <li id="li_ordert_input">  
-   <a id = "ordert_input_a" class="inactivetab" a href="/Seeding/Order/order.php?tab=seeding:ordert:ordert_input">Input Form</a> </li>
+   <a id = "ordert_input_a" class="inactivetab" a href="/Seeding/Order/chooseCrop.php?tab=seeding:ordert:ordert_input">Input Form</a> </li>
 <li id="li_ordert_report">  
    <a id = "ordert_report_a" class="inactivetab" a href="/Seeding/Order/orderReport.php?tab=seeding:ordert:ordert_report">Report</a> </li>
 </ul>

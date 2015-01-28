@@ -27,6 +27,8 @@ create table targets (
    nextNum int default 1,
    active tinyint(1) default 1) ENGINE=INNODB;
 
+insert into targets values('Loss', '', 1, 1);
+
 create table targetEmail (
    email varchar(50),
    target varchar(30),

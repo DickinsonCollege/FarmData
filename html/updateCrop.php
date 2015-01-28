@@ -7,7 +7,8 @@ if ($typ == "harvesting") {
 } else if ($typ == "labor") {
   $sql = "SELECT crop from dir_planted where year(plantdate) = '".$_GET['year']."' union SELECT crop from gh_seeding where year(seedDate)= '".$_GET['year']."'";
 } else if ($typ == "transplanting") {
-   $sql = "SELECT distinct crop from gh_seeding where year(seedDate) = '".$_GET['year']."' order by crop";
+   // $sql = "SELECT distinct crop from gh_seeding where year(seedDate) = '".$_GET['year']."' order by crop";
+   $sql = "SELECT distinct crop from plant order by crop";
 } else {
    $sql = "SELECT distinct crop from plant order by crop";
 }
