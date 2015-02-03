@@ -114,10 +114,10 @@ echo '</div>';
 ?>
 <br clear="all"/>
 <label for="pile"> Tons per Load:&nbsp; </label>
-<input onkeypress="stopSubmitOnEnter(event)" id ="tperload"name="tperload" type="text" class="textbox2 mobile-input" value=0 >
+<input onkeypress="stopSubmitOnEnter(event)" id ="tperload"name="tperload" type="text" class="textbox2 mobile-input single_table" value=0 >
 <br clear="all"/>
 <label for="pile"> Number of Loads: &nbsp; </label>
-<input id ="numloads"name="numloads" onkeypress= 'stopSubmitOnEnter(event)'; type="text" class="textbox2 mobile-input" value=0 >
+<input id ="numloads"name="numloads" onkeypress= 'stopSubmitOnEnter(event)'; type="text" class="textbox2 mobile-input single_table" value=0 >
 <br clear="all"/>
 <label for="incorp">Incorporation Tool: &nbsp;</label>
 <div class="styled-select" id="incorp_toolis">

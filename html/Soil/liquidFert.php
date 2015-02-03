@@ -99,9 +99,9 @@ function show_confirm() {
 	<?php
 	if ($_SESSION['mobile']) echo "<br clear='all'>";
 	?>
-	<input type="text" class="textbox2 mobile-input-half" name="quantity" id="quantity"> 
+	<input type="text" class="textbox2 mobile-input-half single_table" name="quantity" id="quantity"> 
 <div class="styled-select" id="unit2">
-<select name="unit" id="unit" class='mobile-select-half'>
+<select name="unit" id="unit" class='mobile-select-half single_table'>
 	<option value=0 selected disabled> Unit </option>
 	<option value="QUARTS" > QUARTS </option>
 	<option value="GALLONS" > GALLONS</option>
@@ -133,7 +133,7 @@ function show_confirm() {
       	+ '</select></div>';
 	
 		var cell1 = row.insertCell(1);
-		cell1.innerHTML = '<div id="num_drip_rows_Div'+numRows+'"><input type="text" class="textbox3 mobile-input inside_table" name="num_drip_rows'+ numRows +'" id="num_drip_rows'+ numRows +'"/></div>'; 
+		cell1.innerHTML = '<div id="num_drip_rows_Div'+numRows+'"><input type="text" class="textbox25 mobile-input inside_table" name="num_drip_rows'+ numRows +'" id="num_drip_rows'+ numRows +'"/></div>'; 
 
 	}
 	addRow();

@@ -52,7 +52,7 @@ if (!$_SESSION['bedft']) {
 }
 ?>
 <label> &nbsp;</label>
-<input class="textbox2 mobile-input"type="text" name ="bedft" value= 0 id="bedft">
+<input class="textbox2 mobile-input single_table" type="text" name ="bedft" value= 0 id="bedft">
 <br clear="all"/>
 <br clear='all'/>
 <label for="rows">Rows per Bed:&nbsp;</label>
@@ -73,21 +73,21 @@ while ($cons<8) {
 </div>
 <br clear="all"/>
 <label for="numFlats"><b>Number of flats:&nbsp;</b></label>
-<input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input">
+<input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input single_table">
 
 <br clear="all"/>
 <?php
 if ($_SESSION['labor']) {
    echo '
 <label for="numWorkers"><b>Number of workers:&nbsp;</b></label>
-<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input">
+<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input single_table">
 <br clear="all"/>
 
 <label>Enter time in Hours or Minutes:</label>
 <br clear="all"/>
-<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" class="textbox2 mobile-input-half">
+<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" class="textbox2 mobile-input-half single_table">
 <div class="styled-select">
-<select name="timeUnit" id="timeUnit" class=\'mobile-select-half\'>
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>

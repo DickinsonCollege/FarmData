@@ -56,7 +56,7 @@ $farm = $_SESSION['db'];
 	<th>Total Gallons of Water Used </th>
 
 </tr>
-<tr><td><center><input class='textbox4 mobile-input inside_table' type="text" name="waterPerAcre" id="waterPerAcre" value=
+<tr><td><center><input class='textbox4 mobile-input single_table' type="text" name="waterPerAcre" id="waterPerAcre" value=
 <?php
 if ($farm == 'wahlst_spiralpath') {
    echo 90;
@@ -65,7 +65,7 @@ if ($farm == 'wahlst_spiralpath') {
 }
 ?>
   onkeyup="calculateWater();"></center></td>
-<td><center><input type="text" class='textbox4 mobile-input inside_table' name="totalWater" id="totalWater" value=0></center></td></tr>
+<td><center><input type="text" class='textbox4 mobile-input single_table' name="totalWater" id="totalWater" value=0></center></td></tr>
 </table>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';

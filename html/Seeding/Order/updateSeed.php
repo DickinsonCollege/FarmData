@@ -80,10 +80,10 @@ function convertFromGram($unit, $seeds) {
    $units = array('GRAM', 'OUNCE', 'POUND');
 if (!$isCover) {
    echo '<label for="rowft">Seeds per row foot:&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowft"';
+   echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowft"';
    echo 'id="rowft" value="'.$rowft.'">';
    echo '<br clear="all"/>';
-   echo '<input class="textbox25 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" ';
+   echo '<input class="textbox25 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" ';
    echo 'name ="seedsIn" id="seedsIn" value="'.
      number_format((float) convertFromGram($defUnit, $seeds), 1, '.','').'"> ';
    echo '<label for="seedsIn">&nbsp; seeds per&nbsp;</label>';
@@ -108,18 +108,18 @@ if (!$isCover) {
      echo " in ".$year;
    }
    echo ':&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowftToPlant" ';
+   echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowftToPlant" ';
      echo 'id="rowftToPlant" value="'.$rowftToPlant.'">';
 } else {
    echo '<label for="acres">Acres of '.$crop.' to plant in '.$year.':&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="acres"';
+   echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="acres"';
    echo 'id="acres" value="'.$acres.'">';
    echo '<br clear="all"/>';
    echo '<label for="rate">Seeding rate for '.$crop.' (lbs/acre):&nbsp;</label>';
-   echo '<input class="textbox2 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rate"';
+   echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rate"';
    echo 'id="rate" value="'.$rate.'">';
-   echo '<br clear="all"/>';
 }
+echo '<br clear="all"/>';
 echo '<input type="submit" name="updateSeedInfo" class = "submitbutton" ';
 echo ' value="Submit Seeding Information" onclick="return show_confirm();">';
 ?>

@@ -179,6 +179,6 @@ echo "</form>";
 */
 }
 
-echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:tspray:tspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 
 ?>

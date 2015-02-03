@@ -46,7 +46,8 @@ function addTemperatureToTable() {
    var cell = row.insertCell(0);
 
    var cellHTML = "";
-   cellHTML += "<input type='text' name='temperature" + numReadings + "' id='temperature" + numReadings + "' class='textbox25 mobile-input' onchange='calculateAverageTemperature();' value=0>"
+   cellHTML += "<input type='text' name='temperature" + numReadings + "' id='temperature" + 
+      numReadings + "' class='textbox25 mobile-input' onchange='calculateAverageTemperature();' value=0>"
 
    cell.innerHTML = cellHTML;
 

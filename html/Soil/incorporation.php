@@ -65,7 +65,7 @@ function selectSpecies() {
 		count++;
 		var row = table.insertRow(-1);
 		var cell = row.insertCell(0);
-		cell.innerHTML = "<input readonly type='text' style='width:100%;' class='textbox25 mobile-input inside_table'" + 
+		cell.innerHTML = "<input readonly type='text' style='width:100%;' class='textbox25 mobile-input single_table'" + 
 			"name='crop" + count + "' id='crop" + count + "' value='" + speciesNames[i] + "'>";
 	}
 

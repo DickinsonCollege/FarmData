@@ -35,6 +35,7 @@ if (!$isCover) {
       $seeds = $row['seedsGram'];
       $rowft = $row['seedsRowFt'];
       $defUnit = $row['defUnit'];
+      echo '<input type="hidden" name="defUnit" value="'.$defUnit.'">';
    }
    $sql = "select rowFt from toOrder where crop='".$crop."' and year = ".$year;
    $res = mysql_query($sql);
@@ -184,10 +185,10 @@ function update_rowft(rowNum) {
    var toplant = document.getElementById('toplant' + rowNum);
    if (isCover) {
       // toplant.value = (parseFloat(rowftV) * parseFloat(document.getElementById('rate').value)).toFixed(2);
-      toplant.value = (parseFloat(rowftV) * parseFloat(rate)).toFixed(2);
+      toplant.value = (parseFloat(rowftV) * parseFloat(rate)).toFixed(3);
    } else {
       var defUnit = document.getElementById('unit' + rowNum).value;
-      toplant.value = (rowft * parseFloat(rowftV) / fromGram(defUnit, seeds)).toFixed(2);
+      toplant.value = (rowft * parseFloat(rowftV) / fromGram(defUnit, seeds)).toFixed(3);
    }
 }
 
@@ -195,7 +196,7 @@ function update_tobuy(rowNum) {
    var toplant = document.getElementById('toplant' + rowNum).value;
    var inven = document.getElementById('inven' + rowNum).value;
    var tobuy = document.getElementById('tobuy' + rowNum);
-   tobuy.value= (toplant - inven).toFixed(2);
+   tobuy.value= (toplant - inven).toFixed(3);
    update_totals();
 }
 
@@ -214,9 +215,9 @@ function update_totals() {
      }
   }
   document.getElementById("totRowFt").value = totRowFt.toFixed(1);
-  document.getElementById("totToPlant").value = totToPlant.toFixed(2);
-  document.getElementById("totToBuy").value = totToBuy.toFixed(2);
-  document.getElementById("totInven").value = totInven.toFixed(2);
+  document.getElementById("totToPlant").value = totToPlant.toFixed(3);
+  document.getElementById("totToBuy").value = totToBuy.toFixed(3);
+  document.getElementById("totInven").value = totInven.toFixed(3);
 }
 
 function deleteInvButton(rowNum) {
@@ -296,14 +297,14 @@ function addRowInven(code, variety, rowft, defUnit, toPlant, inInventory, sYear)
    cell = row.insertCell(col);
    col++;
    var htm = '<input class="textbox2 mobile-input" type="text" name ="toplant' + invRows + '" id="toplant' +
-      invRows + '" style="width:100%" value="' + toPlant.toFixed(2) + 
+      invRows + '" style="width:100%" value="' + toPlant.toFixed(3) + 
       '" readonly onkeypress="stopSubmitOnEnter(event);">';
    cell.innerHTML=htm;
   
    cell = row.insertCell(col);
    col++;
    var htm = '<input class="textbox2 mobile-input" type="text" name ="inven' + invRows + '" id="inven' +
-      invRows + '" style="width:100%" value="' + inInventory.toFixed(2) + '" oninput="update_tobuy(' + 
+      invRows + '" style="width:100%" value="' + inInventory.toFixed(3) + '" oninput="update_tobuy(' + 
       invRows + ');setColor(' + invRows + ', ' + sYear + ', ' + inInventory + ');" ' +
       'onkeypress="stopSubmitOnEnter(event);">';
    cell.innerHTML=htm;
@@ -311,7 +312,7 @@ function addRowInven(code, variety, rowft, defUnit, toPlant, inInventory, sYear)
    cell = row.insertCell(col);
    col++;
    var htm = '<input class="textbox2 mobile-input" type="text" name ="tobuy' + invRows + '" id="tobuy' +
-      invRows + '" style="width:100%" value="' + (toPlant - inInventory).toFixed(2) + 
+      invRows + '" style="width:100%" value="' + (toPlant - inInventory).toFixed(3) + 
       '" readonly onkeypress="stopSubmitOnEnter(event);">';
    cell.innerHTML=htm;
   
@@ -845,7 +846,7 @@ if (!$isCover && $seeds != "") {
    echo "<tr><th>Unit</th><th>".$crop." Seeds Per Unit</th><th>Row Feet Per Unit</th><th>";
    echo "Calculator: Enter A Number In Any Row To Convert To Other Units</th></tr>";
    echo "<tr><td>SEEDS</td><td>1</td><td>0</td><td>";
-   echo '<input class="textbox2 mobile-input" type="text"';
+   echo '<input class="textbox2 mobile-input inside_table" type="text"';
    echo ' name ="calc_SEEDS" id="calc_SEEDS" value="'.$calc_SEEDS.
         '" style="width:100%" onkeypress="stopSubmitOnEnter(event);" oninput="update_seeds(\'SEEDS\','.
         $seeds.');">';
@@ -859,7 +860,7 @@ if (!$isCover && $seeds != "") {
           echo "&nbsp;";
        }
        echo "</td><td>";
-       echo '<input class="textbox2 mobile-input" type="text"';
+       echo '<input class="textbox2 mobile-input inside_table" type="text"';
        echo ' name ="calc_'.$units[$i].'" id="calc_'.$units[$i].'" value="'.$sds.
         '" style="width:100%" onkeypress="stopSubmitOnEnter(event);" oninput="update_seeds(\''.
         $units[$i].'\','.$seeds.');">';
@@ -890,10 +891,10 @@ echo '<br clear="all"/>';
 echo "<h3>Seed Summary</h3>";
 echo '<br clear="all"/><table><tr><td>';
 if ($isCover) {
-   $needed = number_format((float) ($acres * $rate), 2, '.', '');
+   $needed = number_format((float) ($acres * $rate), 3, '.', '');
 } else {
    $needed = number_format((float) ($rowftToPlant * $rowft)/ convertFromGram($defUnit, $seeds),
-       2, '.', '');
+       3, '.', '');
 }
 echo 'Total '.$showCrop.' seed needed:&nbsp; </td><td>'.$needed.'</td><td> '.$defUnit.'(S)</td></tr>';
 $inInven = 0;
@@ -908,14 +909,14 @@ if ($row = mysql_fetch_array($res)) {
    $inInven = $row['tot'];
 }
 if ($isCover) {
-   $inInven = number_format((float) $inInven, 2, '.', '');
+   $inInven = number_format((float) $inInven, 3, '.', '');
 } else {
-   $inInven = number_format((float) fromGram($defUnit, $inInven), 2, '.', '');
+   $inInven = number_format((float) fromGram($defUnit, $inInven), 3, '.', '');
 } 
 echo '<tr><td>Total '.$crop.' seed on hand:&nbsp;</td><td> '.$inInven.'</td><td> '.$defUnit.
    '(S)</td></tr>';
 echo "<tr><td>Quantity to order:&nbsp;</td><td> ".
-   number_format((float) ($needed - $inInven), 2, '.', '')."</td><td>".
+   number_format((float) ($needed - $inInven), 3, '.', '')."</td><td>".
    $defUnit.'(S)</td></tr></table>';
 echo '<br clear="all"/>';
 echo '<h3>Seed Inventory</h3>';
@@ -970,13 +971,13 @@ echo '<h3>Seed Inventory</h3>';
    while ($row = mysql_fetch_array($res)) {
       if ($isCover) {
          echo "addRowInven('".$row['code']."', '".$row['variety']."', ".$row['acres'].", '',".
-           number_format((float) ($row['acres'] * $rate), 2, '.', '').
-           ", ".number_format((float) $row['inInventory'], 2, '.', '').", ".
+           number_format((float) ($row['acres'] * $rate), 3, '.', '').
+           ", ".number_format((float) $row['inInventory'], 3, '.', '').", ".
            $row['year'].");";
       } else {
          echo "addRowInven('".$row['code']."', '".$row['variety']."', ".$row['rowFt'].", '".$defUnit."', ".
-           number_format((float) ($row['rowFt'] * $rowft)/ convertFromGram($defUnit, $seeds), 2, '.', '').
-           ", ".number_format((float) fromGram($defUnit, $row['inInventory']), 2, '.', '').", ".
+           number_format((float) ($row['rowFt'] * $rowft)/ convertFromGram($defUnit, $seeds), 3, '.', '').
+           ", ".number_format((float) fromGram($defUnit, $row['inInventory']), 3, '.', '').", ".
            $row['year'].");";
       }
    }

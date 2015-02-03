@@ -147,7 +147,7 @@ function order_arrived($row) {
       $defUnit = $_POST['defUnit'];
       $inven = convertToGram($inven, $defUnit);
    }
-   $inven = $unitsPerCatUnit * $catUnitsOrdered;
+   // $inven = $unitsPerCatUnit * $catUnitsOrdered;
    update_inventory();
    update_order();
    if ($isCover) {

@@ -17,9 +17,9 @@
              echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
          }
        ?>';
-      cell0.innerHTML = '<center><div class="styled-select" id="fieldDiv'+numRows+'"> <select class="mobile-select" name ="field' + numRows +'" id="field' + numRows + '" onChange="addInput('+numRows+'); addAcre('+numRows+'); calculateTotalUpdate(); calculateWater();">' +'<option value = 0 selected disabled> FieldID</option>' +   fieldID + '</select></div></center>';
+      cell0.innerHTML = '<center><div class="styled-select" id="fieldDiv'+numRows+'"> <select class="mobile-select inside_table" name ="field' + numRows +'" id="field' + numRows + '" onChange="addInput('+numRows+'); addAcre('+numRows+'); calculateTotalUpdate(); calculateWater();">' +'<option value = 0 selected disabled> FieldID</option>' +   fieldID + '</select></div></center>';
       var cell1 = row.insertCell(1);
-      cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select class=\"mobile-select\" id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
+      cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select class=\"mobile-select single_table\" style='width:100%' id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
                         "<option> Beds </option> </select></div></center>";
       var cell2 = row.insertCell(2);
       cell2.innerHTML = "<center><div id=\"acreDiv"+numRows+"\"><input class='textbox mobile-input inside_table' type=\"text\" id=\"acre"+numRows+"\" value=0 readonly style='width:100%'></div> </center>";
@@ -106,7 +106,7 @@
       xmlhttp.open("GET", "tupdate.php?field="+fld, false);
       xmlhttp.send();
 
-      newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select class=\"mobile-select\" onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
+      newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select class=\"mobile-select single_table\" style='width:100%' onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
    }
 
 

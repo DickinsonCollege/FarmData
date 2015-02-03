@@ -228,3 +228,7 @@ label, b{
 .inside_table {
 	left: 6% !important;
 }
+
+.single_table {
+	left: 3% !important;
+}

@@ -256,7 +256,9 @@ function get_code(row) {
          '<option value = 0 selected disabled> Rate of Seed </option></select></div>';
       var cell2    = row.insertCell(col);
       col++;
-      cell2.innerHTML = '<div id="idDiv'+numRows+'"><input type="text" class="textbox25 mobile-input inside_table"  id="id'+numRows+'" name="pound'+numRows+'"  value="">';   
+      cell2.innerHTML = '<div id="idDiv'+numRows+'"><input type="text"' +
+       ' class="textbox25 mobile-input inside_table" ' +
+       ' id="id'+numRows+'" name="pound'+numRows+'"  value="">';   
    }
    addRow();
    function removeRow(){

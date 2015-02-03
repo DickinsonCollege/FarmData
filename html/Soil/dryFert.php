@@ -61,7 +61,7 @@ while ($row1 =  mysql_fetch_array($result)){
 <br clear="all"/>
 
 <label for"rate"> Rate of Application:&nbsp; </label>
-<input type="text" class = "textbox2 mobile-input" name = "rate" id = "rate" onkeyup="addInput3();">
+<input type="text" class = "textbox2 mobile-input single_table" name = "rate" id = "rate" onkeyup="addInput3();">
 <!--
 <div class="styled-select" id="rate2">
 <select name ="rate" id="rate" onchange="addInput3();" >
@@ -86,7 +86,7 @@ function addInput() {
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "update_beds.php?fieldID="+fieldID, false);
    xmlhttp.send();
-   newdiv.innerHTML = "<div class='styled-select' id='bed2'><select onchange='addInput3();' name ='beds' id='beds' selected>"+xmlhttp.responseText+"</select></div>";
+   newdiv.innerHTML = "<div class='styled-select' id='bed2'><select onchange='addInput3();' name ='beds' id='beds' class='mobile-select'>"+xmlhttp.responseText+"</select></div>";
 
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "update_pounds.php?fieldID="+fieldID, false);
@@ -130,7 +130,7 @@ echo "</div>";
 
 <label for="total"> Pounds per Bed to Apply:&nbsp; </label>
 <div id="pounds2">
-<input class="textbox25 mobile-input" type="text" readonly name="pounds" id="pounds" value=0>
+<input class="textbox25 mobile-input single_table" type="text" readonly name="pounds" id="pounds" value=0>
 </div>
 <br clear="all">
 

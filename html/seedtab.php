@@ -21,7 +21,10 @@ echo '<li id="li_ordert">
 }
 ?>
 </ul>
+<!--
 <?php createBR(); ?>
+-->
+<br clear="all"/>
 </div>
 </div>
 

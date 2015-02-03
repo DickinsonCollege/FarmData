@@ -161,7 +161,7 @@ function addInput3() {
 <br clear = "all"/>
 <label for="passes"> Total Material, Suggested:&nbsp; </label>
 <div id="total2">
-<input name="total4" class= "textbox2 mobile-input"  type="text" disabled id="total4">
+<input name="total4" class= "textbox2 mobile-input single_table"  type="text" disabled id="total4">
 </div>
 <div id="total25">
 <label for="unit35"> </label>
@@ -170,13 +170,13 @@ function addInput3() {
 <label style="margin-top:10px; font-size: 18pt;" for="passes2">(Please Input Total Material Actual Even if You Agree with the Suggested Amount) </label>
 <br clear="all"/>
 <label for="total"> Total Material Actual:&nbsp; </label>
-<input type="text" class="textbox2 mobile-input" id="tot" name="tot">
+<input type="text" class="textbox2 mobile-input single_table" id="tot" name="tot">
 <div id="total3">
 <label for="unit2"> </label>
 </div>
 <br clear="all"/>
 <label for="minues"> Mixed With:&nbsp; </label>
-<input type="text" class="textbox2 mobile-input" id="mix" name="mix">
+<input type="text" class="textbox2 mobile-input single_table" id="mix" name="mix">
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>

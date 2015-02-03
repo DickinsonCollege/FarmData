@@ -5,7 +5,13 @@
 <!--
 <center>
 -->
-<table id="cropTable" style="width:10%">
+<?php
+  echo ' <table id="cropTable"';
+  if (!$_SESSION['mobile']) {
+     echo ' style="width:10%"';
+  }
+  echo '>';
+?>
 <tr><th>Crops</th></tr>
 </table>
 <br clear="all"/>
@@ -39,7 +45,7 @@ value="Remove Crop">
        ?>';
       cell0.innerHTML = '<div class="styled-select<?php 
   if (!$_SESSION['mobile']) { echo "2"; }?>" id="cropDiv'+numCropRows+
-        '"> <select class="mobile-select" name ="crop' + 
+        '"> <select class="mobile-select inside_table" name ="crop' + 
         numCropRows +'" id="crop' + numCropRows + '" >' +
        '<option value = 0 selected disabled> Crop </option>' +  cropID + '</select></div>';
    }

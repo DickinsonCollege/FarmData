@@ -90,16 +90,16 @@ function show_confirm() {
   '&month='.$dMonth.'&day='.$dDay.'&crop='.$currentCrop.'&currentID='.$_GET['currentID'].
   '&tab=harvest:harvestInput&date='.$currentDate;?>" >
 
-<h3>Harvest Input Form</h3>
+<h3 class='form_header'>Harvest Input Form</h3>
 <br clear="all">
-<label for="crop"><b>Date Crop Harvested:</b></label>
+<label class='input_label' for="crop"><b>Date Crop Harvested:</b></label>
 <?php
 if (!$_SESSION['mobile']) echo "<br clear='all'>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear="all"/>
 
-<label for='cropButton'><b>Crop:&nbsp;</b></label>
+<label class='input_label' for='cropButton'><b>Crop:&nbsp;</b></label>
 <div class='styled-select'>
 <select name='cropButton' id='cropButton' class='mobile-select'>
 <option value=0 selected>Crop</option>
@@ -120,7 +120,7 @@ echo "<br clear=\"all\">";
 }
 ?>
 <br clear="all"/>
-<table id='harvestTable' name='harvestTable'>
+<table id='harvestTable' name='harvestTable' class='input_table'>
 <tr><th>FieldID</th><th>Yield</th><th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
 <?php
 if ($_SESSION['labor']) {
@@ -242,15 +242,12 @@ if($currentDate){
 
 <br clear="all"/>
 <div>
-<label for="comments">Comments:</label>
+<label class='input_label' for="comments">Comments:</label>
 <br clear="all"/>
-<textarea  name="comments"rows="20" cols="30">
+<textarea  name="comments" class='input_comments' rows="20" cols="30">
 </textarea>
 </div>
 
-<br clear="all"/>
-
-   
 <input  class="submitbutton"  type="submit" name="submit" value="Submit" onclick= "return show_confirm();">
 
 </form>

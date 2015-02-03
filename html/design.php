@@ -12,7 +12,7 @@ if($_SERVER["HTTPS"] != "on") {
 // HTTPSOFF
 $farm = $_SESSION['db'];
 date_default_timezone_set('America/New_York');
-  $_SESSION['mobile']=1;
+    //  $_SESSION['mobile']=1;
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 
 if ($_SESSION['mobile']) {
@@ -20,7 +20,7 @@ if ($_SESSION['mobile']) {
 	echo "<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>";
 	//echo "<meta name='viewport' content='width=device-width, initial-scale=0.3, minimum-scale=0.3, maximum-scale=1'>";
 	include $_SERVER['DOCUMENT_ROOT'].'/header.php';
-	echo '<link type="text/css "href="/mobileTabs.css" rel = "stylesheet">';
+	echo '<link type="text/css" href="/mobileTabs.css" rel = "stylesheet">';
 //   echo '<link type="text/css" href="/tabs.css" rel="stylesheet">';
    echo '<link type="text/css" href="/mobileTable.css" rel = "stylesheet">';
    echo '<link type="text/css" href="/mobileDesign2.css" rel = "stylesheet">';

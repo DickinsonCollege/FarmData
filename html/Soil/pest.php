@@ -42,7 +42,13 @@ echo "\n<option value= \"$row1[pestName]\">$row1[pestName]</option>";
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
 <br clear="all"/>
-<table id="samples" style="width:10%"
+<?php
+echo '<table id="samples"';
+if (!$_SESSION['mobile']) {
+   echo ' style="width:10%"';
+}
+echo '>';
+?>
 <tr><th>Plant&nbsp;Samples</th></tr>
 </table>
 <br clear="all"/>
@@ -78,9 +84,14 @@ function addSampleRow() {
   row.id = "sampleRow" + numSamples;
 
   var cell = row.insertCell(0);
-  cell.innerHTML =  '<input class="textbox2 mobile-input" type="text" ' +
+/*
+  cell.innerHTML =  '<input type="text" class="textbox mobile-input inside_table" ' +
     'name ="sample' + numSamples + '" id="sample' + numSamples + 
-    '" style="width:100%" value="" oninput="calculate();" ' +
+    '" style="width:1000%" value="" oninput="calculate();" ' +
+    'onkeypress="stopSubmitOnEnter(event);">';
+*/
+  cell.innerHTML =  '<input type="text" name ="sample' + numSamples + '" id="sample' + numSamples + 
+    '" class="textbox2 mobile-input" style="width:100%" value="" oninput="calculate();" ' +
     'onkeypress="stopSubmitOnEnter(event);">';
 }
 

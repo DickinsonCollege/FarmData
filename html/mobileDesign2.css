@@ -233,6 +233,17 @@ background-color: white;
 text-align: center;
 }
 
+
+.textboxp {
+width:75px;
+height: 75px;
+font-size:30pt;
+margin-left: -60px;
+float: left;
+display:block;
+background-color: white;
+text-align: center;
+}
 .textbox2{
 float:left;
 width: 72px;
@@ -311,6 +322,10 @@ input[type='checkbox'] {
 	position: relative;
 	top: 20px;
 }
+
+.large-checkbox {
+   margin-top: -17%;
+}   
 
 textarea {
    width: 100%;
@@ -557,3 +572,10 @@ input.toggle:disabled +label:after {
    position: relative;
    /*text-shadow: 1px 1px 1px #000;*/
 }
+
+.input_table {
+	width: 100%;
+}
+
+.input_comments {
+	margin-bottom: 0px;

@@ -164,7 +164,7 @@ if ($_SESSION['seed_order']) {
   echo '</label>';
 }
 ?>
-<input class="textbox2 mobile-input" type="text" onkeypress= 'stopSubmitOnEnter(event);' 
+<input class="textbox2 mobile-input single_table" type="text" onkeypress= 'stopSubmitOnEnter(event);' 
 <?php if ($_SESSION['seed_order']) { echo ' readonly '; } ?>
 name ="bedft" id="bedft" value ="0">
 <br clear = "all"/>
@@ -188,14 +188,14 @@ while ($cons<8) {
 if ($_SESSION['labor']) {
 echo '
 <label for="numWorkers">Number of workers (optional):&nbsp;</label>
-<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input">
+<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input single_table">
 <br clear="all"/>
 
 <label>Enter time in Hours or Minutes:</label>
 <br clear="all"/>
-<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" class="textbox2 mobile-input-half">
+<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" class="textbox2 mobile-input-half single_table">
 <div class="styled-select">
-<select name="timeUnit" id="timeUnit" class=\'mobile-select-half\'>
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
