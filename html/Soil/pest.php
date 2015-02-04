@@ -49,7 +49,7 @@ if (!$_SESSION['mobile']) {
 }
 echo '>';
 ?>
-<tr><th>Plant&nbsp;Samples</th></tr>
+<tr><th>Insects&nbsp;per&nbsp;Plant</th></tr>
 </table>
 <br clear="all"/>
 <input type="button" id="addSample" name="addSample" class="submitbutton" 
@@ -90,8 +90,9 @@ function addSampleRow() {
     '" style="width:1000%" value="" oninput="calculate();" ' +
     'onkeypress="stopSubmitOnEnter(event);">';
 */
-  cell.innerHTML =  '<input type="text" name ="sample' + numSamples + '" id="sample' + numSamples + 
-    '" class="textbox2 mobile-input" style="width:100%" value="" oninput="calculate();" ' +
+  cell.innerHTML =  '<input type="text" name ="sample' + numSamples + 
+    '" id="sample' + numSamples + 
+    '" class="textbox2 mobile-input inside_table" style="width:100%" value="" oninput="calculate();" ' +
     'onkeypress="stopSubmitOnEnter(event);">';
 }
 

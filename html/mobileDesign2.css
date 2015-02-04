@@ -233,17 +233,6 @@ background-color: white;
 text-align: center;
 }
 
-
-.textboxp {
-width:75px;
-height: 75px;
-font-size:30pt;
-margin-left: -60px;
-float: left;
-display:block;
-background-color: white;
-text-align: center;
-}
 .textbox2{
 float:left;
 width: 72px;
@@ -579,3 +568,4 @@ input.toggle:disabled +label:after {
 
 .input_comments {
 	margin-bottom: 0px;
+}

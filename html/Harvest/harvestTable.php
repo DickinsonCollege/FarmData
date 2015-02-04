@@ -64,7 +64,8 @@ if(isset($_POST['submit'])){
    echo "</table>";
    echo '<br clear="all"/>';
    if ($crop != "%") {
-      $total="Select sum(yield) as total, unit from harvested where hardate between '".
+      $total="Select sum(yield) as total, sum(harvested.hours) as hours, unit from harvested ".
+         "where hardate between '".
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
          "' and harvested.crop like '" .$crop.
          "' and harvested.fieldID like '".$fieldID."' group by unit order by unit";
@@ -97,7 +98,7 @@ if(isset($_POST['submit'])){
       echo "<table>";
       echo "<tr><th>Total Yield</th>";
       echo "<th>Average Yield (bed feet)</th>";
-      echo "<th>Average Yield (row feet)</th></tr>";
+      echo "<th>Average Yield (row feet)</th><th>Hours</th><th>Hours/Unit</th></tr>";
       while ($row1 = mysql_fetch_array($res)) {
           $row2 = mysql_fetch_array($res2);
           $row3 = mysql_fetch_array($res3);
@@ -106,7 +107,9 @@ if(isset($_POST['submit'])){
           $row2Deci3=number_format((float)$row2['yperft'], 3, '.', '');
           echo "<td>".$row2Deci3." ".$row2['unit']."(S)/Bed Foot</td>";
           $row2Deci3=number_format((float)$row3['yperft'], 3, '.', '');
-          echo "<td>".$row2Deci3." ".$row3['unit']."(S)/Row Foot</td></tr>";
+          echo "<td>".$row2Deci3." ".$row3['unit']."(S)/Row Foot</td>";
+          echo "<td>".number_format((float) $row1['hours'], 2, '.', '')."</td>";
+          echo "<td>".number_format((float) $row1['hours'] / $row1['total'], 2, '.', '')."</td></tr>";
       }
       echo "</table>";
       echo "<br clear = 'all'>";

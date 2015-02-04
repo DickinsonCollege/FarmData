@@ -85,7 +85,8 @@ if ($_SESSION['labor']) {
 
 <label>Enter time in Hours or Minutes:</label>
 <br clear="all"/>
-<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" class="textbox2 mobile-input-half single_table">
+<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" value="1"
+  class="textbox2 mobile-input-half single_table">
 <div class="styled-select">
 <select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
    <option value="minutes">Minutes</option>

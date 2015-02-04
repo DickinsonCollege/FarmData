@@ -188,11 +188,13 @@ function addRow() {
 if ($_SESSION['labor']) {
 echo '
       var cell3 = row.insertCell(3);
-      cell3.innerHTML="<input onkeypress= \'stopSubmitOnEnter(event);\' type=\'text\' name=\'numW"+numRows+
-         "\' id=\'numW" + numRows + "\' class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";
+      cell3.innerHTML="<input onkeypress= \'stopSubmitOnEnter(event);\' type=\'text\' name=\'numW"+
+         numRows+ "\' id=\'numW" + numRows + "\' value=\"1\" " +
+         "class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";
       var cell4 = row.insertCell(4);
-      cell4.innerHTML="<input onkeypress=\'stopSubmitOnEnter(event);\' type=\'text\' name=\'time"+numRows+
-         "\' id=\'time"+numRows+"\' class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";';
+      cell4.innerHTML="<input onkeypress=\'stopSubmitOnEnter(event);\' type=\'text\' name=\'time"+
+         numRows+ "\' id=\'time"+numRows+"\' value=\"1\" " +
+         "class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";';
 }
 ?>
    }
