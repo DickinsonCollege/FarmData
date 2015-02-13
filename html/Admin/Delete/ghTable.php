@@ -3,6 +3,7 @@
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
 if(isset($_GET['submit'])){
    if(isset($_GET['id'])){
@@ -56,13 +57,17 @@ if(isset($_GET['submit'])){
                "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
               "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop']).
                "&tab=admin:admin_delete:deleteseed:deleteflats&submit=Submit\">";
-            echo "<input type='submit' class='editbutton' value='Edit'></form></td>";
+            echo "<input type='submit' class='editbutton' value='Edit'";
+            echo 'onclick="return show_warning();">';
+            echo "</form></td>";
       
             echo "<td><form method='POST' action=\"ghTable.php?month=".$month."&day=".$day."&year=".$year.
                "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
                "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop']).
                "&tab=admin:admin_delete:deleteseed:deleteflats&submit=Submit\">";
-            echo "<input type='submit' class='deletebutton' value='Delete'></form></td>";
+            echo "<input type='submit' class='deletebutton' value='Delete'";
+            echo 'onclick="return show_warning();">';
+            echo "</form></td>";
    
             echo "</tr>";
          }

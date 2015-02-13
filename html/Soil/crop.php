@@ -38,7 +38,7 @@ value="Remove Crop">
       row.id="cropRow" + numCropRows;
       var cell0 = row.insertCell(-1);
       var cropID = '<?php
-         $result=mysql_query("Select crop from plant");
+         $result=mysql_query("Select crop from plant where active=1");
          while ($row1 =  mysql_fetch_array($result)){
              echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
          }

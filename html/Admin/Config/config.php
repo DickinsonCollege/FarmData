@@ -131,9 +131,9 @@ In the list below, check each FARMDATA component that you wish to include:
 </ul>
 <b>Seed by the:</b>
 <ul>
-<li> <input type="radio" name="bedft" value="bedft" id="bedft"><b>Bed Foot</b></input> (use if different crops
+<li> <input type="radio" name="bedftv" value="bedftv" id="bedftv"><b>Bed Foot</b></input> (use if different crops
  can be planted in the same bed)
-<li> <input type="radio" name="bedft" value="row" id="bed"><b>Bed</b></input> (use if only one crop can be
+<li> <input type="radio" name="bedftv" value="row" id="bed"><b>Bed</b></input> (use if only one crop can be
  planted per bed)
 </ul>
 <b>Invoice Information:</b> (leave blank if not using invoices)
@@ -159,7 +159,7 @@ for (id in idvs) {
   document.getElementById(id).checked = (idvs[id] > 0);
  // console.log(id + " " + document.getElementById(id).checked);
   if (idvs['bedft'] == 1) {
-    document.getElementById('bedft').checked = true;
+    document.getElementById('bedftv').checked = true;
   } else {
     document.getElementById('bed').checked = true;
   }
@@ -199,7 +199,7 @@ if (!empty($_POST['done'])) {
          $_SESSION[$idv] = 0;
       }
    }
-   if ($_POST['bedft'] == "bedft") {
+   if ($_POST['bedftv'] == "bedftv") {
       $_SESSION['bedft'] = 1;
    } else {
       $_SESSION['bedft'] = 0;

@@ -34,7 +34,7 @@ $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 $user = $row['username'];
 $field = $row['fieldID'];
-$bedft = $row['bedft'];
+$bedftv = $row['bedft'];
 $rowsBed = $row['rowsBed'];
 $com = $row['comments'];
 $curYear = $row['yr'];
@@ -110,7 +110,7 @@ echo '</div></select>';
 echo '<br clear="all"/>';
 
 echo '<label>Bed Feet:&nbsp</label>';
-echo '<input type="text" class="textbox3" name="bedft" id="bedft" value="'.$bedft.'">';
+echo '<input type="text" class="textbox3" name="bedftv" id="bedftv" value="'.$bedftv.'">';
 echo '<br clear="all"/>';
 
 echo '<label>Rows/Bed:&nbsp</label>';
@@ -139,7 +139,7 @@ echo "<input type='submit' name='submit' value='Update Record' class = 'submitbu
 echo "</form>";
 if ($_POST['submit']) {
    $comSanitized=escapehtml($_POST['comments']);
-   $bedft = escapehtml($_POST['bedft']);
+   $bedftv = escapehtml($_POST['bedftv']);
    $numrows = escapehtml($_POST['rowsbed']);
    $fld = escapehtml($_POST['fieldID']);
    $crop = escapehtml($_POST['crop']);
@@ -154,7 +154,7 @@ if ($_POST['submit']) {
    $day = escapehtml($_POST['day']);
    $user = escapehtml($_POST['user']);
    $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
-     $month."-".$day."', bedft=".$bedft.",rowsBed=".$numrows.",hours=".$hours.",comments='".
+     $month."-".$day."', bedft=".$bedftv.",rowsBed=".$numrows.",hours=".$hours.",comments='".
      $comSanitized."',crop='".$crop."' where id=".$id;
    $result = mysql_query($sql);
    if(!$result){

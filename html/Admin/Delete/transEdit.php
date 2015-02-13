@@ -49,7 +49,7 @@ $user = $row['username'];
 $transdate = $row['transdate'];
 $seedDate = $row['seedDate'];
 $fieldID = $row['fieldID'];
-$bedft = $row['bedft'];
+$bedftv = $row['bedft'];
 $rowsBed = $row['rowsBed'];
 $hours = $row['hours'];
 $flats = $row['flats'];
@@ -156,7 +156,7 @@ echo "</div></select>";
 echo "<br clear='all'>";
 
 echo "<label>Bed Feet Planted:&nbsp</label>";
-echo "<input type='text' class='textbox2' name='bedfeet' id='bedfeet' value='".$bedft."'>";
+echo "<input type='text' class='textbox2' name='bedfeet' id='bedfeet' value='".$bedftv."'>";
 echo "<br clear='all'>";
 
 echo "<label>Rows per Bed:&nbsp</label>";
@@ -197,7 +197,7 @@ if ($_POST['submit']) {
    $crop = escapehtml($_POST['crop']);
    $fieldID = escapehtml($_POST['fieldID']);
    $flats = escapehtml($_POST['flats']);
-   $bedft = escapehtml($_POST['bedfeet']);
+   $bedftv = escapehtml($_POST['bedfeet']);
    $rowsbed = escapehtml($_POST['rowsbed']);
    if ($_SESSION['labor']) {
       $hours = escapehtml($_POST['hours']);
@@ -209,7 +209,7 @@ if ($_POST['submit']) {
  
    $sql = "update transferred_to set username='".$username."',crop='".$crop."', seedDate='".$seedDate."', 
       transdate='".$transYear."-".$transMonth."-".$transDay."', 
-      flats='".$flats."', bedft='".$bedft."', rowsBed='".$rowsbed."', hours='".$hours."',
+      flats='".$flats."', bedft='".$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."',
       comments='".$comments."', fieldID='".$fieldID."' WHERE id=".$id;
 
    $result = mysql_query($sql);

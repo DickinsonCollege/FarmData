@@ -46,7 +46,7 @@ if (!$_SESSION['mobile']) {
 <select name="cropButton" id="cropButton" class="mobile-select">
 <option disabled selected value="0">Crop</option>
 <?php
-$sql = "select distinct crop from plant";
+$sql = "select distinct crop from plant where active=1";
 $res = mysql_query($sql);
 while ($row = mysql_fetch_array($res)) {
   echo '<option value="'.$row['crop'].'">'.$row['crop'].'</option>';
@@ -62,10 +62,10 @@ function update_feet() {
    for (var i = 1; i <= numRows; i++) {
       if (document.getElementById("row" + i) != null &&
           document.getElementById("row" + i).innerHTML != "") {
-         tot += parseFloat(document.getElementById("bedft" + i).value);
+         tot += parseFloat(document.getElementById("bedftv" + i).value);
       }
    }
-   document.getElementById("bedft").value = tot;
+   document.getElementById("bedftv").value = tot;
 }
 
 function addRow() {
@@ -94,8 +94,8 @@ function addRow() {
          xmlhttp.responseText+"</select> </div>";
 
       var cell1 = row.insertCell(1);
-      cell1.innerHTML = "<input onkeypress= 'stopSubmitOnEnter(event);' type = 'text' name='bedft" + numRows
-         + "' id='bedft"+numRows+"' class='textbox mobile-input inside_table' style='width:100%' " +
+      cell1.innerHTML = "<input onkeypress= 'stopSubmitOnEnter(event);' type = 'text' name='bedftv" + numRows
+         + "' id='bedftv"+numRows+"' class='textbox mobile-input inside_table' style='width:100%' " +
          "oninput='update_feet();' value='0'>";
    }
 }
@@ -166,7 +166,7 @@ if ($_SESSION['seed_order']) {
 ?>
 <input class="textbox2 mobile-input single_table" type="text" onkeypress= 'stopSubmitOnEnter(event);' 
 <?php if ($_SESSION['seed_order']) { echo ' readonly '; } ?>
-name ="bedft" id="bedft" value ="0">
+name ="bedftv" id="bedftv" value ="0">
 <br clear = "all"/>
 <div class="styled-select">
 <label for="rowbd">Rows per bed:&nbsp;</label>
@@ -251,7 +251,7 @@ if ($_SESSION['seed_order']) {
    con += dy + "-";
    var yr = document.getElementById("year").value;
    con += yr + "\n";
-   var i = document.getElementById("bedft").value;
+   var i = document.getElementById("bedftv").value;
    var r = document.getElementById("rowbd").value;
    if (checkEmpty(r)) {
       alert("Please Select Rows Per Bed");
@@ -271,7 +271,7 @@ if ($_SESSION['seed_order']) {
       alert("Enter valid "+bed+"!");
       return false;
    } 
-   var con=con+bed+": "+ Math.round(i/div) + "\n";
+   var con=con+bed+": "+ i + "\n";
 
    var con=con+"Rows/Bed: "+ r+ "\n";
 
@@ -291,7 +291,7 @@ if ($_SESSION['seed_order']) {
     var ret = confirm("Confirm Entry:"+"\n"+con);
     if (ret) {
        document.getElementById('cropButton').disabled=false;
-       document.getElementById('bedft').disabled=false;
+       document.getElementById('bedftv').disabled=false;
     }
     return ret;
 }
@@ -305,11 +305,11 @@ if ($_SESSION['seed_order']) {
 <input type="submit" class="submitbutton" value = "View Table"></form>
 <?php
 if(isset($_POST['submit'])) {
-   $bedft = escapehtml($_POST['bedft']);
+   $bedftv = escapehtml($_POST['bedftv']);
    $numrows = escapehtml($_POST['rowbd']);
    $crop = escapehtml($_POST['cropButton']);
    if ($_SESSION['bedft'] && $_POST['rowBed'] == "row") {
-      $bedft = $bedft / $numrows;
+      $bedftv = $bedftv / $numrows;
    }
    $fld = escapehtml($_POST['fieldID']);
 
@@ -337,7 +337,7 @@ if(isset($_POST['submit'])) {
       $result = mysql_query($sql); 
       $row= mysql_fetch_array($result);
       $len = $row['length'];
-      $bedft = $bedft * $len;
+      $bedftv = $bedftv * $len;
    } 
 
    $comSanitized=escapehtml($_POST['comments']);
@@ -357,7 +357,7 @@ if(isset($_POST['submit'])) {
       for ($i = 1; $i <= $numRows; $i++) {
          if (isset($_POST['code'.$i])) {
             $code = escapehtml($_POST['code'.$i]);
-            $bf = $_POST['bedft'.$i];
+            $bf = $_POST['bedftv'.$i];
             $bd = " beds";
             if ($_SESSION['bedft']) {
                if ($_POST['rowBed'] == "row") {
@@ -393,10 +393,10 @@ if(isset($_POST['submit'])) {
      }
    }
 
-   $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments)
+$sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments)
    VALUES
    ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
-      $_POST['day']."',".$bedft.", ".$numrows.", ".$totalHours.", '".$comSanitized."')";
+      $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 
        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";

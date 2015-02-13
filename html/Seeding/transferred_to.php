@@ -52,7 +52,7 @@ if (!$_SESSION['bedft']) {
 }
 ?>
 <label> &nbsp;</label>
-<input class="textbox2 mobile-input single_table" type="text" name ="bedft" value= 0 id="bedft">
+<input class="textbox2 mobile-input single_table" type="text" name ="bedftv" value= 0 id="bedftv">
 <br clear="all"/>
 <br clear='all'/>
 <label for="rows">Rows per Bed:&nbsp;</label>
@@ -147,7 +147,7 @@ echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:tr
         var strUser3 = i.options[i.selectedIndex].text;
         var con=con+strUser3+"\n";
 
-        var i = document.getElementById("bedft").value;
+        var i = document.getElementById("bedftv").value;
 
         var r = document.getElementById("rowbd").value;
         var rowBed = document.getElementById("rowBed");
@@ -169,7 +169,7 @@ echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:tr
            alert("Enter valid "+bed+"!");
            return false;
         }
-        var con=con+bed+": "+ Math.round(i*10/div)/10 + "\n";
+        var con=con+bed+": "+ i + "\n";
         var con=con+"Rows/Bed: "+ r + "\n";
 
         var numF = document.getElementById("numFlats").value;
@@ -205,10 +205,10 @@ echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:tr
 <?php
 if(isset($_POST['submit'])) {
    $comSanitized=escapehtml($_POST['comments']);
-   $bedft = escapehtml($_POST['bedft']);
+   $bedftv = escapehtml($_POST['bedftv']);
    $numrows = escapehtml($_POST['rowbd']);
-   if ($_SESSION['bedft'] && $_POST['rowBed'] == "row") {
-      $bedft = $bedft / $numrows;
+   if ($_SESSION['bedftv'] && $_POST['rowBed'] == "row") {
+      $bedftv = $bedftv / $numrows;
    }
 
    $fld = escapehtml($_POST['fieldID']);
@@ -220,7 +220,7 @@ if(isset($_POST['submit'])) {
       $result = mysql_query($sql);
       $row= mysql_fetch_array($result);
       $len = $row['length'];
-      $bedft = $bedft * $len;
+      $bedftv = $bedftv * $len;
    }
 
    if ($_SESSION['labor']) {
@@ -244,7 +244,7 @@ if(isset($_POST['submit'])) {
 
    $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,hours,comments) VALUES ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
-      $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedft.
+      $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
       ", ".$numrows.", ".$numFlats.", ".$totalHours.",'".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 

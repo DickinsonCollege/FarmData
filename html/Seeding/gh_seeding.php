@@ -30,7 +30,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo "<br clear=\"all\">";
 ?>
 <?php
-$labor = false;
+$laborc = false;
 $harvesting = false;
 $transplanting = false;
 include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
@@ -101,7 +101,7 @@ function removeRow() {
 </script>
 
 <label for="numFlats"><b>Number of flats:&nbsp;</b></label>
-<input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input single_table">
+<input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input">
 <br clear="all"/>
 <label for="flatSize"><b>Flat size:&nbsp;</b></label>
 <div class="styled-select">
@@ -140,7 +140,7 @@ echo '<input value=0 type="int" onkeypress="stopSubmitOnEnter(event);" name ="nu
 if ($_SESSION['seed_order']) {
    echo ' readonly ';
 }
-echo ' class="textbox2 mobile-input single_table" id="num_seeds" value="0">';
+echo ' class="textbox2 mobile-input" id="num_seeds" value="0">';
 echo '</input>';
 if (!$_SESSION['seed_order']) {
    echo '<br clear = "all"/>';

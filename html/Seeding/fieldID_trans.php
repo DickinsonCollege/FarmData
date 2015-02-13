@@ -25,14 +25,14 @@ xmlhttp.open("GET", "update_trans.php?crop="+strUser, false);
 xmlhttp.send();
 //console.log(xmlhttp.responseText);
 newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
-   "<select name= 'seedDate' id= 'seedDate' class='mobile-input single_table' onchange='getflats();'>" + 
+   "<select name= 'seedDate' id= 'seedDate' onchange='getflats();'>" + 
    xmlhttp.responseText+"</select> </div>";
    getflats();
 }
  </script>
 <?php
  $transplanting = true;
- $labor = false;
+ $laborc = false;
  $harvesting = false;
  include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
@@ -53,11 +53,11 @@ newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
 <br clear="all">
 <label for='seedDate'> Date Seeded: </label>
 <div id="seedInput" class="styled-select">
-<select name="seedDate" id= "seedDate" class='mobile-select single_table'>
+<select name="seedDate" id= "seedDate" class='mobile-select'>
 <option value=0 selected="selected" style="display:none"> Seed Date </option>
 </select>
 </div>
 <br clear="all">
 <label for="flatsBox">Total Flats Seeded:&nbsp;</label>
-<input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input single_table" type="text" disabled readonly name ="flatsBox" value= '' id="flatsBox">
+<input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input" type="text" disabled readonly name ="flatsBox" value= '' id="flatsBox">
 

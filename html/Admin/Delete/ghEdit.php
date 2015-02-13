@@ -105,7 +105,11 @@ echo "<input type='text' class='textbox2' name='numseeds_planted' id='numseeds_p
 echo "<br clear='all'/>";
 
 echo "<label>Varieties:&nbsp;</label>";
-echo "<input type='text' class='textbox3' name='varieties' id='varieties' value='".$varieties."'>";
+//echo "<input type='text' class='textbox3' name='varieties' id='varieties' value='".$varieties."'>";
+echo '<br clear="all"/>';
+echo "<textarea rows=\"10\" cols=\"30\" name = \"varieties\" id = \"varieties\">";
+echo $varieties;
+echo "</textarea>";
 echo "<br clear='all'/>";
 
 echo "<label>Flats:&nbsp;</label>";

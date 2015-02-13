@@ -11,7 +11,7 @@ function overlay() {
               echo '"harvesting";';
            } else if ($transplanting) {
               echo '"transplanting";';
-           } else if ($labor) {
+           } else if ($laborc) {
               echo '"labor";';
            } else {
               echo '"other";';

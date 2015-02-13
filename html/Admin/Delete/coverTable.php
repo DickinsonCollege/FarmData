@@ -3,6 +3,7 @@
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 if(isset($_GET['submit'])){
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM coverSeed WHERE id=".$_GET['id'];
@@ -50,13 +51,17 @@ if(isset($_GET['submit'])){
 		"&tmonth=".$tcurMonth."&tday=".$tcurDay."&tyear=".$tcurYear."&id=".$row['id'].
 		"&fieldID=".encodeURIComponent($_GET['fieldID']).
 		"&tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverseed&submit=Submit\">";
-	echo "<input type='submit' class='editbutton' value='Edit'></form></td>";
+	echo "<input type='submit' class='editbutton' value='Edit'";
+        echo 'onclick="return show_warning();">';
+        echo "</form></td>";
 
 	echo "<td><form method='POST' action=\"coverTable.php?month=".$month."&day=".$day."&year=".$year.
 		"&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
 		"&fieldID=".encodeURIComponent($_GET['fieldID']).
 		"&tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverseed&submit=Submit\">";
-	echo "<input type='submit' class='deletebutton' value='Delete'></form></td>";
+	echo "<input type='submit' class='deletebutton' value='Delete'";
+        echo 'onclick="return show_warning();">';
+        echo "</form></td>";
 
 	echo "</tr>";
 
