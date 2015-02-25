@@ -37,6 +37,11 @@ if [ -f config ]; then
    FDIR="${ARR[4]}"
    DOMAIN="${ARR[5]}"
    FULLPATH="${ARR[6]}"
+   if [[ ${#ARR[@]} == 8 ]]; then
+      MYSQLHOST="${ARR[7]}"
+   else
+      MYSQLHOST="localhost"
+   fi
    if [ -z $FULLPATH ]; then
       echo "Config file corrupted - please continue with new installation or"
       echo "press ^C to terminate installation."
@@ -60,6 +65,33 @@ if [ -f config ]; then
 fi
 
 if [ $UPGRADE = n ]; then
+   echo "Is your web server also your MySQL server?  (Enter y or n.)";
+   read LOCALHOST
+   if [ $LOCALHOST = Y ]; then
+     LOCALHOST=y
+   fi
+
+   MYSQLHOST="localhost"
+   if [ $LOCALHOST = n ]; then
+      FIN=0
+      while [ $FIN -eq 0 ]; do
+        echo "Enter the hostname of your MySQL server: "
+        read MYSQLHOST
+        if [[ $MYSQLHOST == *\ * ]]; then
+          echo "ERROR: MySQL host name must not contain spaces."
+        else 
+          FIN=1
+        fi
+      done
+
+      echo "Please create and populate the necessary databases on $MYSQLHOST as described here: ";
+      echo "  https://sourceforge.net/p/farmdata/wiki/Install/";
+      echo "You will likely do this via phpMyAdmin, cpanel or some other kind of control panel."
+      echo "You will need the name of the user account database and the username and password";
+      echo "for that database, and the name of the farm information database to complete this";
+      echo "installation process.";
+   fi
+
    FIN=0
    while [ $FIN -eq 0 ]; do
      echo "Enter your domain name (i.e. the hostname of your web server):"
@@ -106,6 +138,7 @@ if [ $UPGRADE = n ]; then
    if [[ $FULLPATH != */ ]]; then
       FULLPATH=$FULLPATH/
    fi
+
 fi
 
 if [ -d $FULLPATH ]; then
@@ -128,82 +161,95 @@ fi
 echo "The URL for your FARMDATA installation is: http$S://$DOMAIN/$FDIR"
 
 # :<<'QWERTY'
-if [ $UPGRADE = n ]; then
-   echo "If you wish to create the necessary MySQL databases yourself, please do"
-   echo "so before continuing with FARMDATA installation."
-   echo ""
-   echo "Do you want the installation procedure to create the MySQL databases"
-   echo "for FARMDATA?  (y/n)"
-   read CREATE
-   if [[ $CREATE == y || $CREATE == Y ]]; then
-     CREATE=y
-     echo "Enter username for MySQL admin account (not stored after installation exits): "
-     read ADMINUSER
-     echo "Enter password for MySQL admin account (not stored after installation exits):"
-     read ADMINPASS
-     echo ""
-     echo "Creating databases ..."
-     USERDB=users
-     USERUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-     # USERUSER=usercheck
-     USERPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-     FARMDB=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-     FARMUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
-     FARMPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+if [ $LOCALHOST = n ]; then
+    echo "Enter the name of the FARMDATA users database: "
+    read USERDB
+    echo "Enter the name of the users database user: "
+    read USERUSER
+    echo "Enter the password of the users database user: "
+    read USERPASS
+    echo "Enter the name of the FARMDATA farm information database: "
+    read FARMDB
+    UU=$USERUSER
+    UP=$USERPASS
+else
+   if [ $UPGRADE = n ]; then
+      echo "If you wish to create the necessary MySQL databases yourself, please do"
+      echo "so before continuing with FARMDATA installation."
+      echo ""
+      echo "Do you want the installation procedure to create the MySQL databases"
+      echo "for FARMDATA?  (y/n)"
+      read CREATE
+      if [[ $CREATE == y || $CREATE == Y ]]; then
+        CREATE=y
+        echo "Enter username for MySQL admin account (not stored after installation exits): "
+        read ADMINUSER
+        echo "Enter password for MySQL admin account (not stored after installation exits):"
+        read ADMINPASS
+        echo ""
+        echo "Creating databases ..."
+        USERDB=users
+        USERUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+        # USERUSER=usercheck
+        USERPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+        FARMDB=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+        FARMUSER=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+        FARMPASS=`tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1`
+      
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $USERDB;" || { 
+            echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $USERUSER identified by '$USERPASS';" || { 
+            echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $USERDB; 
+               grant select, insert, update on $USERDB.* to $USERUSER;" || { 
+            echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $FARMDB;" || { 
+            echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
+            echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
+        mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
+               grant select, delete, insert, update, show view, lock tables on $FARMDB.* to $FARMUSER;" || { 
+            echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
+        UU=$ADMINUSER
+        UP=$ADMINPASS
+        FU=$ADMINUSER
+        FP=$ADMINPASS
+        echo "Database creation successful!"
+      else 
+        echo "Enter the name of the FARMDATA users database: "
+        read USERDB
+        echo "Enter the name of the users database user: "
+        read USERUSER
+        echo "Enter the password of the users database user: "
+        read USERPASS
+        echo "Enter the name of the FARMDATA farm information database: "
+        read FARMDB
+        echo "Enter the name of the farm information database user: "
+        read FARMUSER
+        echo "Enter the password of the farm information database user: "
+        read FARMPASS
+        UU=$USERUSER
+        UP=$USERPASS
+        FU=$FARMUSER
+        FP=$FARMPASS
+      fi
+      echo "Enter username for initial FARMDATA user account:";
+      read FIRSTUSER
+      echo "Enter password for initial FARMDATA user account:";
+      read FIRSTPASS
+      FIRSTPASS=`php -r "print crypt('$FIRSTPASS', '123salt');"`
    
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $USERDB;" || { 
-         echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $USERUSER identified by '$USERPASS';" || { 
-         echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $USERDB; 
-            grant select, insert, update on $USERDB.* to $USERUSER;" || { 
-         echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create database $FARMDB;" || { 
-         echo "Database creation failed.  Exiting FARMDATA install!"; exit 1; }
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "create user $FARMUSER identified by '$FARMPASS';" || { 
-         echo "User creation failed.  Exiting FARMDATA install!"; exit 1; }
-     mysql -u $ADMINUSER -p$ADMINPASS -Bse "use $FARMDB; 
-            grant select, delete, insert, update, show view, lock tables on $FARMDB.* to $FARMUSER;" || { 
-         echo "Granting privileges to user failed.  Exiting FARMDATA install!"; exit 1; }
-     UU=$ADMINUSER
-     UP=$ADMINPASS
-     FU=$ADMINUSER
-     FP=$ADMINPASS
-     echo "Database creation successful!"
-   else 
-     echo "Enter the name of the FARMDATA users database: "
-     read USERDB
-     echo "Enter the name of the users database user: "
-     read USERUSER
-     echo "Enter the password of the users database user: "
-     read USERPASS
-     echo "Enter the name of the FARMDATA farm information database: "
-     read FARMDB
-     echo "Enter the name of the farm information database user: "
-     read FARMUSER
-     echo "Enter the password of the farm information database user: "
-     read FARMPASS
-     UU=$USERUSER
-     UP=$USERPASS
-     FU=$FARMUSER
-     FP=$FARMPASS
-   fi
-   echo "Enter username for initial FARMDATA user account:";
-   read FIRSTUSER
-   echo "Enter password for initial FARMDATA user account:";
-   read FIRSTPASS
-   FIRSTPASS=`php -r "print crypt('$FIRSTPASS', '123salt');"`
-   
-   mysql -u $UU -p$UP -Bse "use $USERDB; source tables/userTables.txt;
-        insert into farms values('$FARMDB', '$FARMPASS', '$FARMUSER');
-        insert into users values('$FIRSTUSER', '$FIRSTPASS', '$FARMDB', 1, 1);" || { 
-         echo "Setting up user database failed.  Exiting FARMDATA install!"; exit 1; }
+      mysql -u $UU -p$UP -Bse "use $USERDB; source tables/userTables.txt;
+           insert into farms values('$FARMDB', '$FARMPASS', '$FARMUSER');
+           insert into users values('$FIRSTUSER', '$FIRSTPASS', '$FARMDB', 1, 1);" || { 
+            echo "Setting up user database failed.  Exiting FARMDATA install!"; exit 1; }
 
-   mysql -u $FU -p$FP -Bse "use $FARMDB; source tables/baseTables.txt;
-         source tables/dfTables.txt;" || { 
-         echo "Setting up farm database failed.  Exiting FARMDATA install!"; exit 1; }
+      mysql -u $FU -p$FP -Bse "use $FARMDB; source tables/baseTables.txt;
+            source tables/dfTables.txt;" || { 
+            echo "Setting up farm database failed.  Exiting FARMDATA install!"; exit 1; }
    
-   echo "Database table creation successful!"
+      echo "Database table creation successful!"
+   fi
 fi
 
 #QWERTY
@@ -227,10 +273,12 @@ for file in `find src -name '*.php'`; do
           exit 1; }
   sed -i "s/usercheckpass/$USERPASS/" $file || { echo "Error configuring files.  Exiting FARMDATA install";
           exit 1; }
+  sed -i "s/localhost/$MYSQLHOST/" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+          exit 1; }
 done
 
 if [[ $SSL != y ]]; then
-   for file in "src/extlogin.php" "src/design.php"; do
+   for file in "src/extlogin.php" "src/design.php" "src/setup/extlogin.php"; do
       sed -i "s%// HTTPSON%/*%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
            exit 1; }
       sed -i "s%// HTTPSOFF%*/%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
@@ -343,7 +391,7 @@ if [ $UPGRADE = n ]; then
    echo "Please log in to: http$S://$DOMAIN/$FDIR/setup"
    echo "to complete FARMDATA setup."
 
-   echo $USERDB:$USERUSER:$USERPASS:$FARMDB:$FDIR:$DOMAIN:$FULLPATH > config
+   echo $USERDB:$USERUSER:$USERPASS:$FARMDB:$FDIR:$DOMAIN:$FULLPATH:$MYSQLHOST > config
 
    echo ""
    echo "Please copy file: config"

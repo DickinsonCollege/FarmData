@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Add New Compost Unit</b></h1>
+<h3><b>Add New Compost Unit</b></h3>
+<br>
 <label for="name"> Compost Unit:&nbsp;</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; type="text" name="name" id="name">
 <br clear="all"/>

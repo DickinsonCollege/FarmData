@@ -8,6 +8,7 @@ $user = $_POST['username'];
 $user = escapehtml($user);
 $sql = "select active, dbuser, username, users.passwd as upasswd, farms.dbase, admin, farms.passwd as fpasswd from users, farms where username = '".$user."' and users.dbase = farms.dbase";
 $result = mysql_query($sql);
+echo mysql_error();
 if ($result) {
   $ct = 0;
   $dbpass = "";

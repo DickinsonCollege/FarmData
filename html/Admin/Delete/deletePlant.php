@@ -47,7 +47,8 @@ console.log(active);
 }
 </script>
 
-<h1> Edit/Delete Plant </h1>
+<h3> Edit/Delete Plant </h3>
+<br>
 <form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
 <label for="crop"><b>Crop:&nbsp;</b></label>
 <div id='crop2' class='styled-select'>

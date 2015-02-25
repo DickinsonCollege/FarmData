@@ -13,12 +13,13 @@ function show_confirm() {
 </script>
 <?php
 if($_GET['exist']==1 || $_POST['hidden']==1){
-   echo "<h1> Edit Invoice </h1>";
+   echo "<h3> Edit Invoice </h3>";
    $exist = 1;
 }else{
-   echo "<h1>Create Invoice </h1>";
+   echo "<h3>Create Invoice </h3>";
    $exist = 0;
 }
+echo "<br>";
 ?>
 <label for="target">Sales Target:&nbsp;</label>
 <div id='targDiv' class='styled-select'>

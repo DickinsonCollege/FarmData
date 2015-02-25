@@ -19,7 +19,7 @@ function show_confirm() {
 	var bratedefault = document.getElementById('bratedefault').value;
 	var rei = document.getElementById('rei').value;
 	var ppe = document.getElementById('ppe').value;
-	var active = document.getElementById('active').value;
+	// var active = document.getElementById('active').value;
 
 	if (spraymaterial ===  "") {
 		alert("Enter a Spray Material Name!");
@@ -48,17 +48,12 @@ function show_confirm() {
 	} else if (checkEmpty(bratedefault) || !isFinite(bratedefault) || bratedefault <= 0) {
 		alert("Enter a valid Default Backpack Rate!");
 		return false;
-	} else if (checkEmpty(rei) || !isFinite(rei) || rei <= 0) {
+	} else if (checkEmpty(rei)) {
 		alert("Enter a valid Restricted Entry Interval!");
 		return false;
 	} else if (ppe === "") {
 		alert("Enter Personal Protection Equipment!");
 		return false;
-/*
-	} else if (active === "") {
-		alert("Check an Active Status!");
-		return false;
-*/
 	} else {
 		return true;
 	}
@@ -131,7 +126,7 @@ function show_confirm() {
 <br clear="all">
 <br clear="all">
 
-<input class="submitbutton" type="submit" name="add" id="add" value="Add" onclick="show_confirm();">
+<input class="submitbutton" type="submit" name="add" id="add" value="Add" onclick="return show_confirm();">
 
 <?php
 if (isset($_POST['add'])) {
@@ -156,7 +151,7 @@ if (isset($_POST['add'])) {
 		('".$spraymaterial."', 
 		'".$trateunits."', ".$tratemin.", ".$tratemax.", ".$tratedefault.", 
 		'".$brateunits."', ".$bratemin.", ".$bratemax.", ".$bratedefault.", 
-		".$rei.", '".$ppe."', ".$active.")";
+		'".$rei."', '".$ppe."', ".$active.")";
  
 	$result = mysql_query($sql);
    if (!$result) {

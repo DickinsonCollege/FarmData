@@ -5,7 +5,8 @@
 	include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 	include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h1 class="hi"> Select Harvest Records: </h1>
+<h3 class="hi"> Select Harvest Records: </h3>
+<br>
 
 <form method="GET" action="quantHarvested.php">
 	<?PHP

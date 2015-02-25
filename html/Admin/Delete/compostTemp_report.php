@@ -6,7 +6,9 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
 ?>
-<h1 class="hi"> Select Compost Temperature Records: </h1>
+<h3 class="hi"> Select Compost Temperature Records: </h3>
+<br>
+
 <input type="hidden" name="tab" value="admin:admin_delete:deletesoil:deletefert:deletecompost:deletecomposttemp">
 <?php
 echo '<label for="from">From:</label> ';

@@ -24,6 +24,7 @@ if ($_SESSION['mobile']) {
 //   echo '<link type="text/css" href="/tabs.css" rel="stylesheet">';
    echo '<link type="text/css" href="/mobileTable.css" rel = "stylesheet">';
    echo '<link type="text/css" href="/mobileDesign2.css" rel = "stylesheet">';
+	echo '<link type="text/css" href="/tableDesignMobile.css" rel="stylesheet">';
 } else {
 	echo '<link type="text/css" href="/tabs.css" rel = "stylesheet">';
    echo '<link type="text/css" href="/tableDesign.css" rel = "stylesheet">';

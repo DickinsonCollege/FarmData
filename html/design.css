@@ -5,7 +5,6 @@
     width: 186px;
     height: 53px;
     border:  0px;
-
 }
 .imgClass: hover {
       background-position:  0px -52px;
@@ -46,18 +45,18 @@ a{
 color:#34495E;
 }
 h4 {
-  margin-top: 5px;
-  font-size: 30pt;
-  margin-bottom: -20px;
+  margin-top: 5px !important;
+  font-size: 30pt !important;
+  margin-bottom: -20px !important;
 }
 h3 {
-   font-size: 35pt;
-   margin-top: 5px;
-   font-weight: bold;
-   margin-bottom: -20px;
+   font-size: 35pt !important;
+   margin-top: 5px !important;
+   font-weight: bold !important;
+   margin-bottom: -20px !important;
 }
 h1 {
-   font-size: 30pt;
+   font-size: 30pt !important;
 }
 
 .gx1{

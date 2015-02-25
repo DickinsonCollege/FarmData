@@ -52,7 +52,8 @@ function getInventoryUnit(cropProd, grade) {
   return default_unit[cropProd];
 }
 </script>
-<h1 style="font-size:52px; margin-top:-30px;"> Distribution Input Table </h1>
+<h3 style="font-size:52px; margin-top:-30px;"> Distribution Input Table </h3>
+<br>
 
 <input type="button" class="largesubmitbutton" id="insertRows" name="insertRows" value="Submit Data to Database" onclick="insertAllRows()">
 <br clear="all"/>

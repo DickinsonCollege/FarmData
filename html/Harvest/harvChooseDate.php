@@ -7,8 +7,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 <form name='date' method='POST'>
 <?php 
-echo '<h1> Choose the date of the harvest list';
-echo ' you would like to view. </h1>';
+echo '<h3> Choose the date of the harvest list';
+echo ' you would like to view. </h3>';
+echo '<br clear="all">';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo "<br clear=\"all\">";
 ?>

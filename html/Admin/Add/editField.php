@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name='form' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
-<h1><b>Edit/Delete an Existing Field </b></h1>
+<h3><b>Edit/Delete an Existing Field </b></h3>
+<br>
 <label for="fieldID"> Field ID:&nbsp; </label>
 <div id="fieldID23" class="styled-select">
 <select id= "fieldID" name="fieldID" class='mobile-select' onChange='addInput();addInput2();addInput3();getActive();'>

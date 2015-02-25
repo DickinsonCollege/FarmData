@@ -6,7 +6,8 @@
 	include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 	$file = $_GET['file'];
 ?>
-<h1 class="hi"> Select Harvest Records: </h1>
+<h3 class="hi"> Select Harvest Records: </h3>
+<br>
 
 <form method="GET" action="<?php echo $file;?>">
 	<?PHP

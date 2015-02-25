@@ -43,7 +43,8 @@ function addInput() {
 </script>
 
 <body id= "delete">
-<h1> Edit/Delete Sales Target</h1>
+<h3> Edit/Delete Sales Target</h3>
+<br>
 <form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
 <label for="target"><b>Sales Target:&nbsp;</b></label>
 <div id='target2' class='styled-select'>

@@ -79,7 +79,8 @@ function addInput() {
 </script>
 
 <body id= "delete">
-<h1> Edit/Delete Spray Material </h1>
+<h3> Edit/Delete Spray Material </h3>
+<br>
 <form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
 <label for="spraymaterial"><b>Spray Material:&nbsp;</b></label>
 <div id='spraymaterial2' class='styled-select'>

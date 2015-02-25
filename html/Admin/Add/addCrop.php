@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Add New Crop</b></h1>
+<h3><b>Add New Crop</b></h3>
+<br>
 <label for="crop">Crop Name:&nbsp;</label> 
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3 mobile-input" type="text" name="name" id="name">
 <br clear="all"/>

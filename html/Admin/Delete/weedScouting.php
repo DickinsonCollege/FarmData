@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h1 class="hi"> Select Weed Scout Records: </h1>
+<h3 class="hi"> Select Weed Scout Records: </h3>
+<br>
 <?php
 echo '<label for="from">From:&nbsp;</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';

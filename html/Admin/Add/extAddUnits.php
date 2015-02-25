@@ -7,8 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="add">
 <form name='form' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
-<h1><b>Add New Units For Harvesting</b></h1>
-
+<h3><b>Add New Units For Harvesting</b></h3>
+<br>
 <label for="unit">New Unit Name:&nbsp;</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3" type="text" name="unit" id="unit">
 <script>

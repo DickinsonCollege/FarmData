@@ -1,8 +1,8 @@
 table {
 	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-        margin-left : 6px;
+	margin-left : 6px;
 	background-color: white;
-        border-collapse:collapse;
+	border-collapse:collapse;
 	width: 1000px;        
 }
 
@@ -11,27 +11,45 @@ th,td {
 	border:1px solid black;
 	padding: 3px 7px 2px 7px;
 	text-align: center;
-        }
+}
+
 th {
 	font-size:15pt;
 	text-align:center;
 	padding-top:5px;
 	padding-bottom:4px;
-        background-color: wheat;
-        color: black;
+	background-color: wheat;
+	color: black;
 }
 
-tr.alt td
-{
-color:#000000;
-background-color:#EAF2D3;
-text-align: center;
+tr.alt td {
+	color:#000000;
+	background-color:#EAF2D3;
+	text-align: center;
 }
-td
+
+td {
 	width: 100px;
 	padding: 10px;
 	text-align: center;
 }
-colgroup
+
+colgroup {
 	width: 10px;
 }
+
+.input-table {
+	width: 100% !important;
+}
+
+.input-table, td {
+	height: 60px;
+	padding: 0px !important;
+}
+
+.table-input-box {
+	width: 100%;
+	height: 100%;
+}
+
+

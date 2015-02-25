@@ -7,6 +7,8 @@ $farm = $_SESSION['db'];
 
 ?>
 <form name='form' method='POST'>
+<h3>Tractor Spray Input</h3>
+<br>
 <label for="date">Date:&nbsp;</label>
 <?php include $_SERVER['DOCUMENT_ROOT'].'/date.php'?>
 <br clear="all">

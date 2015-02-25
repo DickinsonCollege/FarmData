@@ -13,7 +13,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <form name='form' class='pure-form pure-form-aligned' method='get' action="irrigationReport.php?tab=soil:soil_irrigation:irrigation_report">
 	<input type='hidden' name='tab' id='tab' value='soil:soil_irrigation:irrigation_report'>
 	<fieldset>
-		<legend><h4 class="hi"> Irrigation Report</h4></legend>
+		<h3 class="hi"> Irrigation Report</h3>
+		<br>
 		<div class='pure-control-group'>
 			<label for="from">From:&nbsp;</label>
 			<?php

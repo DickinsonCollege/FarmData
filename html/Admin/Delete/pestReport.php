@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h1> Select Insect Scouting Records </h1>
+<h3> Select Insect Scouting Records </h3>
+<br>
 <form name='form' id='test'  method='GET' action="pestTable.php">
 <input type="hidden" name="tab" value="admin:admin_delete:deletesoil:deletescout:deletepestscout">
 <?php

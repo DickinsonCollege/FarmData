@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Add Email to Sales Target</b></h1>
+<h3><b>Add Email to Sales Target</b></h3>
+<br>
 <label for="target">Sales Target:&nbsp;</label> 
 <div id='targDiv' class='styled-select'>
 <select name="target" id="target">

@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
 <form name='date' method='POST'>
-<h1> Date of Harvest List (to Create or Edit): </h1>
+<h3> Date of Harvest List (to Create or Edit): </h3>
+<br>
 
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';

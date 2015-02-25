@@ -7,7 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="add">
 <form name='form' method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
-<h1><b>Add Units to a Crop </b></h1>
+<h3><b>Add Units to a Crop </b></h3>
+<br>
 <label for="crop">Crop:&nbsp;</label>
 <div class="styled-select">
 <select name="crop" id="crop" onChange="addInput(); addInput2();" class="mobile-select"> 

@@ -43,11 +43,14 @@
       var table = document.getElementById("materialTable");
       var row = table.insertRow(numRowsMat);
       var materialSprayed = "<?php
-         $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
+         $sqlM="SELECT sprayMaterial FROM tSprayMaterials where active=1";
          $resultM=mysql_query($sqlM);
-         //echo mysql_error();
          while($rowM=mysql_fetch_array($resultM)){
-            echo "<option value='".$rowM[sprayMaterial]."'>".$rowM[sprayMaterial]."</option>";
+            $active = $rowM['active'];
+            if ($active == '' || $active > 0) {
+               echo "<option value='".$rowM[sprayMaterial]."'>".
+                $rowM[sprayMaterial]."</option>";
+            }
          }?>";
 
       var cell0 = row.insertCell(0);

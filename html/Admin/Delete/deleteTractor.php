@@ -4,9 +4,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h1 > Delete Tractor </h1>
+<h3 > Delete Tractor </h3>
+<br>
 <form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
-<label for="crop"><b>Tractor Name:&nbsp;</b></label>
+<label for="crop">Tractor Name:&nbsp;</label>
 <div id='crop2' class='styled-select'>
 <select name='tractor' id='tractor' class='mobile-select'>
 <option disabled selected>Tractor</option>

@@ -7,7 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
 <form name='form' method='GET' action='bsprayTable.php'>
 <input type="hidden" name="tab" value="admin:admin_delete:deletesoil:deletespray:deletebspray">
-<h1 class="hi"> Select Backpack Spraying Records: </h1>
+<h3 class="hi"> Select Backpack Spraying Records: </h3>
+<br>
 <label for="from">From:</label> 
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';

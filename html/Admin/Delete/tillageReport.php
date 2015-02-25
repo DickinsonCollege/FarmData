@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
-echo '<h1 class="hi"> Select Tillage Records: </h1>';
+echo '<h3 class="hi"> Select Tillage Records: </h3>';
+echo '<br>';
 echo '<label for="from">From:&nbsp;</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo '<br clear="all"/>';

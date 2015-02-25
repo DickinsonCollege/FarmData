@@ -11,7 +11,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 </head>
 <form name='form' class='pure-form pure-form-aligned' method='post' action="pumpTable.php?tab=soil:soil_irrigation:pump_report">
 	<fieldset>
-		<legend><h4 class="hi"> Pump Log Report</h4></legend>
+		<h3 class="hi"> Pump Log Report</h3>
+		<br>
 		<div class='pure-control-group'>
 			<label for="from">From:&nbsp;</label>
 			<?php

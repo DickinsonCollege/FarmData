@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h1><b>Add Product<b></h1>
+<h3><b>Add Product</b></h3>
+<br>
 <label for="product">Product Name:&nbsp;</label>
 <input onkeypress= "stopSubmitOnEnter(event)"; class="textbox3 mobile-input" type="text" name="product" id="product">
 <br clear="all"/>

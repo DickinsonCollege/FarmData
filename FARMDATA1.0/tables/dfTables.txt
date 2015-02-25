@@ -382,7 +382,7 @@ create table tSprayMaterials(
    TRateMin float,TRateMax float, 
    TRateDefault float, BRateUnits varchar(30),
    BRateMin float,BRateMax float, 
-   BRateDefault float, REI_HRS int, 
+   BRateDefault float, REI_HRS varchar(20), 
    PPE varchar(30), 
    active tinyint(1) default 1)ENGINE=INNODB;
 

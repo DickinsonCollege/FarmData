@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h1 class="hi"> Select Harvest Records: </h1>
+<h3 class="hi"> Select Harvest Records: </h3>
+<br>
 <input type="hidden" name = "tab" value = "admin:admin_delete:deleteharvest">
 <?php
 echo '<label for="from">From:&nbsp;</label> ';

@@ -4,7 +4,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h1 > Edit/Delete Dry Fertilizer </h1>
+<h3 > Edit/Delete Dry Fertilizer </h3>
+<br>
 <?php
 if(!empty($_POST['submit'])) {
    $name = escapehtml($_POST['name']);
@@ -32,7 +33,7 @@ if(!empty($_POST['submit'])) {
 ?>
 <form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>?tab=admin:admin_delete:deletesoil:deletematerials:deletedryfertilizermaterial'>
 
-<label for="name"><b>Fertilizer Name:&nbsp;</b></label>
+<label for="name">Fertilizer Name:&nbsp;</label>
 <div id='name2' class='styled-select'>
 <select name='name' id='name' class='mobile-select'>
 <option disabled selected>Fertilizer</option>
@@ -45,11 +46,11 @@ $result = mysql_query("SELECT fertilizerName from fertilizerReference");
 ?>
 <br clear="all">
 
-<label for="rename"><b>Rename Fertilizer:</b></label>
+<label for="rename">Rename Fertilizer:</label>
 <input type="text" id="rename" name="rename" class="textbox25 mobile-input">
 <br clear="all">
 
-<label for="active"><b>Active:&nbsp;</b></label>
+<label for="active">Active:&nbsp;</label>
 <div id='active2' class='styled-select'>
 <select name='active' id='active' class='mobile-select'>
    <option value="1" selected>Active</option>

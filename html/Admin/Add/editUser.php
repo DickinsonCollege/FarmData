@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 <body id="add">
 <form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h1> Update User Status</h1>
+<h3> Update User Status</h3>
+<br>
 <label for="user">Username:&nbsp;</label>
 <div id="useriddiv" class="styled-select">
 <select name="userid" id="userid" class='mobile-select'>

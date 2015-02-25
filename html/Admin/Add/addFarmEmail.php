@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Add Email for Invoices</b></h1>
+<h3><b>Add Email for Invoices</b></h3>
+<br>
 <label for="email">Email address (of a farm employee who should
  receive invoices):&nbsp;</label> 
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3" type="text" name="email" id="email">

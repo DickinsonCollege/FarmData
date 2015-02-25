@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 <form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h1> Add a New User </h1>
+<h3> Add a New User </h3>
+<br>
 <label for="user">New User:&nbsp;</label>
 <input class="textbox3 mobile-input" type="text" name="userid" id="userid">
 <br clear="all"/>

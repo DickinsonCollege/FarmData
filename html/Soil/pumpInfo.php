@@ -10,15 +10,13 @@
      <link rel="stylesheet" href="/pure-release-0.5.0/pure-min.css">
      <!--<meta name="viewport" content="width=device-width, initial-scale=.3, minimum-scale=.3, maximum-scale=1">-->
 </head>
-
 <?php 
-if ($_SESSION['pump']) {
-   echo "<h4>Pump Log Input </h4>";
+/*if ($_SESSION['pump']) {
+   echo "<h3>Pump Log Input </h3>";
 } else {
-   echo "<h4>Irrigation Input </h4>";
-}
+   echo "<h3>Irrigation Input </h3>";
+}*/
 
-echo "<br clear='all'/>";
 $dYear           = null;
 $dMonth          = null;
 $dDay               = null;
@@ -56,7 +54,15 @@ if ($row['year']) {
 ?>
 <form class='pure-form pure-form-aligned' method='POST' action=''>
      <fieldset>
-          <div class='pure-control-group'>
+         <?php 
+				if ($_SESSION['pump']) {
+   				echo "<h3>Pump Log Input </h3>";
+				} else {
+   				echo "<h3>Irrigation Input </h3>";
+				}
+				echo "<br clear='all'/>";
+			?> 
+			<div class='pure-control-group'>
                <label for='date'>Date:&nbsp;</label>
                <?php include $_SERVER['DOCUMENT_ROOT'].'/date.php'?>
           </div>

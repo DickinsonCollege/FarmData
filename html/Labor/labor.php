@@ -7,7 +7,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<label for="harvest"> Input Labor Record </label>
+<label for="harvest"><h3> Input Labor Record</h3> </label>
 
 <script type="text/javascript">
 function show_confirm() {

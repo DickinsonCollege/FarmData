@@ -5,7 +5,7 @@ create table farms (
   primary key(dbase)) ENGINE=InnoDB;
 
 create table users (
-  username varchar(30) not null,
+  username varchar(50) not null,
   passwd varchar(130) not null,
   dbase varchar(30) not null,
   admin tinyint(1) default 0,
