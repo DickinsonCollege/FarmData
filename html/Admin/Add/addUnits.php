@@ -14,7 +14,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <select name="crop" id="crop" onChange="addInput(); addInput2();" class="mobile-select"> 
 <option value=0 selected disabled>Crop&nbsp; </option>
 <?php
-$result=mysql_query("Select crop from plant");while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
+$result=mysql_query("Select crop from plant where active=1");
+while ($row1 =  mysql_fetch_array($result)){
+  echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
 }
 ?>
 </select>

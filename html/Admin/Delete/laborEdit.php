@@ -71,7 +71,7 @@ echo '<br clear="all"/>';
 echo '<label>Crop:&nbsp</label>';
 echo '<div class="styled-select"><select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
-$sql = 'select crop from plant';
+$sql = 'select crop from plant where active=1';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';

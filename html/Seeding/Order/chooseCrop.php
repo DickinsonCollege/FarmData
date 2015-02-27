@@ -20,7 +20,7 @@ if ($_SESSION['cover']) {
 <div id='cropdiv' class='styled-select'>
 <select name='crop' id='crop' class='mobile-select'>
 <?php
-$sql = "select crop from plant";
+$sql = "select crop from plant where active=1";
 $res = mysql_query($sql);
 echo mysql_error();
 echo "<option value='Crop' disabled";

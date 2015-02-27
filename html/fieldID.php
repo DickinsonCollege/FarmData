@@ -8,13 +8,6 @@ if ($_SESSION['mobile']) echo "<br clear='all'/>";
 <?php
 $result = 0;
 $result = mysql_query("SELECT distinct fieldID from field_GH where active=1");
-/*
-if ($active != 'active'){
-	$result = mysql_query("SELECT distinct fieldID from field_GH");
-} else {
-	$result = mysql_query("SELECT distinct fieldID from field_GH where active=1");
-}
-*/
 while ($row1 =  mysql_fetch_array($result)){
   echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }

@@ -35,11 +35,13 @@ Please Click on One of the Tabs to Meet Your Needs!
 <h1>Guest users: </h1>
 <p>
 
+<!--
 Please join us for a free Webinar on FARMDATA on Thursday, February 19, 2015 at 1:00 p.m. Eastern
  time.  The Webinar is hosted by Small Farm Central and will include information on a possible
  pilot project with SFC.  For more information and to sign up:<br>
  <a href="http://pages.smallfarmcentral.com/farmdata/">http://pages.smallfarmcentral.com/farmdata/</a>
 <p>
+-->
  The FARMDATA users manual is available at:<br>
 <a href="http://sourceforge.net/p/farmdata/wiki/Manual/">http://sourceforge.net/p/farmdata/wiki/Manual/</a>
 <p>
@@ -53,6 +55,9 @@ own web server, see:<br>
 <br>
 Installation and configuration instructions are available at:<br>
 <a href="http://sourceforge.net/p/farmdata/wiki/Home/">http://sourceforge.net/p/farmdata/wiki/Home/</a>
+<p>
+To view a recording of a Webinar (hosted by Small Farm Central) that introduces FARMDATA, visit:<br>
+<a href="http://memberassembler.com/hub/farmdata-webinar">http://memberassembler.com/hub/farmdata-webinar</a>
 <!--
 click <a href="FARMDATAGuestUserGuide.html">here</a> for instructions
 on using FARMDATA.  After reading (or printing) the user's guide,

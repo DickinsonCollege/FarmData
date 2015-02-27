@@ -11,7 +11,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 <select name='crop' id='crop' onchange="addInput2();" class="mobile-select">
 <option disabled selected>Crop</option>
 <?php
-$result = mysql_query("SELECT crop from plant");
+$result = mysql_query("SELECT crop from plant where active=1");
         while ($row1 =  mysql_fetch_array($result)){
                 echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
         }

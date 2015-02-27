@@ -19,7 +19,7 @@ $farm = $_SESSION['db'];
 <option value='dir_planted'>Direct Seeding</option>
 <option value='harvested'>Harvesting</option>
 <option value='gh_seeding'>Flats Seeding</option>
-<option value='transferred_to'>Transferred To</option>
+<option value='transferred_to'>Transplanting</option>
 </select>
 </div>
 
@@ -70,6 +70,22 @@ function createTableHeader() {
    tableName = a.options[a.selectedIndex].value;
    tableIndex = a.selectedIndex;
    table = document.getElementById('myTable');
+
+   <?php if ($_SESSION['seed_order']) {
+      echo "  var seed_order = true;";
+   } else {
+      echo "  var seed_order = false;";
+   } ?>
+   if (seed_order) {
+      var warndiv = document.getElementById("warnMessage");
+      if (tableName == "dir_planted" || tableName == "gh_seeding") {
+         warndiv.innerHTML="<div id='warnMessage'>Note: entering seeding records on this page does NOT update " +
+            "seed inventory.<br clear='all'/>Please use the input forms under the Seed tab if you wish to " +
+            "enter variety information and track seed inventory.<br clear='all'><br clear='all'></div>";
+      } else {
+         warndiv.innerHTML="<div id='warnMessage'></div>";
+      }
+   }
 
    // fields_array: Array of column names
    // tableSize: number of columns in table
@@ -622,6 +638,7 @@ function show_confirm() {
 
 
 <br clear="all"/>
+<div id="warnMessage"></div>
 <div id="insertRowsButtonDiv"></div>
 <br clear="all"/>
 <div id="buttonsTopDiv"></div>

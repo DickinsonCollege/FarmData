@@ -85,7 +85,7 @@ $target=$_GET['target'];
 <option value=1  selected> Crop/Product </option>
 <?php
 
-$sql="SELECT crop FROM plant union SELECT product FROM product";
+$sql="SELECT crop FROM plant where active=1 union SELECT product FROM product";
 $result=mysql_query($sql);
 echo mysql_error();
 while($row=mysql_fetch_array($result)){

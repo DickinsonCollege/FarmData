@@ -156,7 +156,12 @@ In the list below, check each FARMDATA component that you wish to include:
 <script type="text/javascript">
 var idvs = eval(<?php echo json_encode($vals); ?>);
 for (id in idvs) {
-  document.getElementById(id).checked = (idvs[id] > 0);
+  var cid = document.getElementById(id);
+  if (cid == null) {
+     console.log(id);
+  } else {
+     cid.checked = (idvs[id] > 0);
+  }
  // console.log(id + " " + document.getElementById(id).checked);
   if (idvs['bedft'] == 1) {
     document.getElementById('bedftv').checked = true;

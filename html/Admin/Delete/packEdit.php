@@ -68,7 +68,7 @@ echo '<div class="pure-control-group">';
 echo '<label>Crop/Product:&nbsp</label>';
 echo '<div class="styled-select"><select name="crop" id="crop" onchange="getUnit();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
-$sql = 'select crop from plant';
+$sql = 'select crop from plant where active=1';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';

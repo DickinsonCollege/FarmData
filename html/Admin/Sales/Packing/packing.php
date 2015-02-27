@@ -5,7 +5,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
-$sql = "select crop from plant union select product as crop from product";
+$sql = "select crop from plant where active = 1 union select product as crop from product";
 $res = mysql_query($sql);
 echo mysql_error();
 $crops = array();
