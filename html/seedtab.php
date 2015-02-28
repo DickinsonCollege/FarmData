@@ -9,9 +9,9 @@ if ($order) {
 ?>
 <ul>
 <li id="li_direct">  
-   <a id = "direct_a" href="/design.php?tab=seeding:direct" class="inactivetab">Direct Seeding</a> </li>
+   <a id = "direct_a" href="/design.php?tab=seeding:direct" class="inactivetab">Direct&nbsp;Seeding</a> </li>
 <li id="li_flats">  
-   <a id = "flats_a" href="/design.php?tab=seeding:flats" class="inactivetab">Flats Seeding</a> </li>
+   <a id = "flats_a" href="/design.php?tab=seeding:flats" class="inactivetab">Flats&nbsp;Seeding</a> </li>
 <li id="li_transplant">  
    <a id = "transplant_a" href="/design.php?tab=seeding:transplant" class="inactivetab">Transplanting</a> </li>
 <?php

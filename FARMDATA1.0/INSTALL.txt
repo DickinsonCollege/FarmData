@@ -23,6 +23,10 @@ Before installing FARMDATA, make sure that:
     If you install in a subdirectory of the document root directory, the URL
     will be: https://your.server.name/subdirectory.name
     (http://your.server.name/subdirectory.name if you are not using SSL)
+  - you know whether your webserver is also the machine that is running MySQL.
+    If not, you also need to know the name of that machine, and to create and
+    populate the databases on that machine before running the install
+    procedure.
   - you decide whether to have the installation procedure create the necessary
     MySQL databases for you, or if you would like to create those databases
     yourself.

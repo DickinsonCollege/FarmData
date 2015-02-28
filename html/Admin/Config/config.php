@@ -347,6 +347,7 @@ if (!empty($_POST['done'])) {
       $sqlUpdate .= ", ".$tname." = ".$tval;
    }
  
+// echo $sqlUpdate;
    mysql_query($sqlUpdate);
    echo mysql_error();
 

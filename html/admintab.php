@@ -464,7 +464,7 @@ echo '</ul>';
 
 <div id="deleteother" style="display:none;">
 <?php
-echo '<div class="tabs tabs'.$_SESSION['num_edit_other'].'">';
+echo '<div class="tabs tabs'.($_SESSION['num_edit_other'] + 1).'">';
 echo '<ul>';
 if ($_SESSION['labor']) {
 echo '<li id="li_deletelabor">  
@@ -480,6 +480,8 @@ echo '<li id="li_deletetractor">
 }
 echo '<li id="li_editfield">  
    <a href="/Admin/Add/editField.php?tab=admin:admin_delete:deleteother:editfield" id = "editfield_a" class="inactivetab">Field</a> </li>';
+echo '<li id="li_editflat">  
+   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteother:editflat" id = "editflat_a" class="inactivetab">Flat&nbsp;Size</a> </li>';
 echo '<li id="li_edituser">  <a href="/Admin/Add/';
 if ($farm == "dfarm") {
   echo 'editUser.php';
