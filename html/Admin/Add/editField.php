@@ -10,7 +10,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <br>
 <label for="fieldID"> Field ID:&nbsp; </label>
 <div id="fieldID23" class="styled-select">
+<!--
 <select id= "fieldID" name="fieldID" class='mobile-select' onChange='addInput();addInput2();addInput3();getActive();'>
+-->
+<select id= "fieldID" name="fieldID" class='mobile-select' onChange='getFieldInfo();'>
 <option value="0" selected disabled> Field </option>
 <?php
 $result = mysql_query("SELECT distinct fieldID from field_GH");
@@ -22,10 +25,59 @@ while ($row1 =  mysql_fetch_array($result)){
 </select></div>
 <br clear="all"/>
 <script type="text/javascript"> 
+function getFieldInfo() {
+   var fld = encodeURIComponent(document.getElementById("fieldID").value);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "getFieldInfo.php?fieldID="+fld, false);
+   xmlhttp.send();
+   var arr = eval(xmlhttp.responseText);
+   console.log(arr);
+   if (arr.length == 4) {
+      var newdiv = document.getElementById('sizeDiv');
+      newdiv.innerHTML="<div id= \"sizeDiv\">" +
+      '<label for="size">Size:&nbsp;</label>' +
+      "<input class= \"textbox25 mobile-input\" type= \"text\" onkeyup = \"updateBeds();\" name = \"size\" id = \"size\"" + 
+      'onkeypress= "stopSubmitOnEnter(event)"; value=' +
+      arr[0] +">" +
+      '<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>' +
+      "</div>";
+
+      newdiv = document.getElementById('bedsDiv');
+      newdiv.innerHTML="<div id= \"bedsDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"beds\" id = \"beds\" value = " + arr[1] + "></div>";
+
+      var activeDiv = document.getElementById("activeDiv");
+      var str = '<div id="activeDiv" class="styled-select"><select ' +
+        'name = "active" id = "active" class="mobile-select">';
+      if (arr[3] == 1) {
+         str += '<option value=1>Yes</option><option value=0>No</option>';
+      } else {
+         str += '<option value=0>No</option><option value=1>Yes</option>';
+      }
+      str += '</select></div>';
+      activeDiv.innerHTML=str;
+
+      newdiv = document.getElementById('lengthDiv');
+      newdiv.innerHTML="<div id= \"lengthDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"length\" id = \"length\" value = "
+      + arr[2] +
+     '> <label style="margin-top: 8px;" for="length">&nbsp;feet</label>' +
+     "</div>";
+
+     var width = ((arr[0] * 43560) / arr[2]).toFixed(2);
+     newdiv = document.getElementById('widthDiv');
+     newdiv.innerHTML = '<div id="widthDiv">' +
+       '<input class="textbox25 mobile-input" type="textbox" name="width" id="width" value=' + width + 
+       ' onkeyup="updateSizeWidth();">' + 
+       '<label style="margin-top: 8px;" for="length">&nbsp;feet (optional)</label>' +
+       '</div>';
+   }
+}
+
+/*
 function addInput2(){
    var newdiv = document.getElementById('sizeDiv');
    var fld = encodeURIComponent(document.getElementById("fieldID").value);
-   xmlhttp= new XMLHttpRequest();xmlhttp.open("GET", "getSize.php?fieldID="+fld, false);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "getSize.php?fieldID="+fld, false);
    xmlhttp.send();
 
    newdiv.innerHTML="<div id= \"sizeDiv\">" +
@@ -68,6 +120,7 @@ function addInput3(){
      '> <label style="margin-top: 8px;" for="length">&nbsp;feet</label>' +
      "</div>";
 }
+*/
 
 function updateSize() {
    var len = parseFloat(document.getElementById('length').value);
@@ -76,6 +129,14 @@ function updateSize() {
    var size = len * beds /(43560 / (bspace / 12));
    if (isNaN(size)) { size = 0; }
    document.getElementById('size').value = size.toFixed(2);
+}
+
+function updateSizeWidth() {
+   var len = parseFloat(document.getElementById('length').value);
+   var width = parseFloat(document.getElementById('width').value);
+   var size = (len * width)/43560;
+   if (isNaN(size)) { size = 0; }
+   document.getElementById('size').value = size.toFixed(3);
 }
 
 function updateBeds() {
@@ -93,6 +154,12 @@ function updateBeds() {
 <div id="lengthDiv">
 <input class="textbox2 mobile-input" type="textbox" name="length" id="length">
 <label style="margin-top: 8px;" for="length">&nbsp;feet</label>
+</div>
+<br clear="all"/>
+<label for="width">Average Width:&nbsp;</label>
+<div id="widthDiv">
+<input class="textbox2 mobile-input" type="textbox" name="width" id="width">
+<label style="margin-top: 8px;" for="length">&nbsp;feet (optional)</label>
 </div>
 <br clear="all"/>
 <label for="beds">Number of Beds:&nbsp;</label> 
