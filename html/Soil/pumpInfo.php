@@ -67,12 +67,11 @@ if ($row['year']) {
                <?php include $_SERVER['DOCUMENT_ROOT'].'/date.php'?>
           </div>
           <br clear='all'>
-          
           <div class='pure-control-group'>
                <label for='valve'>Valves Open Last Session:&nbsp;</label>
 <?php
    if ($_SESSION['mobile']) {
-      echo "<input type='text' readonly id='valve' width=50 name='valve' class='textbox25' value='".
+      echo "<input type='text' readonly id='valve' width=50 name='valve' class='textbox25 mobile-input' value='".
          $valvefill."'/>";
    } else {
       echo "<textarea id='valve' name='valve' readonly style='margin-top:10px;'>".$valvefill."</textarea>";
@@ -82,28 +81,28 @@ if ($row['year']) {
 
           <div class='pure-control-group'>
          <label for='run'>Pump Run Time (minutes):&nbsp;</label>
-         <input type='text' id='run' name='run' class='textbox25' readonly value='".$runtime."'>";
+         <input type='text' id='run' name='run' class='textbox25 mobile-input' readonly value='".$runtime."'>";
     echo "</div>
           <br clear='all'>";
 
    if ($_SESSION['pump']) {
           echo "<div class='pure-control-group'>
          <label for='drive'>Drive Hz:&nbsp;</label>
-         <input type='text' id='drive' name='drive' class='textbox25' value='";
+         <input type='text' id='drive' name='drive' class='textbox25 mobile-input' value='";
      echo $drivefill."'>";
      echo "</div>
           <br clear='all'>
           
           <div class='pure-control-group'>
                <label for='outlet'>Outlet PSI:&nbsp;</label>
-               <input type='text' id='outlet' name='outlet' class='textbox25' value='";
+               <input type='text' id='outlet' name='outlet' class='textbox25 mobile-input' value='";
      echo $outletfill."'>";
      echo "    </div>
           <br clear='all'>
 
           <div class='pure-control-group'>
                <label for='pumpKWH'>Pump KWH:&nbsp;</label>
-               <input type='text' id='pump_kwh' name='pump_kwh' class='textbox25' value='";
+               <input type='text' id='pump_kwh' name='pump_kwh' class='textbox25 mobile-input' value='";
       echo $pump."'>";
       echo"    </div>
           <br clear='all'>";
@@ -112,7 +111,7 @@ if ($row['year']) {
       echo "
           <div class='pure-control-group'>
                <label for='solarKWH'>Solar KWH:&nbsp;</label>
-         <input type='text' id='solar_KWH' name='solar_KWH' class='textbox25' value='". $solar."'>
+         <input type='text' id='solar_KWH' name='solar_KWH' class='textbox25 mobile-input' value='". $solar."'>
           </div>
           <br clear='all'>";
       }
@@ -126,7 +125,7 @@ if ($row['year']) {
           </div>     
           <div class='pure-control-group'>
           <label >Seconds to Page Refresh:&nbsp;</label>
-          <input type="text" id="timer" name="timer" class="textbox25">
+          <input type="text" id="timer" name="timer" class="textbox25 mobile-input">
       </div>
           <br clear='all'>
           <div class='pure-controls'>
@@ -136,6 +135,7 @@ if ($row['year']) {
                 onclick='updatePumpLog(false);'>
       </div>
           
+         </fieldset> </form>
           <br clear='all'>
 <script type="text/javascript">
 // set the date we're counting down to
@@ -244,8 +244,8 @@ setInterval(function () {
  </div>
  <div class='pure-control-group'>
       <label>&nbsp;</label>
-      <input type="button" id="addField" name="addField" class="secondbutton" onClick="addRows();" value="Add Field">
-    <input type="button" id="removeField" name="removeField" class="secondbutton" onClick="removeRow();" value="Remove Field">               
+      <input type="button" id="addField" name="addField" class="genericbutton" onClick="addRows();" value="Add Field">
+    <input type="button" id="removeField" name="removeField" class="genericbutton" onClick="removeRow();" value="Remove Field">               
  </div>
  <div class='pure-controls'>               
       <input type='submit' class='submitbutton' value='Submit' name='submit' onClick="return show_confirm();"> &nbsp;&nbsp;&nbsp;&nbsp;

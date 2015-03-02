@@ -25,6 +25,7 @@ if [ $SSL = Y ]; then
   SSL=y
 fi
 
+LOCALHOST=y
 UPGRADE=n
 if [ -f config ]; then
    echo "Existing FARMDATA installation detected!"
