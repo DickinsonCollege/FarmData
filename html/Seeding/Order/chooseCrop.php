@@ -67,7 +67,7 @@ if ($_SESSION['cover']) {
    echo '<label for="cover">Crop:&nbsp;</label>';
    echo "<div id='covercropdiv' class='styled-select'>";
    echo "<select name='cover' id='cover' class='mobile-select'>";
-   $sql = "select crop from coverCrop";
+   $sql = "select crop from coverCrop where active = 1";
    $res = mysql_query($sql);
    echo mysql_error();
    echo "<option value='Cover Crop' disabled";

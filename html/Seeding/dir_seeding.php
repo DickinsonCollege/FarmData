@@ -185,6 +185,7 @@ while ($cons<8) {
 </div>
 <br clear="all"/>
 <?php
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 if ($_SESSION['labor']) {
 echo '
 <label for="numWorkers">Number of workers (optional):&nbsp;</label>
@@ -246,7 +247,7 @@ if ($_SESSION['seed_order']) {
 ?>
 
    var mth = document.getElementById("month").value;
-   con += mth + "-";
+   con += "Seed Date: " + mth + "-";
    var dy = document.getElementById("day").value;
    con += dy + "-";
    var yr = document.getElementById("year").value;
@@ -276,6 +277,7 @@ if ($_SESSION['seed_order']) {
    var con=con+"Rows/Bed: "+ r+ "\n";
 
 <?php
+  include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
   if ($_SESSION['labor']) {
      echo '
         var tme = document.getElementById("time").value;
@@ -302,6 +304,7 @@ if ($_SESSION['seed_order']) {
 
 <br clear = "all"/>
 <form method="GET" action = "plantReport.php">
+<input type="hidden" name="tab" value="seeding:direct:direct_report">
 <input type="submit" class="submitbutton" value = "View Table"></form>
 <?php
 if(isset($_POST['submit'])) {
@@ -341,6 +344,7 @@ if(isset($_POST['submit'])) {
    } 
 
    $comSanitized=escapehtml($_POST['comments']);
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
    if ($_SESSION['seed_order']) {
       $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
@@ -393,10 +397,10 @@ if(isset($_POST['submit'])) {
      }
    }
 
-$sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments)
+$sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen)
    VALUES
    ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
-      $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."')";
+      $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."', ".$gen.")";
    $result = mysql_query($sql);
    if(!$result){ 
        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";

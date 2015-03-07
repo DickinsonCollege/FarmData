@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $ids = array("notes", "labor", "seed_order", "harvlist", "soil", "fertility", "cover", "compost",
    "fertilizer", "liquidfertilizer", "dryfertilizer", "tillage", "spraying", "backspray", "tractorspray",
   "scouting", "insect", "weed", "disease", "irrigation", "pump", "sales", "sales_packing", "sales_invoice",
-  "bedft");
+  "bedft", "gens");
 $tabsize = array("num_top"=>7, "num_harvest"=>3, "num_soil"=>4, "num_fertility"=>4, "num_fertilizer"=>2,
  "num_spray"=>2, "num_scout"=>3, "num_admin"=>6, "num_add"=>6, "num_add_crop"=>3, "num_add_equip"=>4,
  "num_add_soil"=>5, "num_add_species"=>3, "num_add_other"=>3, "num_edit"=>5,
@@ -41,6 +41,8 @@ In the list below, check each FARMDATA component that you wish to include:
   (tracking seed orders and inventory, including seed usage during planting)</input>
 <li> <input type="checkbox" name="harvlist" id="harvlist"><b>Harvest List</b> (entering and editing a harvest
  plan for a specific day plus real time harvest tracking)</input>
+<li> <input type="checkbox" name="gens" id="gens"><b>Generation Numbers</b> (distinguishing 
+ generations/successions of a crop over multiple seedings in the same field)</input>
 <li> <input type="checkbox" name="soil" class="soil" id="soil" 
    onclick="toggle('soil',document.getElementById('soil').checked);"><b>Soil</b></input>
 <ul>

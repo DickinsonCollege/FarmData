@@ -28,11 +28,12 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
-$sqlget = "SELECT id, year(hardate) as yr, month(hardate) as mth, day(hardate) as dy, crop, username,".
+$sqlget = "SELECT gen, id, year(hardate) as yr, month(hardate) as mth, day(hardate) as dy, crop, username,".
    "hardate, fieldID, yield, unit, hours, comments FROM harvested where id = ".$id;
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 $user = $row['username'];
+$egen = $row['gen'];
 $field = $row['fieldID'];
 $yield = $row['yield'];
 $unit = $row['unit'];
@@ -155,6 +156,7 @@ while ($row = mysql_fetch_array($sqldata)) {
 echo '</select></div>';
 echo '<br clear="all"/>';
 
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 if ($_SESSION['labor']) {
   echo '<label>Hours:&nbsp</label>';
   echo '<input type="text" class="textbox25" name="hours" id="hours" value="'.
@@ -201,11 +203,12 @@ if ($_POST['submit']) {
    $unitdata = mysql_query($unitSQL) or die(mysql_error());
    $row = mysql_fetch_array($unitdata);
    $insertUnit = $row['units'];
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
    $sql = "update harvested set username='".$user."', fieldID='".$fld."', hardate='".$year."-".
      $month."-".$day."', yield=".$yield."/(Select conversion from units where crop= '".
      $crop."' and unit= '".$unit."'),hours=".$hours.",comments='".
-     $comSanitized."',crop='".$crop."' where id=".$id;
+     $comSanitized."',crop='".$crop."',gen=".$gen." where id=".$id;
    $result = mysql_query($sql);
    if(!$result){
        echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";

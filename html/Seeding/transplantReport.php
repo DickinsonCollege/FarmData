@@ -43,6 +43,21 @@ while ($row1 =  mysql_fetch_array($result)){
 </div>
 
 <?php
+if ($_SESSION['gens']) {
+echo '<br clear="all"/>';
+echo '<label for="genSel"><b>Generation #:</b>&nbsp;</label>';
+echo '<div class="styled-select">';
+echo '<select name="genSel" class="mobile-select">';
+echo '<option value = "%" selected="selected"> All </option>';
+$result = mysql_query("SELECT distinct gen from transferred_to order by gen");
+while ($row1 =  mysql_fetch_array($result)){
+echo "\n<option value= \"$row1[gen]\">$row1[gen]</option>";
+}
+echo '</select>';
+echo '</div>';
+} else {
+echo '<input type="hidden" name="genSel" value="%">';
+}
 echo "<br clear=\"all\">";
 echo "<br clear=\"all\">";
 echo'<input class="submitbutton" type="submit" name="submitTrans" value="Submit">';

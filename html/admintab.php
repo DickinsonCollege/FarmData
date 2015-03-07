@@ -329,7 +329,7 @@ echo '</ul>';
 </div>
 
 <div id="deleteseed" style="display:none;">
-<div class="tabs tabs3">
+<div class="tabs tabs4">
 <ul>
 <li id="li_deletedirplant">  
    <a href="/Admin/Delete/dir_seedingReport.php?tab=admin:admin_delete:deleteseed:deletedirplant" id = "deletedirplant_a" class="inactivetab">Direct Seeding</a> </li>
@@ -337,6 +337,8 @@ echo '</ul>';
    <a href="/Admin/Delete/gh_seedingReport.php?tab=admin:admin_delete:deleteseed:deleteflats" id = "deleteflats_a" class="inactivetab">Flats Seeding</a> </li>
 <li id="li_deletetrans">  
    <a href="/Admin/Delete/transferred_Report.php?tab=admin:admin_delete:deleteseed:deletetrans" id = "deletetrans_a" class="inactivetab">Transplanting</a> </li>
+<li id="li_editflat">  
+   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteseed:editflat" id = "editflat_a" class="inactivetab">Flat&nbsp;Size</a> </li>
 </ul>
 <?php createBR(); ?>
 <!--
@@ -388,12 +390,14 @@ echo '<li id="li_deletetill">
 </div>
 
 <div id="deletecover" style="display:none;">
-<div class="tabs tabs2">
+<div class="tabs tabs3">
 <ul>
 <li id="li_deletecoverseed">  
-   <a href="/Admin/Delete/cover_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverseed" id = "deletecoverseed_a" class="inactivetab">Cover&nbsp;Crop&nbsp;Seeding</a> </li>
+   <a href="/Admin/Delete/cover_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverseed" id = "deletecoverseed_a" class="inactivetab">Seeding</a> </li>
 <li id="li_deletecoverincorp">  
-   <a href="/Admin/Delete/incorpReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverincorp" id = "deletecoverincorp_a" class="inactivetab">Cover&nbsp;Crop&nbsp;Incorporation</a> </li>
+   <a href="/Admin/Delete/incorpReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverincorp" id = "deletecoverincorp_a" class="inactivetab">Incorporation</a> </li>
+<li id="li_deletecoverCrop">  
+   <a href="/Admin/Delete/deleteCoverCrop.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverCrop" id = "deletecoverCrop_a" class="inactivetab">Cover&nbsp;Crop</a> </li>
 </ul>
 <?php createBR(); ?>
 </div>
@@ -464,11 +468,11 @@ echo '</ul>';
 
 <div id="deleteother" style="display:none;">
 <?php
-echo '<div class="tabs tabs'.($_SESSION['num_edit_other'] + 1).'">';
+echo '<div class="tabs tabs'.$_SESSION['num_edit_other'].'">';
 echo '<ul>';
 if ($_SESSION['labor']) {
 echo '<li id="li_deletelabor">  
-   <a href="/Admin/Delete/laborReport.php?tab=admin:admin_delete:deleteother:deletelabor" id = "deletelabor_a" class="inactivetab">Labor</a> </li>';
+   <a href="/design.php?tab=admin:admin_delete:deleteother:deletelabor" id = "deletelabor_a" class="inactivetab">Labor</a> </li>';
 }
 echo '<li id="li_deleteunit">  
    <a href="/Admin/Add/viewUnits.php?tab=admin:admin_delete:deleteother:deleteunit" id = "deleteunit_a" class="inactivetab">Crop&nbsp;Unit</a> </li>';
@@ -480,8 +484,6 @@ echo '<li id="li_deletetractor">
 }
 echo '<li id="li_editfield">  
    <a href="/Admin/Add/editField.php?tab=admin:admin_delete:deleteother:editfield" id = "editfield_a" class="inactivetab">Field</a> </li>';
-echo '<li id="li_editflat">  
-   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteother:editflat" id = "editflat_a" class="inactivetab">Flat&nbsp;Size</a> </li>';
 echo '<li id="li_edituser">  <a href="/Admin/Add/';
 if ($farm == "dfarm") {
   echo 'editUser.php';
@@ -492,6 +494,22 @@ echo '?tab=admin:admin_delete:deleteother:edituser" id = "edituser_a" class="ina
 ?>
 </ul>
 <?php createBR(); ?>
+<!--
+<br clear="all"/>
+-->
+</div>
+</div>
+
+<div id="deletelabor" style="display:none;">
+<?php
+echo '<div class="tabs tabs2">';
+echo '<ul>';
+echo '<li id="li_deletelaborR">  
+   <a href="/Admin/Delete/laborReport.php?tab=admin:admin_delete:deleteother:deletelabor:deletelaborR" id = "deletelaborR_a" class="inactivetab">Labor</a> </li>';
+echo '<li id="li_deletelaborT">  
+   <a href="/Admin/Delete/deleteTask.php?tab=admin:admin_delete:deleteother:deletelabor:deletelaborT" id = "deletelaborT_a" class="inactivetab">Labor&nbsp;Task</a> </li>';
+echo '</ul>';
+ createBR(); ?>
 <!--
 <br clear="all"/>
 -->

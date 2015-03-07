@@ -14,21 +14,22 @@ $day = $_POST['day'];
 $tcurYear = $_POST['tyear'];
 $tcurMonth = $_POST['tmonth'];
 $tcurDay = $_POST['tday'];
+$genSel = $_POST['genSel'];
 $crop = escapehtml($_POST['crop']);
 $fieldID = escapehtml($_POST['fieldID']);
 $sql="select plantdate,dir_planted.crop,fieldID,bedft,rowsBed,bedft * rowsBed as rowft, hours, comments";
-$sql .= " from dir_planted where dir_planted.crop like '".$crop."' and ".
-   "fieldID like '".$fieldID."' and plantdate between '".$year."-".
+$sql .= ", gen from dir_planted where dir_planted.crop like '".$crop."' and ".
+   "fieldID like '".$fieldID."' and gen like '".$genSel."' and plantdate between '".$year."-".
    $month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by plantdate ";
 if ($crop != "%") {
    $total = "select sum(bedft * rowsBed) as totalSum from dir_planted where ".
      "plantdate between '".$year."-".$month."-".$day."' AND '".
      $tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop ='".$crop."' ".
-     "and fieldID like '".$fieldID."'";
+     "and fieldID like '".$fieldID."' and gen like '".$genSel."'";
    $btotal = "select sum(bedft) as totalSum from dir_planted where plantdate ".
      "between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".
      $tcurMonth."-".$tcurDay."' AND crop ='".$crop."' and fieldID like '".
-     $fieldID."'";
+     $fieldID."' and gen like '".$genSel."'";
    $totalResult = mysql_query($total);
 echo mysql_error();
    $btotalResult = mysql_query($btotal);
@@ -49,11 +50,21 @@ if ($fieldID == "%") {
 } else {
   echo "Field ".$fieldID;
 }
+if ($_SESSION['gens']) {
+   if ($genSel == "%") {
+      echo " of All Generations";
+   } else {
+      echo " of Generation ".$genSel;
+   }
+}
 echo "</caption>";
 echo "<tr><th>Plant Date</th><th>Crop</th>";
 echo "<th>Field</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th>";
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
+}
+if ($_SESSION['gens']) {
+   echo "<th>Gen&nbsp;#</th>";
 }
 echo "<th> Comments </th></tr>";
 while ( $row = mysql_fetch_array($result)) {
@@ -74,6 +85,9 @@ while ( $row = mysql_fetch_array($result)) {
         echo number_format((float) $row['hours'], 2, '.', '');
         echo "</td><td>";
     }
+   if ($_SESSION['gens']) {
+      echo $row['gen']."</td><td>";
+   }
    echo $row['comments'];
    echo "</td></tr>";
 }
@@ -101,5 +115,7 @@ echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\"
 <input class = "submitbutton" type="submit" name="submit" value="Download Report">
 <?php
 echo '</form>';
-echo '<form method="GET" action = "plantReport.php"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '<form method="GET" action = "plantReport.php">';
+echo '<input type="hidden" name="tab" value="seeding:direct:direct_report">';
+echo '<input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 ?>

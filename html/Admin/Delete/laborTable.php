@@ -64,14 +64,14 @@ if(!empty($_GET['submit'])){
          $year."&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
          "&id=".$row['id']."&crop=".encodeURIComponent($origCrop)."&submit=Submit&fieldID=".
          encodeURIComponent($origFieldID).
-         "&tab=admin:admin_delete:deleteother:deletelabor&task=".encodeURIComponent($origTask)."\">";
+         "&tab=admin:admin_delete:deleteother:deletelabor:deletelaborR&task=".encodeURIComponent($origTask)."\">";
 		echo "<input type='submit' class='editbutton' value='Edit'/></form>";
 		echo "</td><td>";
       echo "<form method='POST' action=\"laborTable.php?month=".$month."&day=".$day."&year=".
          $year."&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
          "&id=".$row['id']."&crop=".encodeURIComponent($origCrop)."&submit=Submit&fieldID=".
          encodeURIComponent($origFieldID).
-         "&tab=admin:admin_delete:deleteother:deletelabor&task=".encodeURIComponent($origTask)."\">";
+         "&tab=admin:admin_delete:deleteother:deletelabor:deletelaborR&task=".encodeURIComponent($origTask)."\">";
 		echo "<input type='submit' class='deletebutton' value='Delete'/></form>";
       echo "</td></tr>";
       echo "\n";

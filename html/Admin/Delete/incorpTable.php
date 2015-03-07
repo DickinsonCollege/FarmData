@@ -7,12 +7,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 echo '<br clear="all"/>';
 if(isset($_GET['submit'])) {
 if(isset($_GET['id'])){
+   $sqlDel="DELETE FROM coverKill WHERE id=".$_GET['id'];
+   mysql_query($sqlDel);
+   echo mysql_error();
    $sqlDel="DELETE FROM coverKill_master WHERE id=".$_GET['id'];
    mysql_query($sqlDel);
    echo mysql_error();
-	$sqlDel="DELETE FROM coverKill WHERE id=".$GET['id'];
-	mysql_query($sqlDel);
-	echo mysql_error();
 }
 if(!empty($_GET['fieldID'])) {
    $year = $_GET['year'];

@@ -28,11 +28,12 @@ $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
 
-$sqlget = "SELECT id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, username,".
+$sqlget = "SELECT gen,id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, username,".
    "plantdate,fieldID,bedft,rowsBed,hours, comments FROM dir_planted where id = ".$id;
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 $user = $row['username'];
+$egen = $row['gen'];
 $field = $row['fieldID'];
 $bedftv = $row['bedft'];
 $rowsBed = $row['rowsBed'];
@@ -122,6 +123,7 @@ for ($row = 1; $row <= 7; $row++) {
 echo '</div></select>';
 echo '<br clear="all"/>';
 
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 if ($_SESSION['labor']) {
    echo '<label>Hours:&nbsp</label>';
    echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
@@ -153,9 +155,10 @@ if ($_POST['submit']) {
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $user = escapehtml($_POST['user']);
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
      $month."-".$day."', bedft=".$bedftv.",rowsBed=".$numrows.",hours=".$hours.",comments='".
-     $comSanitized."',crop='".$crop."' where id=".$id;
+     $comSanitized."',crop='".$crop."',gen=".$gen." where id=".$id;
    $result = mysql_query($sql);
    if(!$result){
        echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";

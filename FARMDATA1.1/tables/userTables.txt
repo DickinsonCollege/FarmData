@@ -1,0 +1,14 @@
+create table farms (
+  dbase varchar(30) not null,
+  passwd varchar(30) not null,
+  dbuser varchar(30) not null,
+  primary key(dbase)) ENGINE=InnoDB;
+
+create table users (
+  username varchar(50) not null,
+  passwd varchar(130) not null,
+  dbase varchar(30) not null,
+  admin tinyint(1) default 0,
+  active tinyint(1) default 1,
+  primary key(username),
+  foreign key(dbase) references farms(dbase)) ENGINE=InnoDB;

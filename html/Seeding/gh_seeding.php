@@ -5,7 +5,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
-$farm = $_SESSION['db'];
 ?>
 
 <h3 >Flats Seeding Input Form</h3>
@@ -154,6 +153,9 @@ if (!$_SESSION['seed_order']) {
 }
 ?>
 <br clear="all"/>
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
+?>
 <div>
 <label for="comments">Comments:</label>
 <br clear="all"/>
@@ -196,6 +198,9 @@ function show_confirm() {
         return false;
    }
    con += "Number of Seeds: "+ ns + "\n";
+   <?php
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
+   ?>
    var ret = confirm("Confirm Entry:"+"\n"+con);       
    if (ret) {
       document.getElementById('cropButton').disabled=false;
@@ -252,14 +257,15 @@ if(isset($_POST['submit'])) {
    } else {
       $varsSanitized=escapehtml($_POST['vars']);
    }
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    $seeds = escapehtml($_POST['num_seeds']);
    $numFlats = escapehtml($_POST['numFlats']);
    $flatSize = escapehtml($_POST['flatSize']);
    $user = escapehtml($_SESSION['username']);
-   $sql="INSERT INTO gh_seeding(username,crop,seedDate,numseeds_planted,flats,cellsFlat,varieties,comments) VALUES ('".
+   $sql="INSERT INTO gh_seeding(username,crop,seedDate,numseeds_planted,flats,cellsFlat,varieties,gen, comments) VALUES ('".
       $user."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
       $_POST['day']."',".$seeds.",".$numFlats.", ".$flatSize.", '".
-      $varsSanitized."','".$comSanitized."')";
+      $varsSanitized."', ".$gen.", '".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 
        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\\nIf this is a duplicate entry error, ask your FARMDATA administrator to correct the record.\");</script>\n";

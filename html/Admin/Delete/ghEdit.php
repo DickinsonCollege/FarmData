@@ -29,13 +29,14 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
-$sqlget = "SELECT id, year(seedDate) as yr, month(seedDate) as mth, day(seedDate) as dy, crop, username, 
+$sqlget = "SELECT id, gen, year(seedDate) as yr, month(seedDate) as mth, day(seedDate) as dy, crop, username, 
 	seedDate, numseeds_planted, comments, varieties, flats, cellsFlat FROM gh_seeding where id = ".$id;
 
 $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 
 $id = $row['id'];
+$egen = $row['gen'];
 $curDay = $row['dy'];
 $curMonth = $row['mth'];
 $curYear = $row['yr'];
@@ -116,11 +117,12 @@ echo "<label>Flats:&nbsp;</label>";
 echo "<input type='text' class='textbox2' name='flats' id='flats' value='".$flats."'>";
 echo "<br clear='all'/>";
 
-echo "<label>Cells Flat:&nbsp;</label>";
+echo "<label>Cells/Flat:&nbsp;</label>";
 echo "<input type='text' class='textbox2' name='cellsFlat' id='cellsFlat' value='".$cellsFlat."'>";
 echo "<br clear='all'/>";
 echo "<br clear='all'/>";
 
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 
 echo '<label>Comments:&nbsp</label>';
 echo '<br clear="all"/>';
@@ -143,11 +145,12 @@ if ($_POST['submit']) {
 	$month = escapehtml($_POST['month']);
 	$day = escapehtml($_POST['day']);
 	$user = escapehtml($_POST['user']);
+        include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    
 	echo $sql = "update gh_seeding set username='".$user."',crop='".$crop."', seedDate='".$year."-".
 		$month."-".$day."', numseeds_planted=".$numseeds_planted.", comments='".$comSanitized."', 
-		varieties='".$varieties."', flats=".$flats.", cellsFlat=".$cellsFlat." 
-		WHERE id=".$id;
+		varieties='".$varieties."', flats=".$flats.", cellsFlat=".$cellsFlat.
+                ",gen=".$gen." WHERE id=".$id;
    $result = mysql_query($sql);
    
 	if(!$result){

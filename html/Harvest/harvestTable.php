@@ -14,17 +14,39 @@ if(isset($_POST['submit'])){
    $tcurYear = $_POST['tyear'];
    $tcurMonth = $_POST['tmonth'];
    $tcurDay = $_POST['tday'];
+   $genSel = $_POST['genSel'];
    $crop = escapehtml($_POST["crop"]);
    $fieldID = escapehtml($_POST["fieldID"]);
 #   $sql = "SELECT hardate,fieldID, harvested.crop,yield,units,hours,comments FROM harvested,plant where hardate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and harvested.crop like '" .$_POST["crop"] ."' and plant.crop = harvested.crop and fieldID like '".$_POST['fieldID']."' order by hardate";
-   $sql = "SELECT hardate,fieldID, harvested.crop,yield,unit,hours,comments FROM harvested where hardate BETWEEN '".
+   $sql = "SELECT gen, hardate,fieldID, harvested.crop,yield,unit,hours,comments FROM harvested where hardate BETWEEN '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and harvested.crop like '" .$crop."' and fieldID like '".
-      $fieldID."' order by hardate";
+      $fieldID."' and gen like '".$genSel."' order by hardate";
    echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
    $sqldata = mysql_query($sql) or die("ERROR");
    echo "<table>";
    $crp = $_POST["crop"];
+   if ($fieldID == "%") {
+       $flb = "All Fields";
+   } else {
+       $flb = $fieldID;
+   }
+   if ($crp == "%") {
+       $clb = "All Crops";
+   } else {
+       $clb = $crp;
+   }
+   if ($genSel == "%") {
+       $glb = "All Generations";
+   } else {
+       $glb = "Gen #: ".$genSel;
+   }
+  echo "<caption> Harvest Report for ".$clb." in ".$flb;
+  if ($_SESSION['gens']) {
+     echo " of ".$glb;
+  }
+  echo "</caption>";
+/*
    if($fieldID == "%" && $crp == "%") {
       echo "<caption> Harvest Report for All Crops in All Fields </caption>";
    } else if ($crp != "%" && $fieldID == "%") {
@@ -36,7 +58,11 @@ if(isset($_POST['submit'])){
       echo "<caption> Harvest Report for All Crops in Field ".$fieldID.
       " </caption>";
    }
+*/
    echo "<tr><th>Date</th><th>Field</th><th>Crop</th><th>Yield</th><th>Unit</th>";
+   if ($_SESSION['gens']) {
+      echo "<th>Gen&nbsp;#</th>";
+   }
    if ($_SESSION['labor']) {
       echo "<th>Hours</th>";
    }
@@ -53,6 +79,10 @@ if(isset($_POST['submit'])){
       echo "</td><td>";
       echo $row['unit'];
       echo "</td><td>";
+      if ($_SESSION['gens']) {
+         echo $row['gen'];
+         echo "</td><td>";
+      }
       if ($_SESSION['labor']) {
          echo number_format((float) $row['hours'], 2, '.', '');
          echo "</td><td>";
@@ -67,32 +97,32 @@ if(isset($_POST['submit'])){
       $total="Select sum(yield) as total, sum(harvested.hours) as hours, unit from harvested ".
          "where hardate between '".
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
-         "' and harvested.crop like '" .$crop.
-         "' and harvested.fieldID like '".$fieldID."' group by unit order by unit";
+         "' and harvested.crop like '" .$crop.  "' and harvested.fieldID like '".
+         $fieldID."' and gen like '".$genSel."' group by unit order by unit";
       $res=mysql_query($total);
       echo mysql_error();
       $yield="Select unit, sum(yield)/(Select sum(tft) from 
          ((Select bedft as tft from dir_planted where fieldID like '".$fieldID.
          "' and year(plantdate) between '".$year."' and '".$tcurYear."' and 
-         dir_planted.crop= '".$crop."') union all 
+         dir_planted.crop= '".$crop."' and dir_planted.gen like '".$genSel."') union all 
          (Select bedft as tft from transferred_to where year(transdate) between '".$year."' and '".
             $tcurYear."' and transferred_to.crop= '".$crop.
-            "' and fieldID like '".$fieldID."')) as temp1) as yperft from harvested where hardate between '".
+            "' and fieldID like '".$fieldID."' and gen like '".$genSel."')) as temp1) as yperft from harvested where hardate between '".
             $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
             "' and harvested.crop = '" .$crop."' and harvested.fieldID like '".
-            $fieldID."' group by unit order by unit";
+            $fieldID."' and gen like '".$genSel."' group by unit order by unit";
       $res2=mysql_query($yield);
       echo mysql_error();
       $yieldr="Select unit, sum(yield)/(Select sum(tft) from 
          ((Select bedft * rowsBed as tft from dir_planted where fieldID like '".$fieldID.
          "' and year(plantdate) between '".$year."' and '".$tcurYear."' and 
-         dir_planted.crop= '".$crop."') union all 
+         dir_planted.crop= '".$crop."' and gen like '".$genSel."') union all 
          (Select bedft * rowsBed as tft from transferred_to where year(transdate) between '".$year."' and '".
             $tcurYear."' and transferred_to.crop= '".$crop.
-            "' and fieldID like '".$fieldID."')) as temp1) as yperft from harvested where hardate between '".
+            "' and fieldID like '".$fieldID."' and gen like '".$genSel."')) as temp1) as yperft from harvested where hardate between '".
             $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
             "' and harvested.crop = '" .$crop."' and harvested.fieldID like '".
-            $fieldID."' group by unit order by unit";
+            $fieldID."' and gen like '".$genSel."' group by unit order by unit";
       $res3=mysql_query($yieldr);
       echo mysql_error();
       echo "<table>";

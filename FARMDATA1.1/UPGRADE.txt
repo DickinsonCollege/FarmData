@@ -1,0 +1,14 @@
+To upgrade from FARMDATA1.0, you must adjust several of the 
+tables in your farm information database.  Connect to that
+database from phpMyAdmin or a terminal and execute the the
+following commands.  In phpMyAdmin, paste the commands into
+the "Run SQL Query" box and click "Go":
+
+alter table coverCrop drop column id;
+alter table coverCrop add column active tinyint(1) default 1 after legume;
+alter table tSprayMaterials alter column REI_HRS varchar(20);
+alter table gh_seeding add column gen int default 1 after cellsFlat;
+alter table dir_planted add column gen int default 1 after hours;
+alter table transferred_to add column gen int default 1 after flats;
+alter table harvested add column gen int default 1 after unit;
+alter table config add column gens tinyint(1) default 1 after bedft;

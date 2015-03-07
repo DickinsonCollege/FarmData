@@ -29,7 +29,7 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
-$sqlget = "SELECT id, year(transdate) as tyr, month(transdate) as tmth, day(transdate) as tdy, crop, username, 
+$sqlget = "SELECT id, gen, year(transdate) as tyr, month(transdate) as tmth, day(transdate) as tdy, crop, username, 
    year(seedDate) as syr, month(seedDate) as smth, day(seedDate) as sdy,
    transdate, seedDate, fieldID, bedft, rowsBed, hours, flats, comments FROM transferred_to WHERE id = ".$id;
 
@@ -37,6 +37,7 @@ $sqldata = mysql_query($sqlget) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 
 $id = $row['id'];
+$egen = $row['gen'];
 $seedDay = $row['sdy'];
 $seedMonth = $row['smth'];
 $seedYear = $row['syr'];
@@ -174,6 +175,7 @@ echo "<label>Number of Flats:&nbsp</label>";
 echo "<input type='text' class='textbox2' name='flats' id='flats' value='".$flats."'>";
 echo "<br clear='all'>";
 
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 if ($_SESSION['labor']) {
    echo "<label>Hours Worked:&nbsp</label>";
    echo "<input type='text' class='textbox2' name='hours' id='hours' value='".$hours."'>";
@@ -206,11 +208,12 @@ if ($_POST['submit']) {
    $transYear = escapehtml($_POST['transYear']);
    $transMonth = escapehtml($_POST['transMonth']);
    $transDay = escapehtml($_POST['transDay']);  
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
  
    $sql = "update transferred_to set username='".$username."',crop='".$crop."', seedDate='".$seedDate."', 
-      transdate='".$transYear."-".$transMonth."-".$transDay."', 
-      flats='".$flats."', bedft='".$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."',
-      comments='".$comments."', fieldID='".$fieldID."' WHERE id=".$id;
+      transdate='".$transYear."-".$transMonth."-".$transDay."', flats='".$flats."', bedft='"
+      .$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."', comments='".$comments."', fieldID='".
+      $fieldID."',gen=".$gen." WHERE id=".$id;
 
    $result = mysql_query($sql);
    

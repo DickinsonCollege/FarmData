@@ -15,17 +15,18 @@ $day = $_POST['day'];
 $tcurYear = $_POST['tyear'];
 $tcurMonth = $_POST['tmonth'];
 $tcurDay = $_POST['tday'];
+$genSel = $_POST['genSel'];
 $crop = escapehtml($_POST['crop']);
-$sql="Select seedDate,crop,numseeds_planted,flats,cellsFlat,varieties,comments from gh_seeding where crop like '".
-   $crop."' and seedDate between '".$year."-".$month."-".$day."' AND '".
+$sql="Select seedDate,crop,numseeds_planted,flats,cellsFlat,varieties,gen, comments from gh_seeding where crop like '".
+   $crop."' and gen like '".$genSel."' and seedDate between '".$year."-".$month."-".$day."' AND '".
    $tcurYear."-".$tcurMonth."-".$tcurDay."' order by seedDate ";
 if ($crop!="%") {
    $total = "select sum(numseeds_planted) as totalSum from gh_seeding where seedDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-      $tcurDay."' AND crop ='".$crop."'";
+      $tcurDay."' AND crop ='".$crop."' and gen like '".$genSel."'";
    $totalf = "select sum(flats) as totalFlats from gh_seeding where seedDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-      $tcurDay."' AND crop ='".$crop."'";
+      $tcurDay."' AND crop ='".$crop."' and gen like '".$genSel."'";
 }
 echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
 
@@ -37,12 +38,24 @@ if ($crop == '%') {
    $crp = $_POST['crop'];
 }
 echo "<table border>";
-echo "<caption> Flats Seeding Records for: ".$crp."</caption>";
+echo "<caption> Flats Seeding Records for: ".$crp;
+if ($_SESSION['gens']) {
+   if ($genSel == "%") {
+      echo " of All Generations";
+   } else {
+      echo " of Generation ".$genSel;
+   }
+}
+echo "</caption>";
 echo "<tr><th>Plant Date</th><th>Crop</th>";
 if (!$_SESSION['bigfarm']) {
    echo "<th>#seeds</th>";
 }
-echo "<th>Flats</th><th>Cells/Flat</th><th>Varieties</th><th> Comments</th></tr>";
+echo "<th>Flats</th><th>Cells/Flat</th><th>Varieties</th>";
+if ($_SESSION['gens']) {
+   echo "<th>Gen&nbsp;#</th>";
+}
+echo "<th> Comments</th></tr>";
 while ( $row = mysql_fetch_array($result)) {
    echo "<tr><td>";
    echo $row['seedDate'];
@@ -59,6 +72,10 @@ while ( $row = mysql_fetch_array($result)) {
    echo "</td><td>";
    echo $row['varieties'];
    echo "</td><td>";
+   if ($_SESSION['gens']) {
+        echo $row['gen'];
+        echo "</td><td>";
+   }
    echo $row['comments'];
    echo "</td></tr>";
 }

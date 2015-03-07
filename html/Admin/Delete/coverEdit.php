@@ -111,7 +111,7 @@ while($row=mysql_fetch_array($result)){
 	$numRows++;
 	// generate options for crops
 	$optionCrop = "";
-	$sql = "SELECT crop FROM coverCrop";
+	$sql = "SELECT crop FROM coverCrop where active = 1";
 	$sqldata = mysql_query($sql) or die(mysql_error);
 	while ($rowCrop = mysql_fetch_array($sqldata)) {
    	$optionCrop = $optionCrop."<option value='".$rowCrop['crop']."'>".$rowCrop['crop']."</option>";
@@ -164,7 +164,7 @@ echo "</table>";
 /*echo "<label>Crop2:&nbsp</label>";
 echo "<div class='styled-select'><select name='crop2' id='crop2'>";
 echo "<option value='".$crop2."' selected>".$crop2."</option>";
-$sql = "SELECT crop FROM coverCrop";
+$sql = "SELECT crop FROM coverCrop where active = 1";
 $sqldata = mysql_query($sql) or die();
 while ($row = mysql_fetch_array($sqldata)) {
 	echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
@@ -192,7 +192,7 @@ echo "<input type='text' class='textbox2' name='num_pounds2' id='num_pounds2' va
       cell0.innerHTML = '<div class="styled-select" id="cropDiv'+numRows+'"><select name ="crop'+numRows+'" id="crop'+numRows+'" onChange="addPounds(\'num_poundsDiv'+numRows+'\',\''+numRows+'\'); addTotalPound(\'id'+numRows+'\',\''+numRows+'\');" class="mobile-select">'+
          '<option value = 0 selected disabled>Species</option>'+
          '<?php
-            $result=mysql_query("Select crop from coverCrop");
+            $result=mysql_query("Select crop from coverCrop where active = 1");
             while ($row1 =  mysql_fetch_array($result)){
                echo "<option value= \"$row1[crop]\">$row1[crop]</option>";
             }

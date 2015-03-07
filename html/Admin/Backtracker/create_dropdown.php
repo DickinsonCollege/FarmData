@@ -14,7 +14,19 @@ if ($fieldName === "crop") {
 // Cell
 } else if ($fieldName === "cellsFlat") {
 	$sql = "SELECT cells FROM flat"; 
+// generation
+} else if ($fieldName === "gen") {
+   if ($tableName === "transferred_to") {
+      $sql = "select distinct gen from gh_seeding order by gen";
+   } else if ($tableName === "harvested") {
+      $sql = "select distinct gen from (select distinct gen from dir_planted union ".
+        "select distinct gen from transferred_to) as tmp order by gen";
+   } else {
+      $sql = "select 1 union select 2 union select 3 union select 4 union select 5".
+          " union select 6 union select 7 union select 8 union select 9 union select 10";
+   }
 }
+
 
 if ($fieldName === "rowsBed") {
 	$array = array(1, 2, 3, 4, 5, 7);

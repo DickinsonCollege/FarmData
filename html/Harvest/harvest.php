@@ -59,6 +59,7 @@ function show_confirm() {
       }
       con=con+"Unit: "+ unit + "\n";
    <?php
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
    if ($_SESSION['labor']) {
       echo 'var numW = document.getElementById("numW"+j).value;
       if (checkEmpty(numW) || numW<=0 || !isFinite(numW)) {
@@ -101,7 +102,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 
 <label class='input_label' for='cropButton'><b>Crop:&nbsp;</b></label>
 <div class='styled-select'>
-<select name='cropButton' id='cropButton' class='mobile-select'>
+<select name='cropButton' id='cropButton' class='mobile-select' 
+<?php if ($_SESSION['gens']) echo 'onChange="getGen();"';?>>
 <option value=0 selected>Crop</option>
 <?php
 $sql = "SELECT crop FROM plant WHERE active=1";
@@ -147,6 +149,20 @@ value="Remove Field">
 <br clear="all"/>
 <input type="hidden" name="numRows" id="numRows" value=0>
 <script type="text/javascript">
+function getGen() {
+   var genDiv = document.getElementById("genDiv");
+   var genStr = '<div id="genDiv" class="styled-select">' +
+       '<select id= "gen" name="gen" class="mobile-select">';
+   var year = document.getElementById("year").value;
+   var crop = encodeURIComponent(document.getElementById("cropButton").value);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year, false);
+   xmlhttp.send();
+   genStr += xmlhttp.responseText;
+   genStr += '</select></div>';
+   genDiv.innerHTML = genStr;
+}
+
 var numRows = 0;
 function addRow() {
    var cb = document.getElementById("cropButton");
@@ -243,6 +259,16 @@ if($currentDate){
 
 
 <br clear="all"/>
+<?php
+if ($_SESSION['gens']) {
+   echo '<label for="gen"> Generation #:&nbsp; </label>';
+   echo '<div id="genDiv" class="styled-select">';
+   echo '<select id= "gen" name="gen" class="mobile-select">';
+   echo '</select>';
+   echo '</div>';
+   echo '<br clear="all">';
+}
+?>
 <div>
 <label class='input_label' for="comments">Comments:</label>
 <br clear="all"/>
@@ -304,15 +330,16 @@ if(isset($_POST['submit'])){
          $totalHours=0;
       }
 
+      include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
       if ($farm == 'wahlst_spiralpath') {
-        $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours, comments, unit) VALUES('".
+        $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours, gen, comments, unit) VALUES('".
            $_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID.
-           "',$yield,$hours,'$comments','$unit')";
+           "',".$yield.",".$hours.", ".$gen.",'".$comments."','".$unit."')";
       } else {
-         $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,comments, unit) VALUES('"
+         echo $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,gen, comments, unit) VALUES('"
             .$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID.
             "',$yield/(Select conversion from units where crop= '".$crop."' and unit= '".$unit.
-            "'),$totalHours,'$comments', '$insertUnit')";
+            "'),".$totalHours.", ".$gen.",'".$comments."', '".$insertUnit."')";
       }
    # $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,comments, unit) VALUES('".$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."',$yield*(Select conversion from (Select 1 as conversion from units where crop= '".$_POST['crop']."' and default_unit ='".$_POST['unit']."' union select conversion from  units where crop= '".$_POST['crop']."' and unit= '".$_POST['unit']."') as conver) ,$hours,'$comments', '$unit')";
    # START - put conversion back in when available

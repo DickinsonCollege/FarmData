@@ -44,7 +44,7 @@ var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 var numericalFields = ["bedft", "hours", "yield", "numseeds_planted", "flats"];
 
 // Elements that need a dropdown menu
-var dropdownArray = ["crop", "fieldID", "cellsFlat", "rowsBed"];
+var dropdownArray = ["crop", "fieldID", "cellsFlat", "rowsBed", "gen"];
 
 // Elements that are dates that should be split up into M/D/Y to edit
 var dateArray = ["plantdate", "transdate", "hardate", "seedDate"];
@@ -346,7 +346,7 @@ function createDropdown(fieldname, data, rowNum){
    // For when AJAX isn't used
    } else {
       xmlhttp.open("GET", "create_dropdown.php?fieldName=" +
-         encodeURIComponent(fieldname)+"&tableName"+tableName, false);
+         encodeURIComponent(fieldname)+"&tableName="+tableName, false);
       xmlhttp.send();
       dropdownArray = eval(xmlhttp.responseText);
    }
@@ -355,7 +355,7 @@ function createDropdown(fieldname, data, rowNum){
       "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "\");' style='width:100%' name='" + fieldname + rowNum + "' id='" + fieldname + rowNum + "'>";
    if (!(fieldname === "seedDate" && tableName === "transferred_to" && (
       data === "" || data === "0000-00-00"))) {
-      selectMenu += "<option disabled value='" + data + "' selected>" + data + "</option>";
+      //selectMenu += "<option disabled value='" + data + "' selected>" + data + "</option>";
    }
 
    if (extraOptions != null) {

@@ -77,6 +77,22 @@ while ($cons<8) {
 
 <br clear="all"/>
 <?php
+if ($_SESSION['gens']) {
+   echo '<label for="gen"> Generation #:&nbsp; </label>';
+   echo '<div id="genDiv" class="styled-select">';
+   echo '<select id= "gen" name="gen" class="mobile-select">';
+   $sql = "select distinct gen from gh_seeding order by gen";
+   $res = mysql_query($sql);
+   echo mysql_error();
+   while ($row = mysql_fetch_array($res)) {
+     $i = $row['gen'];
+     echo "\n<option value='".$i."'>".$i."</option>";
+   }
+   echo '</select>';
+   echo '</div>';
+   echo '<br clear="all">';
+}
+
 if ($_SESSION['labor']) {
    echo '
 <label for="numWorkers"><b>Number of workers:&nbsp;</b></label>
@@ -180,6 +196,7 @@ echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:tr
         var con=con+"Number of flats: "+ numF+ "\n";
 
 <?php
+  include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
   if ($_SESSION['labor']) {
     echo '
         var numW = document.getElementById("numW").value;
@@ -241,11 +258,12 @@ if(isset($_POST['submit'])) {
    } else {
       $totalHours = 0;
    }
+   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
-   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,hours,comments) VALUES ('".
+   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,hours,comments) VALUES ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
-      ", ".$numrows.", ".$numFlats.", ".$totalHours.",'".$comSanitized."')";
+      ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 
        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";

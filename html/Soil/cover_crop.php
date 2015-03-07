@@ -236,7 +236,7 @@ function get_code(row) {
          '\');get_code(' + numRows + ');" class="mobile-select">'+
          '<option value = 0 selected disabled>Species</option>'+
          '<?php
-            $result=mysql_query("Select crop from coverCrop");
+            $result=mysql_query("Select crop from coverCrop where active = 1");
             while ($row1 =  mysql_fetch_array($result)){
                echo "<option value= \"$row1[crop]\">$row1[crop]</option>";
             }

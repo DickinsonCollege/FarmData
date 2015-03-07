@@ -1,6 +1,6 @@
 <?php session_start();?>
 <form name='form' method='GET' action='laborTable.php'>
-<input name="tab" type="hidden" value="admin:admin_delete:deleteother:deletelabor">
+<input name="tab" type="hidden" value="admin:admin_delete:deleteother:deletelabor:deletelaborR">
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';

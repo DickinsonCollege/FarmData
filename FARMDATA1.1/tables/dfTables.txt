@@ -1,25 +1,11 @@
 create table tools(tool_name varchar(30) primary key, type varchar(30)) ENGINE=INNODB;
 insert into tools values ('OTHER', 'INCORPORATION');
-/*
-create table product_type(
-   prod_type varchar(30) primary key) ENGINE=INNODB;
-*/
 
 create table harvestList(
    id int NOT NULL AUTO_INCREMENT,
    harDate date,
    comment text, 
    primary key(id)) ENGINE=INNODB;
-
-/*
-create table harvestListEntry(
-        id int, crop varchar(30), fieldID varchar(30), units varchar(30),
-        CSA varchar(30), dining varchar(30), market varchar(30),
-        other varchar(30) ,Total int, 
-        primary key(id,crop,fieldID), 
-        foreign key(id) references harvestList(id)on update cascade,
-        foreign key(crop) references plant(crop) on update cascade) ENGINE=INNODB;
-*/
 
 create table targets (
    targetName varchar(30) primary key,
@@ -129,59 +115,6 @@ insert into compost_activities values ('STACKING');
 insert into compost_activities values ('WATERING');
 insert into compost_activities values ('COMBINING');
 
-
-/*
-create table pile_add(
-   tractorName varchar(30), compostID varchar(30), pileID varchar(30),
-        add_date date, quantity int,comment text,
-   foreign key(compostID) references compost_material(compostID)
-           on update cascade,
-   foreign key(pileID) references compost_pile(pileID) on update cascade, 
-        foreign key(tractorName) references tractor(tractorName) on 
-           update cascade,
-   primary key(tractorName,compostID,pileID)) ENGINE = INNODB;
-
-create table utilized_on(
-   util_date date,fieldID varchar(30), incorpTool varchar(30), 
-   pileID varchar(30),tperacre float,incorpTiming varchar(30),              id int NOT NULL AUTO_INCREMENT primary key,
-   foreign key(fieldID) references field_GH(fieldID) on update cascade, 
-   foreign key (incorpTool) references tools(tool_name) on update cascade,
-   unique(util_date,fieldID, incorpTool, pileID), 
-   foreign key(pileID) references compost_pile(pileID) on update cascade,
-   fieldSpread int,comments text) ENGINE = INNODB;
-
-create table standard(
-   tractorName varchar(30), compostID varchar(30), 
-   foreign key(compostID) references compost_material(compostID)
-           on update cascade, 
-   foreign key(tractorName) references tractor(tractorName)
-           on update cascade, 
-   bucks_per_scoop int not null,b1_weight int not null, 
-   b2_weight int not null, b3_weight int not null, approx_vol int not null,
-        scoop_weight int not null, bucket_weight int not null,
-        primary key(tractorName,compostID)) ENGINE = INNODB;
-*/
-
-/*
-create table fertility_info( 
-   fieldID varchar(30) not null, testDate date not null,
-        H_percent double, K_percent double, Mg_percent double,
-        Na_percent double, Soil_ph double, 
-   Organic_Material_ENR double, Organic_Material_Percent double,
-   Organic_Material_Rate double, P_Reserve_ppm double,
-   P_Reserve_rate text, P_Mehlich_ppm double, P_Mehlich_rate text,
-   K_ppm double, K_rate text, Mg_ppm double, Mg_rate text,
-   Ca_ppm double, Ca_rate text, Na_ppm double, Na_rate text,
-   S_ppm double, S_rate text, Mn_ppm double, Mn_rate text,
-      Nitrate_NO3N_ppm double,                  
-   Nitrate_NO3N_rate text, Zn_ppm double, Zn_rate text, Fe_ppm double,
-        Fe_rate text, B_ppm double, B_rate text,
-        Soluble_Salts_ms_per_cm double,Soluble_Salts_rate text,
-        Cl_ppm double,Cl_rate text,Al_ppm double,Al_rate text,Cu_ppm double,
-        Cu_rate text,Acidity_H_meq_per_100g double,buffer_index double,
-        CEC_meq_per_100g double) ENGINE=INNODB;
-*/
-
 create table units(
    crop varchar(30), 
    default_unit varchar(30) not null,
@@ -189,12 +122,6 @@ create table units(
    conversion float not null,
    foreign key(crop) references plant(crop) on update cascade,
    primary key(crop,default_unit,unit))ENGINE=INNODB;
-
-/*
-create table customer(
-        cust_id varchar(30),name varchar(30) not null,
-        primary key(cust_id)) ENGINE=INNODB;
-*/
 
 create table product(
    product varchar(30),
@@ -223,64 +150,22 @@ create table invoice_entry(
         foreign key(invoice_no) references invoice_master(invoice_no)) 
             ENGINE=INNODB;
 
-/*
-create table salesCategory(
-   salesCategory varchar(30) primary key) ENGINE=INNODB;
-
-create table activityCode(
-   activity_code varchar(30) primary key) ENGINE=INNODB;
-
-create table transaction_master(
-   trans_id int auto_increment,tDate date,cust_id varchar(30),
-   activity_code varchar(30),salesCategory varchar(30),
-   foreign key(cust_id) references customer(cust_id),
-   foreign key(salesCategory) references salesCategory(salesCategory),
-   foreign key(activity_code) references activityCode(activity_code),
-   primary key(trans_id)) ENGINE=INNODB;
-
-create table transaction_entry(
-   trans_id int,numunits float,price_unit float,
-   prod_type varchar(30),product_details varchar(30),
-   foreign key(trans_id) references transaction_master(trans_id),
-   foreign key(prod_type) references product_type(prod_type))
-   ENGINE=INNODB;
-*/
-
 create table email(
    username varchar(50) primary key) ENGINE=INNODB;
 
 create table coverCrop(
-   crop varchar(30) unique,
+   crop varchar(30) primary key,
    drillRateMin int,
    drillRateMax int,
    brcstRateMin int,
    brcstRateMax int,
    legume int, 
-   id int NOT NULL AUTO_INCREMENT primary key
-) ENGINE=INNODB;
+   active tinyint(1) default 1) ENGINE=INNODB;
 
 create table seedingMethod(
    seed_method varchar(30) primary key) ENGINE=INNODB;
 insert into seedingMethod values ('OTHER');
 insert into seedingMethod values ('DRILL');
-
-/*
-create table coverSeed(
-   crop1 varchar(30),area_seeded float not null, 
-   seedRate1 float,num_pounds1 float,crop2 varchar(30), 
-   seedRate2 float,num_pounds2 float,
-   seed_method varchar(30),incorp_tool varchar(30),
-   comments text,
-   seedDate date,fieldID varchar(30),
-        id int NOT NULL AUTO_INCREMENT primary key, 
-   foreign key(fieldID) references field_GH(fieldID) on update cascade,
-   foreign key(crop1) references coverCrop(crop) on update cascade,
-   foreign key(incorp_tool) references tools(tool_name) on update cascade,
-   foreign key(seed_method) references seedingMethod(seed_method) on
-update cascade,
-   UNIQUE(seedDate, fieldID, crop1))
-   ENGINE=INNODB;
-*/
 
 create table coverSeed_master(
    id int NOT NULL AUTO_INCREMENT primary key, 
@@ -305,21 +190,6 @@ create table coverSeed(
    foreign key(id) references coverSeed_master(id)
    ) ENGINE=INNODB;
 
-/*
-create table coverKill(
-   id int auto_increment primary key,killDate date,
-   seedDate date, fieldID varchar(30),
-   coverCrop1 varchar(30), coverCrop2 varchar(30), incorpTool varchar(30),
-   totalBiomass float,comments text,
-   foreign key(fieldID) references field_GH(fieldID) on update cascade,
-   foreign key(seedDate, fieldID, coverCrop1) references 
-            coverSeed(seedDate, fieldID, crop1) on update cascade,
-   foreign key(incorpTool) references tools(tool_name) on update cascade,
-   foreign key(coverCrop1) references coverCrop(crop) on update cascade,
-   foreign key(coverCrop2) references coverCrop(crop) on update cascade,
-   unique(killDate,fieldID,coverCrop1, coverCrop2)) ENGINE=INNODB;
-*/
-
 create table coverKill_master(
    id int auto_increment primary key,
    killDate date,
@@ -339,23 +209,6 @@ create table coverKill(
    foreign key(coverCrop) references coverCrop(crop) on update cascade,
         foreign key(id) references coverKill_master(id)
    ) ENGINE=INNODB;
-
-/*
-create table cropGroupReference(cropGroup varchar(30) primary key) ENGINE=INNODB;
-insert into cropGroupReference values('BRASSICA');
-insert into cropGroupReference values('CUCURBIT');
-insert into cropGroupReference values('DRY BEAN');
-insert into cropGroupReference values('TOMPEP');
-insert into cropGroupReference values('CARROT');
-insert into cropGroupReference values('GARLIC');
-insert into cropGroupReference values('ONION');
-insert into cropGroupReference values('GH');
-insert into cropGroupReference values('PEA');
-insert into cropGroupReference values('POTATO');
-insert into cropGroupReference values('SLOWVEG');
-insert into cropGroupReference values('SPOKRA');
-insert into cropGroupReference values('VEGMIX');
-*/
 
 create table tSprayMaster(
    id int auto_increment primary key,
@@ -550,33 +403,11 @@ create view inventory as
    unit from unionPackDistribution group by crop_product, grade, unit having 
    sum(amount) >0.01 or sum(amount)<-0.01;
 
-/*
-create table distribution_temp(
-   distDate date, 
-   crop_product varchar(30), 
-   grade int(1), 
-   target varchar(30), 
-   amount float, 
-   unit varchar(30), 
-   comments text
-   ) ENGINE=INNODB;
-*/
-
 create table irrigation_device(
    id int primary key not null auto_increment,
    irrigation_device varchar(30) not null,
    unique(irrigation_device)
 ) ENGINE=INNODB; 
-
-/*
-insert into irrigation_device(irrigation_device) values('2" BALL');
-insert into irrigation_device(irrigation_device) values('2" H&L');
-insert into irrigation_device(irrigation_device) values('4" H&L');
-insert into irrigation_device(irrigation_device) values('4" ROSEBUD');
-insert into irrigation_device(irrigation_device) values('DRIP');
-insert into irrigation_device(irrigation_device) values('KIFCO GUN');
-insert into irrigation_device(irrigation_device) values('OTHER');
-*/
 
 create table pump_master (
    id int NOT NULL AUTO_INCREMENT primary key,
@@ -637,14 +468,6 @@ CREATE TABLE utilized_on (
    FOREIGN KEY (fieldID) REFERENCES field_GH (fieldID) ON UPDATE CASCADE,
    FOREIGN KEY (pileID) REFERENCES compost_pile (pileID) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
-
-/*
-create table seedunit(unit varchar(30) not null primary key) ENGINE=InnoDB;
-insert into seedunit values('SEEDS');
-insert into seedunit values('GRAM');
-insert into seedunit values('OUNCE');
-insert into seedunit values('POUND');
-*/
 
 create table seedInfo (
    crop varchar(30) not null primary key,

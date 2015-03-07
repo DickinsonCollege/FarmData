@@ -44,7 +44,7 @@ $comments = $row['comments'];
 $hours = $row['hours'];
 
 echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
-   "?tab=admin:admin_delete:deleteother:deletelabor&year=".$origYear."&month=".$origMonth."&day=".$origDay.
+   "?tab=admin:admin_delete:deleteother:deletelabor:deletelaborR&year=".$origYear."&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&fieldID=".encodeURIComponent($origField).
    "&task=".encodeURIComponent($origTask)."&crop=".encodeURIComponent($origCrop)."&id=".$id."\">";
 
@@ -154,7 +154,7 @@ if ($_POST['submit']) {
       echo '<meta http-equiv="refresh" content="0;URL=laborTable.php?year='.$origYear.'&month='.$origMonth.
         '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay."&crop=".
         encodeURIComponent($origCrop)."&fieldID=".encodeURIComponent($origField)."&task=".
-        encodeURIComponent($origTask)."&tab=admin:admin_delete:deleteother:deletelabor&submit=Submit\">";
+        encodeURIComponent($origTask)."&tab=admin:admin_delete:deleteother:deletelabor:deletelaborR&submit=Submit\">";
    }
 }
 ?>

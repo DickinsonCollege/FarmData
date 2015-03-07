@@ -11,49 +11,35 @@ $month = $_POST['month'];
 $day = $_POST['day'];$tcurYear = $_POST['tyear'];
 $tcurMonth = $_POST['tmonth'];
 $tcurDay = $_POST['tday'];
+$genSel = $_POST['genSel'];
 $crop = escapehtml($_POST['transferredCrop']);
 $fieldID = escapehtml($_POST['fieldID']);
 $sql="Select fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft,".
-  " transdate,datediff(transdate,seedDate) as diffdate,flats, hours, comments ".
+  " transdate,datediff(transdate,seedDate) as diffdate,flats, gen, hours, comments ".
   " from  transferred_to where crop like '".$crop."' and fieldID like '".
-  $fieldID."' and transdate between '".$year."-".$month."-".$day.
+  $fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".$day.
   "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by transdate";
 if ($crop != "%") {
    $sql2="select avg(diffdate) from (select datediff(transdate,seedDate) as ".
       "diffdate from transferred_to where crop = '".$crop."' and fieldID ".
-      "like '".$fieldID."' and transdate between '".$year."-".$month."-".
+      "like '".$fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".
       $day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."') as temp";
    $avg=mysql_query($sql2);
    echo mysql_error();
    $total = "select sum(bedft*rowsBed) as totalSum from transferred_to where ".
       "transdate between '".$year."-".$month."-".$day."' AND '".
       $tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop = '".$crop."'".
-      " and fieldID like '".$fieldID."'";
+      " and fieldID like '".$fieldID."' and gen like '".$genSel."'";
    $totalResult = mysql_query($total);
    echo mysql_error();
    $btotal = "select sum(bedft) as totalSum from transferred_to where ".
       "transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-".$tcurDay."' AND crop = '".$crop."'".
-      " and fieldID like '".$fieldID."'";
+      " and fieldID like '".$fieldID."' and gen like '".$genSel."'";
    $btotalResult = mysql_query($btotal);
    echo mysql_error();
 }
 
-/*
-   if ($_POST['transferredCrop']=="All") {
-      $sql="Select fieldID,crop,seedDate,bedft, rowsBed, bedft * rowsBed as rowft, transdate,datediff(transdate,seedDate) as diffdate,flats, hours, comments from  transferred_to where  transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by transdate";
-
-   }else {
-
-      $sql="Select fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft, transdate,datediff(transdate,seedDate) as diffdate,flats, hours, comments from  transferred_to where crop='".$_POST['transferredCrop']."' and transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by transdate";
-      $sql2="select avg(diffdate)  from (Select datediff(transdate,seedDate) as diffdate from transferred_to where crop='".$_POST["transferredCrop"]."' and transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."') as temp";
-      $avg=mysql_query($sql2);
-      $total = "select sum(bedft*rowsBed) as totalSum from transferred_to where transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop ='".$_POST['transferredCrop']."'" ;
-      $totalResult = mysql_query($total);
-      $btotal = "select sum(bedft) as totalSum from transferred_to where transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop ='".$_POST['transferredCrop']."'" ;
-      $btotalResult = mysql_query($btotal);
-   }
-*/
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
 $result=mysql_query($sql);
 echo mysql_error();
@@ -69,8 +55,18 @@ if ($fieldID == "%") {
 } else {
   echo "Field ".$fieldID;
 }
+if ($_SESSION['gens']) {
+   if ($genSel == "%") {
+      echo " of All Generations";
+   } else {
+      echo " of Generation ".$genSel;
+   }
+}
 echo "</caption>";
    echo "<tr><th>Crop<center></th><th>Field</th><th>SeedDate</th><th><center>TransDate</center></th><th><center>DaysinFlat</center> </th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th>Flats</th>";
+if ($_SESSION['gens']) {
+   echo "<th>Gen&nbsp;#</th>";
+}
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
@@ -103,6 +99,10 @@ echo "<th><center> Comments</center></th></tr>";
         echo "</td><td>";
 	echo $row['flats'];
         echo "</td><td>";
+   if ($_SESSION['gens']) {
+        echo $row['gen'];
+	echo "</td><td>";
+   }
    if ($_SESSION['labor']) {
         echo number_format((float) $row['hours'], 2, '.', '');
 	echo "</td><td>";
