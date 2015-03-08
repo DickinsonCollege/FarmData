@@ -99,10 +99,10 @@ function removeRow() {
 }
 </script>
 
-<label for="numFlats"><b>Number of flats:&nbsp;</b></label>
+<label for="numFlats">Number of flats:&nbsp;</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input">
 <br clear="all"/>
-<label for="flatSize"><b>Flat size:&nbsp;</b></label>
+<label for="flatSize">Flat size:&nbsp;</label>
 <div class="styled-select">
 <select name ="flatSize" id="flatSize" class="mobile-select">
 <?php

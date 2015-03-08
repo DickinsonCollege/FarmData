@@ -56,7 +56,7 @@ create table transferred_to(
    rowsBed int, 
    hours float not null default 0,
    flats float,
-   gen int default 1;
+   gen int default 1,
    id int NOT NULL AUTO_INCREMENT,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(crop) references plant(crop)on update cascade, 
@@ -73,7 +73,7 @@ create table dir_planted(
    id int NOT NULL AUTO_INCREMENT,
    rowsBed int,
    hours float not null default 0,
-   gen int default 1;
+   gen int default 1,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(crop) references plant(crop) on update cascade,
    primary key(id))ENGINE=INNODB;
@@ -88,7 +88,7 @@ create table harvested(
     id int NOT NULL AUTO_INCREMENT, 
     hours float not null default 0,
     unit varchar(30) not null,
-    gen int default 1;
+    gen int default 1,
     foreign key(fieldID) references field_GH(fieldID)on update cascade,
     foreign key(crop) references plant(crop) on update cascade,
     primary key(id))
@@ -117,7 +117,7 @@ create table gh_seeding(
    seedDate date,
    flats float,
    cellsFlat int,
-   gen int default 1;
+   gen int default 1,
    numseeds_planted int not null,
    comments text,
    varieties text,

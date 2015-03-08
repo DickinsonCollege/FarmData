@@ -1,4 +1,7 @@
-Welcome to FARMDATA, version 1.0
+Welcome to FARMDATA, version 1.1
+
+PLEASE read the upgrade instructions if you are upgrading from
+version 1.0!
 
 FARMDATA is licensed under the Gnu General Public License, version 3.0.
 Please see the file gpl-3.0.txt included with this download, or

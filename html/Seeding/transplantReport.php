@@ -9,13 +9,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <h3 class="hi"> Transplanted Crops Report </h3>
 <br clear="all"/>
 <?php
-echo "<label for='from'><b>From:</b>&nbsp;</label>";
+echo "<label for='from'>From:&nbsp;</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo "<br clear=\"all\">";
-echo "<label for='to'><b>To:</b>&nbsp;</label>";
+echo "<label for='to'>To:&nbsp;</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 echo "<br clear=\"all\">";
-echo'<label for="crop"><b>Crop:</b>&nbsp;</label>';
+echo'<label for="crop">Crop:&nbsp;</label>';
 ?>
 <div class="styled-select">
 <select name="transferredCrop" class='mobile-select'>
@@ -29,7 +29,7 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all"/>
-<label for="fieldID"><b>Field ID:</b>&nbsp;</label>
+<label for="fieldID">Field ID:&nbsp;</label>
 <div class="styled-select">
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
@@ -45,7 +45,7 @@ while ($row1 =  mysql_fetch_array($result)){
 <?php
 if ($_SESSION['gens']) {
 echo '<br clear="all"/>';
-echo '<label for="genSel"><b>Generation #:</b>&nbsp;</label>';
+echo '<label for="genSel">Generation #:&nbsp;</label>';
 echo '<div class="styled-select">';
 echo '<select name="genSel" class="mobile-select">';
 echo '<option value = "%" selected="selected"> All </option>';

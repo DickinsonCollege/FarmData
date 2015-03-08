@@ -72,7 +72,7 @@ while ($cons<8) {
 </select>
 </div>
 <br clear="all"/>
-<label for="numFlats"><b>Number of flats:&nbsp;</b></label>
+<label for="numFlats">Number of flats:&nbsp;</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input single_table">
 
 <br clear="all"/>
@@ -95,7 +95,7 @@ if ($_SESSION['gens']) {
 
 if ($_SESSION['labor']) {
    echo '
-<label for="numWorkers"><b>Number of workers:&nbsp;</b></label>
+<label for="numWorkers">Number of workers:&nbsp;</label>
 <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input single_table">
 <br clear="all"/>
 
