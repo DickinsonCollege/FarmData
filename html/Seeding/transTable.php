@@ -57,15 +57,15 @@ if ($fieldID == "%") {
 }
 if ($_SESSION['gens']) {
    if ($genSel == "%") {
-      echo " of All Generations";
+      echo " of All Successions";
    } else {
-      echo " of Generation ".$genSel;
+      echo " of Succession ".$genSel;
    }
 }
 echo "</caption>";
    echo "<tr><th>Crop<center></th><th>Field</th><th>SeedDate</th><th><center>TransDate</center></th><th><center>DaysinFlat</center> </th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th>Flats</th>";
 if ($_SESSION['gens']) {
-   echo "<th>Gen&nbsp;#</th>";
+   echo "<th>Succ&nbsp;#</th>";
 }
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";

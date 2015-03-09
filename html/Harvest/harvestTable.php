@@ -37,9 +37,9 @@ if(isset($_POST['submit'])){
        $clb = $crp;
    }
    if ($genSel == "%") {
-       $glb = "All Generations";
+       $glb = "All Successions";
    } else {
-       $glb = "Gen #: ".$genSel;
+       $glb = "Succession ".$genSel;
    }
   echo "<caption> Harvest Report for ".$clb." in ".$flb;
   if ($_SESSION['gens']) {
@@ -61,7 +61,7 @@ if(isset($_POST['submit'])){
 */
    echo "<tr><th>Date</th><th>Field</th><th>Crop</th><th>Yield</th><th>Unit</th>";
    if ($_SESSION['gens']) {
-      echo "<th>Gen&nbsp;#</th>";
+      echo "<th>Succ&nbsp;#</th>";
    }
    if ($_SESSION['labor']) {
       echo "<th>Hours</th>";

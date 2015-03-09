@@ -52,9 +52,9 @@ if ($fieldID == "%") {
 }
 if ($_SESSION['gens']) {
    if ($genSel == "%") {
-      echo " of All Generations";
+      echo " of All Successions";
    } else {
-      echo " of Generation ".$genSel;
+      echo " of Succession ".$genSel;
    }
 }
 echo "</caption>";
@@ -64,7 +64,7 @@ if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
 if ($_SESSION['gens']) {
-   echo "<th>Gen&nbsp;#</th>";
+   echo "<th>Succ&nbsp;#</th>";
 }
 echo "<th> Comments </th></tr>";
 while ( $row = mysql_fetch_array($result)) {

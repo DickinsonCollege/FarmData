@@ -31,7 +31,7 @@ while ($row1 =  mysql_fetch_array($result)){
 <?php
 if ($_SESSION['gens']) {
    echo '<br clear="all"/>';
-   echo '<label for="genSel">Generation #:&nbsp;</label>';
+   echo '<label for="genSel">Succession #:&nbsp;</label>';
    echo '<div class="styled-select">';
    echo '<select name="genSel" class="mobile-select">';
    echo '<option value = "%" selected="selected"> All </option>';

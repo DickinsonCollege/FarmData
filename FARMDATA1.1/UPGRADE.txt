@@ -6,7 +6,7 @@ the "Run SQL Query" box and click "Go":
 
 alter table coverCrop drop column id;
 alter table coverCrop add column active tinyint(1) default 1 after legume;
-alter table tSprayMaterials alter column REI_HRS varchar(20);
+alter table tSprayMaterials modify column REI_HRS varchar(20);
 alter table gh_seeding add column gen int default 1 after cellsFlat;
 alter table dir_planted add column gen int default 1 after hours;
 alter table transferred_to add column gen int default 1 after flats;

@@ -261,7 +261,7 @@ if($currentDate){
 <br clear="all"/>
 <?php
 if ($_SESSION['gens']) {
-   echo '<label for="gen"> Generation #:&nbsp; </label>';
+   echo '<label for="gen">Succession #:&nbsp; </label>';
    echo '<div id="genDiv" class="styled-select">';
    echo '<select id= "gen" name="gen" class="mobile-select">';
    echo '</select>';

@@ -41,9 +41,9 @@ echo "<table border>";
 echo "<caption> Flats Seeding Records for: ".$crp;
 if ($_SESSION['gens']) {
    if ($genSel == "%") {
-      echo " of All Generations";
+      echo " of All Successions";
    } else {
-      echo " of Generation ".$genSel;
+      echo " of Succession ".$genSel;
    }
 }
 echo "</caption>";
@@ -53,7 +53,7 @@ if (!$_SESSION['bigfarm']) {
 }
 echo "<th>Flats</th><th>Cells/Flat</th><th>Varieties</th>";
 if ($_SESSION['gens']) {
-   echo "<th>Gen&nbsp;#</th>";
+   echo "<th>Succ&nbsp;#</th>";
 }
 echo "<th> Comments</th></tr>";
 while ( $row = mysql_fetch_array($result)) {
