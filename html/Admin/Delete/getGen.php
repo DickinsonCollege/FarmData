@@ -4,7 +4,7 @@ if ($_SESSION['gens']) {
    echo '<div id="genDiv" class="styled-select">';
    echo '<select id= "gen" name="gen" class="mobile-select">';
    echo "\n<option value='".$egen."'>".$egen."</option>";
-   for ($i = 1; $i < 16; $i++) {
+   for ($i = 0; $i < 31; $i++) {
      echo "\n<option value='".$i."'>".$i."</option>";
    }
    echo '</select>';
