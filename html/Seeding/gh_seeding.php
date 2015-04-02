@@ -7,8 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<h3 >Flats Seeding Input Form</h3>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
+<h3 >Tray Seeding Input Form</h3>
+<form name='form' id='ghform' method='post' action="<?php $_PHP_SELF ?>">
 <br clear="all"/>
 <h4> Please Input Only One Record Per Day for Each Crop.
 <?php
@@ -24,7 +24,7 @@ if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
    $dMonth = $_POST['month'];
    $dYear = $_POST['year'];
 }
-echo '<label for="Seed">Date:&nbsp;</label>';
+echo '<label for="Seed">Date of Seeding:&nbsp;</label>';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo "<br clear=\"all\">";
 ?>
@@ -54,7 +54,7 @@ function update_seeds() {
 function addRow() {
    var cb = document.getElementById("cropButton");
    if (cb.value=="0") {
-      alert("Error: choose crop first!");
+      showError("Error: choose crop first!");
    } else {
       cb.disabled=true;
       numRows++;
@@ -99,10 +99,10 @@ function removeRow() {
 }
 </script>
 
-<label for="numFlats">Number of flats:&nbsp;</label>
+<label for="numFlats">Number of trays:&nbsp;</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input">
 <br clear="all"/>
-<label for="flatSize">Flat size:&nbsp;</label>
+<label for="flatSize">Tray size:&nbsp;</label>
 <div class="styled-select">
 <select name ="flatSize" id="flatSize" class="mobile-select">
 <?php
@@ -128,7 +128,8 @@ if ($_SESSION['seed_order']) {
    echo '&nbsp;&nbsp';
    echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton" ';
    echo 'onClick="removeRow();" value="Remove Variety">';
-   echo '<br clear = "all"/>';
+   //echo '<br clear = "all"/>';
+   echo '<p>';
 }
 echo '<label for="numSeeds">';
 if ($_SESSION['seed_order']) {
@@ -151,9 +152,8 @@ if (!$_SESSION['seed_order']) {
    echo '</div>';
    echo '</div>';
 }
-?>
-<br clear="all"/>
-<?php
+echo '<br clear="all"/>';
+echo '<p>';
 include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 ?>
 <div>
@@ -167,53 +167,59 @@ include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 function show_confirm() {
    var crp = document.getElementById("cropButton").value;
    if(checkEmpty(crp) || crp == "Crop") {
-      alert("Please Select a Crop");
+      showError("Please Select a Crop");
       return false;
    }
 
-   var con="Crop: "+ crp + "\n";
+   var con="Crop: "+ crp + "<br>";
    var mth = document.getElementById("month").value;        
-   con += "SeedDate: " + mth + "-";
+   con += "Date of Seeding: " + mth + "-";
    var dy = document.getElementById("day").value;
    con += dy + "-";
    var yr = document.getElementById("year").value;
-   con += yr + "\n";
+   con += yr + "<br>";
    var numF = document.getElementById("numFlats").value;
    if (checkEmpty(numF) || numF<=0 || !isFinite(numF)) {
-      alert("Enter a valid number of flats!");
+      showError("Enter a valid number of trays!");
       return false;
    }
-   con += "Number of flats: "+ numF + "\n";
+   con += "Number of trays: "+ numF + "<br>";
 
    var fs = document.getElementById("flatSize").value;
    if (checkEmpty(fs) && fs != 0) {
-      alert("Please select flats size");
+      showError("Please select tray size");
       return false;
    }
-   con += "Flats Size: " + fs + " cells\n";
+   con += "Tray Size: " + fs + " cells<br>";
 
    var ns = document.getElementById("num_seeds").value;
    if ((checkEmpty(ns) && ns != 0) || ns<0 || isNaN(ns)) {
-        alert("Enter a valid number of seeds planted");
+        showError("Enter a valid number of seeds planted");
         return false;
    }
-   con += "Number of Seeds: "+ ns + "\n";
+   con += "Number of Seeds: "+ ns + "<br>";
    <?php
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
    ?>
-   var ret = confirm("Confirm Entry:"+"\n"+con);       
+/*
+   var ret = confirm("Confirm Entry:"+"<br>"+con);       
    if (ret) {
       document.getElementById('cropButton').disabled=false;
       document.getElementById('num_seeds').disabled=false;
    }
    return ret;
+*/
+   var msg = "Confirm Entry:"+"<br>"+con;
+console.log(msg);
+   showConfirm(msg, 'ghform');
  }
 </script>
-<input class="submitbutton" type="submit" name="submit" value="Submit" id="submit" onclick= "return show_confirm();">
+<input class="submitbutton" type="button" value="Submit" onclick= "show_confirm();">
 </form>
 <?php
 echo '<form method="POST" action = "/Seeding/gh_seedingReport.php?tab=seeding:flats:flats_report"><input type="submit" class="submitbutton" value = "View Table"></form>';
-if(isset($_POST['submit'])) {
+//if(isset($_POST['submit'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $crop = escapehtml($_POST['crop']);
    $comSanitized=escapehtml($_POST['comments']);
    $seedInfo = true;
@@ -225,7 +231,7 @@ if(isset($_POST['submit'])) {
          $seedsRowFt = $row['seedsRowFt'];
       } else {
          $seedInfo = false;
-         //echo "<script>alert(\"No seeding information found!\");</script>\n";
+         //echo "<script>showError(\"No seeding information found!\");</script>\n";
       }
       $varsSanitized="";
       $numRows = $_POST['numRows'];
@@ -268,7 +274,7 @@ if(isset($_POST['submit'])) {
       $varsSanitized."', ".$gen.", '".$comSanitized."')";
    $result = mysql_query($sql);
    if(!$result){ 
-       echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\\nIf this is a duplicate entry error, ask your FARMDATA administrator to correct the record.\");</script>\n";
+       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\\nIf this is a duplicate entry error, ask your FARMDATA administrator to correct the record.\");</script>\n";
    }else {
       echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    }

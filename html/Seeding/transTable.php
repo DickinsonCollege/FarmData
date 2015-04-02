@@ -63,7 +63,7 @@ if ($_SESSION['gens']) {
    }
 }
 echo "</caption>";
-   echo "<tr><th>Crop<center></th><th>Field</th><th>SeedDate</th><th><center>TransDate</center></th><th><center>DaysinFlat</center> </th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th>Flats</th>";
+   echo "<tr><th>Crop<center></th><th>Field</th><th>Date of Tray Seeding</th><th><center>Date of Transplanting</center></th><th><center>Days in Tray</center> </th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th>Trays</th>";
 if ($_SESSION['gens']) {
    echo "<th>Succ&nbsp;#</th>";
 }
@@ -115,15 +115,15 @@ echo "<th><center> Comments</center></th></tr>";
    if ($crop != "%") {
    while ($row2 = mysql_fetch_array($avg)) {
         $formatNum=number_format($row2['avg(diffdate)'],2,'.','');
-	echo "<label for='average'>Average Days in Flat: &nbsp</label> <input style='width: 100px;' class='textbox2'type ='text' name='avgDays' disabled value=".$formatNum.">";
+	echo "<label for='average'>Average Days in Tray: &nbsp</label> <input style='width: 100px;' class='textbox2'type ='text' name='avgDays' disabled value=".$formatNum.">";
    }
    echo '<br clear="all"/>';
    while($row3 = mysql_fetch_array($btotalResult)) {
-        echo "<label for='sum'>Total Bed Feet Planted: &nbsp;</label> <input class='textbox3'type ='text' name='sum' disabled value=".$row3['totalSum'].">";
+        echo "<label for='sum'>Total Number of Bed Feet Planted: &nbsp;</label> <input class='textbox3'type ='text' name='sum' disabled value=".$row3['totalSum'].">";
    }
    echo '<br clear="all"/>';
    while($row3 = mysql_fetch_array($totalResult)) {
-        echo "<label for='sum'>Total Row Feet Planted: &nbsp;</label> <input class='textbox3'type ='text' name='sum' disabled value=".$row3['totalSum'].">";
+        echo "<label for='sum'>Total Number of Row Feet Planted: &nbsp;</label> <input class='textbox3'type ='text' name='sum' disabled value=".$row3['totalSum'].">";
    }
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';

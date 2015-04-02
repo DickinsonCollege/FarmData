@@ -3,7 +3,6 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-$farm = $_SESSION['db'];
 ?>
 
 
@@ -247,7 +246,7 @@ if(!empty($_POST['submit'])) {
    $sql = "UPDATE tSprayMaterials SET sprayMaterial=upper('".$rename."'), 
 		TRateUnits=upper('".$trateunits."'), TRateMin=".$tratemin.", TRateMax=".$tratemax.", TRateDefault=".$tratedefault.", 
 		BRateUnits=upper('".$brateunits."'), BRateMin=".$bratemin.", BRateMax=".$bratemax.", BRateDefault=".$bratedefault.",
-		REI_HRS=".$restrictedentryinterval.", PPE='".$protectionequipment."', active=".$active."
+		REI_HRS='".$restrictedentryinterval."', PPE='".$protectionequipment."', active=".$active."
 		WHERE sprayMaterial='".$spraymaterial."'";
 
    $query = mysql_query($sql) or die(mysql_error());

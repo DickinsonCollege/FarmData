@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
 <form name='form' method='POST' action='gh_table.php?tab=seeding:flats:flats_report'>
-<h3> Flats Seeding Report</h3>
+<h3> Tray Seeding Report</h3>
 <br clear="all"/>
 <?php
 echo "<label for='from'>From:&nbsp;</label>";

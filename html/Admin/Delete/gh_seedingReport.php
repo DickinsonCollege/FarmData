@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 class="hi"> Select Flats Seeding Records: </h3>
+<h3 class="hi"> Select Tray Seeding Records: </h3>
 <br>
 <?php
 echo '<label for="from">From:&nbsp;</label> ';

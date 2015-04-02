@@ -51,13 +51,13 @@ newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
 </div>
 -->
 <br clear="all">
-<label for='seedDate'> Date Seeded: </label>
+<label for='seedDate'>Date of Tray Seeding: </label>
 <div id="seedInput" class="styled-select">
 <select name="seedDate" id= "seedDate" class='mobile-select'>
 <option value=0 selected="selected" style="display:none"> Seed Date </option>
 </select>
 </div>
 <br clear="all">
-<label for="flatsBox">Total Flats Seeded:&nbsp;</label>
+<label for="flatsBox">Total Number of Trays Seeded:&nbsp;</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input" type="text" disabled readonly name ="flatsBox" value= '' id="flatsBox">
 

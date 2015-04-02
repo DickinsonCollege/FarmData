@@ -99,83 +99,35 @@ foreach ($tabArr as $crp=>$arr) {
    echo "<td>".$itemYield."</td>";
    echo "</tr>";
 }
-
-
-/*
-
-# Put back when conversions are in place
-#	$sqlBig="SELECT harvestListEntry.crop,harvestListEntry.fieldID,harvestListEntry.units,harvestListEntry.CSA,harvestListEntry.dining,harvestListEntry.market,harvestListEntry.other,harvestListEntry.Total,(SELECT COALESCE(SUM(harvested.yield/ (SELECT 1 as conversion FROM units where crop=harvestListEntry.crop and default_unit=harvestListEntry.units UNION select conversion from units where crop=harvestListEntry.crop and unit=harvestListEntry.units)),0) FROM harvested where harvested.crop=harvestListEntry.crop and harvested.hardate=harvestList.harDate) as itemYield FROM harvestListEntry,harvestList WHERE harvestListEntry.id=".$currentID." and harvestList.id=".$currentID." order by (itemYield-Total)";
-//	$sqlBig="SELECT harvestListEntry.crop,harvestListEntry.fieldID,harvestListEntry.units,harvestListEntry.CSA,harvestListEntry.dining,harvestListEntry.market,harvestListEntry.other,harvestListEntry.Total,(SELECT COALESCE(SUM(harvested.yield),0) FROM harvested where harvested.crop=harvestListEntry.crop and harvested.hardate=harvestList.harDate) as itemYield FROM harvestListEntry,harvestList WHERE harvestListEntry.id=".$currentID." and harvestList.id=".$currentID." order by (itemYield-Total)";
-	$sqlBig="SELECT harvestListEntry.crop,harvestListEntry.fieldID,harvestListEntry.units,harvestListEntry.CSA,harvestListEntry.dining,harvestListEntry.market,harvestListEntry.other,harvestListEntry.Total,(SELECT COALESCE(SUM(harvested.yield),0) FROM harvested where harvested.crop=harvestListEntry.crop and harvested.hardate=harvestList.harDate) as itemYield FROM harvestListEntry,harvestList WHERE harvestListEntry.id=".$currentID." and harvestList.id=".$currentID." order by harvestListEntry.crop";
-	$resultBig=mysql_query($sqlBig);
-echo mysql_error();
-while($row=mysql_fetch_array($resultBig)){ 
-	$itemCrop=$row['crop'];
-	$itemField=$row['fieldID'];
-	$itemUnits=$row['units'];
-	$itemCSA=$row['CSA'];
-	$itemD=$row['dining'];
-	$itemM=$row['market'];
-	$itemO=$row['other'];
-	$itemT=$row['Total'];
-	$itemYield=$row['itemYield'];
-
-
-	if($itemYield>=$itemT){
-	echo "<tr class=\"other\">";
-	}else{
-	echo "<tr>";
-	}
-	
-	echo "<td> <a class=\"gx2\" href=\"harvest.php?tab=harvest:harvestInput&crop=".encodeURIComponent($itemCrop)."&date=".$date."&year=".$year."&month=".$month."&day=".$day."&currentID=".$currentID."\">".$itemCrop." </a> </td>";
-        echo "  <td> $itemField </td>
-                <td> $itemUnits</td>";
-if($detail ==1){
-	echo "	<td> $itemCSA</td>
-		<td> $itemD</td>
-		<td> $itemM</td>
-		<td>$itemO</td>
-		<td>$itemT</td>
-		<td>".number_format((float) $itemYield, 2, '.', '')."</td>
-		</tr>";
-}else{
-        echo "	<td>$itemT</td>
-		<td>".number_format((float) $itemYield, 2, '.', '')."</td>
-                </tr>";
-
-}
-}
-*/
 echo '</table>';
 ?>
 
 <br clear="all"/>
-<div class="comments"> 
+
 <?php
-if($_SESSION['mobile'] && !ae_detect_ie()&& $detail==1) {
-echo '<textarea class="comments2">';
-} else if($_SESSION['mobile'] && ae_detect_ie() && $detail==1){
-echo '<textarea style="width:1255px" class="comments">';
-}else {
-if(!$_SESSION['mobile'] && $detail != 1){
-echo '<textarea class="comments">';
-} else if ($_SESSION['mobile'] && ae_detect_ie()) {
-echo '<textarea style="width: 780px;" class="comments">';
-} else {
-echo '<textarea  class="comments">';
-     }	
+if ($_SESSION['mobile']) {
+   echo "<label>&nbsp;</label>";
+   echo '<br clear="all"/>';
 }
 ?>
-
+<h3>Comments</h3>
+<br clear="both"/>
 <?php
 $sql="SELECT comment from harvestList where id=".$currentID;
 $row= mysql_fetch_array( mysql_query($sql));
-echo  $row['comment'];
+if ($_SESSION['mobile']) {
+  echo "<label class='label_comments'>";
+} else {
+   echo '<div class="comments_box">';
+}
 
-echo "</textarea>";
-echo "</div>";
+echo  str_replace("\n", "<br>", $row['comment']);
+if ($_SESSION['mobile']) {
+  echo "</label>";
+} else {
+   echo "</div>";
+}
 
-echo "</form>";
 echo '<br clear="all"/>';
 if($detail==1){
 echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton mobile-submit" value = "Harvest List Summary"></form>';
@@ -185,7 +137,7 @@ echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year
 ?>
 
 <?php
-echo '<form method="post" action = "addComment.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton" value = "Add Note"></form>';
+echo '<form method="post" action = "addComment.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton" value = "Add Comment"></form>';
 echo '<br clear="all"/>';
 echo ' <meta http-equiv="refresh" content=60;URL="harvestList.php?tab=harvest:harvestList&year='.
    $year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.

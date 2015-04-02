@@ -51,7 +51,7 @@ echo "<a class='header_link' href='".$homeURL."'>";
 </div>
 
 <!-- Space Between Buttons -->
-<div class='header_container header_middle'>
+<div id = "google_translate_element" class='header_container header_middle'>
 </div>
 
 <!-- Logout Button -->

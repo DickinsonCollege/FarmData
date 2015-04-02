@@ -11,7 +11,7 @@ if (isset($_POST['submit'])) {
    echo "<col id='col2' />";
    echo "<col id='col3' />";
    echo "</colgroup>";
-   echo "<caption> Notes Report </caption>";
+   echo "<caption> Comments Report </caption>";
    echo "<tr><th>UserName</th><th> Date </th><th>Comments</th></tr>";
    while($row = mysql_fetch_array($result)) {
         echo "<tr><td>";

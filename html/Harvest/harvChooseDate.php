@@ -33,7 +33,7 @@ if(isset($_POST['date'])){
    	 $sql_result = mysql_fetch_array($sql_result);
     	 $currentID= $sql_result["id"];
 	}else{
-	 $sql="INSERT INTO harvestList(harDate) VALUES('$listDate')";
+	 $sql="INSERT INTO harvestList(harDate, comment) VALUES('".$listDate."','')";
 	echo "<br>";
 	mysql_query($sql);
 	$currentIDTable=mysql_query("SELECT LAST_INSERT_ID()");

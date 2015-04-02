@@ -26,7 +26,7 @@ while ($row =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all">
-<label for="fieldID"> Field ID:&nbsp; </label>
+<label for="fieldID">Name of Field:&nbsp; </label>
 <div id="fieldID2" class="styled-select">
 <select id= "fieldID" name="fieldID" class="mobile-select">
 <option value="%"> All </option>

@@ -38,7 +38,7 @@ if ($crop == '%') {
    $crp = $_POST['crop'];
 }
 echo "<table border>";
-echo "<caption> Flats Seeding Records for: ".$crp;
+echo "<caption> Tray Seeding Records for: ".$crp;
 if ($_SESSION['gens']) {
    if ($genSel == "%") {
       echo " of All Successions";
@@ -47,11 +47,11 @@ if ($_SESSION['gens']) {
    }
 }
 echo "</caption>";
-echo "<tr><th>Plant Date</th><th>Crop</th>";
+echo "<tr><th>Date of Seeding</th><th>Crop</th>";
 if (!$_SESSION['bigfarm']) {
-   echo "<th>#seeds</th>";
+   echo "<th>Number of Seeds</th>";
 }
-echo "<th>Flats</th><th>Cells/Flat</th><th>Varieties</th>";
+echo "<th>Trays</th><th>Cells/Tray</th><th>Varieties</th>";
 if ($_SESSION['gens']) {
    echo "<th>Succ&nbsp;#</th>";
 }
@@ -85,14 +85,14 @@ if($crop != '%' && !$_SESSION['bigfarm']) {
      $totalResult = mysql_query($total);
      echo mysql_error();
      while($row5 = mysql_fetch_array($totalResult)){
-        echo '<label for="total"> Total Seeds Planted:&nbsp;</label>';
+        echo '<label for="total"> Total Number of Seeds Planted:&nbsp;</label>';
 	echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalSum'].'>';
      }
      echo "<br clear=\"all\"/>";
      $totalResult = mysql_query($totalf);
      echo mysql_error();
      while($row5 = mysql_fetch_array($totalResult)){
-        echo '<label for="total"> Total Flats  Planted:&nbsp;</label>';
+        echo '<label for="total"> Total Number of Trays Planted:&nbsp;</label>';
 	echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalFlats'].'>';
      }
 }

@@ -188,9 +188,6 @@ h1.hi {
    font-size: 35pt;
    margin-top: -10px;
 }
-p {
-  font-size: 30pt;
-}
 .imgClass { 
     background-image: url("submit.gif");
     background-position:  0 0;
@@ -568,4 +565,12 @@ input.toggle:disabled +label:after {
 
 .input_comments {
 	margin-bottom: 0px;
+}
+
+.label_comments {
+   display:block;
+   border:2px solid;
+   border-color:black;
+   font-size=30px;
+   background:white;
 }

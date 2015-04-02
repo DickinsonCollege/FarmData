@@ -76,6 +76,7 @@ function createBR() {
 }
 ?>
 
+
 <script type="text/javascript">
 function checkEmpty(aNum) {
         var undef;
@@ -94,13 +95,72 @@ function checkEmpty(aNum) {
 
 function showAlert(msg) {
    var win = document.getElementById("alert");
-   win.innerHTML="<center>"+msg+"</center>";
+   window.setTimeout(closeAlert, 2000);
+   openAlert("<center>"+msg+"</center>", "100%", true);
+/*
    win.style.display = "block";
    win.style.background = "white";
    win.style.borderColor="black";
-	win.style.fontSize="50px";
-	win.style.marginBottom="50px";
-   window.setTimeout(closeAlert, 2000);
+   win.style.fontSize="40px";
+   win.style.marginBottom="50px";
+   location.href='#';
+   location.href='#here';
+*/
+}
+
+function confirmYes(frm) {
+  closeAlert();
+  var cb = document.getElementById("cropButton");
+  if (cb != null) {
+     cb.disabled = false;
+  }
+  var bf = document.getElementById('bedftv');
+  if (bf != null) {
+     bf.disabled = false;
+  }
+  var ns = document.getElementById('num_seeds');
+  if (ns != null) {
+     ns.disabled = false;
+  }
+  document.getElementById(frm).submit();
+}
+
+function showConfirm(msg, frm) {
+   var win = document.getElementById("alert");
+   // msg = msg.replace(/(\n)+/g, "<br>");
+   msg += "<p/><input type='button' class='submitbutton' value='Confirm' onclick=\"confirmYes('" + frm + "');\">";
+   msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' class='submitbutton' value='Cancel' onclick='closeAlert();'>";
+   //win.innerHTML="<center>"+msg+"</center>";
+   openAlert(msg, "75%", false);
+}
+
+function showError(msg) {
+   msg += "<p/><input type='button' class='submitbutton' value='OK' onclick=\"closeAlert();\">";
+   openAlert(msg, "60%", false);
+}
+
+function openAlert(msg, wid, dismiss) {
+   var win = document.getElementById("alert");
+   win.innerHTML=msg;
+   win.style.display = "block";
+   win.style.background = "white";
+   win.style.borderColor="black";
+   if (dismiss) {
+      win.style.fontSize="40px";
+   } else {
+      win.style.fontSize="20px";
+   }
+   win.style.marginBottom="50px";
+   // win.style.marginTop="50px";
+   win.style.width=wid;
+   win.style.marginLeft="auto";
+   win.style.marginRight="auto";
+   win = document.getElementById("here");
+   if (!dismiss || (1 == <?php echo $_SESSION['mobile'];?>)) {
+      win.style.paddingTop="60px";
+   }
+   location.href='#';
+   location.href='#here';
 }
 
 function closeAlert() {
@@ -108,8 +168,10 @@ function closeAlert() {
    win.innerHTML="<center>&nbsp;</center>";
    win.style.background = "ivory";
    win.style.borderColor="ivory";
-	win.style.fontSize="0px";
-	win.style.marginBottom="0px";
+   win.style.fontSize="0px";
+   win.style.marginBottom="0px";
+   win = document.getElementById("here");
+   win.style.paddingTop="0px";
 }
 
 function escapeHtml(text) {

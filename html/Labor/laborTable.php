@@ -40,7 +40,7 @@ if(isset($_POST['submit'])){
       $tsk = $task;
    }
    echo "<caption>  Labor Report for ".$tsk." for ".$crp." in ".$fld."</caption>";
-   echo "<tr><th>Date</th><th>Crop</th><th>Field</th><th>Task</th><th>Hours</th><th> &nbsp  Comments &nbsp </th></tr>";
+   echo "<tr><th>Date of Labor</th><th>Crop</th><th>Name of Field</th><th>Task</th><th>Hours</th><th> &nbsp  Comments &nbsp </th></tr>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['ldate'];

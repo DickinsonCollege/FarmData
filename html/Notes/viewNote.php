@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 ?>
-<h1> <b> View Notes </b> </h1>
+<h1> <b> View Comments </b> </h1>
 <form name="form" method="post" action="notesTable.php?tab=notes:notes_report">
 <?php
 echo "<label for='from'>From:&nbsp;</label>";

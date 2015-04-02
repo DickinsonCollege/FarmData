@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<h1> <b> Add a Note </b> </h1>
+<h1> <b> Add a Comment</b> </h1>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>?tab=notes:notes_input">
 
 <label for="date">Date:</label>
@@ -14,7 +14,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear="all"/>
-<label for="note">Note:</label>
+<label for="note">Comment:</label>
 <br clear="all"/>
 <textarea name="comments" rows="10" cols="30"> </textarea>
 <br clear="all"/>

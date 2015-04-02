@@ -4,13 +4,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 > Delete Flat Size </h3>
+<h3 > Delete Tray Size </h3>
 <br>
 <form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
-<label for="flat">Flat Size:&nbsp;</label>
+<label for="flat">Tray Size:&nbsp;</label>
 <div id='crop2' class='styled-select'>
 <select name='flat' id='flat' class='mobile-select'>
-<option disabled selected>Flat Size</option>
+<option disabled selected>Tray Size</option>
 <?php
 $result = mysql_query("SELECT cells from flat");
         while ($row1 =  mysql_fetch_array($result)){
@@ -28,12 +28,12 @@ if(!empty($_POST['submit'])) {
       $sql5 = "delete from flat where cells = ".$flat;
       $totalResult = mysql_query($sql5);
       if(!$totalResult) {
-          echo '<script> alert("Could not remove flat.  Is it used in a flats seeding record?"); </script>';
+          echo '<script> alert("Could not remove tray.  Is it used in a tray seeding record?"); </script>';
       } else {
-          echo '<script> alert("Removed Flat Size Successfully"); </script>';
+          echo '<script> alert("Removed Tray Size Successfully"); </script>';
       }
    } else {
-        echo '<script> alert("Please Select a Flat Size"); </script>';
+        echo '<script> alert("Please Select a Tray Size"); </script>';
    }
 }
 ?>

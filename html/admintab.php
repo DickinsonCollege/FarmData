@@ -11,7 +11,7 @@ echo '<li id="li_admin_view">
 echo '<li id="li_admin_backtracker">
    <a id = "admin_backtracker_a" href="/Admin/Backtracker/backtracker.php?tab=admin:admin_backtracker" class="inactivetab">Backdater</a></li>';
 echo '<li id="li_admin_config">
-   <a id = "admin_config_a" href="/design.php?tab=admin:admin_config" class="inactivetab">Config</a></li>';
+   <a id = "admin_config_a" href="/design.php?tab=admin:admin_config" class="inactivetab">Configuration</a></li>';
 if ($_SESSION['sales']) {
 echo '<li id="li_admin_sales">  
    <a id = "admin_sales_a" href="/design.php?tab=admin:admin_sales" class="inactivetab">Sales</a> </li>';
@@ -40,7 +40,7 @@ echo '<div class="tabs tabs'.$_SESSION['num_add'].'">';
 echo '<ul>';
 if ($_SESSION['harvlist']) {
 echo '<li id="li_admin_harvestlist">  
-   <a href="/Admin/adminHarvest/harvAdminChooseDate.php?tab=admin:admin_add:admin_harvestlist" id = "admin_harvestlist_a" class="inactivetab">Harv&nbsp;List</a> </li>';
+   <a href="/Admin/adminHarvest/harvAdminChooseDate.php?tab=admin:admin_add:admin_harvestlist" id = "admin_harvestlist_a" class="inactivetab">Harvest&nbsp;List</a> </li>';
 }
 echo '<li id="li_admin_addcrop">  
    <a href="/design.php?tab=admin:admin_add:admin_addcrop" id = "admin_addcrop_a" class="inactivetab">Crop';
@@ -104,7 +104,7 @@ echo '<li id="li_addequip:addtool">
    <a href="/Admin/Add/addTool.php?tab=admin:admin_add:admin_addequip:addtool" id = "addtool_a" class="inactivetab">Tool</a> </li>';
 }
 echo '<li id="li_addequip:addflat">
-   <a href="/Admin/Add/addFlat.php?tab=admin:admin_add:admin_addequip:addflat" id = "addflat_a" class="inactivetab">Flat</a> </li>';
+   <a href="/Admin/Add/addFlat.php?tab=admin:admin_add:admin_addequip:addflat" id = "addflat_a" class="inactivetab">Tray</a> </li>';
 if ($_SESSION['irrigation']) {
 echo '<li id="li_addequip:addirr">
    <a href="/Admin/Add/addIrrDevice.php?tab=admin:admin_add:admin_addequip:addirr" id = "addirr_a" class="inactivetab">Irr.&nbsp;Device</a> </li>';
@@ -334,11 +334,11 @@ echo '</ul>';
 <li id="li_deletedirplant">  
    <a href="/Admin/Delete/dir_seedingReport.php?tab=admin:admin_delete:deleteseed:deletedirplant" id = "deletedirplant_a" class="inactivetab">Direct Seeding</a> </li>
 <li id="li_deleteflats">  
-   <a href="/Admin/Delete/gh_seedingReport.php?tab=admin:admin_delete:deleteseed:deleteflats" id = "deleteflats_a" class="inactivetab">Flats Seeding</a> </li>
+   <a href="/Admin/Delete/gh_seedingReport.php?tab=admin:admin_delete:deleteseed:deleteflats" id = "deleteflats_a" class="inactivetab">Tray Seeding</a> </li>
 <li id="li_deletetrans">  
    <a href="/Admin/Delete/transferred_Report.php?tab=admin:admin_delete:deleteseed:deletetrans" id = "deletetrans_a" class="inactivetab">Transplanting</a> </li>
 <li id="li_editflat">  
-   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteseed:editflat" id = "editflat_a" class="inactivetab">Flat&nbsp;Size</a> </li>
+   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteseed:editflat" id = "editflat_a" class="inactivetab">Tray&nbsp;Size</a> </li>
 </ul>
 <?php createBR(); ?>
 <!--

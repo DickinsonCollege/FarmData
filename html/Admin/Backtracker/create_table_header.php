@@ -31,6 +31,14 @@ while ($row = mysql_fetch_array($result)) {
 		$i++;
         } else if ($row[0] == "hours" && !$_SESSION['labor']) {
              // nothing: not tracking labor
+/*
+        } else if ($row[0] == "flats") {
+		$array[$i] = 'trays';
+		$i++;
+        } else if ($row[0] == "cellsFlat") {
+		$array[$i] = 'cells/tray';
+		$i++;
+*/
         } else {
 		$array[$i] = $row[0];
 		$i++;

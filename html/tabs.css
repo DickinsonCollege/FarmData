@@ -1,20 +1,3 @@
-/* #tabs :link, #tabs:visited {background:#f00; color:#fff}*/
-/*
-#tabs :link {
-   background:WHEAT;
-   color:BLACK;
-}
-#tabs :visited {background:WHEAT;}
-#tabs :hover {background:WHEAT;}
-#tabs :active {background:teal;}
-*/
-/*
-#harvestInput #harvestInput, #harvest #harvest, #seeding #seeding, #soil #soil, #notes #notes, #labor #labor, #logout #logout {
-color: #fff;
-background: peru;
-}
-*/
-
 .activetab {
    background: peru;
    color: ivory;

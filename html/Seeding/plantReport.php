@@ -31,7 +31,7 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all"/>
-<label for="fieldID">Field ID:&nbsp;</label>
+<label for="fieldID">Name of Field:&nbsp;</label>
 <div class="styled-select">
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>

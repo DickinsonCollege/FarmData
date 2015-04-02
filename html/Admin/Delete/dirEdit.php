@@ -84,7 +84,7 @@ while ($row = mysql_fetch_array($sqldata)) {
 echo '</div></select>';
 echo '<br clear="all"/>';
 
-echo '<label>Field:&nbsp</label>';
+echo '<label>Name of Field:&nbsp</label>';
 echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';

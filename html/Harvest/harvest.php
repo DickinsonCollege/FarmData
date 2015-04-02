@@ -23,67 +23,66 @@ function show_confirm() {
    var cb = document.getElementById("cropButton");
    var crp = cb.value;
    if(checkEmpty(crp) || crp == "Crop") {
-      alert("Please Select a Crop");
+      showError("Please Select a Crop");
       return false;
    }
-   var con="Crop: "+ crp + "\n";
+   var con="Crop: "+ crp + "<br>";
    var m = document.getElementById("month").value;
-   con=con+"Harvest Date: "+m+"-";
+   con=con+"Date of Harvest: "+m+"-";
    var d = document.getElementById("day").value;
    con=con+d+"-";
    var y = document.getElementById("year").value;
-   con=con+y+"\n\n";
+   con=con+y+"<p>";
 
    var numRows = document.getElementById("numRows").value;
    if (numRows < 1) {
-      alert("Add at Least One Field!");
+      showError("Add at Least One Field!");
       return false;
    }
    for (j = 1; j <= numRows; j++) {
       var fld = document.getElementById("fieldID"+j).value;
       if(checkEmpty(fld)) {
-         alert("Please Select a FieldID in row " + j);
+         showError("Please Select a Field Name in row " + j);
          return false;
       }
-      con=con+"FieldID: "+ fld+ "\n";
+      con=con+"Name of Field: "+ fld+ "<br>";
       var yld = document.getElementById("yield"+j).value;
       if (checkEmpty(yld) || yld<=0 || !isFinite(yld) ) {
-        alert("Enter a valid yield in row " + j);
+        showError("Please enter a valid yield in row " + j);
         return false;
       }
-      con=con+"Yield: "+ yld+ "\n";
+      con=con+"Yield: "+ yld+ "<br>";
       var unit = document.getElementById("unit"+j).value;
       if(checkEmpty(unit)) {
-         alert("Please Select a Unit in row " + j);
+         showError("Please Select a Unit in row " + j);
          return false;
       }
-      con=con+"Unit: "+ unit + "\n";
+      con=con+"Unit: "+ unit + "<br>";
    <?php
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
    if ($_SESSION['labor']) {
       echo 'var numW = document.getElementById("numW"+j).value;
       if (checkEmpty(numW) || numW<=0 || !isFinite(numW)) {
-         alert("Enter a valid number of workers in row " + j);
+         showError("Please enter a valid number of workers in row " + j);
          return false;
       }
-     con=con+"Number of workers: "+ numW+ "\n";
+     con=con+"Number of workers: "+ numW+ "<br>";
 
      var tme = document.getElementById("time"+j).value;
      var unit = document.getElementById("timeUnit").value;
       if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
-         alert("Enter a valid number of " + unit + " in row "+j);
+         showError("Please enter a valid number of " + unit + " in row "+j);
          return false;
       }
-      con = con+"Number of " + unit + ": " + tme + "\n\n";';
+      con = con+"Number of " + unit + ": " + tme + "</p><p>";';
    } else {
-      echo 'con +="\n";';
+      echo 'con +="<br>";';
    }
    ?>
    }
 
-   var ret = confirm("Confirm Entry:"+"\n"+con);
-   if (ret) cb.disabled=false;
-   return ret;
+   var msg = "Confirm Entry:"+"<br>"+con;
+   showConfirm(msg, 'test');
 }
 </script>
 
@@ -93,13 +92,12 @@ function show_confirm() {
 
 <h3 class='form_header'>Harvest Input Form</h3>
 <br clear="all">
-<label class='input_label' for="crop"><b>Date Crop Harvested:</b></label>
+<label class='input_label' for="crop"><b>Date of Harvest:</b></label>
 <?php
-if (!$_SESSION['mobile']) echo "<br clear='all'>";
+// if (!$_SESSION['mobile']) echo "<br clear='all'>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear="all"/>
-
 <label class='input_label' for='cropButton'><b>Crop:&nbsp;</b></label>
 <div class='styled-select'>
 <select name='cropButton' id='cropButton' class='mobile-select' 
@@ -123,7 +121,7 @@ echo "<br clear=\"all\">";
 ?>
 <br clear="all"/>
 <table id='harvestTable' name='harvestTable' class='input_table'>
-<tr><th>FieldID</th><th>Yield</th><th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<tr><th>Name of Field</th><th>Yield</th><th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
 <?php
 if ($_SESSION['labor']) {
   echo '
@@ -167,7 +165,7 @@ var numRows = 0;
 function addRow() {
    var cb = document.getElementById("cropButton");
    if (cb.value=="0") {
-      alert("Error: choose crop first!");
+      showError("Error: choose crop first!");
    } else {
       cb.disabled=true;
       numRows++;
@@ -258,7 +256,10 @@ if($currentDate){
 ?>
 
 
+<!--
 <br clear="all"/>
+-->
+<p>
 <?php
 if ($_SESSION['gens']) {
    echo '<label for="gen">Succession #:&nbsp; </label>';
@@ -276,7 +277,10 @@ if ($_SESSION['gens']) {
 </textarea>
 </div>
 
+<!--
 <input  class="submitbutton"  type="submit" name="submit" value="Submit" onclick= "return show_confirm();">
+-->
+<input  class="submitbutton" type="button" value="Submit" onclick= "show_confirm();">
 
 </form>
 <?php
@@ -290,11 +294,12 @@ if ($_SESSION['gens']) {
 <!--
 <br clear="all"/>
 -->
-
 <?php
-//echo "</form>";
+// echo "</form>";
 echo '<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton" value = "View Table"></form>';
-if(isset($_POST['submit'])){
+// if(isset($_POST['submitB'])){
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $crop = escapehtml($_POST['cropButton']);
    $year = $_POST['year'];
    $month = $_POST['month'];
@@ -336,7 +341,7 @@ if(isset($_POST['submit'])){
            $_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID.
            "',".$yield.",".$hours.", ".$gen.",'".$comments."','".$unit."')";
       } else {
-         echo $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,gen, comments, unit) VALUES('"
+         $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,gen, comments, unit) VALUES('"
             .$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID.
             "',$yield/(Select conversion from units where crop= '".$crop."' and unit= '".$unit.
             "'),".$totalHours.", ".$gen.",'".$comments."', '".$insertUnit."')";
@@ -349,7 +354,7 @@ if(isset($_POST['submit'])){
       if($value){
          echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
       } else {
-          echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
+          echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
       }
   }
 }

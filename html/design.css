@@ -558,6 +558,14 @@ text-decoration: underline;
 	border: 0px !important;
 }
 
+.comments_box {
+   display:block;
+   border:2px solid;
+   border-color:black;
+   font-size:30px;
+   background:white;
+}
+
 /***** CSS for styled Toggle *******/
 .toggle {
   	position: absolute;

@@ -22,8 +22,12 @@ if ($fieldName === "crop") {
       $sql = "select distinct gen from (select distinct gen from dir_planted union ".
         "select distinct gen from transferred_to) as tmp order by gen";
    } else {
-      $sql = "select 1 union select 2 union select 3 union select 4 union select 5".
-          " union select 6 union select 7 union select 8 union select 9 union select 10";
+      $sql = "select 0 union select 1 union select 2 union select 3 union select 4 union select 5".
+          " union select 6 union select 7 union select 8 union select 9 union select 10".
+          " union select 11 union select 12 union select 13 union select 14 union select 15".
+          " union select 16 union select 17 union select 18 union select 19 union select 20".
+          " union select 21 union select 22 union select 23 union select 24 union select 25".
+          " union select 26 union select 27 union select 28 union select 29 union select 30";
    }
 }
 

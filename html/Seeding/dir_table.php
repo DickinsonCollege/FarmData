@@ -58,7 +58,7 @@ if ($_SESSION['gens']) {
    }
 }
 echo "</caption>";
-echo "<tr><th>Plant Date</th><th>Crop</th>";
+echo "<tr><th>Date of Seeding</th><th>Crop</th>";
 echo "<th>Field</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th>";
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";

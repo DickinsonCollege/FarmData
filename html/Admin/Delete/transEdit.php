@@ -145,7 +145,7 @@ if ($farm == 'dfarm') {
 echo '</div></select>';
 echo '<br clear="all">';
 
-echo "<label>Field ID:&nbsp</label>";
+echo "<label>Name of Field:&nbsp</label>";
 echo "<div class='styled-select'><select name='fieldID' id='fieldID'>";
 echo "<option value='".$fieldID."' selected>".$fieldID."</option>";
 $sql = 'select fieldID from field_GH where active = 1';
@@ -171,7 +171,7 @@ echo '</div></select>';
 // echo "<input type='text' class='textbox2' name='rowsbed' id='rowsbed' value='".$rowsBed."'>";
 echo "<br clear='all'>";
 
-echo "<label>Number of Flats:&nbsp</label>";
+echo "<label>Number of Trays:&nbsp</label>";
 echo "<input type='text' class='textbox2' name='flats' id='flats' value='".$flats."'>";
 echo "<br clear='all'>";
 

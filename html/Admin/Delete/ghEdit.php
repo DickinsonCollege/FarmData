@@ -54,7 +54,7 @@ echo "<form name='form' method='post' action=\"".$SERVER['PHP_SELF'].
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&crop=".
    encodeURIComponent($origCrop)."&id=".$id."\">";
 
-echo "<H3> Edit GreenHouse Seeding Record </H3>";
+echo "<H3> Edit Tray Seeding Record </H3>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 echo '<label>Date:&nbsp</label>';
@@ -113,11 +113,11 @@ echo $varieties;
 echo "</textarea>";
 echo "<br clear='all'/>";
 
-echo "<label>Flats:&nbsp;</label>";
+echo "<label>Trays:&nbsp;</label>";
 echo "<input type='text' class='textbox2' name='flats' id='flats' value='".$flats."'>";
 echo "<br clear='all'/>";
 
-echo "<label>Cells/Flat:&nbsp;</label>";
+echo "<label>Cells/Tray:&nbsp;</label>";
 echo "<input type='text' class='textbox2' name='cellsFlat' id='cellsFlat' value='".$cellsFlat."'>";
 echo "<br clear='all'/>";
 echo "<br clear='all'/>";

@@ -1,3 +1,6 @@
+<head><meta name="google-translate-customization" content="8bca6d16755ec7ea-88689800f992b82a-g914b132bacc77839-20"></meta>
+ <meta charset="UTF-8"> 
+</head>
 <?php
 session_start();
 //$cookieLifetime = 3 * 24 * 60 * 60; // three days in seconds
@@ -12,7 +15,7 @@ if($_SERVER["HTTPS"] != "on") {
 // HTTPSOFF
 $farm = $_SESSION['db'];
 date_default_timezone_set('America/New_York');
-        //$_SESSION['mobile']=1;
+//  $_SESSION['mobile']=1;
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 
 if ($_SESSION['mobile']) {
@@ -34,6 +37,23 @@ if (isset($_GET['tab'])) {
    $tabar = explode(":", $_GET['tab']);
    $tab = $tabar[0];
 }
+if (!$_SESSION['mobile']) {
+  echo '<div id="google_translate_element"></div>';
+}
+?>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,es', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" 
+   src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+</script>
+
+<style type="text/css">iframe.goog-te-banner-frame{ display: none !important;}</style>
+<style type="text/css">body {position: static !important; top:0px !important;}</style>
+
+<?php
 echo '<div id="menubar" style="">';
 /*
 if ($_SESSION['admin']==1 && $farm != 'wahlst_spiralpath') {
@@ -66,7 +86,7 @@ if ($_SESSION['soil']) {
 echo '<li id="li_soil"><a href="/design.php?tab=soil" class = "inactivetab" id= "soil_a">Soil</a></li>';
 }
 if ($_SESSION['notes']) {
-   echo '<li id="li_notes"><a href="/design.php?tab=notes" class = "inactivetab" id= "notes_a">Notes</a></li>';
+   echo '<li id="li_notes"><a href="/design.php?tab=notes" class = "inactivetab" id= "notes_a">Comments</a></li>';
 }
 if ($_SESSION['labor']) {
    echo '<li id="li_labor"><a href="/design.php?tab=labor" class = "inactivetab" id= "labor_a">Labor</a></li>';
@@ -145,6 +165,9 @@ if ($tab=='harvest') {
 ?>
 <!-- to end menubar div
 -->
+</div>
+
+<div id="here">
 </div>
 
 <div id="alert" style="display:block;border:2px solid;border-color:ivory;">

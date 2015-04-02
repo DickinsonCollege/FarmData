@@ -7,10 +7,92 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<form name='form' method='post' action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:direct:direct_input">
+<script type="text/javascript">
+function show_confirm() {
+   var fld = document.getElementById("fieldID").value;
+   if (checkEmpty(fld)) {
+      showError("Please Select a Field Name");
+      return false;
+   }
+
+   var con="Name of Field: "+ fld + "<br>";
+   var crp = document.getElementById("cropButton").value;
+   if (checkEmpty(crp) || crp == "Crop") {
+      showError("Please Select a Crop");
+      return false;
+   }
+   con += "Crop: "+ crp + "<br>";
+<?php
+if ($_SESSION['seed_order']) {
+   echo '
+   var count = 1;
+   for (var i = 1; i <= numRows; i++) {
+      if (document.getElementById("row" + i) != null &&
+          document.getElementById("row" + i).innerHTML != "") {
+         var code = document.getElementById("code" + i).value;
+         if (checkEmpty(code)) {
+            showError("Please select a seed code in row: " + count);
+            return false;
+         }
+         count++;
+      }
+   }';
+}
+?>
+
+   var mth = document.getElementById("month").value;
+   con += "Date of Seeding: " + mth + "-";
+   var dy = document.getElementById("day").value;
+   con += dy + "-";
+   var yr = document.getElementById("year").value;
+   con += yr + "<br>";
+   var i = document.getElementById("bedftv").value;
+   var r = document.getElementById("rowbd").value;
+   if (checkEmpty(r)) {
+      showError("Please Select Rows Per Bed");
+      return false;
+   } 
+   var rowBed = document.getElementById("rowBed");
+   var div = 1;
+   if (rowBed && rowBed.value == "row") {
+       div = r;
+   }
+   var bed = <?php if (!$_SESSION['bedft']) {
+               echo '"Number of Beds";';
+        } else { 
+               echo '"Number of Bed Feet";';
+         } ?>
+   if (checkEmpty(i) || isNaN(i) || i<0) {
+      showError("Enter valid "+bed+"!");
+      return false;
+   } 
+   var con=con+bed+": "+ i + "<br>";
+
+   con = con+"Rows/Bed: "+ r + "<br>";
+
+<?php
+  include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
+  if ($_SESSION['labor']) {
+     echo '
+        var tme = document.getElementById("time").value;
+   var unit = document.getElementById("timeUnit").value;
+        if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+           showError("Enter a valid number of " + unit + "!");
+           return false;
+        }
+   con = con+"Number of " + unit + ": " + tme + "<br>";';
+   } 
+?>
+
+   var msg = "Confirm Entry:"+"<br>"+con;
+   showConfirm(msg, 'seedform');
+}
+</script>
+
+<form name='form' id='seedform' method='post' action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:direct:direct_input">
 <h3 class="hi"> Direct Seeding Input Form</h3>
 <br clear="all"/>
-<label for="planted">Date:&nbsp;</label>
+<label for="planted">Date of Seeding:&nbsp;</label>
 <?php
 if ($_SESSION['mobile']) echo "<br clear='all'/>";
 if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
@@ -22,10 +104,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear="all"/>
 
-<label for="fieldcrop">Field:&nbsp;</label>
+<label for="fieldcrop">Name of Field:&nbsp;</label>
 <div class="styled-select">
 <select name="fieldID" id= "fieldID" class='mobile-select'>
-<option disabled selected="selected" value = 0  style="display:none; width: auto;"> Field ID  </option>
+<option disabled selected="selected" value = 0  style="display:none; width: auto;"> Field Name</option>
 <?php
 $result=mysql_query("Select fieldID from field_GH where active = 1");
 while ($row1 =  mysql_fetch_array($result)){
@@ -42,6 +124,7 @@ if (!$_SESSION['mobile']) {
 }
 //include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
+<label>Crop:&nbsp;</label>
 <div class="styled-select">
 <select name="cropButton" id="cropButton" class="mobile-select">
 <option disabled selected value="0">Crop</option>
@@ -71,7 +154,7 @@ function update_feet() {
 function addRow() {
    var cb = document.getElementById("cropButton");
    if (cb.value=="0") {
-      alert("Error: choose crop first!");
+      showError("Error: choose crop first!");
    } else {
       cb.disabled=true;
       numRows++;
@@ -134,17 +217,19 @@ if ($_SESSION['seed_order']) {
    }
    echo '</table>';
    echo '<br clear = "all"/>';
+   // echo '<br clear = "all"/>';
    echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton" onClick="addRow();"';
    echo ' value="Add Variety">';
    echo '&nbsp;&nbsp';
    echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton" ';
    echo 'onClick="removeRow();" value="Remove Variety">';
-   echo '<br clear = "all"/>';
-   echo '<br clear = "all"/>';
+   echo '<p>';
+  //  echo '<br clear = "all"/>';
+   // echo '<br clear = "all"/>';
 }
 
 if ($_SESSION['seed_order']) {
-  echo '<label>Total ';
+  echo '<label>Total number of ';
   if ($_SESSION['bedft']) {
      echo 'Feet';
   } else {
@@ -183,7 +268,7 @@ while ($cons<8) {
 ?>
 </select>
 </div>
-<br clear="all"/>
+<br clear = "all"/>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 if ($_SESSION['labor']) {
@@ -213,93 +298,9 @@ echo '
 rows="10" cols="30">
 </textarea>
 </div>
-<script type="text/javascript">
-function show_confirm() {
-   var fld = document.getElementById("fieldID").value;
-   if (checkEmpty(fld)) {
-      alert("Please Select a FieldID");
-      return false;
-   }
-
-   var con="FieldID: "+ fld + "\n";
-   var crp = document.getElementById("cropButton").value;
-   if (checkEmpty(crp) || crp == "Crop") {
-      alert("Please Select a Crop");
-      return false;
-   }
-   con += "Crop: "+ crp + "\n";
-<?php
-if ($_SESSION['seed_order']) {
-   echo '
-   var count = 1;
-   for (var i = 1; i <= numRows; i++) {
-      if (document.getElementById("row" + i) != null &&
-          document.getElementById("row" + i).innerHTML != "") {
-         var code = document.getElementById("code" + i).value;
-         if (checkEmpty(code)) {
-            alert("Please select a seed code in row: " + count);
-            return false;
-         }
-         count++;
-      }
-   }';
-}
-?>
-
-   var mth = document.getElementById("month").value;
-   con += "Seed Date: " + mth + "-";
-   var dy = document.getElementById("day").value;
-   con += dy + "-";
-   var yr = document.getElementById("year").value;
-   con += yr + "\n";
-   var i = document.getElementById("bedftv").value;
-   var r = document.getElementById("rowbd").value;
-   if (checkEmpty(r)) {
-      alert("Please Select Rows Per Bed");
-      return false;
-   } 
-   var rowBed = document.getElementById("rowBed");
-   var div = 1;
-   if (rowBed && rowBed.value == "row") {
-       div = r;
-   }
-   var bed = <?php if (!$_SESSION['bedft']) {
-               echo '"Number of Beds";';
-        } else { 
-               echo '"Number of Bed Feet";';
-         } ?>
-   if (checkEmpty(i) || isNaN(i) || i<0) {
-      alert("Enter valid "+bed+"!");
-      return false;
-   } 
-   var con=con+bed+": "+ i + "\n";
-
-   var con=con+"Rows/Bed: "+ r+ "\n";
-
-<?php
-  include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
-  if ($_SESSION['labor']) {
-     echo '
-        var tme = document.getElementById("time").value;
-   var unit = document.getElementById("timeUnit").value;
-        if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
-           alert("Enter a valid number of " + unit + "!");
-           return false;
-        }
-   con = con+"Number of " + unit + ": " + tme + "\n";';
-   } 
-?>
-
-    var ret = confirm("Confirm Entry:"+"\n"+con);
-    if (ret) {
-       document.getElementById('cropButton').disabled=false;
-       document.getElementById('bedftv').disabled=false;
-    }
-    return ret;
-}
-</script>
 <br clear = "all"/>
-<input class="submitbutton" type="submit" name="submit" value="Submit" onclick= "return show_confirm();">
+<input class="submitbutton" type="button" value="Submit" 
+ onclick= "show_confirm();">
 </form>
 
 <br clear = "all"/>
@@ -307,7 +308,8 @@ if ($_SESSION['seed_order']) {
 <input type="hidden" name="tab" value="seeding:direct:direct_report">
 <input type="submit" class="submitbutton" value = "View Table"></form>
 <?php
-if(isset($_POST['submit'])) {
+//if(isset($_POST['submit'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $bedftv = escapehtml($_POST['bedftv']);
    $numrows = escapehtml($_POST['rowbd']);
    $crop = escapehtml($_POST['cropButton']);
@@ -403,7 +405,7 @@ $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hour
       $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."', ".$gen.")";
    $result = mysql_query($sql);
    if(!$result){ 
-       echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
+       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
    }else {
       echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    }   

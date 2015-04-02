@@ -33,7 +33,7 @@ $sig = $row['sig'];
 <h1><b>Configure FARMDATA</b></h1>
 In the list below, check each FARMDATA component that you wish to include:
 <ul>
-<li> <input type="checkbox" name="notes" id="notes"><b>Notes</b> (entry and reporting of comments or
+<li> <input type="checkbox" name="notes" id="notes"><b>Comments</b> (entry and reporting of comments or
  observations by any user) </input>
 <li> <input type="checkbox" name="labor" id="labor"><b>Labor</b>
   (tracking labor hours for direct seeding, transplanting, harvesting and any other tasks)</input>
@@ -41,7 +41,7 @@ In the list below, check each FARMDATA component that you wish to include:
   (tracking seed orders and inventory, including seed usage during planting)</input>
 <li> <input type="checkbox" name="harvlist" id="harvlist"><b>Harvest List</b> (entering and editing a harvest
  plan for a specific day plus real time harvest tracking)</input>
-<li> <input type="checkbox" name="gens" id="gens"><b>Generation Numbers</b> (distinguishing 
+<li> <input type="checkbox" name="gens" id="gens"><b>Succession Numbers</b> (distinguishing 
  generations/successions of a crop over multiple seedings in the same field)</input>
 <li> <input type="checkbox" name="soil" class="soil" id="soil" 
    onclick="toggle('soil',document.getElementById('soil').checked);"><b>Soil</b></input>

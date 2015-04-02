@@ -125,7 +125,7 @@ if ($farm == 'dfarm') {
 echo '</div></select>';
 echo '<br clear="all"/>';
 
-echo '<label>Field:&nbsp</label>';
+echo '<label>Name of Field:&nbsp</label>';
 echo '<div class="styled-select" id="fieldID2"><select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 /*

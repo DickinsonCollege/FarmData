@@ -18,7 +18,7 @@ $farm = $_SESSION['db'];
 <option value='default' disabled selected>&nbsp;</option>
 <option value='dir_planted'>Direct Seeding</option>
 <option value='harvested'>Harvesting</option>
-<option value='gh_seeding'>Flats Seeding</option>
+<option value='gh_seeding'>Tray Seeding</option>
 <option value='transferred_to'>Transplanting</option>
 </select>
 </div>
@@ -586,7 +586,9 @@ function show_confirm() {
  
                if ((dateArray.indexOf(fields_array[j+1]) < 0) || 
                   (fields_array[j+1] == "seedDate" && tableName == "transferred_to")) {
-                  if (fields_array[j+1] != "comments" && fields_array[j+1] != "varieties" && fields_array[j+1] != "numseeds_planted") {
+                  if (fields_array[j+1] != "comments" && fields_array[j+1] != "varieties" && 
+                      fields_array[j+1] != "gen" && 
+                      fields_array[j+1] != "numseeds_planted") {
                      ele = document.getElementById(fields_array[j+1] + i);
                      if (checkEmpty(ele.value) || ele.value == "" || ele.value == "undefined") {
                         alert("Check Row " + i + ": " + fields_array[j+1] + "\n" + 
