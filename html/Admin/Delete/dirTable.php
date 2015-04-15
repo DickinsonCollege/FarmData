@@ -64,7 +64,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       "&tmonth=".$tcurMonth.  "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop']).
       "&tab=admin:admin_delete:deleteseed:deletedirplant&submit=Submit\">";
       echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
-      echo 'onclick="return show_warning();">';
+      echo 'onclick="return show_delete_warning();">';
       echo "</form> </td>";
       echo "</tr>";
    }
