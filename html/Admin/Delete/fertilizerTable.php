@@ -8,7 +8,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
   
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM fertilizer WHERE id=".$_GET['id'];
-//      echo $sqlDel;
       mysql_query($sqlDel) or die(mysql_error());
       echo mysql_error();
    }
