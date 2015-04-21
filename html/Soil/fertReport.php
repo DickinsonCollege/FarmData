@@ -1,5 +1,6 @@
 <?php session_start(); ?>
-<form name='form' method='POST' action='fertTable.php?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report'>
+<form name='form' method='GET' action='fertTable.php'>
+<input type="hidden" name="tab" value='soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report'>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';

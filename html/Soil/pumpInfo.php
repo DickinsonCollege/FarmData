@@ -52,7 +52,7 @@ if ($row['year']) {
      $runtime      = number_format((float) $row['runtime'], 1, '.', '');
 }
 ?>
-<form class='pure-form pure-form-aligned' method='POST' action=''>
+<form class='pure-form pure-form-aligned' method='POST' action='pumpInfo.php'>
      <fieldset>
          <?php 
 				if ($_SESSION['pump']) {
@@ -135,7 +135,7 @@ if ($row['year']) {
                 onclick='updatePumpLog(false);'>
       </div>
           
-         </fieldset> </form>
+         </fieldset> 
           <br clear='all'>
 <script type="text/javascript">
 // set the date we're counting down to

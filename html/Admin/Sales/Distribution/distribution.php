@@ -6,6 +6,27 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
 
+$sql = "select * from distribution order by distDate";
+$result = mysql_query($sql);
+echo mysql_error();
+$prices = array();
+while ($row = mysql_fetch_array($result)) {
+   $crop = $row['crop_product'];
+   $grade = $row['grade'];
+   $unit = $row['unit'];
+   $target = $row['target'];
+   $price = $row['pricePerUnit'];
+   $convsql = "SELECT conversion FROM units WHERE crop='".$crop."' AND unit='POUND'";
+   $convresult = mysql_query($convsql);
+   if (mysql_num_rows($convresult) > 0) {
+      $convrow = mysql_fetch_array($convresult);
+      $conversion = $convrow[0];
+      $unit = 'POUND';
+      $price = $price / $conversion;
+   }
+   $prices[$crop][$grade][$target] = array($price, $unit);
+}
+
 $sql = "select * from inventory";
 $result = mysql_query($sql);
 echo mysql_error();
@@ -33,6 +54,8 @@ while ($row = mysql_fetch_array($result)) {
 <script type="text/javascript">
 var inventory = eval(<?php echo json_encode($inventory);?>);
 var inventory_unit = eval(<?php echo json_encode($inventory_unit);?>);
+var prices = eval(<?php echo json_encode($prices);?>);
+console.log(prices);
 
 function getInventoryAmount(cropProd, grade) {
   if (cropProd in inventory) {
@@ -177,11 +200,11 @@ window.onload = function() {
 
 var alreadyPopulated = false;
 var numTables = 0;
-var tableSize = 7;
+var tableSize = 8;
 
-var fields_array = ["distDate", "crop_product", "grade", "target", "amount", "unit", "comments"];
-var table_array = ["Row", "Target", "Amount", "Unit", "Comments"];
-var numericalFields = ["grade", "amount"];
+var fields_array = ["distDate", "crop_product", "grade", "target", "amount", "unit", "pricePerUnit", "comments"];
+var table_array = ["Row", "Target", "Amount", "Unit", "Price/Unit", "Total Price", "Comments"];
+var numericalFields = ["grade", "amount", "pricePerUnit"];
 //var targets_array = ["CSA", "Dining Services", "Market", "Other"];
 
 /*************************************************************************
@@ -212,7 +235,10 @@ function createNewTable() {
    xmlhttp.send();
    var crop_product_amounts_array = eval(xmlhttp.responseText);
 */
-   var crop_product_amounts_array = [getInventoryAmount(cropProd, grade), getInventoryUnit(cropProd, grade)]; 
+
+
+   var crop_product_amounts_array = [getInventoryAmount(eCropProd, grade), getInventoryUnit(eCropProd, grade)]; 
+
 
    // Create new table
    numTables++;
@@ -253,16 +279,25 @@ function createNewTable() {
       var cell = row.insertCell(3);
       cell.innerHTML = createUnitInput(crop_product_amounts_array[1], numTables, numRows, eCropProd);
 
-      // Comments
+      // Price/Unit
       var cell = row.insertCell(4);
+      cell.innerHTML = createPriceInput(crop_product_amounts_array[0], crop_product_amounts_array[1],
+                       grade, targs[i], numTables, numRows, eCropProd);
+
+      // Total
+      var cell = row.insertCell(5);
+      cell.innerHTML = createTotal(numTables, numRows);
+
+      // Comments
+      var cell = row.insertCell(6);
       cell.innerHTML = createCommentsInput("", numTables, numRows);
 
       // Delete Button
-      var cell = row.insertCell(5);
+      var cell = row.insertCell(7);
       cell.innerHTML = createDeleteButton(numTables, numRows);
 
       // Copy Button
-      var cell = row.insertCell(6);
+      var cell = row.insertCell(8);
       cell.innerHTML = createCopyButton(numTables, numRows);
    }
 
@@ -334,7 +369,8 @@ function createTargetInput(data, tableNum, rowNum) {
    var HTMLString = "";
 
    HTMLString += "<div id='targetTable" + tableNum + "Row" + rowNum + "Div' class='styled-select'>" + 
-      "<select style='width:100%;'" + 
+      "<select style='width:100%;' onchange='convertRowPrice(" + tableNum + ", " + rowNum + ");" +
+      "updatePrice(" + tableNum + ");'" + 
       "id='targetTable" + tableNum + "Row" + rowNum + "'>" + 
       "<option value='" + data +"' selected>" + data + "</option>";
       for (var t = 0; t < targs.length; t++) {
@@ -356,7 +392,7 @@ function createAmountInput(data, tableNum, rowNum) {
 
    HTMLString += "<div id='amountTable" + tableNum + "Row" + rowNum + "Div'>" + 
       "<input type='text' style='width:100%;'" + 
-      "onChange='calculateTotalSoFar(" + tableNum + "); checkInventoryAmounts(" + tableNum + ")'" + 
+      "oninput='calculateTotalSoFar(" + tableNum + "); checkInventoryAmounts(" + tableNum + ")'" + 
       "id='amountTable" + tableNum + "Row" + rowNum + "'" + 
       "class='textbox25' value='" + data + "'></div>";
 
@@ -376,6 +412,47 @@ function getUnits(cropProd) {
    return units;
 }
 
+function getPrice(cropProd, grade, target) {
+  if (typeof prices[cropProd] != 'undefined') {
+    if (typeof prices[cropProd][grade] != 'undefined') {
+       if (typeof prices[cropProd][grade] [target] != 'undefined') {
+           return prices[cropProd][grade][target][0];
+       }
+    }
+  }
+  return 0;
+}
+
+function getPriceUnit(cropProd, grade, target) {
+  if (typeof prices[cropProd] != 'undefined') {
+    if (typeof prices[cropProd][grade] != 'undefined') {
+       if (typeof prices[cropProd][grade] [target] != 'undefined') {
+           return prices[cropProd][grade][target][1];
+       }
+    }
+  }
+  return 0;
+}
+
+// create price input
+function createPriceInput(amount, unit, grade, target, tableNum, rowNum, cropProd) {
+  var val = getPrice(cropProd, grade, target);
+  var res = "<div id='pricePerUnitTable" + tableNum + "Row" + rowNum + "Div' class='styled-select'>" +
+      "<input type='text' style='width:100%;'" + 
+      "oninput='updatePrice(" + tableNum + ");'" + 
+      "id='pricePerUnitTable" + tableNum + "Row" + rowNum + "'" + 
+      "class='textbox25' value='" + parseFloat(val).toFixed(2) + "'></div>";
+  return res;
+}
+
+function createTotal(tableNum, rowNum) {
+  var res = "<div id='totalTable" + tableNum + "Row" + rowNum + "Div' class='styled-select'>" +
+      "<input readonly type='text' style='width:100%;'" + 
+      "id='totalTable" + tableNum + "Row" + rowNum + "'" + 
+      "class='textbox25' value='0.00'></div>";
+  return res;
+}
+
 /*******************************
 * Creates Unit Input for table *
 *******************************/
@@ -391,7 +468,8 @@ function createUnitInput(data, tableNum, rowNum, cropProd) {
 
    HTMLString += "<div id='unitTable" + tableNum + "Row" + rowNum + "Div' class='styled-select'>" + 
       "<select style='width:100%;'" + 
-      "onChange='calculateTotalSoFar(" + tableNum + "); checkInventoryAmounts(" + tableNum + ")'" + 
+      "onchange='convertRowPrice(" + tableNum + ", " + rowNum + ");" +
+      "calculateTotalSoFar(" + tableNum + "); checkInventoryAmounts(" + tableNum + ");'" + 
       "id='unitTable" + tableNum + "Row" + rowNum + "'>" + 
       "<option value='" + data + "' selected>" + data + "</option>";
          for (var u = 0; u < units.length; u++) {
@@ -473,8 +551,11 @@ function createTotalSoFar(tbl, tableNum, unit) {
    cell.innerHTML = "<b>" + unit + "(s)</br>";
 
    row.insertCell(4);
-   row.insertCell(5);
+   cell = row.insertCell(5);
+   cell.innerHTML = "<input readonly type='text' id='currentPriceTable" + tableNum + "' class='textbox25' style='width:100%' value='0'>";
    row.insertCell(6);
+   row.insertCell(7);
+   row.insertCell(8);
 }
 
 /*************************************************************************
@@ -540,30 +621,41 @@ function copyRow(tableNum, rowNum) {
 
    // Target
    var cell = row.insertCell(1);
-   var elem = document.getElementById("targetTable" + tableNum + "Row" + rowNum).value;
-   cell.innerHTML = createTargetInput(elem, tableNum, numRows);
+   var targ = document.getElementById("targetTable" + tableNum + "Row" + rowNum).value;
+   cell.innerHTML = createTargetInput(targ, tableNum, numRows);
 
    // Amount
    var cell = row.insertCell(2);
-   var elem = document.getElementById("amountTable" + tableNum + "Row" + rowNum).value;
-   cell.innerHTML = createAmountInput(parseFloat(elem).toFixed(2), tableNum, numRows);
+   var amount = document.getElementById("amountTable" + tableNum + "Row" + rowNum).value;
+   cell.innerHTML = createAmountInput(parseFloat(amount).toFixed(2), tableNum, numRows);
 
    // Unit
    var cell = row.insertCell(3);
-   var elem = document.getElementById("unitTable" + tableNum + "Row" + rowNum).value;
-   cell.innerHTML = createUnitInput(elem, tableNum, numRows, cropProd);
+   var unit = document.getElementById("unitTable" + tableNum + "Row" + rowNum).value;
+   cell.innerHTML = createUnitInput(unit, tableNum, numRows, cropProd);
+
+    // Price/Unit
+    var cell = row.insertCell(4);
+    var price = document.getElementById("pricePerUnitTable" + tableNum + "Row" + rowNum).value;
+    var grade = cropprodgradeTable[tableNum];
+    cell.innerHTML = createPriceInput(amount, unit, grade, targ, tableNum, numRows, cropProd);
+    document.getElementById("pricePerUnitTable" + tableNum + "Row" + numRows).value = price;
+
+    // Total
+    var cell = row.insertCell(5);
+    cell.innerHTML = createTotal(numTables, numRows);
 
    // Comments
-   var cell = row.insertCell(4);
+   var cell = row.insertCell(6);
    var elem = document.getElementById("commentsTable" + tableNum + "Row" + rowNum).value;
    cell.innerHTML = createCommentsInput(elem, tableNum, numRows);
 
    // Delete Button
-   var cell = row.insertCell(5);
+   var cell = row.insertCell(7);
    cell.innerHTML = createDeleteButton(tableNum, numRows);
 
    // Copy Button
-   var cell = row.insertCell(6);
+   var cell = row.insertCell(8);
    cell.innerHTML = createCopyButton(tableNum, numRows);
 
    calculateTotalSoFar(tableNum);
@@ -627,7 +719,6 @@ function checkInventoryAmounts(tableNum) {
 * Calculates the total amount of all rows of table                       *
 *************************************************************************/
 function calculateTotalSoFar(tableNum) {
-   var xmlhttp = new XMLHttpRequest();
 
    var numRows = numrowsTable[tableNum];
    var tableUnit = unittypeTable[tableNum];
@@ -638,21 +729,8 @@ function calculateTotalSoFar(tableNum) {
       var row = document.getElementById("row" + i + "table" + tableNum);
       if (row != null) {
          var amount = document.getElementById("amountTable" + tableNum + "Row" + i).value;
-         var unit = document.getElementById("unitTable" + tableNum + "Row" + i).value;
+         var unit = escapeHtml(document.getElementById("unitTable" + tableNum + "Row" + i).value);
 
-/*
-         xmlhttp.open("GET", "convert_unit.php?cropProdName="+encodeURIComponent(crop_prod) +
-            "&unit="+encodeURIComponent(unit), false);
-         xmlhttp.send();
-         var default_unit_conversion = eval(xmlhttp.responseText);
-
-         xmlhttp.open("GET", "convert_unit.php?cropProdName="+encodeURIComponent(crop_prod)
-            + "&unit="+encodeURIComponent(tableUnit), false);
-         xmlhttp.send();
-         var table_unit_conversion = eval(xmlhttp.responseText);
-
-         amountSoFar += parseFloat((amount/default_unit_conversion[1]) * table_unit_conversion[1]);
-*/
          amountSoFar += parseFloat((amount/conversion[crop_prod][unit]) * 
             conversion[crop_prod][tableUnit]);
       }
@@ -660,6 +738,53 @@ function calculateTotalSoFar(tableNum) {
 
    var amountBox = document.getElementById("currentamountTable" + tableNum);
    amountBox.value = amountSoFar.toFixed(2);
+   updatePrice(tableNum);
+}
+
+function updatePrice(tableNum) {
+   var numRows = numrowsTable[tableNum];
+   var tot = 0;
+   for (var i = 1; i <= numRows; i++) {
+      var row = document.getElementById("row" + i + "table" + tableNum);
+      if (row != null) {
+         var amount = document.getElementById("amountTable" + tableNum + "Row" + i).value;
+         var price = document.getElementById("pricePerUnitTable" + tableNum + "Row" + i).value;
+         var linePrice = amount * price;
+         document.getElementById("totalTable" + tableNum + "Row" + i).value = linePrice.toFixed(2);
+         tot += linePrice;
+      }
+   }
+   var totBox = document.getElementById("currentPriceTable" + tableNum);
+   totBox.value = tot.toFixed(2);
+}
+
+/*
+function updateRowPrice(tableNum, rowNum) {
+   var cropProd = cropprodnameTable[tableNum];
+   var grade = cropprodgradeTable[tableNum];
+   var targ = escapeHtml(document.getElementById("targetTable" + tableNum + "Row" + rowNum).value);
+   document.getElementById("pricePerUnitTable" + tableNum + "Row" + rowNum).value =
+     getPrice(cropProd, grade, targ);
+}
+*/
+
+function convertRowPrice(tableNum, rowNum) {
+   var priceInput = document.getElementById("pricePerUnitTable" + tableNum +
+      "Row" + rowNum);
+   var cropProd = cropprodnameTable[tableNum];
+   var grade = cropprodgradeTable[tableNum];
+   var targ = escapeHtml(document.getElementById("targetTable" + tableNum + 
+       "Row" + rowNum).value);
+   var price = getPrice(cropProd, grade, targ);
+   var unit = escapeHtml(document.getElementById("unitTable" + tableNum + 
+      "Row" + rowNum).value);
+   var defUnit = getPriceUnit(cropProd, grade, targ);
+   var newPrice = 0;
+   if (defUnit != 0) {
+      newPrice = (price / conversion[cropProd][unit]) * 
+         conversion[cropProd][defUnit];
+   }
+   priceInput.value = newPrice.toFixed(2);
 }
 
 /*************************************************************************
@@ -795,18 +920,28 @@ console.log(packing_array[i]);
    
          // Unit
          var cell = row.insertCell(3);
-         cell.innerHTML = createUnitInput(packing_array[currIndex][3], numTables, numRows, packing_array[currIndex][2]);
+         cell.innerHTML = createUnitInput( packing_array[currIndex][3], numTables, numRows, 
+            packing_array[currIndex][2]);
    
-         // Comments
+         // Price/Unit
          var cell = row.insertCell(4);
+         cell.innerHTML = createPriceInput(packing_array[currIndex][1], packing_array[currIndex][3],
+               currGrade, packing_array[currIndex][0], numTables, numRows, packing_array[currIndex][2]);
+    
+         //Total
+         var cell = row.insertCell(5);
+         cell.innerHTML = createTotal(numTables, numRows);
+
+         // Comments
+         var cell = row.insertCell(6);
          cell.innerHTML = createCommentsInput("", numTables, numRows);
    
          // Delete Button
-         var cell = row.insertCell(5);
+         var cell = row.insertCell(7);
          cell.innerHTML = createDeleteButton(numTables, numRows);
    
          // Copy Button
-         var cell = row.insertCell(6);
+         var cell = row.insertCell(8);
          cell.innerHTML = createCopyButton(numTables, numRows);
 
          currIndex++;
@@ -866,51 +1001,27 @@ function insertAllRows() {
                for (var k = 3; k < tableSize; k++) {
                   var elem = document.getElementById(fields_array[k] + "Table" + i + "Row" + j);
                   elem = elem.value;
-                  values[k] = elem;
+                  values[k] = escapeHtml(elem);
 
-                  if (fields_array[k] === "unit") unit = elem;
+                  if (fields_array[k] === "unit") unit = escapeHtml(elem);
                   if (fields_array[k] === "amount") amount = elem;
                }
 
                // Adds a warning in comments if value in distribution exceeds inventory amount
                if (amountsMessage) {
-                  values[6] += "\nDistributed amount exceeded amount that was in inventory by more than 40%.";
+                  values[7] += "\nDistributed amount exceeded amount that was in inventory by more than 40%.";
                }
 
                // Performs unit conversion
-/*
-               xmlhttp.open("GET", "convert_unit.php?cropProdName="+encodeURIComponent(crop_prod)
-                  + "&unit="+encodeURIComponent(unit), false);
-               xmlhttp.send();
-               default_unit_conversion = eval(xmlhttp.responseText);
-               values[fields_array.indexOf("amount")] = amount/default_unit_conversion[1];
-               values[fields_array.indexOf("unit")] = default_unit_conversion[0];
-*/
-/*
-               values[fields_array.indexOf("amount")] = amount/conversion[crop_prod][default_unit[crop_prod]];
-               values[fields_array.indexOf("unit")] = default_unit[crop_prod];
-*/
                values[fields_array.indexOf("amount")] = amount/conversion[crop_prod][unit];
                values[fields_array.indexOf("unit")] = default_unit[crop_prod];
+               var priceInd = fields_array.indexOf("pricePerUnit");
+               var price = values[priceInd];
+               values[priceInd] = price * conversion[crop_prod][unit];
                if (values[fields_array.indexOf("amount")] > 0) {
                   allvalues[ind] = values;
                   ind++;
                }
-
-/*
-               // Convert Javascript arrays to PHP arrays
-               values_array_json = JSON.stringify(values);
-               fields_array_json = JSON.stringify(fields_array);
-
-               // XMLHTTP request to insert row into distribution
-               xmlhttp.open("GET", "insert_row.php?values_array="+encodeURIComponent(values_array_json) 
-                 +" &fields_array="+fields_array_json+"&tableSize="+tableSize, false);
-               xmlhttp.send();
-               if (xmlhttp.responseText != "") {
-                  alert("ERROR in MySQL inserting row into table:\n" + xmlhttp.responseText);
-                  return false;
-               }
-*/
             }
          }
       }
@@ -918,6 +1029,7 @@ function insertAllRows() {
    // Convert Javascript arrays to PHP arrays
    values_array_json = JSON.stringify(allvalues);
    fields_array_json = JSON.stringify(fields_array);
+
 
    // XMLHTTP request to insert row into distribution
    xmlhttp.open("GET", "insert_all_rows.php?values_array="+encodeURIComponent(values_array_json) 
@@ -972,7 +1084,8 @@ function show_confirm() {
                for (var k = 3; k < tableSize; k++) {
                   var elem = document.getElementById(fields_array[k] + "Table" + i + "Row" + j);
 
-                  if (fields_array[k] != "comments" && fields_array[k] != "amount") {
+                  if (fields_array[k] != "comments" && fields_array[k] != "amount"
+                   && fields_array[k] != "pricePerUnit") {
                      if (checkEmpty(elem.value) || elem.value === "" || elem.value === "undefined" || elem.value === "null") {
                         alert("Check Table " + escapeescapeHtml(tableName) + " - Grade: " + tableGrade + "\n" + 
                               "Row " + j + ": " + fields_array[k] + "\n" + 

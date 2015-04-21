@@ -2,23 +2,25 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-$farm = $_SESSION['db'];
-?>
-
-<form name='form' method='POST' action='/down.php'>
-<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
-$year = $_POST['year'];
-$month = $_POST['month'];
-$day = $_POST['day'];
-$tcurYear = $_POST['tyear'];
-$tcurMonth = $_POST['tmonth'];
-$tcurDay = $_POST['tday'];
-$genSel = $_POST['genSel'];
-$crop = escapehtml($_POST['crop']);
-$fieldID = escapehtml($_POST['fieldID']);
-$sql="select plantdate,dir_planted.crop,fieldID,bedft,rowsBed,bedft * rowsBed as rowft, hours, comments";
-$sql .= ", gen from dir_planted where dir_planted.crop like '".$crop."' and ".
+
+if (isset($_GET['id'])) {
+   $sqlDel="DELETE FROM dir_planted WHERE id=".$_GET['id'];
+   mysql_query($sqlDel);
+   echo mysql_error();
+}
+$year = $_GET['year'];
+$month = $_GET['month'];
+$day = $_GET['day'];
+$tcurYear = $_GET['tyear'];
+$tcurMonth = $_GET['tmonth'];
+$tcurDay = $_GET['tday'];
+$genSel = $_GET['genSel'];
+$crop = escapehtml($_GET['crop']);
+$fieldID = escapehtml($_GET['fieldID']);
+$sql="select id, plantdate,dir_planted.crop,fieldID,bedft,rowsBed,bedft * rowsBed as rowft, hours, comments";
+$sql .= ", gen, username from dir_planted where dir_planted.crop like '".$crop."' and ".
    "fieldID like '".$fieldID."' and gen like '".$genSel."' and plantdate between '".$year."-".
    $month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by plantdate ";
 if ($crop != "%") {
@@ -66,7 +68,11 @@ if ($_SESSION['labor']) {
 if ($_SESSION['gens']) {
    echo "<th>Succ&nbsp;#</th>";
 }
-echo "<th> Comments </th></tr>";
+echo "<th> Comments </th>";
+if ($_SESSION['admin']) {
+  echo "<th>User</th><th>Edit</th><th>Delete</th>";
+}
+echo "</tr>";
 while ( $row = mysql_fetch_array($result)) {
    echo "<tr><td>";
    echo  $row['plantdate'];
@@ -89,7 +95,28 @@ while ( $row = mysql_fetch_array($result)) {
       echo $row['gen']."</td><td>";
    }
    echo $row['comments'];
-   echo "</td></tr>";
+   echo "</td>";
+   if ($_SESSION['admin']) {
+      echo "<td>".$row['username']."</td>";
+      echo "<td><form method=\"POST\" action=\"dirEdit.php?month=".
+         $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
+         "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop']).
+         "&genSel=".$_GET['genSel']."&fieldID=".encodeURIComponent($_GET['fieldID']).
+         "&tab=seeding:direct:direct_report&submit=Submit\">";
+      echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"";
+      echo 'onclick="return show_warning();">';
+      echo "</form> </td>";
+
+      echo "<td><form method=\"POST\" action=\"dir_table.php?month=".$month."&day=".$day."&year=".$year.
+         "&tmonth=".$tcurMonth.  "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id']."&crop=".
+          encodeURIComponent($_GET['crop']).
+         "&genSel=".$_GET['genSel']."&fieldID=".encodeURIComponent($_GET['fieldID']).
+         "&tab=seeding:direct:direct_report&submit=Submit\">";
+      echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+      echo 'onclick="return show_delete_warning();">';
+      echo "</form> </td>";
+   }
+   echo "</tr>";
 }
 echo "</table>";
 if($crop != '%') {
@@ -110,6 +137,7 @@ if($crop != '%') {
         echo '<br clear="all"/>';
 }
         echo '<br clear="all"/>';
+echo "<form name='form' method='POST' action='/down.php'>";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
  ?>
 <input class = "submitbutton" type="submit" name="submit" value="Download Report">

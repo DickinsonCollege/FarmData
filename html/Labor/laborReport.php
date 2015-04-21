@@ -1,5 +1,6 @@
 <?php session_start();?>
-<form name='form' method='POST' action='laborTable.php?tab=labor:labor_report'>
+<form name='form' method='GET' action='laborTable.php'>
+<input type="hidden" name="tab" value='labor:labor_report'>
 <?php 
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';

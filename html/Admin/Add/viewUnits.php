@@ -56,14 +56,14 @@ while($row = mysql_fetch_array($result)) {
    } else {
       echo "<form method=\"POST\" action=\"viewUnits.php?&crop=".encodeURIComponent($row['crop']).
         "&edit=1&unit=".encodeURIComponent($row['unit'])."&rowNum=".$rowNum.
-        "&tab=admin:admin_delete:deleteother:deleteunit\">";
+        "&tab=admin:admin_delete:deletecrop:deleteunit\">";
       echo '<input onkeypress= "stopSubmitOnEnter(event);" name="conv'.$rowNum.'" id="conv'.$rowNum.
          '" value="'.$row['conversion'].'" class="textbox2 mobile-input" type="text" style="width:100%">';
       echo "</td><td>";
       echo "<input type=\"submit\" class=\"submitbutton\" value=\"Update\"></form> </td><td>";
       echo "<form method=\"POST\" action=\"viewUnits.php?&crop=".encodeURIComponent($row['crop']).
         "&delete=1&unit=".encodeURIComponent($row['unit']).
-        "&tab=admin:admin_delete:deleteother:deleteunit\">";
+        "&tab=admin:admin_delete:deletecrop:deleteunit\">";
       echo '<input type="submit" class="deletebutton" value="Delete" style="width:100%"></form>';
    }
    echo "</td></tr>";

@@ -7,10 +7,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 <form name='form' method='GET' action="deleteTspray.php">
 <?PHP
-	echo '<input type="hidden" name = "tab" value = "admin:admin_delete:deletesoil:deletespray:tractorspray">';
+   echo '<input type="hidden" name = "tab" value = "soil:soil_spray:tspray:tspray_edit">';
 ?>
-	
-<h3 class="hi"> Tractor Spray Report </h3>
+   
+<h3 class="hi"> Tractor Spray Edit/Delete </h3>
 <br clear="all"/>
 <label for='from'>From:&nbsp;</label>
 <?php

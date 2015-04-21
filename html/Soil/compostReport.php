@@ -4,7 +4,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<form name='form' id='test'  method='POST' action="compostTable.php?tab=soil:soil_fert:soil_compost:compost_report">
+<form name='form' id='test'  method='GET' action="compostTable.php">
+<input type="hidden" name="tab" value="soil:soil_fert:soil_compost:compost_report">
 <h3 class="hi"> Compost Report </h3>
 <br clear="all"/>
 <label for='date'> From:&nbsp; </label>

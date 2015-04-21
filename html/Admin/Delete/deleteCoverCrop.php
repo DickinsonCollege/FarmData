@@ -140,7 +140,7 @@ if(!empty($_POST['submit'])) {
    $drillMax = $_POST['drillMax'];
    $broadMin = $_POST['broadMin'];
    $broadMax = $_POST['broadMax'];
-   echo $query = "update coverCrop set crop = upper('".$rename."'), drillRateMin = '".$drillMin.
+   $query = "update coverCrop set crop = upper('".$rename."'), drillRateMin = '".$drillMin.
       "', drillRateMax = '".$drillMax.  "', brcstRateMin = '".$broadMin.  "', brcstRateMax = '".$broadMax.
       "', legume = ".$legume.", active = ".$active." where crop='".$crop."'";
    $res = mysql_query($query);

@@ -1,6 +1,7 @@
 <?php session_start();?>
 <body onload="addFieldID();">
-<form name='form' method='POST' action='harvestTable.php?tab=harvest:harvestReport'>
+<form name='form' method='GET' action='harvestTable.php'>
+<input type="hidden" name="tab" value="harvest:harvestReport">
 <?php 
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';

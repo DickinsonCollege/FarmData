@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='POST' action="transTable.php?tab=seeding:transplant:transplant_report">
+<form name='form' method='GET' action="transTable.php">
+<input type="hidden" name="tab" value="seeding:transplant:transplant_report">
 <h3 class="hi"> Transplanted Crops Report </h3>
 <br clear="all"/>
 <?php

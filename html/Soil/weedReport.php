@@ -6,7 +6,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <h3 class="hi"> Weed Scout Report </h3>
-<form name='form' id='test'  method='POST' action="weedTable.php?tab=soil:soil_scout:soil_weed:weed_report">
+<form name='form' id='test'  method='GET' action="weedTable.php">
+<input type="hidden" name="tab" value="soil:soil_scout:soil_weed:weed_report">
 <br clear="all"/>
 <label for='date'> From:&nbsp; </label>
 <?php

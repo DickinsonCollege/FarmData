@@ -13,6 +13,12 @@ $invoiceID=$_GET['invoiceID'];
 $target=$_GET['target'];
 
 ?>
+<script type="text/javascript">
+function addToDistribution() {
+  var id = <?php echo $currentID;?>;
+  console.log(id);
+}
+</script>
 <br clear="all"/>
 <table >
 <?php
@@ -65,7 +71,7 @@ if($_GET['deleteProduct']){
 <?php
 echo "<form name='sendValue' method='POST' action='".$_SERVER['PHP_SELF']."?year=".$listYear.
   "&month=".$listMonth."&day=".$listDay."&currentID=".$currentID."&invoiceID=".$invoiceID.
-  "&target=".$target."&tab=admin:admin_sales:invoice:editinvoice'>";
+  "&target=".encodeURIComponent($target)."&tab=admin:admin_sales:invoice:editinvoice'>";
 /*
 $listYear=$_GET['year'];
 $listMonth=$_GET['month'];
@@ -159,6 +165,13 @@ echo $row2['comments'];
 <br clear="all"/>
 <br clear="all"/>
 <input type="submit" name="submit_notes" class = "submitbutton" value="Update Notes" >
+<!--
+<br clear="all"/>
+<br clear="all"/>
+<input type="button" name="dist" class = "submitbutton" 
+ value="Add Distribution Records for Current Invoice" 
+ onclick="addToDistribution();">
+-->
 </form>
 
 

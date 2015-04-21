@@ -1,6 +1,8 @@
 <?php session_start();?>
 
-<form name='form' method='POST' action='distributionTable.php?tab=admin:admin_sales:distribution:distribution_report'>
+<form name='form' method='GET' action='distributionTable.php'>
+<input type="hidden" name="tab" 
+   value='admin:admin_sales:distribution:distribution_report'>
 
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
@@ -28,7 +30,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 $sql = "SELECT crop FROM plant WHERE active=1 union SELECT product FROM product";
 $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
-	echo "<option value='".$row[0]."'>".$row[0]."</option>";
+	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
 }
 ?>
 </select></div>
@@ -42,7 +44,7 @@ while ($row = mysql_fetch_array($result)) {
 $sql = "SELECT targetName FROM targets";
 $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
-	echo "<option value='".$row[0]."'>".$row[0]."</option>";
+	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
 }
 ?>
 </select><div>

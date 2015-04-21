@@ -25,7 +25,7 @@ if ($active == 1) {
 
 <?php
 echo "<form name='form' method='post' action=\"".$SERVER['PHP_SELF'].
-   "?tab=admin:admin_delete:deletesoil:deletecompost&pileID=".encodeURIComponent($pileID)."\">";
+   "?tab=admin:admin_delete:deleteother:deletecompost&pileID=".encodeURIComponent($pileID)."\">";
 
 echo "<H3> Edit Compost Record </H3>";
 echo '<br clear="all"/>';
@@ -75,7 +75,7 @@ if ($_POST['submit']) {
    } else {
       echo "<script>alert(\"Entered data successfully!\");</script> \n";
       echo '<meta http-equiv="refresh" content="0;';
-     echo 'URL=compostPileTable.php?tab=admin:admin_delete:deletesoil:deletecompostpile">';
+     echo 'URL=compostPileTable.php?tab=admin:admin_delete:deleteother:deletecompostpile">';
    }
 }
 ?>

@@ -187,5 +187,6 @@
             return false;
         }
         alert('Irrigation Form Successfully Submitted!');
+        return true;
     }
 </script>

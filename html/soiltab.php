@@ -225,12 +225,25 @@ echo '</ul>';
 </div>
 
 <div id="tspray" style="display:none;">
-<div class="tabs tabs2">
+<?php
+if ($_SESSION['admin']) {
+   echo '<div class="tabs tabs3">';
+} else {
+   echo '<div class="tabs tabs2">';
+}
+?>
 <ul>
 <li id="li_tspray_input">  
    <a href="/Soil/Tspray/tSpray.php?tab=soil:soil_spray:tspray:tspray_input" id = "tspray_input_a" class="inactivetab">Input Form</a> </li>
 <li id="li_tspray_report">  
    <a href="/Soil/Tspray/reportChooseDate.php?tab=soil:soil_spray:tspray:tspray_report" id = "tspray_report_a" class="inactivetab">Report</a> </li>
+<?php
+if ($_SESSION['admin']) {
+echo '<li id="li_tspray_edit_a">  
+   <a href="/Admin/Delete/tsprayReport.php?tab=soil:soil_spray:tspray:tspray_edit" id = "tspray_edit_a" class="inactivetab">Edit/Delete</a> </li>';
+
+}
+?>
 </ul>
 <?php createBR(); ?>
 <!--

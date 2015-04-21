@@ -3,6 +3,7 @@ session_start();
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $farm = $_SESSION['db'];
 ?>
 <script type="text/javascript">
@@ -47,7 +48,7 @@ console.log(active);
 }
 </script>
 
-<h3> Edit/Delete Plant </h3>
+<h3> Edit/Delete Crop</h3>
 <br>
 <form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
 <label for="crop"><b>Crop:&nbsp;</b></label>
@@ -98,12 +99,12 @@ if ($_SESSION['sales_invoice']) {
 <?php
 if(!empty($_POST['submit'])) {
    $crop = escapehtml($_POST['crop']);
-   $rename = escapehtml($_POST['rename']);
+   $rename = escapehtml(strtoupper($_POST['rename']));
    $active = $_POST['active'];
    if ($_SESSION['sales_invoice']) {
       $dh_units = escapehtml($_POST['dh_units']);
       $units_per_case = escapehtml($_POST['units_per_case']);
-      $query = "UPDATE plant SET crop=upper('".$rename."'), dh_units='".$dh_units."', units_per_case=".
+      $query = "UPDATE plant SET crop='".$rename."', dh_units='".$dh_units."', units_per_case=".
        $units_per_case.", active= ".$active." WHERE crop='".$crop."'";
       $sql = mysql_query($query) or die(mysql_error());
       if (!$sql) {

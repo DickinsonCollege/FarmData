@@ -7,7 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="soil">
-<form name='form' method='post' action="incorpTable.php?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report">
+<form name='form' method='get' action="incorpTable.php">
+<input type="hidden" name="tab" value="soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report">
 <h3 class="hi"> Incorporation Report</h3>
 <br clear="all"/>
 <label for="from">From:&nbsp; </label>

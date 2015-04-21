@@ -53,7 +53,7 @@ if(isset($_POST['submit'])) {
          " between '".  $year."-".$month."-".$day."' AND '".$tcurYear."-".
          $tcurMonth."-".$tcurDay.
          "' and invoice_master.invoice_no=invoice_entry.invoice_no ".
-         "and target like '".$target.
+         "and target like '".escapeHTML($target).
          "' group by date(salesDate), invoice_master.invoice_no, comments".
          " order by salesDate,invoice_no";
       $result=mysql_query($sql);

@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='POST' action='gh_table.php?tab=seeding:flats:flats_report'>
+<form name='form' method='GET' action='gh_table.php'>
+<input type="hidden" name="tab" value="seeding:flats:flats_report">
 <h3> Tray Seeding Report</h3>
 <br clear="all"/>
 <?php

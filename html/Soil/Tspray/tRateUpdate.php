@@ -8,10 +8,15 @@ while ($row=mysql_fetch_array($result)) {
 $ind=$row['TRateMin'];
 echo "<option value=".$row['TRateDefault'].">".$row['TRateDefault']."</option> \n";
 
+$formatDif=number_format($row['dif'],2,'.','');
+if ($formatDif <= 0.1) {
+   $formatDif = 0.1;
+}
+
 while($ind<=$row['TRateMax']){
 echo "<option value=\"".$ind."\">".$ind."</option> \n";
-echo $formatDif=number_format($row['dif'],2,'.','');
-$ind=$ind+$formatDif;
+// echo $formatDif=number_format($row['dif'],2,'.','');
+   $ind=$ind+$formatDif;
 }
 
 

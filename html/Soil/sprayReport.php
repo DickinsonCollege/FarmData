@@ -1,5 +1,6 @@
 <?php session_start(); ?>
-<form name='form' method='POST' action='sprayTable.php?tab=soil:soil_spray:bspray:bspray_report'>
+<form name='form' method='GET' action='sprayTable.php'>
+<input type="hidden" name="tab" value='soil:soil_spray:bspray:bspray_report'>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';

@@ -3,18 +3,23 @@
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
-<form name='form' method='POST' action='/down.php'>
 <?php
-$year = $_POST['year'];
-$month = $_POST['month'];
-$day = $_POST['day'];$tcurYear = $_POST['tyear'];
-$tcurMonth = $_POST['tmonth'];
-$tcurDay = $_POST['tday'];
-$genSel = $_POST['genSel'];
-$crop = escapehtml($_POST['transferredCrop']);
-$fieldID = escapehtml($_POST['fieldID']);
-$sql="Select fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft,".
+if(isset($_GET['id'])){
+   $sqlDel="DELETE FROM transferred_to WHERE id=".$_GET['id'];
+   mysql_query($sqlDel);
+   echo mysql_error();
+}
+$year = $_GET['year'];
+$month = $_GET['month'];
+$day = $_GET['day'];$tcurYear = $_GET['tyear'];
+$tcurMonth = $_GET['tmonth'];
+$tcurDay = $_GET['tday'];
+$crop = escapehtml($_GET['transferredCrop']);
+$genSel = $_GET['genSel'];
+$fieldID = escapehtml($_GET['fieldID']);
+$sql="Select id, username, fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft,".
   " transdate,datediff(transdate,seedDate) as diffdate,flats, gen, hours, comments ".
   " from  transferred_to where crop like '".$crop."' and fieldID like '".
   $fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".$day.
@@ -40,7 +45,6 @@ if ($crop != "%") {
    echo mysql_error();
 }
 
-echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
 $result=mysql_query($sql);
 echo mysql_error();
 echo "<table>";
@@ -70,7 +74,11 @@ if ($_SESSION['gens']) {
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
-echo "<th><center> Comments</center></th></tr>";
+echo "<th><center> Comments</center></th>";
+if ($_SESSION['admin']) {
+   echo "<th>User</th><th>Edit</th><th>Delete</th>";
+}
+echo "</tr>";
    while ($row= mysql_fetch_array($result)) {
         echo "<tr><td>";
         echo $row['crop'];
@@ -81,41 +89,56 @@ echo "<th><center> Comments</center></th></tr>";
         if ($row['seedDate'] == '0000-00-00') {
            echo "N/A";
         } else {
-	   echo $row['seedDate'];
+      echo $row['seedDate'];
         }
         echo "</td><td>";
-	//echo str_replace("-","/",$row['transdate']);
+   //echo str_replace("-","/",$row['transdate']);
         echo $row['transdate'];
         echo "</td><td>";
         echo $row['diffdate'];
         echo "</td><td>";
         echo number_format((float) $row['bedft'], 1, '.', '');
-	// echo $row['bedft'];
+   // echo $row['bedft'];
         echo "</td><td>";
-	echo $row['rowsBed'];
+   echo $row['rowsBed'];
         echo "</td><td>";
-	// echo $row['rowft'];
+   // echo $row['rowft'];
         echo number_format((float) $row['rowft'], 1, '.', '');
         echo "</td><td>";
-	echo $row['flats'];
+   echo $row['flats'];
         echo "</td><td>";
    if ($_SESSION['gens']) {
         echo $row['gen'];
-	echo "</td><td>";
+   echo "</td><td>";
    }
    if ($_SESSION['labor']) {
-        echo number_format((float) $row['hours'], 2, '.', '');
-	echo "</td><td>";
+     echo number_format((float) $row['hours'], 2, '.', '');
+     echo "</td><td>";
    }
-        echo $row['comments'];
-        echo "</td></tr>";
+   echo $row['comments'];
+   if ($_SESSION['admin']) {
+      echo "<td>".$row['username']."</td>";
+      echo "<td><form method='POST' action=\"transEdit.php?month=".$month."&day=".$day."&year=".$year.
+         "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+         "&transferredCrop=".encodeURIComponent($crop).
+         "&genSel=".$genSel."&fieldID=".encodeURIComponent($_GET['fieldID']).
+         "&tab=seeding:transplant:transplant_report&submit=Submit\">";
+      echo "<input type='submit' class='editbutton' value='Edit'></form></td>";
+      echo "<td><form method='POST' action=\"transTable.php?month=".$month."&day=".$day."&year=".$year.
+         "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+         "&transferredCrop=".encodeURIComponent($crop).
+         "&genSel=".$genSel."&fieldID=".encodeURIComponent($_GET['fieldID']).
+         "&tab=seeding:transplant:transplant_report&submit=Submit\">";
+      echo "<input type='submit' class='deletebutton' value='Delete' onclick='return warn_delete();'></form></td>";
+   }
+   echo "</td></tr>";
    }
    echo "</table>";
    echo '<br clear="all"/>';
    if ($crop != "%") {
    while ($row2 = mysql_fetch_array($avg)) {
         $formatNum=number_format($row2['avg(diffdate)'],2,'.','');
-	echo "<label for='average'>Average Days in Tray: &nbsp</label> <input style='width: 100px;' class='textbox2'type ='text' name='avgDays' disabled value=".$formatNum.">";
+   echo "<label for='average'>Average Days in Tray: &nbsp</label> <input style='width: 100px;' class='textbox2'type ='text' name='avgDays' disabled value=".$formatNum.">";
    }
    echo '<br clear="all"/>';
    while($row3 = mysql_fetch_array($btotalResult)) {
@@ -128,11 +151,13 @@ echo "<th><center> Comments</center></th></tr>";
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
 }
+echo "<form name='form' method='POST' action='/down.php'>";
 echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
+echo '</form>';
 
 if (!$result||(!$avg && $crop != "%")) {
         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
 }
-echo '</form>';
 echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:transplant:transplant_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 ?>

@@ -26,7 +26,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
       
       echo "<td><form method=\"POST\" action=\"compostPileEdit.php?&pileID=".
          encodeURIComponent($row['pileID']).
-        "&tab=admin:admin_delete:deletesoil:deletecompostpile&submit=Submit\">";
+        "&tab=admin:admin_delete:deleteother:deletecompostpile&submit=Submit\">";
       echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"></form> </td>";
       
       echo "</tr>";

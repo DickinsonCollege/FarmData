@@ -31,7 +31,7 @@ if(!empty($_POST['submit'])) {
    }
 }
 ?>
-<form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>?tab=admin:admin_delete:deletesoil:deletematerials:deletedryfertilizermaterial'>
+<form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>?tab=admin:admin_delete:deletematerials:deletedryfertilizermaterial'>
 
 <label for="name">Fertilizer Name:&nbsp;</label>
 <div id='name2' class='styled-select'>

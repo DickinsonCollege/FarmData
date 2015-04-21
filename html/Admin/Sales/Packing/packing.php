@@ -68,6 +68,9 @@ function changeColor(rowNum) {
 function getUnit(row) {
    var crop = document.getElementById("crop" + row).value;
    var unit = document.getElementById("unit" + row);
+console.log(crop);
+console.log(escapeHtml(crop));
+console.log(units);
    var unitarr = units[escapeHtml(crop)];
    var htm = "<div class='styled-select' id='unit" + row + "div' name='unit" + row+ "div'>" +
      "<select  style='width:100%' name='unit" + row + "' id='unit" + row + "'>";
@@ -105,7 +108,8 @@ function getAmt(row) {
 function addall(row){
    var sum = 0;
    for (var i = 0; i < targs.length; i++) {
-      sum += Number(document.getElementById(targs[i].replace(/ /g, "_") + row).value);
+      // sum += Number(document.getElementById(targs[i].replace(/ /g, "_") + row).value);
+      sum += Number(document.getElementById(encodeURIComponent(targs[i]) + row).value);
    }
    document.getElementById('total' + row).value = sum;
    changeColor(row);
@@ -176,7 +180,8 @@ function addRow(crp, crpArr) {
 
    for (var i = 0; i < targs.length; i++) {
       cell = row.insertCell(i + 4);
-      var targ = targs[i].replace(/ /g, "_");
+      //var targ = targs[i].replace(/ /g, "_");
+      var targ = encodeURIComponent(targs[i]);
       htm = "<div id='" + targ + rowNum + "div' name='" + targ + rowNum + "div'>" +
         " <input type='text' style='width:100%;'";
       if (crp != "") {
@@ -280,7 +285,8 @@ function show_confirm() {
          exists[row] = crop + grade;
          row++;
          for (var i = 0; i < targs.length; i++) {
-            var targ = targs[i].replace(/ /g, "_");
+            // var targ = targs[i].replace(/ /g, "_");
+            var targ = encodeURIComponent(targs[i]);
             var val = document.getElementById(targ + j).value;
             if (!isFinite(val) || val < 0) {
                 alert("Invalid value for " + targs[i] + " in row " + row + "!");
@@ -372,7 +378,8 @@ if (isset($_POST['insertRows'])) {
          }
          for ($j = 0; $j < count($targs); $j++) {
             $targ = $targs[$j];
-            $targr = str_replace(" ", "_", $targ);
+            // $targr = str_replace(" ", "_", $targ);
+            $targr = encodeURIComponent($targ);
             $val = $_POST[$targr.$i];
             if ($val > 0) {
                $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".

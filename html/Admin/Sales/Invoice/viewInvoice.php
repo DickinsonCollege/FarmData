@@ -7,10 +7,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 <?php
 if(isset($_GET['invoice'])){
-   $id=escapehtml($_GET['invoice']);
-   $total=escapehtml($_GET['total']);
-   $target=escapehtml($_GET['target']);
-   $invoiceID=escapehtml($_GET['invoiceID']);
+   $id=$_GET['invoice'];
+   $total=$_GET['total'];
+   $target=$_GET['target'];
+   $invoiceID=$_GET['invoiceID'];
 } 
 
 $sql = "select farmname from config";

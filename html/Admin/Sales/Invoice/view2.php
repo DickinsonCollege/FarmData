@@ -6,10 +6,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 if(isset($_GET['invoice'])){
    $invoiceID=$_GET['invoice'];
-   $total=escapehtml($_GET['total']);
+   $total=$_GET['total'];
    $invoiceDate=$_GET['salesDate'];
-   $target=escapehtml($_GET['target']);
-   $invoiceIDNum=escapehtml($_GET['invoiceID']);
+   $target=$_GET['target'];
+   $invoiceIDNum=$_GET['invoiceID'];
 } 
 
 $sql = "select farmname, farmemail, sig from config";

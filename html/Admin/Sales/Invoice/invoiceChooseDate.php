@@ -35,7 +35,7 @@ $result=mysql_query($sql);
 while ($row1 =  mysql_fetch_array($result)){
   $targ = $row1['targetName'];
   if ($targ != 'Loss') {
-     echo '<option value= "'.$targ.'">'.$targ.'</option>';
+     echo '<option value= "'.escapeHTML($targ).'">'.$targ.'</option>';
   }
 }
 ?>

@@ -3,21 +3,24 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-$farm = $_SESSION['db'];
-?>
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
-<form name='form' method='POST' action='/down.php'>
 
-<?php
-$year = $_POST['year'];
-$month = $_POST['month'];
-$day = $_POST['day'];
-$tcurYear = $_POST['tyear'];
-$tcurMonth = $_POST['tmonth'];
-$tcurDay = $_POST['tday'];
-$genSel = $_POST['genSel'];
-$crop = escapehtml($_POST['crop']);
-$sql="Select seedDate,crop,numseeds_planted,flats,cellsFlat,varieties,gen, comments from gh_seeding where crop like '".
+if (isset($_GET['id'])) {
+   $sqlDel="DELETE FROM gh_seeding WHERE id=".$_GET['id'];
+   mysql_query($sqlDel);
+   echo mysql_error();
+}
+$year = $_GET['year'];
+$month = $_GET['month'];
+$day = $_GET['day'];
+$tcurYear = $_GET['tyear'];
+$tcurMonth = $_GET['tmonth'];
+$tcurDay = $_GET['tday'];
+$genSel = $_GET['genSel'];
+$crop = escapehtml($_GET['crop']);
+
+$sql="Select id, username, seedDate,crop,numseeds_planted,flats,cellsFlat,varieties,gen, comments from gh_seeding where crop like '".
    $crop."' and gen like '".$genSel."' and seedDate between '".$year."-".$month."-".$day."' AND '".
    $tcurYear."-".$tcurMonth."-".$tcurDay."' order by seedDate ";
 if ($crop!="%") {
@@ -55,7 +58,11 @@ echo "<th>Trays</th><th>Cells/Tray</th><th>Varieties</th>";
 if ($_SESSION['gens']) {
    echo "<th>Succ&nbsp;#</th>";
 }
-echo "<th> Comments</th></tr>";
+echo "<th> Comments</th>";
+if ($_SESSION['admin']) {
+   echo "<th>User</th><th>Edit</th><th>Delete</th>";
+}
+echo "</tr>";
 while ( $row = mysql_fetch_array($result)) {
    echo "<tr><td>";
    echo $row['seedDate'];
@@ -77,7 +84,26 @@ while ( $row = mysql_fetch_array($result)) {
         echo "</td><td>";
    }
    echo $row['comments'];
-   echo "</td></tr>";
+   echo "</td>";
+   if ($_SESSION['admin']) {
+      echo "<td>".$row['username']."</td>";
+      echo "<td><form method='POST' action=\"ghEdit.php?month=".$month."&day=".$day."&year=".$year.
+      "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
+      "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop'])."&genSel=".$genSel.
+      "&tab=seeding:flats:flats_report&submit=Submit\">";
+      echo "<input type='submit' class='editbutton' value='Edit'";
+      echo 'onclick="return show_warning();">';
+      echo "</form></td>";
+
+      echo "<td><form method='POST' action=\"gh_table.php?month=".$month."&day=".$day."&year=".$year.
+      "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay.
+      "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop'])."&genSel=".$genSel.
+      "&tab=seeding:flats:flats_report&submit=Submit\">";
+      echo "<input type='submit' class='deletebutton' value='Delete'";
+      echo 'onclick="return show_delete_warning();">';
+      echo "</form></td>";
+   }
+   echo "</tr>";
 }
 echo "</table>";
 if($crop != '%' && !$_SESSION['bigfarm']) {
@@ -86,23 +112,24 @@ if($crop != '%' && !$_SESSION['bigfarm']) {
      echo mysql_error();
      while($row5 = mysql_fetch_array($totalResult)){
         echo '<label for="total"> Total Number of Seeds Planted:&nbsp;</label>';
-	echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalSum'].'>';
+   echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalSum'].'>';
      }
      echo "<br clear=\"all\"/>";
      $totalResult = mysql_query($totalf);
      echo mysql_error();
      while($row5 = mysql_fetch_array($totalResult)){
         echo '<label for="total"> Total Number of Trays Planted:&nbsp;</label>';
-	echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalFlats'].'>';
+   echo ' <input type="textbox" name="total" style="float: left;width: 100px;" id="total" class="textbox2" disabled value='.$row5['totalFlats'].'>';
      }
 }
         echo "<br clear=\"all\"/>";
         if($crop != "%") {
         echo "<br clear=\"all\"/>";
         }
-	echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+   echo "<form name='form' method='POST' action='/down.php'>";
+   echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
+   echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
 echo '</form>';
 echo '<form method="POST" action = "/Seeding/gh_seedingReport.php?tab=seeding:flats:flats_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 
-echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
 ?>

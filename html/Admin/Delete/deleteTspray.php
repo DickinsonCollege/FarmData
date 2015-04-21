@@ -3,6 +3,7 @@
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
 <?php
    // delete from tSprayMaster, tSprayWater, tSprayField.
@@ -67,13 +68,14 @@ echo mysql_error();
         "&tmonth=".$_GET['tmonth']."&tyear=".$_GET['tyear']."&tday=".$_GET['tday'].
         "&id=".$rowM['id']."&complete=".$rowM['complete']."&initials=".
         escapehtml($rowM['initials']).
-        "&tab=admin:admin_delete:deletesoil:deletespray:tractorspray&submit=Submit'>";
+        "&tab=soil:soil_spray:tspray:tspray_edit'>";
    echo "<input type='submit' class='editbutton' value='Edit'></form></td>";
    echo "<td><form method='POST' action='deleteTspray.php?month=".$_GET['month'].
       "&day=".$_GET['day']."&year=".$_GET['year']."&tmonth=".$_GET['tmonth'].
       "&tyear=".$_GET['tyear']."&tday=".$_GET['tday']."&id=".$rowM['id'].
-      "&tab=admin:admin_delete:deletesoil:deletespray:tractorspray&submit=Submit'>";
-   echo "<input type='submit' class='deletebutton' value='Delete'></form></td></tr>";
+      "&tab=soil:soil_spray:tspray:tspray_edit'>";
+   echo "<input type='submit' class='deletebutton' value='Delete'";
+   echo "onclick='return warn_delete();'></form></td></tr>";
 
    }
 echo '</table>';

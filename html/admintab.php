@@ -231,13 +231,13 @@ echo '<li id="li_addtask">
 <?php
 echo '<div class="tabs tabs'.$_SESSION['num_edit'].'">';
 echo '<ul>';
-echo '<li id="li_deleteharvest">  
-   <a href="/Admin/Delete/harvestReport.php?tab=admin:admin_delete:deleteharvest" id = "deleteharvest_a" class="inactivetab">Harvest</a> </li>';
-echo '<li id="li_deleteseed">  
-   <a href="/design.php?tab=admin:admin_delete:deleteseed" id = "deleteseed_a" class="inactivetab">Seed</a> </li>';
-if ($_SESSION['soil']) {
-echo '<li id="li_deletesoil">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil" id = "deletesoil_a" class="inactivetab">Soil</a> </li>';
+echo '<li id="li_deletecrop">  
+   <a href="/design.php?tab=admin:admin_delete:deletecrop" id = "deletecrop_a" class="inactivetab">Crop</a> </li>';
+echo '<li id="li_deleteequip">  
+   <a href="/design.php?tab=admin:admin_delete:deleteequip" id = "deleteequip_a" class="inactivetab">Equipment</a> </li>';
+if ($_SESSION['num_edit_soil_material'] > 0) {
+echo '<li id="li_deletematerials">  
+   <a href="/design.php?tab=admin:admin_delete:deletematerials" id = "deletematerials_a" class="inactivetab">Material</a> </li>';
 }
 if ($_SESSION['sales']) {
 echo '<li id="li_deletesales">  
@@ -252,196 +252,19 @@ echo '<li id="li_deleteother">
 </div>
 
 <div id="deletesales" style="display:none;">
-<div class="tabs tabs<?php echo $_SESSION['num_edit_sales'];?>">
-<ul>
-<?php
-if ($_SESSION['sales_packing']) {
-   echo '
-<li id="li_delete_packing">  
-   <a href="/Admin/Delete/packingReport.php?tab=admin:admin_delete:deletesales:delete_packing" id="delete_packing_a" class="inactivetab">Packing</a> </li>';
-  echo '
-<li id="li_delete_dist">  
-   <a href="/Admin/Delete/distributionReport.php?tab=admin:admin_delete:deletesales:delete_dist" id="delete_dist_a" class="inactivetab">Distribution</a> </li>';
-}
-if ($_SESSION['sales_invoice']) {
-   echo '
-<li id="li_delete_target">  
-   <a href="/Admin/Delete/deleteTarget.php?tab=admin:admin_delete:deletesales:delete_target" id="delete_target_a" class="inactivetab">Sales Target</a> </li>';
-   echo '
-<li id="li_delete_targetemail">  
-   <a href="/Admin/Delete/targetEmailTable.php?tab=admin:admin_delete:deletesales:delete_targetemail" id="delete_targetemail_a" class="inactivetab">Target Email</a> </li>';
-   echo '
-<li id="li_delete_farmemail">  
-   <a href="/Admin/Delete/farmEmailTable.php?tab=admin:admin_delete:deletesales:delete_farmemail" id="delete_farmemail_a" class="inactivetab">Farm Email</a> </li>';
-}
-?>
-</ul>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deletesoil" style="display:none;">
-<?php
-echo '<div class="tabs tabs'.$_SESSION['num_edit_soil'].'">';
-echo '<ul>';
-if ($_SESSION['fertility']) {
-echo '<li id="li_deletefert"> 
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletefert" id = "deletefert_a" class="inactivetab">Fertility</a> </li>';
-}
-if ($_SESSION['spraying']) {
-echo '<li id="li_deletespray">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletespray" id = "deletespray_a" class="inactivetab">Spraying</a> </li>';
-}
-if ($_SESSION['scouting']) {
-echo '<li id="li_deletescout">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletescout" id = "deletescout_a" class="inactivetab">Scouting</a> </li>';
-}
-if ($_SESSION['compost']) {
-echo '<li id="li_deletecompostpile">
-	<a href="/Admin/Delete/compostPileTable.php?tab=admin:admin_delete:deletesoil:deletecompostpile" id="deletecompostpile_a" class="inactivetab">Compost&nbsp;Pile</a></li>';
-}
-if ($_SESSION['spraying'] || $_SESSION['fertilizer']) {
-echo '<li id="li_deletematerials">
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletematerials" id="deletematerials_a" class="inactivetab">Material</a></li>';
-}
-echo '</ul>';
-?>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deletespray" style="display:none;">
-<?php
-echo '<div class="tabs tabs'.$_SESSION['num_spray'].'">';
-echo '<ul>';
-if ($_SESSION['backspray']) {
-echo '<li id="li_deletebspray">  
-   <a href="/Admin/Delete/bsprayReport.php?tab=admin:admin_delete:deletesoil:deletespray:deletebspray" id = "deletebspray_a" class="inactivetab">Backpack Spraying</a> </li>';
-}
-if ($_SESSION['tractorspray']) {
-echo '<li id="li_tractorspray">  
-   <a href="/Admin/Delete/tsprayReport.php?tab=admin:admin_delete:deletesoil:deletespray:tractorspray" id = "tractorspray_a" class="inactivetab">Tractor Spraying</a> </li>';
-}
-echo '</ul>';
-?>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deleteseed" style="display:none;">
-<div class="tabs tabs4">
-<ul>
-<li id="li_deletedirplant">  
-   <a href="/Admin/Delete/dir_seedingReport.php?tab=admin:admin_delete:deleteseed:deletedirplant" id = "deletedirplant_a" class="inactivetab">Direct Seeding</a> </li>
-<li id="li_deleteflats">  
-   <a href="/Admin/Delete/gh_seedingReport.php?tab=admin:admin_delete:deleteseed:deleteflats" id = "deleteflats_a" class="inactivetab">Tray Seeding</a> </li>
-<li id="li_deletetrans">  
-   <a href="/Admin/Delete/transferred_Report.php?tab=admin:admin_delete:deleteseed:deletetrans" id = "deletetrans_a" class="inactivetab">Transplanting</a> </li>
-<li id="li_editflat">  
-   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteseed:editflat" id = "editflat_a" class="inactivetab">Tray&nbsp;Size</a> </li>
-</ul>
-<?php createBR(); ?>
-<!--
-<br clear="all"/>
--->
-</div>
-</div>
-
-<div id="deletefert" style="display:none;">
-<?php
-echo '<div class="tabs tabs'.$_SESSION['num_edit_soil_fertility'].'">';
-echo '<ul>';
-if ($_SESSION['cover']) {
-echo '<li id="li_deletecover">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover" id = "deletecover_a" class="inactivetab">Cover&nbsp;Crop</a> </li>';
-}
-if ($_SESSION['compost']) {
-echo '<li id="li_deletecompost">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletefert:deletecompost" id = "deletecompost_a" class="inactivetab">Compost</a> </li>';
-}
-if ($_SESSION['fertilizer']) {
-echo '<li id="li_deletefertilizer">  
-   <a href="/design.php?tab=admin:admin_delete:deletesoil:deletefert:deletefertilizer" id = "deletefertilizer_a" class="inactivetab">Fertilizer</a> </li>';
-}
-if ($_SESSION['tillage']) {
-echo '<li id="li_deletetill">  
-   <a href="/Admin/Delete/tillageReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletetill" id = "deletetill_a" class="inactivetab">Tillage</a> </li>';
-}
-?>
-</ul>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deletecompost" style="display:none;">
-<div class="tabs tabs4">
-<ul>
-<li id="li_deletecompostaccum">  
-   <a href="/Admin/Delete/compostAccum_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecompost:deletecompostaccum" id = "deletecompostaccum_a" class="inactivetab">Accumulation</a> </li>
-<li id="li_deletecompostact">  
-   <a href="/Admin/Delete/compostAct_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecompost:deletecompostact" id = "deletecompostact_a" class="inactivetab">Activity</a> </li>
-<li id="li_deletecomposttemp">  
-   <a href="/Admin/Delete/compostTemp_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecompost:deletecomposttemp" id = "deletecomposttemp_a" class="inactivetab">Temperature</a> </li>
-<li id="li_deletecompostapp">  
-   <a href="/Admin/Delete/compostReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletecompost:deletecompostapp" id = "deletecompostapp_a" class="inactivetab">Application</a> </li>
-</ul>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deletecover" style="display:none;">
 <div class="tabs tabs3">
 <ul>
-<li id="li_deletecoverseed">  
-   <a href="/Admin/Delete/cover_report.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverseed" id = "deletecoverseed_a" class="inactivetab">Seeding</a> </li>
-<li id="li_deletecoverincorp">  
-   <a href="/Admin/Delete/incorpReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverincorp" id = "deletecoverincorp_a" class="inactivetab">Incorporation</a> </li>
-<li id="li_deletecoverCrop">  
-   <a href="/Admin/Delete/deleteCoverCrop.php?tab=admin:admin_delete:deletesoil:deletefert:deletecover:deletecoverCrop" id = "deletecoverCrop_a" class="inactivetab">Cover&nbsp;Crop</a> </li>
+<li id="li_delete_target">  
+   <a href="/Admin/Delete/deleteTarget.php?tab=admin:admin_delete:deletesales:delete_target" id="delete_target_a" class="inactivetab">Sales Target</a> </li>
+<li id="li_delete_targetemail">  
+   <a href="/Admin/Delete/targetEmailTable.php?tab=admin:admin_delete:deletesales:delete_targetemail" id="delete_targetemail_a" class="inactivetab">Target Email</a> </li>
+<li id="li_delete_farmemail">  
+   <a href="/Admin/Delete/farmEmailTable.php?tab=admin:admin_delete:deletesales:delete_farmemail" id="delete_farmemail_a" class="inactivetab">Farm Email</a> </li>
 </ul>
 <?php createBR(); ?>
 </div>
 </div>
 
-<div id="deletefertilizer" style="display:none;">
-<?php
-echo '<div class="tabs tabs'.$_SESSION['num_fertilizer'].'">';
-echo '<ul>';
-if ($_SESSION['dryfertilizer']) {
-echo '<li id="li_deletedryfertilizer">
-	<a href="/Admin/Delete/dryFertilizerReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletefertilizer:deletedryfertilizer" id="deletedryfertilizer_a" class="inactivetab">Dry&nbsp;Fertilizer</a></li>';
-}
-if ($_SESSION['liquidfertilizer']) {
-echo '<li id="li_deleteliquidfertilizer">
-	<a href="/Admin/Delete/liquidFertilizerReport.php?tab=admin:admin_delete:deletesoil:deletefert:deletefertilizer:deleteliquidfertilizer" id="deleteliquidfertilizer_a" class="inactivetab">Liquid&nbsp;Fertilizer</a></li>';
-}
-?>
-</ul>
-<?php createBR(); ?>
-</div>
-</div>
-
-<div id="deletescout" style="display:none;">
-<?php
-echo '<div class="tabs tabs'.$_SESSION['num_scout'].'">';
-echo '<ul>';
-if ($_SESSION['insect']) {
-echo '<li id="li_deletepestscout">  
-   <a href="/Admin/Delete/pestReport.php?tab=admin:admin_delete:deletesoil:deletescout:deletepestscout" id = "deletepestscout_a" class="inactivetab">Insect</a> </li>';
-}
-if ($_SESSION['weed']) {
-echo '<li id="li_deleteweedscout">  
-   <a href="/Admin/Delete/weedScouting.php?tab=admin:admin_delete:deletesoil:deletescout:deleteweedscout" id = "deleteweedscout_a" class="inactivetab">Weed</a> </li>';
-}
-if ($_SESSION['disease']) {
-echo '<li id="li_deletediseasescout">  
-   <a href="/Admin/Delete/diseaseReport.php?tab=admin:admin_delete:deletesoil:deletescout:deletediseasescout" id = "deletediseasescout_a" class="inactivetab">Disease</a> </li>';
-}
-echo '</ul>';
-?>
-<?php createBR(); ?>
-</div>
-</div>
 
 
 <div id="deletematerials" style="display:none;">
@@ -450,18 +273,52 @@ echo '<div class="tabs tabs'.$_SESSION['num_edit_soil_material'].'">';
 echo '<ul>';
 if ($_SESSION['dryfertilizer']) {
 echo '<li id="li_deletedryfertilizermaterial">
-	<a href="/Admin/Delete/deleteDryFertilizer.php?tab=admin:admin_delete:deletesoil:deletematerials:deletedryfertilizermaterial" id="deletedryfertilizermaterial_a" class="inactivetab">Dry Fertilizer</a></li>';
+	<a href="/Admin/Delete/deleteDryFertilizer.php?tab=admin:admin_delete:deletematerials:deletedryfertilizermaterial" id="deletedryfertilizermaterial_a" class="inactivetab">Dry Fertilizer</a></li>';
 }
 if ($_SESSION['liquidfertilizer']) {
 echo '<li id="li_deleteliquidfertilizermaterial">
-	<a href="/Admin/Delete/deleteLiquidFertilizer.php?tab=admin:admin_delete:deletesoil:deletematerials:deleteliquidfertilizermaterial" id="deleteliquidfertilizermaterial_a" class="inactivetab">Liquid Fertilizer</a></li>';
+	<a href="/Admin/Delete/deleteLiquidFertilizer.php?tab=admin:admin_delete:deletematerials:deleteliquidfertilizermaterial" id="deleteliquidfertilizermaterial_a" class="inactivetab">Liquid Fertilizer</a></li>';
 }
 if ($_SESSION['spraying']) {
 echo '<li id="li_deletespraymaterial">
-   <a href="/Admin/Delete/deleteSprayMaterial.php?tab=admin:admin_delete:deletesoil:deletematerials:deletespraymaterial" id="deletespraymaterial_a" class="inactivetab">Spray Material</a></li>';
+   <a href="/Admin/Delete/deleteSprayMaterial.php?tab=admin:admin_delete:deletematerials:deletespraymaterial" id="deletespraymaterial_a" class="inactivetab">Spray Material</a></li>';
 }
 echo '</ul>';
 ?>
+<?php createBR(); ?>
+</div>
+</div>
+
+<div id="deletecrop" style="display:none;">
+<div class="tabs tabs2">
+<ul>
+<li id="li_deleteunit">  
+   <a href="/Admin/Add/viewUnits.php?tab=admin:admin_delete:deletecrop:deleteunit" id = "deleteunit_a" class="inactivetab">Crop&nbsp;Unit</a> </li>
+<li id="li_deleteplant">
+   <a href="/Admin/Delete/deletePlant.php?tab=admin:admin_delete:deletecrop:deleteplant" id="deleteplant_a" class="inactivetab">Crop</a></li>
+</ul>
+<?php createBR(); ?>
+</div>
+</div>
+
+<div id="deleteequip" style="display:none;">
+<?php
+if ($_SESSION['tillage']) {
+   echo '<div class="tabs tabs2">';
+} else {
+   echo '<div class="tabs tabs1">';
+}
+?>
+<ul>
+<li id="li_editflat">  
+   <a href="/Admin/Delete/deleteFlat.php?tab=admin:admin_delete:deleteequip:editflat" id = "editflat_a" class="inactivetab">Tray&nbsp;Size</a> </li>
+<?php
+if ($_SESSION['tillage']) {
+echo '<li id="li_deletetractor">  
+   <a href="/Admin/Delete/deleteTractor.php?tab=admin:admin_delete:deleteequip:deletetractor" id = "deletetractor_a" class="inactivetab">Tractor</a> </li>';
+}
+?>
+</ul>
 <?php createBR(); ?>
 </div>
 </div>
@@ -470,18 +327,6 @@ echo '</ul>';
 <?php
 echo '<div class="tabs tabs'.$_SESSION['num_edit_other'].'">';
 echo '<ul>';
-if ($_SESSION['labor']) {
-echo '<li id="li_deletelabor">  
-   <a href="/design.php?tab=admin:admin_delete:deleteother:deletelabor" id = "deletelabor_a" class="inactivetab">Labor</a> </li>';
-}
-echo '<li id="li_deleteunit">  
-   <a href="/Admin/Add/viewUnits.php?tab=admin:admin_delete:deleteother:deleteunit" id = "deleteunit_a" class="inactivetab">Crop&nbsp;Unit</a> </li>';
-echo '<li id="li_deleteplant">
-   <a href="/Admin/Delete/deletePlant.php?tab=admin:admin_delete:deleteother:deleteplant" id="deleteplant_a" class="inactivetab">Plant</a></li>';
-if ($_SESSION['tillage']) {
-echo '<li id="li_deletetractor">  
-   <a href="/Admin/Delete/deleteTractor.php?tab=admin:admin_delete:deleteother:deletetractor" id = "deletetractor_a" class="inactivetab">Tractor</a> </li>';
-}
 echo '<li id="li_editfield">  
    <a href="/Admin/Add/editField.php?tab=admin:admin_delete:deleteother:editfield" id = "editfield_a" class="inactivetab">Field</a> </li>';
 echo '<li id="li_edituser">  <a href="/Admin/Add/';
@@ -491,6 +336,18 @@ if ($farm == "dfarm") {
    echo 'resetPassword.php';
 }
 echo '?tab=admin:admin_delete:deleteother:edituser" id = "edituser_a" class="inactivetab">User</a> </li>';
+if ($_SESSION['labor']) {
+echo '<li id="li_deletelaborT">  
+   <a href="/Admin/Delete/deleteTask.php?tab=admin:admin_delete:deleteother:deletelaborT" id = "deletelaborT_a" class="inactivetab">Labor&nbsp;Task</a> </li>';
+}
+if ($_SESSION['compost']) {
+echo '<li id="li_deletecompostpile">
+	<a href="/Admin/Delete/compostPileTable.php?tab=admin:admin_delete:deleteother:deletecompostpile" id="deletecompostpile_a" class="inactivetab">Compost&nbsp;Pile</a></li>';
+}
+if ($_SESSION['cover']) {
+echo '<li id="li_deletecoverCrop">  
+   <a href="/Admin/Delete/deleteCoverCrop.php?tab=admin:admin_delete:deleteother:deletecoverCrop" id = "deletecoverCrop_a" class="inactivetab">Cover&nbsp;Crop</a> </li>';
+}
 ?>
 </ul>
 <?php createBR(); ?>
@@ -500,21 +357,6 @@ echo '?tab=admin:admin_delete:deleteother:edituser" id = "edituser_a" class="ina
 </div>
 </div>
 
-<div id="deletelabor" style="display:none;">
-<?php
-echo '<div class="tabs tabs2">';
-echo '<ul>';
-echo '<li id="li_deletelaborR">  
-   <a href="/Admin/Delete/laborReport.php?tab=admin:admin_delete:deleteother:deletelabor:deletelaborR" id = "deletelaborR_a" class="inactivetab">Labor</a> </li>';
-echo '<li id="li_deletelaborT">  
-   <a href="/Admin/Delete/deleteTask.php?tab=admin:admin_delete:deleteother:deletelabor:deletelaborT" id = "deletelaborT_a" class="inactivetab">Labor&nbsp;Task</a> </li>';
-echo '</ul>';
- createBR(); ?>
-<!--
-<br clear="all"/>
--->
-</div>
-</div>
 
 <div id="admin_view" style="display:none;">
 <div class="tabs tabs3">

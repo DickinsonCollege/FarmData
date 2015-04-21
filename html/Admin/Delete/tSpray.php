@@ -320,7 +320,7 @@ if(!empty($_POST['submit'])) {
 
    echo '<meta http-equiv="refresh" content=0;URL="deleteTspray.php?year='.$origYear.'&month='.$origMonth.
         '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&crop='.$origCrop.
-        '&tab=admin:admin_delete:deletesoil:deletespray:tractorspray>';
+        '&tab=soil:soil_spray:tspray:tspray_edit>';
 }
 
 ?>

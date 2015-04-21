@@ -5,7 +5,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='POST' action='dir_table.php?tab=seeding:direct:direct_report'>
+<form name='form' method='GET' action='dir_table.php'>
+<input type="hidden" name="tab" value="seeding:direct:direct_report">
 <h3 class="hi">Direct Seeding Report </h3>
 <br clear="all"/>
 <label for='from'>From:&nbsp;</label>

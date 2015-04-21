@@ -3,29 +3,31 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
 
-<form name='form' method='POST' action='/down.php'>
 <?php
-if(isset($_POST['submit'])){
-   $year = $_POST['year'];
-   $month = $_POST['month'];
-   $day = $_POST['day'];
-   $tcurYear = $_POST['tyear'];
-   $tcurMonth = $_POST['tmonth'];
-   $tcurDay = $_POST['tday'];
-   $genSel = $_POST['genSel'];
-   $crop = escapehtml($_POST["crop"]);
-   $fieldID = escapehtml($_POST["fieldID"]);
-#   $sql = "SELECT hardate,fieldID, harvested.crop,yield,units,hours,comments FROM harvested,plant where hardate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and harvested.crop like '" .$_POST["crop"] ."' and plant.crop = harvested.crop and fieldID like '".$_POST['fieldID']."' order by hardate";
-   $sql = "SELECT gen, hardate,fieldID, harvested.crop,yield,unit,hours,comments FROM harvested where hardate BETWEEN '".
+   if (isset($_GET['id'])) {
+      $sqlDel="DELETE FROM harvested WHERE id=".$_GET['id'];
+      mysql_query($sqlDel);
+      echo mysql_error();
+   }
+   $year = $_GET['year'];
+   $month = $_GET['month'];
+   $day = $_GET['day'];
+   $tcurYear = $_GET['tyear'];
+   $tcurMonth = $_GET['tmonth'];
+   $tcurDay = $_GET['tday'];
+   $genSel = $_GET['genSel'];
+   $crop = escapehtml($_GET["crop"]);
+   $fieldID = escapehtml($_GET["fieldID"]);
+   $sql = "SELECT id, username, gen, hardate,fieldID, harvested.crop,yield,unit,hours,comments FROM harvested where hardate BETWEEN '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and harvested.crop like '" .$crop."' and fieldID like '".
       $fieldID."' and gen like '".$genSel."' order by hardate";
-   echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
    $sqldata = mysql_query($sql) or die("ERROR");
    echo "<table>";
-   $crp = $_POST["crop"];
+   $crp = $crop;
    if ($fieldID == "%") {
        $flb = "All Fields";
    } else {
@@ -66,7 +68,13 @@ if(isset($_POST['submit'])){
    if ($_SESSION['labor']) {
       echo "<th>Hours</th>";
    }
-   echo "<th> &nbsp;  Comments  </th></tr>";
+   echo "<th> &nbsp;  Comments  </th>";
+   if ($_SESSION['admin']) {
+      echo "<th>User</th>";
+      echo "<th>Edit</th>";
+      echo "<th>Delete</th>";
+   }
+   echo "</tr>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['hardate'];
@@ -88,8 +96,25 @@ if(isset($_POST['submit'])){
          echo "</td><td>";
       }
       echo $row['comments'];
-      echo "</td></tr>";
-      echo "\n";
+      echo "</td>";
+      if ($_SESSION['admin']) {
+         echo "<td>".$row['username']."</td>";
+         echo "<td><form method=\"POST\" action=\"harvestEdit.php?month=".$month."&day=".$day."&year=".$year.
+            "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+            "&crop=".encodeURIComponent($_GET['crop']).
+            "&fieldID=".encodeURIComponent($_GET['fieldID'])."&genSel=".$genSel.
+            "&tab=harvest:harvestReport&submit=Submit\">";
+         echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"></form> </td>";
+
+         echo "<td><form method=\"POST\" action=\"harvestTable.php?month=".$month."&day=".$day."&year=".$year.
+            "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+            "&crop=".encodeURIComponent($_GET['crop']).
+            "&fieldID=".encodeURIComponent($_GET['fieldID'])."&genSel=".$genSel.
+            "&tab=harvest:harvestReport&submit=Submit\">";
+         echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+         echo "onclick='return warn_delete();'></form></td>";
+      }
+      echo "</tr>";
    }
    echo "</table>";
    echo '<br clear="all"/>';
@@ -144,8 +169,9 @@ if(isset($_POST['submit'])){
       echo "</table>";
       echo "<br clear = 'all'>";
    }
-}
-        echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+echo "<form name='form' method='POST' action='/down.php'>";
+echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
+echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
 echo "</form>";
 echo '<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
 ?>

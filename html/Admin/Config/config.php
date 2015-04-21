@@ -11,7 +11,7 @@ $tabsize = array("num_top"=>7, "num_harvest"=>3, "num_soil"=>4, "num_fertility"=
  "num_spray"=>2, "num_scout"=>3, "num_admin"=>6, "num_add"=>6, "num_add_crop"=>3, "num_add_equip"=>4,
  "num_add_soil"=>5, "num_add_species"=>3, "num_add_other"=>3, "num_edit"=>5,
  "num_edit_soil"=>5, "num_edit_soil_fertility"=>4, "num_edit_soil_material"=>3,
- "num_edit_other"=>6, "num_view_graphs"=>4, "num_sales"=>4, "num_add_sales"=>4, "num_edit_sales"=>5);
+ "num_edit_other"=>5, "num_view_graphs"=>4, "num_sales"=>4, "num_add_sales"=>4, "num_edit_sales"=>3);
 //print_r($tabsize);
 $sql = "select * from config";
 $res = mysql_query($sql);
@@ -249,7 +249,6 @@ if (!empty($_POST['done'])) {
    if (!$_SESSION['soil']) {
       $tabsize['num_top']--;
       $tabsize['num_add']--;
-      $tabsize['num_edit']--;
    }
    if (!$_SESSION['fertility']) {
       $tabsize['num_soil']--;
@@ -258,6 +257,7 @@ if (!empty($_POST['done'])) {
    if (!$_SESSION['cover']) {
       $tabsize['num_fertility']--;
       $tabsize['num_add_soil']--;
+      $tabsize['num_edit_other']--;
       $tabsize['num_edit_soil_fertility']--;
    }
    if (!$_SESSION['compost']) {
@@ -265,6 +265,7 @@ if (!empty($_POST['done'])) {
       $tabsize['num_add_soil']--;
       $tabsize['num_edit_soil']--;
       $tabsize['num_edit_soil_fertility']--;
+      $tabsize['num_edit_other']--;
    }
    if (!$_SESSION['fertilizer']) {
       $tabsize['num_fertility']--;
@@ -284,7 +285,6 @@ if (!empty($_POST['done'])) {
       $tabsize['num_add_equip']--;
       $tabsize['num_add_equip']--;
       $tabsize['num_edit_soil_fertility']--;
-      $tabsize['num_edit_other']--;
    }
    if (!$_SESSION['spraying']) {
       $tabsize['num_edit_soil_material']--;
@@ -294,6 +294,9 @@ if (!empty($_POST['done'])) {
       if (!$_SESSION['fertilizer']) {
          $tabsize['num_edit_soil']--;
       }
+   }
+   if ($tabsize['num_edit_soil_material'] == 0) {
+      $tabsize['num_edit']--;
    }
    if (!$_SESSION['backspray']) {
       $tabsize['num_spray']--;
@@ -335,8 +338,6 @@ if (!empty($_POST['done'])) {
       $tabsize['num_sales']--;
       $tabsize['num_sales']--;
       $tabsize['num_sales']--;
-      $tabsize['num_edit_sales']--;
-      $tabsize['num_edit_sales']--;
    }
   
    $sqlUpdate = "update config set ";
