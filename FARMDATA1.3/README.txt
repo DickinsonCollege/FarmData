@@ -1,7 +1,7 @@
-Welcome to FARMDATA, version 1.2
+Welcome to FARMDATA, version 1.3
 
 PLEASE read the upgrade instructions if you are upgrading from
-version 1.0 or 1.1!
+an earlier version!
 
 FARMDATA is licensed under the Gnu General Public License, version 3.0.
 Please see the file gpl-3.0.txt included with this download, or
@@ -19,3 +19,6 @@ to suggest new features, submit a ticket at:
 https://sourceforge.net/p/farmdata/tickets/
 You will need to create a sourceforge account (if you don't already
 have one) in order to create a ticket.
+
+Or, send a request to join our Facebook group:
+https://www.facebook.com/groups/1408906732746605/
