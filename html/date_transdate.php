@@ -4,9 +4,11 @@ function addInput() {return;}
 function overlay() {return;}
 </script>
 <?php 
-if ($_SESSION['mobile']) echo "<br clear='all'/>";
+// if ($_SESSION['mobile']) echo "<br clear='all'/>";
 ?>
+<!--
 <div class= "styled-select">
+-->
 <select name="tmonth" id="tmonth" class="mobile-month-select">
 <?php
 $tcurMonth = strftime("%m");
@@ -35,4 +37,6 @@ for($year = $tcurYear - 3; $year < $tcurYear+5; $year++) {
 }
 ?>
 </select>
+<!--
 </div>
+-->

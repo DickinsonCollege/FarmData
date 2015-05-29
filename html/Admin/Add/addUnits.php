@@ -6,11 +6,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="add">
-<form name='form' method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
-<h3><b>Add Units to a Crop </b></h3>
-<br>
-<label for="crop">Crop:&nbsp;</label>
-<div class="styled-select">
+<form name='form' class="pure-form pure-form-aligned" method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
+<center>
+<h2>Add Harvest Unit to Crop </h2>
+</center>
+
+<div class="pure-control-group">
+<label for="crop">Crop:</label>
 <select name="crop" id="crop" onChange="addInput(); addInput2();" class="mobile-select"> 
 <option value=0 selected disabled>Crop&nbsp; </option>
 <?php
@@ -21,7 +23,6 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all"/>
 
 <script type="text/javascript"> 
 function updateNew() {
@@ -36,7 +37,14 @@ function addInput2(){
    xmlhttp= new XMLHttpRequest();xmlhttp.open("GET", "unitsU.php?crop="+crop, false);
    xmlhttp.send();
    //console.log(xmlhttp.responseText);
-   newdiv.innerHTML="<div id= \"units\"> <select class='mobile-select' name= \"unit\" id = \"unit\" onchange=\"updateNew();\"> "+ xmlhttp.responseText+"</div>";
+   newdiv.innerHTML = '<div class="pure-control-group" id="units">' +
+      '<label for="unit">New Unit:</label>  ' +
+      '<select name="unit" id="unit" onchange="updateNew();">' +
+      xmlhttp.responseText + '</select></div>';
+
+/*
+"<div id= \"units\"> <select class='mobile-select' name= \"unit\" id = \"unit\" onchange=\"updateNew();\"> "+ xmlhttp.responseText+"</div>";
+*/
    var newUnit = document.getElementById("unit").value;
    var inp = document.getElementById('newunit');
    inp.value = newUnit;
@@ -47,40 +55,55 @@ function addInput(){
    var crop = encodeURIComponent(document.getElementById("crop").value);
    xmlhttp= new XMLHttpRequest();xmlhttp.open("GET", "addUpdate.php?crop="+crop, false);
    xmlhttp.send();
-   newdiv.innerHTML="<div id= \"default\"> <input class=\"textbox3 mobile-input\" type=\"text\" name= \"default_unit\" id = \"default_unit\" readonly=\"readonly\" value = \""+ xmlhttp.responseText+"\"> </div>";
-/*
-   var inp = document.getElementById('defaultunit');
-   inp.value = decodeURIComponent(xmlhttp.responseText);
-*/
+   newdiv.innerHTML = '<div class="pure-control-group" id="default">' +
+      '<label for="Conversion"> Default Unit:</label> ' +
+      '<input readonly type="text" name="default_unit" id="default_unit" ' +
+      'value="' + xmlhttp.responseText + '"> </div> ';
+
    var inp = document.getElementById('default2');
-   inp.innerHTML="<div id= \"default2\"> <input class=\"textbox3 mobile-input\" type=\"text\" name= \"defaultunit\" id = \"defaultunit\" value = \""+ xmlhttp.responseText+"\"> </div>";
+
+   inp.innerHTML = 
+      '<div class="pure-control-group" id="default2">' +
+      '<label for="default">Conversion Factor from New Unit:</label> ' +
+      'One&nbsp; ' +
+      '<input class="textbox3 mobile-input" size = "12" type="textbox" readonly name="defaultunit" id="defaultunit" value="' + 
+      xmlhttp.responseText + '">' + 
+      '&nbsp;equals&nbsp;' +
+      '<input type="textbox" size="5" name="conversion" id="conversion">' +
+      '&nbsp; ' +
+      '<input size="12" type="textbox" readonly name="newunit" id="newunit">' +
+      '(S) </div>';
+
+/*
+"<div id= \"default2\"> <input class=\"textbox3 mobile-input\" type=\"text\" name= \"defaultunit\" id = \"defaultunit\" value = \""+ xmlhttp.responseText+"\"> </div>";
+*/
 }
 </script>
 
-<label for="Conversion"> Default Unit:&nbsp;</label> <div id="default"> 
-<input class="textbox3 mobile-input" readonly="readonly" type="text" name="default_unit" id="default_unit"> </div> 
-<br clear="all"/>
-<label for="unit">New Unit:&nbsp;</label> 
-<div id="units"class="styled-select">
+<div class="pure-control-group" id="default">
+<label for="Conversion"> Default Unit:</label> 
+<input readonly type="text" name="default_unit" id="default_unit">
+</div> 
+
+<div class="pure-control-group" id="units">
+<label for="unit">New Unit:</label> 
 <select name="unit" id="unit" class="mobile-select">
-<option disabled value=0 selected>Unit&nbsp; </option>
+<option disabled value=0 selected>Unit </option>
 </select>
 </div>
-<br clear="all"/>
-<label for="default">Conversion Factor from New Unit:&nbsp;</label>
-<br clear="all"/>
-<label>One&nbsp; </label>
-<div id = "default2">
-<input class="textbox3 mobile-input" type="textbox" readonly name="defaultunit" id="defaultunit">
+
+
+<div class="pure-control-group" id="default2">
+<label for="default">Conversion Factor from New Unit:</label>
+One&nbsp;
+<input class="textbox3 mobile-input" size = "12" type="textbox" readonly name="defaultunit" id="defaultunit">
+&nbsp;equals&nbsp;
+<input type="textbox" size="5" name="conversion" id="conversion">
+&nbsp;
+<input size="12" type="textbox" readonly name="newunit" id="newunit">
+(S)
 </div>
-<label>&nbsp;equals&nbsp;</label>
-<input class="textbox3 mobile-input" type="textbox" name="conversion" id="conversion">
-<label>&nbsp;</label>
-<input class="textbox3 mobile-input" type="textbox" readonly name="newunit" id="newunit">
-<label>(s)</label>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="add" id="submit" value="Add">
 <script>
         function show_confirm() {
 /**        var i = document.getElementById("name").value;
@@ -100,6 +123,14 @@ function addInput(){
 }
 
 	</script>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add">
+</form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "viewUnits.php?tab=admin:admin_add:admin_addcrop:addunitconv"><input type="submit" class="submitbutton pure-button wide" value = "View Units Table"></form>
+</div>
 
 <?php
 if (isset($_POST['add'])) {
@@ -119,8 +150,5 @@ if (isset($_POST['add'])) {
       echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
    }
 }
-echo "</form>";
-# echo '<br clear="all"/>';
-echo '<form method="POST" action = "viewUnits.php?tab=admin:admin_add:admin_addcrop:addunit"><input type="submit" class="submitbutton" value = "View Units Table"></form>';
 ?>
 

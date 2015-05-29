@@ -13,34 +13,35 @@ function populate() {
    xmlhttp.open("GET", "getCoverCrop.php?crop="+crop, false);
    xmlhttp.send();
    var plantarray = eval(xmlhttp.responseText);
-console.log(plantarray);
    var renamediv = document.getElementById("renamediv");
-   renamediv.innerHTML='<div id ="renamediv"><input onkeypress="stopSubmitOnEnter(event)"; type="text" name="rename" id="rename" class="textbox3 mobile-input" value="'+escapeHtml(crp)+'"></div>';
+   renamediv.innerHTML = '<label for="rename">Rename Cover Crop:</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event)" type="text" name="rename" id="rename" ' +
+      'value="'+escapeHtml(crp)+'"></div>';
 
    var dmin = document.getElementById("drillMinDiv");
-   dmin.innerHTML='<div id="drillMinDiv"> <input onkeypress="stopSubmitOnEnter(event)"' + 
-      'type="text" name="drillMin" id="drillMin" class="textbox25 mobile-input" value="' + plantarray[0] + 
-      '"> <label>&nbsp; (lbs/acre)</label></div>';
+   dmin.innerHTML = '<label for="drillMin">Drill Seeding Rate (minimum):</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event)" type="text" name="drillMin" id="drillMin" ' +
+      ' value="' + plantarray[0] + '"> &nbsp; (lbs/acre)';
 
    var dmax = document.getElementById("drillMaxDiv");
-   dmax.innerHTML='<div id="drillMaxDiv"> <input onkeypress="stopSubmitOnEnter(event)"' + 
-      'type="text" name="drillMax" id="drillMax" class="textbox25 mobile-input" value="' + plantarray[1] + 
-      '"> <label>&nbsp; (lbs/acre)</label></div>';
+   dmax.innerHTML = '<label for="drillMax">Drill Seeding Rate (maximum):</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event);" type="text" name="drillMax" id="drillMax" ' +
+      'value="' + plantarray[1] + '"> &nbsp; (lbs/acre)';
 
    var bmin = document.getElementById("broadMinDiv");
-   bmin.innerHTML='<div id="broadMinDiv"> <input onkeypress="stopSubmitOnEnter(event)"' + 
-      'type="text" name="broadMin" id="broadMin" class="textbox25 mobile-input" value="' + plantarray[2] + 
-      '"> <label>&nbsp; (lbs/acre)</label></div>';
+   bmin.innerHTML = '<label for="BroadMin">Broadcast Seeding Rate (minimum):</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event);" type="text" name="broadMin" id="broadMin" ' +
+      'value="' + plantarray[2] + '"> &nbsp; (lbs/acre)';
 
    var bmax = document.getElementById("broadMaxDiv");
-   bmax.innerHTML='<div id="broadMaxDiv"> <input onkeypress="stopSubmitOnEnter(event)"' + 
-      'type="text" name="broadMax" id="broadMax" class="textbox25 mobile-input" value="' + plantarray[3] + 
-      '"> <label>&nbsp; (lbs/acre)</label></div>';
+   bmax.innerHTML = '<label for="BroadMax">Broadcast Seeding Rate (maximum):</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event);" type="text" name="broadMax" id="broadMax" ' +
+      ' value="' + plantarray[3] + '"> &nbsp; (lbs/acre)';
  
    var legdiv = document.getElementById("legumediv");
    var leg = plantarray[4];
-   var newleg = '<div class="styled-select" id="legumediv">' +
-      ' <select name="legume" id="legume" class="mobile-select">';
+   var newleg = '<label for="legume">Legume:</label> ' +
+      '<select name="legume" id="legume">';
    if (leg == "1") {
       newleg += "<option selected value='1'>Yes</option><option value='0'>No</option>";
    }  else {
@@ -51,7 +52,7 @@ console.log(plantarray);
 
    var adiv = document.getElementById("activediv");
    var active = plantarray[5];
-   var newActive = "<div class=\"styled-select\" id=\"activediv\"> <select name=\"active\" id=\"active\" class='mobile-select'>";
+   var newActive = '<label>Change Active Status:</label> <select name="active" id="active">';
    if (active == "1") {
       newActive += "<option selected value='1'>Yes</option><option value='0'>No</option>";
    }  else {
@@ -62,11 +63,13 @@ console.log(plantarray);
 }
 </script>
 
-<h3> Edit/Delete Cover Crop </h3>
-<br>
-<form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
-<label for="crop"><b>Cover Crop:&nbsp;</b></label>
-<div id='crop2' class='styled-select'>
+<center>
+<h2> Edit/Delete Cover Crop </h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
+
+<div class="pure-control-group">
+<label for="crop">Cover Crop:</label>
 <select name='crop' id='crop' class='mobile-select' onchange='populate();'>
 <option disabled selected>Cover Crop</option>
 <?php
@@ -76,60 +79,48 @@ $result = mysql_query("SELECT crop from coverCrop");
         }
         echo "</select></div>";
 ?>
-<br clear="all"/>
 
+<div class="pure-control-group" id="renamediv">
 <label for="rename">Rename Cover Crop:</label>
-<div id="renamediv">
 <input onkeypress="stopSubmitOnEnter(event)" type="text" name="rename" id="rename" class="textbox3 mobile-input">
 </div>
-<br clear="all"/>
 
+<div class="pure-control-group" id="drillMinDiv">
 <label for="drillMin">Drill Seeding Rate (minimum):</label>
-<div id="drillMinDiv">
-<input onkeypress="stopSubmitOnEnter(event)" type="text" name="drillMin" id="drillMin" class="textbox25 mobile-input">
-<label>&nbsp; (lbs/acre)</label>
+<input onkeypress="stopSubmitOnEnter(event)" type="text" name="drillMin" id="drillMin">
+&nbsp; (lbs/acre)
 </div>
-<br clear="all"/>
 
+<div class="pure-control-group" id="drillMaxDiv">
 <label for="drillMax">Drill Seeding Rate (maximum):</label>
-<div id="drillMaxDiv">
-<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="drillMax" id="drillMax" class="textbox25 mobile-input">
-<label>&nbsp; (lbs/acre)</label>
+<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="drillMax" id="drillMax" >
+&nbsp; (lbs/acre)
 </div>
-<br clear="all"/>
 
+<div class="pure-control-group" id="broadMinDiv">
 <label for="BroadMin">Broadcast Seeding Rate (minimum):</label>
-<div id="broadMinDiv">
-<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="broadMin" id="broadMin" class="textbox25 mobile-input">
-<label>&nbsp; (lbs/acre)</label>
+<input onkeypress="stopSubmitOnEnter(event);" type="text" name="broadMin" id="broadMin">
+&nbsp; (lbs/acre)
 </div>
-<br clear="all"/>
 
+<div class="pure-control-group" id="broadMaxDiv">
 <label for="BroadMax">Broadcast Seeding Rate (maximum):</label>
-<div id="broadMaxDiv">
-<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="broadMax" id="broadMax" class="textbox25 mobile-input">
-<label>&nbsp; (lbs/acre)</label>
+<input onkeypress="stopSubmitOnEnter(event);" type="text" name="broadMax" id="broadMax">
+&nbsp; (lbs/acre)
 </div>
-<br clear="all"/>
 
-<label for="legume">Legume:&nbsp;</label>
-<div class="styled-select" id="legumediv">
-<select name="legume" id="legume" class='mobile-select'>
-</select>
-</div>
-<br clear="all"/>
+<div class="pure-control-group" id="legumediv">
+<label for="legume">Legume:</label>
+<select name="legume" id="legume"> </select> </div>
 
-<label for="admin">Change Active Status:&nbsp;</label>
-<div class="styled-select" id="activediv">
+<div class="pure-control-group" id="activediv">
+<label for="admin">Change Active Status:</label>
 <select name="active" id="active" class='mobile-select'>
 </select>
 </div>
 
-
- 
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" name="submit" type="submit" id="submit" value="Submit">
+<input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 <?php
 if(!empty($_POST['submit'])) {
    $crop = escapehtml($_POST['crop']);

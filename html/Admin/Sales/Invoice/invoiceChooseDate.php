@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<form name='date' method='POST' action="<?php $_PHP_SELF ?>">
+<form name='date' class = 'pure-form pure-form-aligned' method='POST' action="<?php $_PHP_SELF ?>">
 <script type="text/javascript">
 function show_confirm() {
   return confirm("Confirm Deletion");
@@ -13,16 +13,16 @@ function show_confirm() {
 </script>
 <?php
 if($_GET['exist']==1 || $_POST['hidden']==1){
-   echo "<h3> Edit Invoice </h3>";
+   echo "<center><h2>Edit Invoice </h2></center>";
    $exist = 1;
 }else{
-   echo "<h3>Create Invoice </h3>";
+   echo "<center><h2>Create Invoice </h2></center>";
    $exist = 0;
 }
-echo "<br>";
 ?>
-<label for="target">Sales Target:&nbsp;</label>
-<div id='targDiv' class='styled-select'>
+
+<div class = 'pure-control-group'>
+<label for="target">Sales Target:</label>
 <select name="target" id="target">
 <?php
 if ($exist) {
@@ -39,23 +39,24 @@ while ($row1 =  mysql_fetch_array($result)){
   }
 }
 ?>
-</select>
-<br clear="all"/>
+</select></div>
 
+<div class = 'pure-control-group'>
 <?php
 if ($exist) {
-  echo '<label for="date">From:&nbsp;</label>';
+  echo '<label for="date">From:</label>';
 } else {
-  echo '<label for="date">Invoice Date:&nbsp;</label>';
+  echo '<label for="date">Invoice Date:</label>';
 }
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 if ($exist) {
    echo '<br clear="all"/>';
-   echo '<label for="date2">To:&nbsp;</label>';
+   echo '<label for="date2">To:</label>';
    include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 }
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
+echo '</div>';
 
 if($exist){
    echo "<input type='hidden' name='hidden' value=".$_GET['exist'] .">";
@@ -63,7 +64,7 @@ if($exist){
    echo "<input type='hidden' name='hidden' value=".$_POST['hidden'] .">";
 }
 ?>
-<input class="submitbutton" type="submit" name="submit" value="Choose" >
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Choose" >
 </form>
 
 
@@ -90,9 +91,9 @@ if(isset($_POST['submit']) && isset($_POST['target'])){
       $sql_result=mysql_query($sql);
 //        echo mysql_error();
       if(is_resource($sql_result) &&  mysql_num_rows($sql_result) > 0 ){
-	 echo "<table border>";
-	 echo "<tr><th>Sales Date</th><th><center>Invoice No.</center></th>".
-            "<th>Customer</th><th>Edit</th><th>Delete</th></tr>";
+	 echo "<table border class = 'pure-table pure-table-bordered'>";
+	 echo "<thead><tr><th>Sales Date</th><th><center>Invoice No.</center></th>".
+            "<th>Customer</th><th>Edit</th><th>Delete</th></tr></thead>";
         while ($row=mysql_fetch_array($sql_result)) {
            echo "<tr><td>";
            echo $row['salesDate'];
@@ -107,12 +108,12 @@ if(isset($_POST['submit']) && isset($_POST['target'])){
               '&target='.encodeURIComponent($row['target']).
               '&invoiceID='.$row['invoice_id'].
               '&tab=admin:admin_sales:invoice:editinvoice">';
-           echo "<input type='submit' class='editbutton' value='Edit'></form>";
+           echo "<input type='submit' class='editbutton pure-button wide' value='Edit'></form>";
            echo "</td><td>";
            echo '<form method="POST" action="invoiceDelete.php?invoice='.
               $row['invoice_no'].
               '&tab=admin:admin_sales:invoice:editinvoice">';
-           echo "<input type='submit' class='deletebutton' onclick='return show_confirm();' value='Delete'></form>";
+           echo "<input type='submit' class='deletebutton pure-button wide' onclick='return show_confirm();' value='Delete'></form>";
 	   echo "</td></tr>";
 	}	
 	echo "</table>";

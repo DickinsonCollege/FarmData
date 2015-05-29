@@ -212,7 +212,7 @@ echo '<li id="li_addliquidfertilizer">
 <li id="li_adduser">  
    <a href="/Admin/Add/add<?php if ($farm != "dfarm") {echo "Ext";}?>User.php?tab=admin:admin_add:admin_addother:adduser" id = "adduser_a" class="inactivetab">User</a> </li>
 <li id="li_addfield">  
-   <a href="/Admin/Add/addField.php?tab=admin:admin_add:admin_addother:addfield" id = "addfield_a" class="inactivetab">Fields</a> </li>
+   <a href="/Admin/Add/addField.php?tab=admin:admin_add:admin_addother:addfield" id = "addfield_a" class="inactivetab">Field</a> </li>
 <?php
 if ($_SESSION['labor']) {
 echo '<li id="li_addtask">  
@@ -252,9 +252,11 @@ echo '<li id="li_deleteother">
 </div>
 
 <div id="deletesales" style="display:none;">
-<div class="tabs tabs3">
+<div class="tabs tabs4">
 <ul>
-<li id="li_delete_target">  
+<li id="li_delete_product">  
+   <a href="/Admin/Delete/deleteProduct.php?tab=admin:admin_delete:deletesales:delete_product" id="delete_product_a" class="inactivetab">Product</a> </li>
+<li id = "li_delete_target">
    <a href="/Admin/Delete/deleteTarget.php?tab=admin:admin_delete:deletesales:delete_target" id="delete_target_a" class="inactivetab">Sales Target</a> </li>
 <li id="li_delete_targetemail">  
    <a href="/Admin/Delete/targetEmailTable.php?tab=admin:admin_delete:deletesales:delete_targetemail" id="delete_targetemail_a" class="inactivetab">Target Email</a> </li>

@@ -5,17 +5,20 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3 class="hi"> Cover Crop Incorporation </h3>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_input">
-<br clear="all"/>
-<label for='date'>Date:&nbsp; </label>
+<center>
+<h2 class="hi"> Cover Crop Incorporation </h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_input">
+<fieldset>
+<div class="pure-control-group">
+<label for='date'>Date: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
+<div class="pure-control-group" id="field">
 <label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
-<select name ="fieldID" id="fieldID" onchange="selectDates(); selectSpecies();" class='mobile-select'>
+<select name ="fieldID" id="fieldID" onchange="selectDates(); selectSpecies();calculate2();" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
 $sqlget = "select distinct fieldID from coverSeed_master";
@@ -27,10 +30,9 @@ echo '</select>';
 echo '</div>';
 ?>
 
-<br clear='all'/>
+<div class="pure-control-group" id="seeddateDiv">
 <label for='sdate'> Seed Date: </label>
-<div class='styled-select' id='seeddateDiv'>
-<select name='seeddate' id='seeddate' onchange="selectSpecies();" class='mobile-select'>
+<select name='seeddate' id='seeddate' onchange="selectSpecies();calculate2();" class='mobile-select'>
 <option value=0 selected disabled>Seed Date</option>
 </select></div>
 <input type='hidden' id='numCrops' name='numCrops' value=0>
@@ -44,7 +46,10 @@ function selectDates() {
 	xmlhttp.send();
 
 	var seeddateDiv = document.getElementById('seeddateDiv');
-	seeddateDiv.innerHTML = "<select name='seeddate' id='seeddate' class='mobile-select' onchange='selectSpecies();'>" + xmlhttp.responseText + "</select>";
+	seeddateDiv.innerHTML = '<div class="pure-control-group" id="seeddateDiv">' +
+           "<label for='sdate'> Seed Date: </label> " + 
+           "<select name='seeddate' id='seeddate' onchange='selectSpecies();calculate2();' >" +
+           xmlhttp.responseText + "</select></div>";
 }
 
 function selectSpecies() {
@@ -55,82 +60,80 @@ function selectSpecies() {
 
 	xmlhttp.open("GET", "update_species.php?fieldID=" + fieldID + "&seedDate=" + seedDate, false);
 	xmlhttp.send();
-
-	var table = document.getElementById('coverCropTable');
-	table.innerHTML = "<tr><th>Species</th></tr>";
 	var speciesNames = eval(xmlhttp.responseText);
 
-	var count = 0;
+        var sDiv = document.getElementById("speciesList");
+        var content = '<div class="pure-control-group" id="speciesList"><label>Species:</label> ' +
+           '<textarea readonly id="listArea" name="listArea">';
 	for (i = 0; i < speciesNames.length; i++) {
-		count++;
-		var row = table.insertRow(-1);
-		var cell = row.insertCell(0);
-		cell.innerHTML = "<input readonly type='text' style='width:100%;' class='textbox25 mobile-input single_table'" + 
-			"name='crop" + count + "' id='crop" + count + "' value='" + speciesNames[i] + "'>";
-	}
+           content += speciesNames[i];
+           if (i < speciesNames.length - 1) {
+              content += "\n";
+           }
+        }
+        content += '</textarea> </div>';
+        sDiv.innerHTML = content;
 
 	var hi = document.getElementById('numCrops');
-	hi.value = count;
+	hi.value = speciesNames.length;
 }
 </script>
 
-<br clear='all'>
-<br clear="all"/>
-<table id='coverCropTable' name='coverCropTable'>
-	<tr><th>Species</th></tr>
-</table>
-<?php if($_SESSION['mobile']) echo "<div style='margin-top: 100px;'>"; ?>
+<div class="pure-control-group" id="speciesList">
+<label>Species:</label>
+<textarea readonly id="listArea" name="listArea"></textarea>
+</div>
 
 <br clear='all'>
-<br clear='all'>
 
-<input onclick="addMeasurement();" class="genericbutton" style="float:left;" 
-  type="button" id="add" value="Add Biomass Calculation"/>
+<!--
 <br clear="all"/>
 <label for="pounds">&nbsp;Lbs Per 4 Sq. Ft. </label>
 <br clear="all"/>
+-->
 <div id="container"></div>
 <br clear="all"/>
-<input type="button" id="remove" class = "genericbutton"
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input onclick="addMeasurement();" class="genericbutton pure-button wide" 
+  type="button" id="add" value="Add Biomass Calculation"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="remove" class = "genericbutton pure-button wide"
   value="Remove Biomass Calculation" onClick="remov();"/>
+</div>
+<!--
+<div class="pure-u-1">
+<input type="button" id="Avg" value="Calculate" class="genericbutton pure-button wide" onClick="calculate(); calculate2();"/>
+</div>
+-->
+</div>
 <br clear="all"/>
 <br clear="all"/>
 <script type="text/javascript">
 var num=0;
 function remov() {
-	var elem = document.getElementById("container");
-	console.log(elem);
-	var elem2 = document.getElementById("div"+num);
-	elem.removeChild(elem2);
-	num--;
+   var elem = document.getElementById("container");
+   console.log(elem);
+   var elem2 = document.getElementById("div"+num);
+   elem.removeChild(elem2);
+   num--;
+//   calculate();
+   calculate2();
 }
 </script>
 
 
-<input type="button" id="Avg" value="Calculate" class="genericbutton" onClick="calculate(); calculate2();"/>
-<br clear="all"/>
-<?php
-if($_SESSION['mobile']){
-   echo '<label for="average"> Biomass Pounds Per Acre:</label>';
-   echo '<br clear="all"/>';
-}else {
-echo '<label for="average"> Biomass Pounds Per Acre: &nbsp; </label>';
-}
-?>
+<div class="pure-control-group">
+<label for="average"> Biomass Pounds Per Acre:</label>
 <input type="text" value=0 readonly id="average" class="textbox25 mobile-input" name="average" >
-<br clear="all"/>
-<?php 
-if($_SESSION['mobile']){
-   echo '<label for="average"> Total Biomass Pounds:</label>';
-   echo '<br clear="all"/>';
-} else {
-echo '<label for="average"> Total Biomass Pounds: &nbsp; </label>';
-}
-?>
-<input type="text" value=0 readonly disabled id="total89" class="textbox25 mobile-input" name="total89" >
-<br clear="all"/>
-<label for"incorp20"> Incorporation Tool: &nbsp; </label>
-<div class="styled-select">
+</div>
+<div class="pure-control-group">
+<label for="average"> Total Biomass Pounds:</label>
+<input type="text" value=0 readonly id="total89" class="textbox25 mobile-input" name="total89" >
+</div>
+<div class="pure-control-group">
+<label for"incorp20"> Incorporation Tool:</label>
 <select id="tool" name="tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool</option>
 <?php
@@ -141,10 +144,9 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group">
 <label for="tractor"> Tractor: </label>
-<div class="styled-select" id="tractor2">
    <select name="tractor" id="tractor" class='mobile-select'>
       <option value=0 selected disabled> Tractor </option>
       <?php
@@ -157,10 +159,9 @@ while ($row1 =  mysql_fetch_array($result)){
       ?>
    </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group">
 <label for="numPasses"> Number of Passes: </label>
-<div class="styled-select" id="numPasses2">
    <select name="numPasses" id="numPasses" class='mobile-select'>
       <option value=0 selected disabled> Passes </option>
       <?php
@@ -172,10 +173,9 @@ while ($row1 =  mysql_fetch_array($result)){
       ?>
    </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group">
 <label for="percTilled"> % of Field Tilled: </label>
-<div class="styled-select" id="percTilled2">
    <select name="percTilled" id="percTilled" class='mobile-select'>
       <option value=0 selected disabled> % Tilled </option>
       <?php
@@ -187,10 +187,9 @@ while ($row1 =  mysql_fetch_array($result)){
       ?>  
    </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group">
 <label for="minutes"> Minutes in Field: </label>
-<div class="styled-select" id="minutes2">
    <select name="minutes" id="minutes" class='mobile-select'>
       <option value=0 selected disabled> Minutes </option>
       <?php
@@ -202,46 +201,28 @@ while ($row1 =  mysql_fetch_array($result)){
       ?>
    </select>
 </div>
-<br clear="all">
 
 
 <script type="text/javascript">
 var container = document.getElementById('container');
 function addMeasurement() {
-num++;
-        var input = document.createElement('input'),
-        div = document.createElement('div');
-//      div.id="avg"+num;
-        input.type = "text";
-        input.className="textbox4 mobile-input-half";
-        input.value=0;
-//      input.onCha=calculate();        
-        input.id="avg"+num;
-        div.id="div"+num;
-        div.appendChild(input);
-        //...
-        container.appendChild(div);
+   num++;
+/*
+   var input = document.createElement('input'),
+   div = document.createElement('div');
+   input.type = "text";
+   input.className="textbox4 mobile-input-half";
+   input.value=0;
+   input.id="avg"+num;
+   div.id="div"+num;
+   div.appendChild(input);
+*/
+   div = document.createElement('div');
+   div.innerHTML = "<div class='pure-control-group'><label>Pounds per 4 square feet:</label>" +
+      "<input type='text' id='avg" + num + "' value=0 onkeyup='calculate2();'></div>";
+   container.appendChild(div);
 };
 
-/*
-function addSeedDate(seedDate, seedID, both) {
-        console.log(seedDate+"seedDateID");
-	var newdiv = document.getElementById(seedDate);
-        var e = document.getElementById(both);
-        var f = document.getElementById("fieldID");
-        console.log(f.value+"fieldID");
-        console.log(e.value+"cover crop");
-        var strUser= e.value;
-        var strUser2= f.value;
-        xmlhttp= new XMLHttpRequest();
-        xmlhttp.open("GET", "update_SeedDate.php?both="+strUser+"&fieldID="+strUser2, false);
-        xmlhttp.send();
-        newdiv.innerHTML="<div class='styled-select' id ='"+seedDate+"'>  <select name= '"+seedID+"' id= '"+seedID+"' class='mobile-select'>"+xmlhttp.responseText+"</select> </div>";
-        if (xmlhttp.responseText == "\n" && f.value != "0" && e.value != "0") {
-           alert("No " + e.value + " seeded in Field: " + f.value + "!");
-        }
-}
-*/
 function calculate() {
 var  total=0;
 count=num;
@@ -252,10 +233,13 @@ console.log(t);
         console.log(total);
                 count--;
         }
-//console.log(total/count);
-console.log(total+"total");
-console.log(count+"count");
-document.getElementById('average').value= ((total/num)*10890).toFixed(2);;
+        var avg;
+        if (num > 0) {
+           avg = ((total/num)*10890).toFixed(2);
+        } else {
+           avg = 0;
+        }
+document.getElementById('average').value = avg;
 return document.getElementById('average').value;
 }
 
@@ -267,7 +251,7 @@ function calculate2() {
         xmlhttp.open("GET", "update_total.php?fieldID="+fieldID+"&seeddate="+
           sdate, false);
         xmlhttp.send();
-console.log(xmlhttp.responseText+"responsetext");
+// console.log(xmlhttp.responseText+"responsetext");
         var total = parseFloat(xmlhttp.responseText,10)*calculate();
 document.getElementById('total89').value= total.toFixed(2);;
 }
@@ -294,9 +278,12 @@ function show_confirm() {
            alert("No crops seeded!");
            return false;
         }
+/*
         for (i = 1; i <= num; i++) {
           con+= document.getElementById("crop"+i).value + "\n";
         }
+*/
+        con += document.getElementById("listArea").value + "\n";
         
 /*
 	var strUser3 = i.options[i.selectedIndex].text;
@@ -361,16 +348,24 @@ function show_confirm() {
 </script>
 
 
+<div class="pure-control-group">
 <label for="comments"> Comments: </label>
-<br clear="all"/>
 <textarea name="comments" id="comments"
-cols=30 rows=10>
+cols=30 rows=5>
 </textarea>
+</div>
+</fieldset>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" value="Submit" name="submit" class="submitbutton" onclick="return show_confirm();">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" value="Submit" name="submit" class="submitbutton pure-button wide" onclick="return show_confirm();">
 </form>
-<form method="POST" action = "incorpReport.php?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "incorpReport.php?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 if (isset($_POST['submit'])) {
    $acre=43560;
@@ -380,7 +375,7 @@ if (isset($_POST['submit'])) {
    $incorpTool = escapehtml($_POST['tool']);
    $aver = escapehtml($_POST['average']);
    $comments = escapehtml($_POST['comments']);
-   echo "<script>calculate();</script>";
+   echo "<script>calculate2();</script>";
 
 	// Insert into coverKill_master
 	$sql = "INSERT INTO coverKill_master(killDate, incorpTool, totalBiomass, comments, fieldID, seedDate) 
@@ -390,10 +385,20 @@ if (isset($_POST['submit'])) {
 			/100*(SELECT size FROM field_GH WHERE fieldID='".$fieldID."'), 
 		'".$comments."', '".$fieldID."', '".$seedDate."')";
 	$result1 = mysql_query($sql);
+	echo mysql_error();
 
 	// Inert into coverKill
 	$count = 1;
 	$id = mysql_insert_id();
+        $crops = explode("\n", $_POST['listArea']);
+        foreach ($crops as $crp) {
+	 	$sql = "INSERT INTO coverKill(coverCrop, id) 
+			VALUES ('".trim($crp)."', ".$id.");";
+		$result = mysql_query($sql);
+		echo mysql_error();
+                $result1 = $result1 && $result;
+        }
+/*
 	$numCrops = $_POST['numCrops'];
 	while ($count <= $numCrops) {
 		$crop = escapehtml($_POST['crop'.$count]);
@@ -403,6 +408,7 @@ if (isset($_POST['submit'])) {
 		echo mysql_error();
 		$count++;
 	}
+*/
 
    // Insert into tillage
    $tractor = escapehtml($_POST['tractor']);

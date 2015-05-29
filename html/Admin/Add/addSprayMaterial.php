@@ -60,56 +60,64 @@ function show_confirm() {
 }
 </script>
 
-
 <form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3 class="hi"><b>Add Spray Material</b></h3>
-<br clear="all"/>
+<center><h2 class="hi"><b>Add Spray Material</b></h2></center>
 
-<label for="spraymaterial">Spray Material Name:&nbsp;</label>
+<div class = "pure-form pure-form-aligned">
+<div class = "pure-control-group">
+<label for="spraymaterial">Spray Material Name:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox3 mobile-input" type="text" name="spraymaterial" id="spraymaterial">
-<br clear="all">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="trateunits">Tractor Rate Units:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox25 mobile-input" type="text" name="trateunits" id="trateunits">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="tratemin">Minimum Tractor Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="tratemin" id="tratemin">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="tratemax">Maximum Tractor Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="tratemax" id="tratemax">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="tratedefault">Default Tractor Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="tratedefault" id="tratedefault">
-<br clear="all">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="brateunits">Backpack Rate Units:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox25 mobile-input" type="text" name="brateunits" id="brateunits">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="bratemin">Minimum Backpack Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="bratemin" id="bratemin">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="bratemax">Maximum Backpack Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="bratemax" id="bratemax">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="bratedefault">Default Backpack Rate:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="bratedefault" id="bratedefault">
-<br clear="all">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="rei">Restricted Entry Interval:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox2 mobile-input" type="text" name="rei" id="rei">
-<br clear="all">
+</div>
 
+<div class = "pure-control-group">
 <label for="ppe">Personal Protection Equipment:</label>
 <input onkeypress='stopSubmitOnEnter(event)' class="textbox25 mobile-input" type="text" name="ppe" id="ppe">
+</div>
 
 <!--
 <br clear="all">
@@ -117,17 +125,16 @@ function show_confirm() {
 <label for="active">Active Status:</label>
 <div id="activediv" class="styled-select">
 <select name="active" id="active" class='mobile-select'>
-	<option value="1" selected>Active</option>
-	<option value="0">Inactive</option>
+<option value="1" selected>Active</option>
+<option value="0">Inactive</option>
 <select>
 </div>
 -->
-
-<br clear="all">
-<br clear="all">
-
-<input class="submitbutton" type="submit" name="add" id="add" value="Add" onclick="return show_confirm();">
-
+</div>
+<br clear="all"/>
+<input class="submitbutton pure-button wide" type="submit" name="add" id="add" value="Add" onclick="return show_confirm();">
+<br clear="all"/>
+<br clear="all"/>
 <?php
 if (isset($_POST['add'])) {
 	$spraymaterial = escapehtml(strtoupper($_POST['spraymaterial']));

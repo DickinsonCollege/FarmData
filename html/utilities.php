@@ -128,14 +128,18 @@ function confirmYes(frm) {
 function showConfirm(msg, frm) {
    var win = document.getElementById("alert");
    // msg = msg.replace(/(\n)+/g, "<br>");
-   msg += "<p/><input type='button' class='submitbutton' value='Confirm' onclick=\"confirmYes('" + frm + "');\">";
-   msg += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' class='submitbutton' value='Cancel' onclick='closeAlert();'>";
+   msg += "<p/><div class='pure-g'><div class='pure-u-1-2'>" +
+     "<input type='button' class='submitbutton pure-button wide' value='Confirm' onclick=\"confirmYes('"
+      + frm + "');\"></div>";
+   msg += "<div class='pure-u-1-2'>" + 
+// &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     "<input type='button' class='submitbutton pure-button wide' value='Cancel' onclick='closeAlert();'></div></div>";
    //win.innerHTML="<center>"+msg+"</center>";
    openAlert(msg, "75%", false);
 }
 
 function showError(msg) {
-   msg += "<p/><input type='button' class='submitbutton' value='OK' onclick=\"closeAlert();\">";
+   msg += "<p/><input type='button' class='submitbutton pure-button wide' value='OK' onclick=\"closeAlert();\">";
    openAlert(msg, "60%", false);
 }
 

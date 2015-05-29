@@ -3,8 +3,8 @@
    function addRow(){
       document.getElementById('numRows').value= parseInt(numRows)+1;
       numRows++;
-      var table = document.getElementById("fieldTable");
-      var row    = table.insertRow(numRows);
+      var table = document.getElementById("fieldTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(-1);
       var cell0 = row.insertCell(0);
       var fieldID = '<?php
                         $result=mysql_query("Select fieldID from field_GH where active=1");
@@ -12,14 +12,18 @@
                            echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
                         }
                      ?>';
-      cell0.innerHTML = '<center><div class="styled-select" id="fieldDiv'+numRows+'"> <select name ="field' + numRows +'" id="field' + numRows + '" onChange="addInput('+numRows+'); addAcre('+numRows+'); calculateTotalUpdate(); calculateWater();">' +'<option value = 0 selected disabled> FieldID</option>' +   fieldID + '</select></div></center>';
+      cell0.innerHTML = '<center><div class="styled-select" id="fieldDiv'+numRows+'"> <select class="wide" name ="field' + numRows +'" id="field' + numRows + '" onChange="addInput('+numRows+'); addAcre('+numRows+'); calculateTotalUpdate(); calculateWater();">' +'<option value = 0 selected disabled> FieldID</option>' +   fieldID + '</select></div></center>';
       var cell1 = row.insertCell(1);
-      cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
+      cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select class='wide' id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
                         "<option> Beds </option> </select></div></center>";
       var cell2 = row.insertCell(2);
-      cell2.innerHTML = "<center><div id=\"acreDiv"+numRows+"\"><input style='position:relative;' class='textbox4' type=\"text\" id=\"acre"+numRows+"\" value=0 readonly></div> </center>";
+      cell2.innerHTML = "<center><div id=\"acreDiv"+numRows+"\"><input class='wide' type=\"text\" id=\"acre"+numRows+"\" value=0 readonly></div> </center>";
+      
+      var cell3 = row.insertCell(3);
+      cell3.innerHTML = "<center><input type = 'text' class = 'wide' id='crop" + numRows + "' name = 'crop" + numRows + "'></center>"; 
    }
    //addRow();
+
    function removeRow(){
       if (numRows > 0){
          var field = document.getElementById('field'+numRows);
@@ -35,6 +39,7 @@
       }
    }
    //addRowMat();
+
    function addInput(num){
       var fld = encodeURIComponent(document.getElementById('field'+num).value);
       var newdiv=document.getElementById('maxBed'+num);
@@ -42,8 +47,9 @@
       xmlhttp.open("GET", "tupdate.php?field="+fld, false);
       xmlhttp.send();
 
-      newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
+      newdiv.innerHTML="<div class='styled-select2' id=\"maxBed"+num+"\"><select onchange=\"addAcre("+num+"); calculateTotalUpdate(); calculateWater();\" class='wide' id= \"maxBed2"+num+"\" name= \"maxBed2"+num+"\">"+xmlhttp.responseText+"</select></div>";
    }
+
    function addAcre(numA){
       var fld = encodeURIComponent(document.getElementById('field'+numA).value);
       var bA = document.getElementById('maxBed2'+numA).value;
@@ -52,8 +58,6 @@
       xmlhttp.open("GET", "tAcreUpdate.php?field="+fld+"&beds="+bA, false);
       xmlhttp.send();
       newdiv.value=xmlhttp.responseText;
-//        newdiv.innerHTML="<select id= 'maxBed<?php echo $numFieldInd  ?>' name= 'maxBed'>"+xmlhttp.responseText+"</select>";
-   
    }
    function calculateTotal(){
       var ind=1;

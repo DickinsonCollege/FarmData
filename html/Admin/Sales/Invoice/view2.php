@@ -25,12 +25,13 @@ $result2=mysql_query($sql);
 echo mysql_error();
 ?>
 <?php
-$str= "<table border>".
-"<caption>".$farm." Invoice # ".$invoiceIDNum.
- "<br>Customer:&nbsp;".$target."</caption>".
-"<tr><th>Product</th><th><center>Cases</center></th><th>Unit</th><th>Units/
-Case</th><th>Total Units</th><th><center>Price/ Case</center></th><th>Total</
-th></tr>";
+$str= "<center><h2>".$farm." Invoice # ".$invoiceIDNum.
+ "<br>Customer:&nbsp;".$target.
+  "<br> Date:&nbsp;".$_GET['salesDate'].
+  "</h2></center>".
+"<table class='pure-table pure-table-bordered'>".
+"<thead><tr><th>Product</th><th><center>Cases</center></th><th>Unit</th><th>Units per
+Case</th><th>Total Units</th><th><center>Price per Case</center></th><th>Total</th></tr></thead>";
 
 while ($row= mysql_fetch_array($result2)) {
 
@@ -47,28 +48,33 @@ while ($row= mysql_fetch_array($result2)) {
        $row['units_per_case'].
         "</td><td>".
         $row['totalUnits'].
-        "</td><td>".
+        "</td><td align='right'>".
         $dec.
-        "</td><td>".
+        "</td><td align='right'>".
         $dec2.
         "</td></tr>";
 
 }
 
-$str=$str. "</table>".'<br clear="all"/>';
-$str=$str.'<label for="comment">Notes</label>';
+$str=$str."<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td align='right'>Total:</td><td align='right'>".number_format($total,2,'.','')."</td></tr>";
+$str=$str."</table>";
 $str=$str.'<br clear="all"/>';
+$str=$str.'<div class="pure-form pure-form-aligned"><div class="pure-control-group"><label>Notes:</label> ';
 $str=$str."<textarea name=\"comments\" rows=\"8\" col=\"70\" class='mobile-comments'>";
 $sqlGetValue="SELECT comments from invoice_master where invoice_no=".$invoiceID;
 $row2=mysql_fetch_array( mysql_query($sqlGetValue));
 $str=$str.$row2['comments'];
-$str=$str.'</textarea>';
-$str=$str.'<br clear="all"/>';
+$str=$str.'</textarea></div></div>';
 $str=$str.'<br clear="all"/>';
 
-$str=$str."<label for='total'> Total for Invoice: $".number_format($total,2,'.','')."<br> Date:&nbsp;".$_GET['salesDate']."</label>";
-$str=$str.'<br clear="all"/>';
-$str=$str.'<br clear="all"/>';
+// $str=$str."<label for='total'> Total for Invoice: $".number_format($total,2,'.','');
+//."<br> Date:&nbsp;".$_GET['salesDate']."</label>";
 $str.=str_replace("\n", "<br>", $sig);
 ?>
 <?php
@@ -97,7 +103,7 @@ function approve() {
 <form name='form' method='POST' id='send'>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" name="submit" value="Send" class="submitbutton" onClick="return approve();">
+<input type="submit" name="submit" value="Send" class="submitbutton pure-button wide" onClick="return approve();">
 <?php
 if(isset($_POST['submit'])){
 
@@ -127,7 +133,6 @@ $headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
 
 // More headers
 $headers .= 'From: <'.$farmemail.'>' . "\r\n";
-
 mail($to,$subject,file_get_contents($_SERVER['DOCUMENT_ROOT'].'/emailDesign.php').$str,$headers);
 echo '<script type="text/javascript">alert("Mail Sent!");</script>';
 }

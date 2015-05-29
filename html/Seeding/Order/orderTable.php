@@ -4,7 +4,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<form name='form' method='POST' action='/down.php'>
+<form name='form' class='pure-form pure-form-aligned' method='POST' action='/down.php'>
 <?php
 $year = $_POST['year'];
 $crop = escapehtml($_POST['crop']);
@@ -42,8 +42,8 @@ $result=mysql_query($sql);
 if (!$result) {
         echo "<script>alert(\"Could not retrieve report: Please try again!\\n".mysql_error()."\");</script>\n";
 }
-echo "<table>";
-echo "<caption>Seed Order Report for ";
+echo "<center>";
+echo "<h2>Seed Order Report for ";
 if ($crop == "%") {
   echo "All Crops in ";
 } else {
@@ -67,9 +67,12 @@ if ($status == "%") {
   echo $status;
 }
 
-echo "</caption>";
+echo "</h2>";
+echo "</center>";
 
-echo "<tr><th>Crop<center></th><th>Variety</th><th>Year</th><th>Source</th><th>Catalog Order #</th>";
+echo "<table class='pure-table pure-table-bordered'>";
+
+echo "<thead><tr><th>Crop<center></th><th>Variety</th><th>Year</th><th>Source</th><th>Catalog Order #</th>";
 echo "<th>Organic?</th><th>Catalog Unit</th><th>Price Per Catalog Unit</th>";
 if (!$isCover) {
    echo "<th>Default Unit</th>";
@@ -90,7 +93,7 @@ if ($isCover) {
 echo " Ordered</th><th>Total Price</th><th>Order Status</th>";
 echo "<th>Search Source 1</th><th>Date Searched 1</th>";
 echo "<th>Search Source 2</th><th>Date Searched 2</th>";
-echo "<th>Search Source 3</th><th>Date Searched 3</th></tr>";
+echo "<th>Search Source 3</th><th>Date Searched 3</th></tr></thead>";
 $count = 0;
 $totPrice = 0;
 $totUnits = 0;
@@ -152,28 +155,39 @@ while ($row= mysql_fetch_array($result)) {
 }
 echo "</table>";
 echo '<br clear="all"/>';
-echo "<label for='totPrice'>Total Price:&nbsp;</label>";
-echo "<input style='width: 100px;' class='textbox2'type ='text' name='totPrice' disabled value='$".
+echo '<div class="pure-control-group">';
+echo "<label for='totPrice'>Total Price:</label> ";
+echo "<input type ='text' name='totPrice' readonly value='$".
   number_format((float) $totPrice, 2, '.','')."'>";
-echo '<br clear="all"/>';
-echo "<label for='org'>Organic:&nbsp;</label>";
-echo "<input style='width: 100px;' class='textbox2'type ='text' name='org' disabled value='".
+echo '</div>';
+echo '<div class="pure-control-group">';
+echo "<label for='org'>Organic:</label> ";
+echo "<input type ='text' name='org' readonly value='".
   number_format((float) ($org * 100/$count), 2, '.','')."%'>";
-echo '<br clear="all"/>';
-echo "<label for='norg'>Non-Organic:&nbsp;</label>";
-echo "<input style='width: 100px;' class='textbox2'type ='text' name='norg' disabled value='".
+echo '</div>';
+echo '<div class="pure-control-group">';
+echo "<label for='norg'>Non-Organic:</label> ";
+echo "<input type ='text' name='norg' readonly value='".
   number_format((float) ($ut * 100/$count), 2, '.','')."%'>";
-echo '<br clear="all"/>';
+echo '</div>';
 if ($crop != "%" && $defUnit != "") {
-echo "<label for='quant'>Quantity:&nbsp;</label>";
-echo "<input style='width: 100px;' class='textbox2'type ='text' name='quant' disabled value='".
+echo '<div class="pure-control-group">';
+echo "<label for='quant'>Quantity:</label> ";
+echo "<input type ='text' name='quant' disabled value='".
   number_format((float) $totUnits, 2, '.','')."'>";
-echo "<label>&nbsp;".$defUnit."</label>";
-echo '<br clear="all"/>';
+// echo "<label>".$defUnit."</label>";
+echo "&nbsp;".$defUnit."(S)";
+echo '</div>';
 }
 
 echo '<br clear="all"/>';
-echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+echo '<div class="pure-g">';
+echo '<div class="pure-u-1-2">';
+echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Report">';
 echo '</form>';
-echo '<form method="POST" action = "/Seeding/Order/orderReport.php?tab=seeding:ordert:ordert_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '</div>';
+echo '<div class="pure-u-1-2">';
+echo '<form method="POST" action = "/Seeding/Order/orderReport.php?tab=seeding:ordert:ordert_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo '</div>';
+echo '</div>';
 ?>

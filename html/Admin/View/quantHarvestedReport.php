@@ -5,24 +5,26 @@
 	include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 	include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 class="hi"> Select Harvest Records: </h3>
-<br>
+<center><h2 class="hi"> Select Harvest Records: </h2></center>
 
-<form method="GET" action="quantHarvested.php">
+<form class = "pure-form pure-form-aligned" method="GET" action="quantHarvested.php">
 	<?PHP
 	echo '<input type="hidden" name = "tab" value = "admin:admin_view:view_graphs:quantharvested">';
    ?>
 	<?php
-	echo '<label for="from">From:&nbsp;</label> ';
+	echo '<div class = "pure-control-group">';
+	echo '<label for="from">From:</label> ';
 	include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-	echo '<br clear="all"/>';
-	echo '<label for="to"> To:&nbsp</label> ';
+	echo '</div>';
+
+	echo '<div class = "pure-control-group">';
+	echo '<label for="to">To:</label> ';
 	include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+	echo '</div>';
 	?>
-	<br clear="all">
-	<br clear="all">
-   <label for="crop"> Crop:&nbsp;</label>
-   <div class ="styled-select">
+
+   <div class = "pure-control-group">
+   <label for="crop"> Crop:</label>
    <select id = "crop" name="crop" class="mobile-select">
    <?php
    $result = mysql_query("SELECT distinct crop from harvested");
@@ -33,7 +35,6 @@
    </select>
    </div>
 	<br clear="all">
-	<br clear="all">
-   <input class="submitbutton" type="submit" name="submit" value="Submit" />
+   <input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit" />
 </form>
 

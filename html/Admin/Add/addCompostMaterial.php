@@ -5,12 +5,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Compost Material</b></h3>
-<br>
-<label for="name"> Compost Material:&nbsp;</label>
+<form name="form" class = "pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center><h2><b>Add New Compost Material</b></h2></center>
+<div class = "pure-control-group">
+<label for="name"> Compost Material:</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; type="text" name="name" id="name">
-<br clear="all"/>
+</div>
 
 <script>
 function show_confirm() {
@@ -23,7 +23,7 @@ return confirm("Confirm Entry: " +"\n"+con);
 </script>
 <br clear="all"/>
 
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Add">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 <?php
 if (!empty($_POST['done'])) {
    if(!empty($_POST['name'])) {

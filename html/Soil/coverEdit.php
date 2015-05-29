@@ -30,51 +30,51 @@ $incorp_tool = $row['incorp_tool'];
 $fieldID = $row['fieldID'];
 $comments = $row['comments'];
 
-echo "<form name='form' method='POST' action=\"".$SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='POST' action=\"".$SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_report".
    "&year=".$origYear."&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&id=".$id."&fieldID=".encodeURIComponent($origFieldID)."\">";
 
-echo "<H3> Edit Cover Crop Seeding Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo "<center>";
+echo "<H2> Edit Cover Crop Seeding Record </H2>";
+echo "</center>";
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label>';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth <= 12; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day <= 31; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 4; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo "<label>Field ID:&nbsp</label>";
-echo "<div class='styled-select'><select name='fieldID' id='fieldID' onchange='callAll();'>";
+echo '<div class="pure-control-group">';
+echo "<label>Field ID:</label>";
+echo "<select name='fieldID' id='fieldID' onchange='callAll();'>";
 echo "<option value\"=".$fieldID."\" selected>".$fieldID."</option>";
 $sql = "SELECT fieldID FROM field_GH where active=1";
 $sqldata = mysql_query($sql) or die();
 while ($row = mysql_fetch_array($sqldata)) {
    echo "<option value=\"".$row['fieldID']."\">".$row['fieldID']."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
+echo '</select></div>';
 
-echo "<label>Percent of Field Seeded:&nbsp</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Percent of Field Seeded:</label>";
 echo "<input type='text' class='textbox2' name='area_seeded' id='area_seeded' value='".$area_seeded."' onchange='callAll();'>";
-echo "<br clear='all'>";
+echo '</div>';
 
-echo "<label>Seed Method:&nbsp</label>";
-echo "<div class='styled-select' id='seedM'>";
+echo '<div class="pure-control-group">';
+echo "<label>Seeding Method:</label>";
 echo "<select name ='seed_method' id='seed_method' class='mobile-select' onchange='callAll();'>";
 echo "<option value=".$seed_method.">".$seed_method."</option>";
 $result=mysql_query("select seed_method from seedingMethod");
@@ -84,10 +84,9 @@ while ($row1 =  mysql_fetch_array($result)){
 
 echo "</select>";
 echo "</div>";
-echo "<br clear='all'>";
 
-echo "<label>Incorporation Tool:&nbsp</label>";
-echo "<div class='styled-select' id='incorp_toolis'>";
+echo '<div class="pure-control-group">';
+echo "<label>Incorporation Tool:</label>";
 echo "<select name ='incorp_tool' id='incorp_tool' class='mobile-select'>";
 echo "<option value ='".$incorp_tool."'>".$incorp_tool."</option>";
 $result=mysql_query("Select tool_name from tools where type='INCORPORATION'");
@@ -99,8 +98,8 @@ echo "</div>";
 echo "<br clear='all'>";
 echo "<br clear='all'>";
 
-echo "<table name='covercrop' id='covercrop'>";
-echo "<tr><th>Species</th><th>Seed Rate</th><th>Number Of Pounds</th></tr>";
+echo "<table name='covercrop' id='covercrop' class='pure-table pure-table-bordered'>";
+echo "<thead><tr><th>Species</th><th>Seed Rate</th><th>Number Of Pounds</th></tr></thead>";
 $sql = "select * from coverSeed where id=".$id;
 $result = mysql_query($sql);
 $numRows = 0;
@@ -158,31 +157,14 @@ while($row=mysql_fetch_array($result)){
 }
 echo "<input type='hidden' value='".$numRows."' name='numRows' id='numRows'>";
 echo "</table>";
-/*echo "<label>Crop2:&nbsp</label>";
-echo "<div class='styled-select'><select name='crop2' id='crop2'>";
-echo "<option value='".$crop2."' selected>".$crop2."</option>";
-$sql = "SELECT crop FROM coverCrop where active = 1";
-$sqldata = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($sqldata)) {
-   echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
-}
-echo "</div></select>";
-echo "<br clear='all'>";
-
-echo "<label>Seed Rate2:&nbsp</label>";
-echo "<input type='text' class='textbox2' name='seedRate2' id='seedRate2' value='".$seedRate2."'>";
-echo "<br clear='all'>";
-
-echo "<label>Num Pounds 2:&nbsp</label>";
-echo "<input type='text' class='textbox2' name='num_pounds2' id='num_pounds2' value='".$num_pounds2."'>";*/
 ?>
 <script type='text/javascript'>
    var numRows=document.getElementById('numRows').value;
    function addRow(){
       numRows++;
       document.getElementById('numRows').value = numRows;
-      var table   = document.getElementById('covercrop');
-      var row     = table.insertRow(numRows);
+      var table = document.getElementById("covercrop").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
       row.id      = "row" + numRows;
       row.name    = "row" + numRows;
       var cell0   = row.insertCell(0);
@@ -227,7 +209,7 @@ echo "<input type='text' class='textbox2' name='num_pounds2' id='num_pounds2' va
       if(e.value!=0){
       var crop= e.value;
       xmlhttp= new XMLHttpRequest();
-      xmlhttp.open("GET","/Soil/update_pounds1.php?crop="+encodeURIComponent(crop)+"&method="+
+      xmlhttp.open("GET","update_pounds1.php?crop="+encodeURIComponent(crop)+"&method="+
            encodeURIComponent(method),false);
       xmlhttp.send();
       newdiv.innerHTML="<select name='numpounds"+num+"' id='numpounds"+num+"'  onChange='addTotalPound(\"id"+num+"\",\""+num+"\");' class='mobile-select'>"+xmlhttp.responseText+"</select>";
@@ -259,21 +241,28 @@ function callAll() {
 </script>
 
 <br clear='all'>
-<input type="button" id="add" name="add" class="genericbutton" onClick="addRow();" value="Add Row">
-<input type="button" id="remove" name="remove" class="genericbutton" onClick="removeRow();" value="Remove Row">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" id="add" name="add" class="genericbutton pure-button wide" onClick="addRow();" value="Add Row">
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="remove" name="remove" class="genericbutton pure-button wide" onClick="removeRow();" value="Remove Row">
+</div>
+</div>
 <br clear="all"/>
 <br clear="all"/>
 <?php
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label>';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo "</div>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
    $numberOfRows = escapehtml($_POST['numRows']);
@@ -314,7 +303,7 @@ if ($_POST['submit']) {
    if(!$result){
        echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
    } else {
-      echo "<script>alert(\"Entered data successfully!\");</script> \n";
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
       echo '<meta http-equiv="refresh" content="0;URL=coverTable.php?year='.$origYear.'&month='.$origMonth.
          '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
          "&fieldID=".encodeURIComponent($origFieldID).

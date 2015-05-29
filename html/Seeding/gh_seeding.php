@@ -1,5 +1,4 @@
 <?php session_start();?>
-<html>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
@@ -7,9 +6,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<h3 >Tray Seeding Input Form</h3>
-<form name='form' id='ghform' method='post' action="<?php $_PHP_SELF ?>">
-<br clear="all"/>
+<center>
+<h2 >Tray Seeding Input Form</h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' id='ghform' method='post' action="<?php $_PHP_SELF ?>">
 <h4> Please Input Only One Record Per Day for Each Crop.
 <?php
 if (!$_SESSION['seed_order']) {
@@ -17,16 +17,17 @@ if (!$_SESSION['seed_order']) {
 }
 ?>
 </h4>
-<br clear="all"/>
+<fieldset>
+<div class='pure-control-group'>
 <?php
 if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
    $dDay = $_POST['day'];
    $dMonth = $_POST['month'];
    $dYear = $_POST['year'];
 }
-echo '<label for="Seed">Date of Seeding:&nbsp;</label>';
+echo '<label for="Seed">Date of Seeding:</label>';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
+echo "</div>";
 ?>
 <?php
 $laborc = false;
@@ -34,7 +35,6 @@ $harvesting = false;
 $transplanting = false;
 include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
-<br clear="all"/>
 <input type="hidden" name="numRows" id="numRows" value=0>
 
 <script type="text/javascript">
@@ -60,8 +60,10 @@ function addRow() {
       numRows++;
       var nr = document.getElementById("numRows");
       nr.value = numRows;
-      var table = document.getElementById("ghTable");
-      var row = table.insertRow(numRows);
+      //var table = document.getElementById("ghTable");
+      //var row = table.insertRow(numRows);
+      var table = document.getElementById("ghTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
       row.id = "row"+numRows;
       row.name = "row"+numRows;
       var cell0 = row.insertCell(0);
@@ -99,11 +101,12 @@ function removeRow() {
 }
 </script>
 
-<label for="numFlats">Number of trays:&nbsp;</label>
+<div class='pure-control-group'>
+<label for="numFlats">Number of trays:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input">
-<br clear="all"/>
-<label for="flatSize">Tray size:&nbsp;</label>
-<div class="styled-select">
+</div>
+<div class='pure-control-group'>
+<label for="flatSize">Tray size:</label>
 <select name ="flatSize" id="flatSize" class="mobile-select">
 <?php
 $sql = "select cells from flat";
@@ -115,51 +118,51 @@ while ($row1 =  mysql_fetch_array($result)) {
 </select>
 </div>
 
-<br clear="all"/>
 <?php
 if ($_SESSION['seed_order']) {
    echo '<br clear = "all"/>';
-   echo '<table id="ghTable" name="ghTable">';
-   echo '<tr><th>Seed&nbsp;Code</th><th>Seeds Planted</th></tr>';
-   echo '</table>';
+   echo '<table id="ghTable" class="pure-table pure-table-bordered" name="ghTable">';
+   echo '<thead><tr><th>Seed&nbsp;Code</th><th>Seeds&nbsp;Planted</th></tr></thead>';
+   echo '<tbody></tbody></table>';
    echo '<br clear = "all"/>';
-   echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton" onClick="addRow();"';
+   echo '<div class="pure-g">';
+   echo '<div class="pure-u-1-2">';
+   echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton pure-button wide" onClick="addRow();"';
    echo ' value="Add Variety">';
-   echo '&nbsp;&nbsp';
-   echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton" ';
+   echo '</div>';
+   echo '<div class="pure-u-1-2">';
+   echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton pure-button wide" ';
    echo 'onClick="removeRow();" value="Remove Variety">';
-   //echo '<br clear = "all"/>';
+   echo '</div>';
+   echo '</div>';
    echo '<p>';
 }
+echo "<div class='pure-control-group'>";
 echo '<label for="numSeeds">';
 if ($_SESSION['seed_order']) {
    echo 'Total ';
 }
-echo 'Seeds Planted:&nbsp;</label> ';
+echo 'Seeds Planted:</label> ';
 echo '<input value=0 type="int" onkeypress="stopSubmitOnEnter(event);" name ="num_seeds" ';
 if ($_SESSION['seed_order']) {
    echo ' readonly ';
 }
 echo ' class="textbox2 mobile-input" id="num_seeds" value="0">';
-echo '</input>';
+echo '</input></div>';
 if (!$_SESSION['seed_order']) {
-   echo '<br clear = "all"/>';
-   echo '<div>';
+   echo '<div class="pure-control-group">';
    echo '<label for="vars">Varieties:</label>';
-   echo '<br clear="all"/>';
-   echo '<textarea  name="vars"rows="10" cols="30">';
+   echo '<textarea  name="vars"rows="5" cols="30">';
    echo '</textarea>';
    echo '</div>';
-   echo '</div>';
+   //echo '</div>';
 }
-echo '<br clear="all"/>';
 echo '<p>';
 include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 ?>
-<div>
+<div class='pure-control-group'>
 <label for="comments">Comments:</label>
-<br clear="all"/>
-<textarea  name="comments"rows="10" cols="30">
+<textarea  name="comments"rows="5" cols="30">
 </textarea>
 </div>
 <br clear="all"/>
@@ -214,10 +217,17 @@ console.log(msg);
    showConfirm(msg, 'ghform');
  }
 </script>
-<input class="submitbutton" type="button" value="Submit" onclick= "show_confirm();">
+</fieldset>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input class="submitbutton pure-button wide" type="button" value="Submit" onclick= "show_confirm();">
 </form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Seeding/gh_seedingReport.php?tab=seeding:flats:flats_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
-echo '<form method="POST" action = "/Seeding/gh_seedingReport.php?tab=seeding:flats:flats_report"><input type="submit" class="submitbutton" value = "View Table"></form>';
 //if(isset($_POST['submit'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $crop = escapehtml($_POST['crop']);

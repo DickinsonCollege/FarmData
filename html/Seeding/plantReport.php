@@ -5,22 +5,25 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='GET' action='dir_table.php'>
+<form name='form' method='GET' class='pure-form pure-form-aligned' action='dir_table.php'>
 <input type="hidden" name="tab" value="seeding:direct:direct_report">
-<h3 class="hi">Direct Seeding Report </h3>
-<br clear="all"/>
-<label for='from'>From:&nbsp;</label>
+<center>
+<h2 class="hi">Direct Seeding Report </h2>
+</center>
+<fieldset>
+<div class='pure-control-group'>
+<label for='from'>From:</label>
 <?php
-if ($_SESSION['mobile']) echo "<br clear='all'/>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php'; 
-echo "<br clear=\"all\">";
-echo "<label for='to'>To:&nbsp;</label>";
+echo "</div>";
+echo "<div class='pure-control-group'>";
+echo "<label for='to'>To:</label>";
 if ($_SESSION['mobile']) echo "<br clear='all'/>";
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
-echo "<br clear=\"all\">";
-echo'<label for="crop">Crop:&nbsp;</label>';
+echo "</div>";
 ?>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="crop">Crop:</label>
 <select name='crop' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
@@ -31,9 +34,8 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all"/>
-<label for="fieldID">Name of Field:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="fieldID">Name of Field:</label>
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
@@ -46,9 +48,8 @@ while ($row1 =  mysql_fetch_array($result)){
 </div>
 <?php
 if ($_SESSION['gens']) {
-   echo '<br clear="all"/>';
-   echo '<label for="genSel">Succession #:&nbsp;</label>';
-   echo '<div class="styled-select">';
+   echo "<div class='pure-control-group'>";
+   echo '<label for="genSel">Succession #:</label> ';
    echo '<select name="genSel" class="mobile-select">';
    echo '<option value = "%" selected="selected"> All </option>';
    $result = mysql_query("SELECT distinct gen from dir_planted order by gen");
@@ -63,4 +64,6 @@ if ($_SESSION['gens']) {
 ?>
 <br clear="all"/>
 <br clear="all"/>
-<input class='submitbutton' type="submit" name="submit" value="Submit">
+<input class='submitbutton pure-button wide' type="submit" name="submit" value="Submit">
+</fieldset>
+</form>

@@ -43,57 +43,58 @@ $curCrop = $row['crop'];
 $comments = $row['comments'];
 $hours = $row['hours'];
 
-echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
+echo "<form name='form' class = 'pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=labor:labor_report&year=".$origYear."&month=".$origMonth.
    "&day=".$origDay."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&fieldID=".encodeURIComponent($origField).
    "&task=".encodeURIComponent($origTask).
    "&crop=".encodeURIComponent($origCrop)."&id=".$id."\">";
 
-echo "<H3> Edit Labor Record </H3>";
+echo "<center><h2> Edit Labor Record </h2></center>";
 echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo '<div class = "pure-control-group">';
+echo '<label>Date:</label>';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<label>Crop:&nbsp</label>';
-echo '<div class="styled-select"><select name="crop" id="crop">';
+echo '</select></div>';
+
+echo '<div class = "pure-control-group">';
+echo '<label>Crop:</label>';
+echo '<select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Field:&nbsp</label>';
-echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
+echo '<div class = "pure-control-group">';
+echo '<label>Field:</label>';
+echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
 $sqldata = mysql_query($sql) or die("ERROR3");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>User:&nbsp</label>';
-echo '<div class="styled-select"><select name="user" id="user">';
+echo '<div class = "pure-control-group">';
+echo '<label>User:</label>';
+echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
@@ -104,33 +105,35 @@ if ($farm == 'dfarm') {
 } else {
    echo $useropts;
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Task:&nbsp</label>';
-echo '<div class="styled-select"><select name="task" id="task">';
+echo '<div class = "pure-control-group">';
+echo '<label>Task:</label>';
+echo '<select name="task" id="task">';
 echo '<option value="'.$task.'" selected>'.$task.' </option>';
 $sqldata = mysql_query("select task from task") or die(mysql_error());
 while ($row = mysql_fetch_array($sqldata)){
 	echo '<option value="'.$row[task].'">'.$row[task].'</option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Hours:&nbsp</label>';
+echo '<div class = "pure-control-group">';
+echo '<label>Hours:</label>';
 echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
-echo '<br clear="all"/>';
+echo '</div>';
 
-
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
+echo '<div class = "pure-control-group">';
+echo '<label>Comments:</label>';
 echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
+
 echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
+echo '<br clear = "all">';
+
 if ($_POST['submit']) {
    $comSanitized=escapehtml($_POST['comments']);
    $task = escapehtml($_POST['task']); echo $task;

@@ -303,15 +303,19 @@ done
 for file in "src/extlogin.php" "src/design.php" "src/logout.php" "src/admintab.php" "src/hartab.php" "src/labortab.php" "src/notetab.php" "src/seedtab.php" "src/soiltab.php" "src/setup/setup.php" "src/setup/extlogin.php" "src/connection.php"; do
    sed -i "s%/tabs\.css%/$FDIR/tabs.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
-   sed -i "s%/mobileTable\.css%/$FDIR/mobileTable.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
-        exit 1; }
+#   sed -i "s%/mobileTable\.css%/$FDIR/mobileTable.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+#        exit 1; }
    sed -i "s%/mobileTabs\.css%/$FDIR/mobileTabs.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
-   sed -i "s%/mobileDesign2\.css%/$FDIR/mobileDesign2.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+#   sed -i "s%/mobileDesign2\.css%/$FDIR/mobileDesign2.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+#        exit 1; }
+#   sed -i "s%/tableDesign\.css%/$FDIR/tableDesign.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+#        exit 1; }
+#   sed -i "s%/design\.css%/$FDIR/design.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+#        exit 1; }
+   sed -i "s%/apple%/$FDIR/apple%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
-   sed -i "s%/tableDesign\.css%/$FDIR/tableDesign.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
-        exit 1; }
-   sed -i "s%/design\.css%/$FDIR/design.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+   sed -i "s%/icon%/$FDIR/icon%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
    sed -i "s%/design\.php%/$FDIR/design.php%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }

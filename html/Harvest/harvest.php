@@ -1,5 +1,8 @@
 <?php session_start();?>
 <?php
+//if ($_SESSION['mobile']) {
+    echo "<html>";
+//}
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
@@ -59,7 +62,11 @@ function show_confirm() {
       }
       con=con+"Unit: "+ unit + "<br>";
    <?php
-   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
+   //include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
+   if ($_SESSION['gens']) {
+      echo 'var gen = document.getElementById("gen" +j).value;';
+      echo 'con += "Succession #: " + gen + "<br>";';
+   }
    if ($_SESSION['labor']) {
       echo 'var numW = document.getElementById("numW"+j).value;
       if (checkEmpty(numW) || numW<=0 || !isFinite(numW)) {
@@ -86,22 +93,24 @@ function show_confirm() {
 }
 </script>
 
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'].'?year='.$dYear.
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'].'?year='.$dYear.
   '&month='.$dMonth.'&day='.$dDay.'&crop='.$currentCrop.'&currentID='.$_GET['currentID'].
   '&tab=harvest:harvestInput&date='.$currentDate;?>" >
 
-<h3 class='form_header'>Harvest Input Form</h3>
-<br clear="all">
-<label class='input_label' for="crop"><b>Date of Harvest:</b></label>
+<center>
+<h2 class='form_header'>Harvest Input Form</h2>
+</center>
+<fieldset>
+<div class='pure-control-group'>
+<label class='input_label' for="crop">Date of Harvest:</label>
 <?php
 // if (!$_SESSION['mobile']) echo "<br clear='all'>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label class='input_label' for='cropButton'><b>Crop:&nbsp;</b></label>
-<div class='styled-select'>
+</div>
+<div class='pure-control-group'>
+<label class='input_label' for='cropButton'>Crop:</label>
 <select name='cropButton' id='cropButton' class='mobile-select' 
-<?php if ($_SESSION['gens']) echo 'onChange="getGen();"';?>>
 <option value=0 selected>Crop</option>
 <?php
 $sql = "SELECT crop FROM plant WHERE active=1";
@@ -112,7 +121,6 @@ while ($row = mysql_fetch_array($result)) {
 ?>
 </select></div>
 
-<br clear="all"/>
 
 <?php
 if($_SESSION['mobile']){
@@ -120,45 +128,92 @@ echo "<br clear=\"all\">";
 }
 ?>
 <br clear="all"/>
-<table id='harvestTable' name='harvestTable' class='input_table'>
-<tr><th>Name of Field</th><th>Yield</th><th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<!--
+ style="table-layout:fixed;"
+-->
+<table id='harvestTable' name='harvestTable'
+  class='pure-table pure-table-bordered'>
+<!--
+<col/>
+<col/>
 <?php
+if ($_SESSION['mobile']) {
+   echo '<col width="130px"/>';
+} else {
+   echo '<col width="240px"/>';
+}
+?>
+<?php
+if ($_SESSION['gens']) {
+   echo '<col>';
+}
+if ($_SESSION['labor']) {
+   echo '<col/>';
+   if ($_SESSION['mobile']) {
+      echo '<col width="130px"/>';
+   } else {
+      echo '<col width="240px"/>';
+   }
+}
+?>
+-->
+
+<thead><tr><th>Name of Field</th><th>Yield</th><th>&nbsp;&nbsp;Unit&nbsp;&nbsp;</th>
+<?php
+if ($_SESSION['gens']) {
+   echo '<th>Succ&nbsp;#</th>';
+}
 if ($_SESSION['labor']) {
   echo '
 <th>Workers</th><th>
-<div class="styled-select">
-<select name="timeUnit" id="timeUnit" class="mobile-select">
+<select name="timeUnit" id="timeUnit" class="mobile-select wide">
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
-</div>
-</th>';
+</th></tr></thead>';
 }
 ?>
-</tr>
+<tbody></tbody>
 </table>
 <br clear="all"/>
-<input type="button" id="addField" name="addField" class="genericbutton" onClick="addRow();"
+<script type="text/javascript">
+window.onload=function() {
+   var wid = window.innerWidth || document.body.clientWidth;
+   var min = 750;
+   // console.log(wid);
+   // console.log(min);
+   if (wid < min) {
+      document.getElementById("harvestTable").style.width=min;
+   }
+      // console.log(document.getElementById("harvestTable").style.width);
+
+}
+</script>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" id="addField" name="addField" 
+  class="genericbutton pure-button wide" onClick="addRow();"
 value="Add Field">
-&nbsp;&nbsp;&nbsp;
-<input type="button" id="removeField" name="removeField" class="genericbutton" onClick="removeRow();"
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="removeField" name="removeField" 
+  class="genericbutton pure-button wide" onClick="removeRow();"
 value="Remove Field">
-<br clear="all"/>
+</div>
+</div>
 <br clear="all"/>
 <input type="hidden" name="numRows" id="numRows" value=0>
 <script type="text/javascript">
-function getGen() {
-   var genDiv = document.getElementById("genDiv");
-   var genStr = '<div id="genDiv" class="styled-select">' +
-       '<select id= "gen" name="gen" class="mobile-select">';
+function getGen(j) {
    var year = document.getElementById("year").value;
    var crop = encodeURIComponent(document.getElementById("cropButton").value);
+   var fldID = encodeURIComponent(document.getElementById("fieldID" + j).value);
    xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year, false);
+   xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year + "&fieldID=" + fldID, false);
    xmlhttp.send();
-   genStr += xmlhttp.responseText;
-   genStr += '</select></div>';
-   genDiv.innerHTML = genStr;
+   var cell25 = document.getElementById('genCell' + j);
+   cell25.innerHTML=" <select name='gen" + j + "' id=\'gen" +j +
+        "' class='wide'>" + xmlhttp.responseText + " </select>";
 }
 
 var numRows = 0;
@@ -169,8 +224,8 @@ function addRow() {
    } else {
       cb.disabled=true;
       numRows++;
-      var table = document.getElementById("harvestTable");
-      var row = table.insertRow(numRows);
+      var table = document.getElementById("harvestTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
       row.id = "row"+numRows;
       row.name = "row"+numRows;
       var cell0 = row.insertCell(0);
@@ -182,11 +237,18 @@ function addRow() {
       if(xmlhttp.responseText=="\n") {
         cb.value="";
       }
-      cell0.innerHTML="<div class='styled-select' id ='fieldID2" + numRows + "''>  <select name= 'fieldID" +
-        numRows + "' id= 'fieldID" + numRows + "' class='mobile-select' style='width:100%'>"+xmlhttp.responseText+"</select> </div>";
+      var genStr = "<div class='styled-select' id ='fieldID2" + numRows + "''>  <select name= 'fieldID" +
+        numRows + "' id= 'fieldID" + numRows + "' ";
+      <?php
+      if ($_SESSION['gens']) {
+          echo "genStr += \"onchange='getGen(\" + numRows + \");' \";";
+      }
+      ?>
+      genStr += "class='wide'>"+xmlhttp.responseText+"</select> </div>";
+      cell0.innerHTML = genStr;
       var cell1 = row.insertCell(1);
       cell1.innerHTML="<input onkeypress= 'stopSubmitOnEnter(event);' type = 'text' name='yield"+numRows+
-         "' id='yield"+numRows+"' class='textbox mobile-input inside_table' style='width:100%'>";
+         "' id='yield"+numRows+"' class='textbox mobile-input inside_table wide' size='5'>";
       <?php
       if ($farm == 'wahlst_spiralpath') {
         echo 'xmlhttp.open("GET", "hupdatesp.php?crop="+crop, false);';
@@ -197,23 +259,43 @@ function addRow() {
       xmlhttp.send();
       var cell2 = row.insertCell(2);
       cell2.innerHTML="<div class = 'styled-select'> <select name='unit"+numRows+"' id='unit" + numRows +
-        "' class='mobile-select' style='width:100%'>"+xmlhttp.responseText+" </select> </div>";
+        "' class='mobile-select wide'>"+xmlhttp.responseText+" </select> </div>";
+      var col = 3;
 <?php
+if ($_SESSION['gens']) {
+/*
+   echo 'xmlhttp = new XMLHttpRequest();';
+   echo 'var year = document.getElementById("year").value;';
+   echo 'xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year, false);';
+   echo 'xmlhttp.send();';
+*/
+   echo "   var cell25 = row.insertCell(3);";
+   echo "   cell25.id = 'genCell' + numRows;";
+   echo "   col++;";
+   echo '   cell25.innerHTML=" <select name=\'gen"+numRows+"\' id=\'gen" + numRows +
+        "\' class=\'mobile-select wide\'></select>";';
+}
 if ($_SESSION['labor']) {
 echo '
-      var cell3 = row.insertCell(3);
+      var cell3 = row.insertCell(col);
       cell3.innerHTML="<input onkeypress= \'stopSubmitOnEnter(event);\' type=\'text\' name=\'numW"+
          numRows+ "\' id=\'numW" + numRows + "\' value=\"1\" " +
-         "class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";
-      var cell4 = row.insertCell(4);
+         "class=\'textbox mobile-input inside_table wide\' size = \'3\'>";
+      col++;
+      var cell4 = row.insertCell(col);
       cell4.innerHTML="<input onkeypress=\'stopSubmitOnEnter(event);\' type=\'text\' name=\'time"+
          numRows+ "\' id=\'time"+numRows+"\' value=\"1\" " +
-         "class=\'textbox mobile-input inside_table\' style=\'width:100%\'>";';
+         "class=\'textbox mobile-input inside_table wide\' size = \'5\'>";';
 }
 ?>
    }
    var nr = document.getElementById("numRows");
    nr.value=numRows;
+<?php
+if ($_SESSION['gens']) {
+   echo "   getGen(numRows);";
+}
+?>
 }
    
 function removeRow() {
@@ -258,46 +340,50 @@ if($currentDate){
 
 <!--
 <br clear="all"/>
+<div class='pure-control-group' id='genDiv'>
 -->
-<p>
 <?php
+/*
 if ($_SESSION['gens']) {
-   echo '<label for="gen">Succession #:&nbsp; </label>';
-   echo '<div id="genDiv" class="styled-select">';
+   echo '<label for="gen">Succession #:</label> ';
    echo '<select id= "gen" name="gen" class="mobile-select">';
    echo '</select>';
    echo '</div>';
-   echo '<br clear="all">';
 }
+*/
 ?>
-<div>
+<div class='pure-control-group'>
 <label class='input_label' for="comments">Comments:</label>
-<br clear="all"/>
-<textarea  name="comments" class='input_comments' rows="20" cols="30">
+<textarea  name="comments" class='input_comments' rows="5" cols="30">
 </textarea>
 </div>
 
-<!--
-<input  class="submitbutton"  type="submit" name="submit" value="Submit" onclick= "return show_confirm();">
--->
-<input  class="submitbutton" type="button" value="Submit" onclick= "show_confirm();">
-
+</fieldset>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input  class="submitbutton pure-button wide" type="button" value="Submit" onclick= "show_confirm();">
 </form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+
 <?php
    if(!empty($_GET['currentID'])){
+   echo '<div class="pure-u-1">';
    echo "<form method='POST' action='harvestList.php?year=".$_GET['year']."&month=".$_GET['month'].
          "&day=".$_GET['day']."&currentID=".$_GET['currentID'].
          "&tab=harvest:harvestList&detail=0'>";
-       echo "<input type='submit' class='submitbutton' value ='View Harvest List (".$currentDate.")'></form> ";
+       echo "<input type='submit' class='submitbutton pure-button wide' value ='View Harvest List (".$currentDate.")'></form> ";
+  echo '</div>';
 }
 ?>
 <!--
 <br clear="all"/>
 -->
+</div>
 <?php
 // echo "</form>";
-echo '<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton" value = "View Table"></form>';
-// if(isset($_POST['submitB'])){
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $crop = escapehtml($_POST['cropButton']);
@@ -335,7 +421,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          $totalHours=0;
       }
 
-      include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
+//      include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
+      if ($_SESSION['gens']) {
+         $gen = $_POST['gen'.$j];
+      } else {
+         $gen = 1;
+      }
       if ($farm == 'wahlst_spiralpath') {
         $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours, gen, comments, unit) VALUES('".
            $_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID.

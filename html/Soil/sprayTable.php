@@ -26,13 +26,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
         $fieldID."'and materialSprayed like '".$sprayMaterial."' and crops like '%".$crop.
         "%' and materialSprayed = sprayMaterial order by sprayDate";
       $sqldata = mysql_query($sql) or die(mysql_error());
-      echo "<table>";
+/*
       echo "<colgroup><col width='10px' id='col1'/>";
       echo "<col id='col2'/>";
       echo "<col id='col3'/>";
       echo "<col id='col4'/>";
       echo "<col id='col5'/>";
       echo "</colgroup>";
+*/
       if ($fieldID == "%") {
         $fld = "All Fields";
       } else {
@@ -43,12 +44,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       } else {
          $mat = $sprayMaterial;
       }
-      echo "<caption>Backpack Spray Report for ".$mat." on ".$fld."</caption>";
-      echo "<tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th>";
+      echo "<center>";
+      echo "<h2>Backpack Spray Report for ".$mat." on ".$fld."</h2>";
+      echo "</center>";
+      echo "<table class='pure-table pure-table-bordered'>";
+      echo "<thead><tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th>";
       if ($_SESSION['admin']) {
          echo "<th>Edit</th><th>Delete</th>";
       }
-      echo "</tr>";
+      echo "</tr></thead>";
       while($row = mysql_fetch_array($sqldata)) {
    echo "<tr><td>";
    //echo str_replace("-","/",$row['sprayDate']);
@@ -77,7 +81,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "&fieldID=".encodeURIComponent($_GET['fieldID']).
          "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
          "&tab=soil:soil_spray:bspray:bspray_report\">";
-      echo "<input type='submit' class='editbutton' value='Edit' /></form>";
+      echo "<input type='submit' class='editbutton pure-button wide' value='Edit' /></form>";
       echo "</td><td>";
       echo "<form method='POST' action=\"sprayTable.php?month=".$month.
          "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
@@ -85,7 +89,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "&fieldID=".encodeURIComponent($_GET['fieldID']).
          "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
          "&tab=soil:soil_spray:bspray:bspray_report\">";
-     echo "<input type='submit' class='deletebutton' value='Delete'";
+     echo "<input type='submit' class='deletebutton pure-button wide' value='Delete'";
      echo "onclick='return warn_delete();'/></form>";
      echo "</td>";
   }
@@ -94,29 +98,40 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 }
       echo "</table>";
       echo '<br clear="all"/>';
+      echo '<div class="pure-form pure-form-aligned">';
       $total="Select sum(water) as water, sum(totalMaterial) as total from bspray where sprayDate between '".$year."-".$month."-".$day.
-         "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and materialSprayed like '".$sprayMaterial."'" ;
+         "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and materialSprayed like '".$sprayMaterial."' and fieldID like '".$fieldID."'";
       $result=mysql_query($total) or die(mysql_error());
       $other = "Select BRateUnits from tSprayMaterials where sprayMaterial like '".$sprayMaterial."'";
       $result2 = mysql_query($other) or die(mysql_error());
       $row2 = mysql_fetch_array($result2);
       while ($row1 = mysql_fetch_array($result) ) {
-        echo "<label for='total'>Total Gallons of Water Used:&nbsp;</label>";
-   echo "<input disabled class='textbox2 mobile-input' style='width: 120px;' type ='text' value=".$row1['water'].">";
+        echo '<div class="pure-control-group">';
+        echo "<label for='total'>Total Gallons of Water Used:</label> ";
+   echo "<input readonly class='textbox2 mobile-input' type ='text' value=".$row1['water'].">";
+        echo "</div>";
         if ($sprayMaterial != "%") {
-           echo '<br clear="all"/>';
-           echo "<label for='total'>Total Material Used:&nbsp;</label>";
-      echo "<input disabled class='textbox2 mobile-input' style='width: 120px;' type ='text' value=".$row1['total'].">";
-      echo "<label style='margin-top: 4px'for='unit'>&nbsp;".$row2['BRateUnits']."(S)</label>";
+           echo '<div class="pure-control-group">';
+           echo "<label for='total'>Total Material Used:</label> ";
+      echo "<input readonly class='textbox2 mobile-input'  type ='text' value=".$row1['total'].">";
+      echo "&nbsp;".$row2['BRateUnits']."(S)";
+        echo "</div>";
         }
       }
+      echo "</div>";
       echo '<br clear="all"/>';
       echo '<br clear="all"/>';
+      echo '<div class="pure-g">';
+      echo '<div class="pure-u-1-2">';
       echo "<form name='form' method='POST' action='/down.php'>";
       echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
-      echo '<input type="submit" class="submitbutton" name="submit" value="Download Report">';
+      echo '<input type="submit" class="submitbutton pure-button wide" name="submit" value="Download Report">';
       echo '</form>';
-      echo '<form method="POST" action = "sprayReport.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+      echo '</div>';
+      echo '<div class="pure-u-1-2">';
+      echo '<form method="POST" action = "sprayReport.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+      echo '</div>';
+      echo '</div>';
 ?>
 </div>
 </body>

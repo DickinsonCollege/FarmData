@@ -29,7 +29,7 @@ $curYear = $row['yr'];
 $curMonth = $row['mth'];
 $curDay = $row['dy'];
 $comments = $row['comments'];
-echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_scout:soil_disease:disease_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay."&tyear=".$tcurYear.
    "&tmonth=".$tcurMonth."&tday=".$tcurDay.
@@ -38,28 +38,30 @@ echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
    "&stage=".encodeURIComponent($origStage).
    "&disease=".encodeURIComponent($origDisease)."&id=".$id."\">";
 
-echo "<H3> Edit Disease Scouting Record </H3>";
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month" class="mobile-select">';
+echo "<center>";
+echo "<H2> Edit Disease Scouting Record </H2>";
+echo "</center>";
+
+echo "<div class='pure-control-group'>";
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month" class="mobile-select">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day" class="mobile-select">';
+echo '</select>';
+echo '<select name="day" id="day" class="mobile-select">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year" class="mobile-select">';
+echo '</select>';
+echo '<select name="year" id="year" class="mobile-select">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo "<label>Field ID:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo "<div class='pure-control-group'>";
+echo "<label>Name of Field:</label> ";
 echo "<select name='fieldID' id='fieldID' class='mobile-select'>";
 echo "<option value='".$fieldID."' selected>".$fieldID."</option>";
 $sql = "SELECT fieldID from field_GH where active=1";
@@ -67,15 +69,15 @@ $result = mysql_query($sql) or die();
 while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".$row['fieldID']."'>".$row['fieldID']."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
+echo '</select></div>';
 
-echo '<label>Crops:&nbsp</label>';
+echo "<div class='pure-control-group'>";
+echo '<label>Crops:</label> ';
 echo "<textarea name='crops'>".$crops."</textarea>";
-echo '<br clear="all"/>';
+echo '</div>';
 
-echo "<label>Disease:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo "<div class='pure-control-group'>";
+echo "<label>Disease:</label> ";
 echo "<select name='disease' id='disease' class='mobile-select'>";
 echo "<option value='".$disease."' selected>".$disease."</option>";
 $sql = "select diseaseName from disease";
@@ -83,21 +85,19 @@ $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".$row['diseaseName']."'>".$row['diseaseName']."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
+echo '</select></div>';
 
-echo "<label>Infestation:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo "<div class='pure-control-group'>";
+echo "<label>Infestation:</label> ";
 echo "<select name='infest' id='infest' class='mobile-select'>";
 echo "<option value='".$infest."' selected>".$infest."</option>";
 for ($i = 0; $i < 5; $i++) {
 	echo "<option value='".$i."'>".$i."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
+echo '</select></div>';
 
-echo "<label>Stage:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo "<div class='pure-control-group'>";
+echo "<label>Stage:</label> ";
 echo "<select name='stage' id='stage' class='mobile-select'>";
 $sql = "select stage from stage";
 $res = mysql_query($sql);
@@ -109,24 +109,17 @@ while ($row = mysql_fetch_array($res)) {
    }
    echo ">".$row['stage']."</option>";
 }
-/*
-echo "<option value='".$stage."' selected>".$stage."</option>";
-echo "<option value='MODERATE'> MODERATE </option>";
-echo "<option value='SAD'> SAD </option>";
-echo "<option value='SEVERE'> SEVERE </option>";
-*/
 echo "</select></div>";
-echo "<br clear='all'>";
 
-
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo "<div class='pure-control-group'>";
+echo '<label>Comments:</label>';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo "</div>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);

@@ -5,17 +5,20 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='date' method='POST'>
+<form name='date' class='pure-form pure-form-aligned' method='POST'>
 <?php 
-echo '<h3> Choose the date of the harvest list';
-echo ' you would like to view. </h3>';
-echo '<br clear="all">';
+ echo '<center>';
+echo '<h2>Choose Harvest List Date</h2>';
+ echo '</center>';
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label>';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
+echo "</div>";
 ?>
 <br clear="all"/>
 
-<input class="submitbutton" type="submit" name="date" value="Choose" >
+<input class="submitbutton pure-button wide"
+   type="submit" name="date" value="Choose" >
 </form>
 
 <?php

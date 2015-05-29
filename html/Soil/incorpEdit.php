@@ -47,7 +47,10 @@ function selectDates() {
    xmlhttp.send();
 
    var seeddateDiv = document.getElementById('seeddateDiv');
-   seeddateDiv.innerHTML = "<select name='seeddate' id='seeddate' class='mobile-select' onchange='selectSpecies();'>" + xmlhttp.responseText + "</select>";
+   seeddateDiv.innerHTML = '<div class="pure-control-group" id="seeddateDiv">' +
+       "<label for='seeddatelabel'>Seed Date:</label> " +
+       "<select name='seeddate' id='seeddate' class='mobile-select' onchange='selectSpecies();'>" + 
+       xmlhttp.responseText + "</select></div>";
 }
 
 function selectSpecies() {
@@ -60,56 +63,53 @@ function selectSpecies() {
    xmlhttp.open("GET", "update_species.php?fieldID=" + fieldID + "&seedDate=" + seedDate, false);
    xmlhttp.send();
 
-   var table = document.getElementById('coverCropTable');
-   table.innerHTML = "<tr><th>Species</th></tr>";
    var speciesNames = eval(xmlhttp.responseText);
-   
-   var count = 0;
+   var sDiv = document.getElementById("speciesList");
+   var content = '<div class="pure-control-group" id="speciesList"><label>Species:</label> ' +
+      '<textarea readonly id="listArea" name="listArea">';
    for (i = 0; i < speciesNames.length; i++) {
-      count++;
-      var row = table.insertRow(-1);
-      var cell = row.insertCell(0);
-      cell.innerHTML = "<input readonly type='text' style='width:100%;' class='textbox25 mobile-input inside_table'" + 
-         "name='crop" + count + "' id='crop" + count + "' value='" + speciesNames[i] + "'>";
+      content += speciesNames[i];
+      if (i < speciesNames.length - 1) {
+         content += "\n";
+      }
    }
-
-   var hi = document.getElementById('numCrops');
-   hi.value = count;
+   content += '</textarea> </div>';
+   sDiv.innerHTML = content;
 }
 
 </script>
 
 
 <?php
-echo "<form name='form' method='POST' action=\"".$SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='POST' action=\"".$SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report".
    "&year=".$origYear."&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&id=".$id."&fieldID=".encodeURIComponent($origFieldID)."\">";
 
-echo "<H3> Edit Cover Crop Incorporation Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select class="mobile-month-select" name="month" id="month">';
+echo "<center>";
+echo "<H2> Edit Cover Crop Incorporation Record </H2>";
+echo "</center>";
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label> ';
+echo '<select class="mobile-month-select" name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth <= 12; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select class="mobile-day-select" name="day" id="day">';
+echo '</select>';
+echo '<select class="mobile-day-select" name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day <= 31; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select class="mobile-year-select" name="year" id="year">';
+echo '</select>';
+echo '<select class="mobile-year-select" name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 4; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo "<label>Field ID:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo '<div class="pure-control-group">';
+echo "<label>Name of Field:</label> ";
 echo '<select onchange="selectDates(); selectSpecies();" class="mobile-select" name="fieldID" id="fieldID">';
 echo "<option value='".$fieldID."' selected>".$fieldID."</option>";
 $sql = "select distinct fieldID from coverSeed_master";
@@ -117,15 +117,15 @@ $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
    echo "<option value='".$row['fieldID']."'>".$row['fieldID']."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
+echo '</select></div>';
 
-echo "<label for='seeddatelabel'>Seed Date:&nbsp;</label>";
-echo "<div class='styled-select' id='seeddateDiv'>";
+echo '<div class="pure-control-group" id="seeddateDiv">';
+echo "<label for='seeddatelabel'>Seed Date:</label> ";
+// echo "<div class='styled-select' id='seeddateDiv'>";
 echo "<select onchange='selectSpecies();' class='mobile-select' name='seeddate' id='seeddate'>";
 echo "<option value='".$seedDate."'>".$seedDate."</select></div>";
-echo "<br clear='all'>";
 
+/*
 echo "<br clear='all'>";
 echo "<table name='coverCropTable' id='coverCropTable'>";
 echo "<tr><th>Species</th></tr>";
@@ -139,17 +139,26 @@ while ($row = mysql_fetch_array($result)) {
       name='crop".$numRows."' id='crop".$numRows."' value='".$row['coverCrop']."'>";
    echo "</select></td></tr>";
 }
+*/
+   
+echo '<div class="pure-control-group" id="speciesList">';
+echo '<label>Species:</label> ';
+echo '<textarea readonly id="listArea" name="listArea"></textarea>';
+echo '</div>';
+echo '<script type="text/javascript">selectSpecies();</script>';
+
+
 echo "<input type='hidden' value='".$numRows."' name='numRows' id='numRows'>";
 echo "</table>";
 echo "<input type='hidden' id='numCrops' name='numCrops' value=".$numRows.">";
 
-echo "<br clear='all'>";
-echo "<label>Total Biomass Pounds:&nbsp</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Total Biomass Pounds:</label> ";
 echo "<input type='text' class='textbox25 mobile-input' name='totalBiomass' id='totalBiomass' value='".$totalBiomass."'>";
-echo "<br clear='all'>";
+echo "</div>";
 
-echo "<label>Incorporation Tool:&nbsp</label>";
-echo "<div class='styled-select' id='incorpToolDiv'>";
+echo '<div class="pure-control-group">';
+echo "<label>Incorporation Tool:</label> ";
 echo "<select class='mobile-select' name='incorpTool' id='incorpTool'>";
 echo "<option value='".$incorpTool."' selected>".$incorpTool."</option>";
 $sql = "select tool_name from tools where type='INCORPORATION'";
@@ -157,19 +166,18 @@ $result = mysql_query($sql) or die();
 while ($row = mysql_fetch_array($result)) {
    echo "<option value='".$row['tool_name']."'>".$row['tool_name']."</option>";
 }
-echo "</div></select>";
-echo "<br clear='all'>";
-echo "<br clear='all'>";
+echo "</select></div>";
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
    $comments = escapehtml($_POST['comments']);

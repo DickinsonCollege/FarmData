@@ -20,7 +20,8 @@ if (isset($_GET['editto'])){
    $sql = "Select * from inventory where crop_product like '".$crop_product."'and grade like '".$grade."' group by crop_product, grade, unit";
    $result = mysql_query($sql);
    
-   echo "<table>";
+   echo "<div class='pure-form pure-form-aligned'>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    $crpProd = $_GET['crop_product'];
    if ($crpProd === "%" || $crpProd === "%25") {
       $crpProd = "All Crops/Products";
@@ -30,17 +31,16 @@ if (isset($_GET['editto'])){
       $grd = "All";
    }
 
-   echo "<caption>Inventory Report for ".$crpProd." of Grade: ".$grd."</caption>";
-   echo "<caption>".$dat."</option>";
+   echo "<center><h2>Inventory Report for ".$crpProd." of Grade: ".$grd."</h2></center>";
 
-   echo "<tr>
+   echo "<thead><tr>
       <th>Crop/Product</th>
       <th>Grade</th>
       <th>Amount</th>
       <th>Unit</th>
       <th>Update To</th>
       <th>Update</th>
-      </tr>";
+      </tr></thead>";
    while ($row = mysql_fetch_array($result)) {
       echo "<tr>";
       echo "<td>";
@@ -65,19 +65,27 @@ if (isset($_GET['editto'])){
       echo "<form method='POST' action=\"inventoryUpdate.php?tab=admin:admin_sales:inventory&crop_product=".
           encodeURIComponent($_GET['crop_product'])."&grade=".$grade."&crop=".
           encodeURIComponent($row[crop_product])."&gradeupdate=".$row[grade]."&amount=".$amount."&unit=".
-          encodeURIComponent($unit)."\"><input type='text' class='textbox2' id='edit' name='edit'>";
+          encodeURIComponent($unit)."\"><input type='text' size='5' id='edit' name='edit'>";
       echo "</td><td>";
-      echo "<input type='submit' class='submitbutton' value='Update' name='submit' id='submit'></form>";
+      echo "<input type='submit' class='submitbutton pure-button wide' value='Update' name='submit' id='submit'></form>";
       echo "</td>";
       echo "</tr>";
    }
    echo "</table>";
+   echo "</div>";
    echo "<br clear='all'>";
-        echo "<form name='form' method='POST' action='/down.php'>";
-        echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
-   echo "<input class='submitbutton' type='submit' name='submit' value='Download Report'>";
+
+   echo "<div class = 'pure-g'>";
+   echo "<div class = 'pure-u-1-2'>";
+   echo "<form name='form' method='POST' action='/down.php'>";
+   echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
+   echo "<input class='submitbutton pure-button wide' type='submit' name='submit' value='Download Report'>";
    echo "</form>";
+   echo "</div>";
+   echo "<div class = 'pure-u-1-2'>";
    echo "<form method='POST' action='inventoryReport.php?tab=admin:admin_sales:inventory'>";
-   echo "<input type='submit' class='submitbutton' value='Run Another Report'></form>";
+   echo "<input type='submit' class='submitbutton pure-button wide' value='Run Another Report'></form>";
+   echo "</div>";
+   echo "</div>";
 
 ?>

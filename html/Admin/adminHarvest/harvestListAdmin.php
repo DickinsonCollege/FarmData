@@ -24,8 +24,11 @@ while ($row = mysql_fetch_array($result)) {
 }
 ?>
 
-<br clear="all"/>
-<form name='form' method='POST' action="<?php echo $_SERVER['PHP_SELF'].
+<center>
+<h2>Create/Edit Harvest List</h2>
+</center>
+
+<form name='form' class='pure-form pure-form-aligned' method='POST' action="<?php echo $_SERVER['PHP_SELF'].
   '?tab=admin:admin_add:admin_harvestlist&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.
   $currentID.'&detail='.$detail; ?>">
 
@@ -53,7 +56,8 @@ while ($row = mysql_fetch_array($result)) {
 }
 </script>
 
-<table >
+<table class="pure-table pure-table-bordered">
+<thead>
 <tr>	<th>Crop</th>
 	<th>Units</th>
 	<th>Field</th>
@@ -64,7 +68,10 @@ for ($i = 0; $i < count($targs); $i++) {
 ?>
         <th>Total</th>
 </tr>
-<tr>	<td> 
+</thead>
+<tbody>
+<tr>
+	<td> 
 <div class="styled-select">
 <select name= "crop" id="crop" class="mobile-select" onChange="addInput();checkIfOnList();" >
 <option value=0 selected  > Crop </option>
@@ -86,7 +93,7 @@ while ($row1 =  mysql_fetch_array($result)){
 </div>
 </td>
 
-<td><center><input class="textbox4 mobile-input inside_table" type= "text" name="fieldID" id="fieldID" size="3"></center></td>
+<td><center><input class="textbox4 mobile-input inside_table" type= "text" name="fieldID" id="fieldID" size="10"></center></td>
 
 <script type="text/javascript">
 	 function addInput(){
@@ -105,6 +112,7 @@ while ($row1 =  mysql_fetch_array($result)){
           for ($i = 0; $i < count($targs); $i++) {
               echo 'sum += parseFloat(document.getElementById("'.str_replace(" ", "_",$targs[$i]).
                    '").value);';
+              echo "\n";
           }
         ?>
 	document.getElementById('total').value = sum;
@@ -114,23 +122,18 @@ while ($row1 =  mysql_fetch_array($result)){
 </script>
 <?php
 for ($i = 0; $i < count($targs); $i++) {
-   echo '<td><input class="textbox4 mobile-input inside_table" type= "text"';
+   echo '<td><input size="3" class="wide" type= "text"';
    echo ' name="'.str_replace(" ", "_",$targs[$i]).'" id="'.str_replace(" ", "_",$targs[$i]).
        '" value=0 oninput="addall();"></td>';
 
 }
 ?>
-<!--
-<td> <input class="textbox4 mobile-input inside_table" type= "text" name="CSA49" id="CSA" size="3" value=0 oninput="addthree()"></td>
-<td> <input class="textbox4 mobile-input inside_table"  type= "text" name="dining" id="dining" size="12" value=0 oninput="addthree()"></td>
-<td> <input class="textbox4 mobile-input inside_table" type= "text" name="market" id="market"  size="5" value=0 oninput="addthree()"></td>
-<td> <input class= "textbox4 mobile-input inside_table" type= "text" name="other" id="other"  size="5" value=0 oninput="addthree()"></td>
--->
 <td><input class=" textbox4 mobile-input inside_table" type="text" name="total" id="total" size="3" readonly></td>
 </tr>
+</tbody>
 </table>
 <br clear="all"/>
-<input type="submit" name="form" class="submitbutton" value="Submit" > 
+<input type="submit" name="form" class="submitbutton pure-button wide" value="Submit" > 
 </form>
 <br clear="all"/>
 
@@ -140,13 +143,6 @@ if(isset($_POST['form'])&& isset($_POST['crop'])&& isset($_POST['fieldID']) &&
    $crop= escapehtml($_POST['crop']);
    $fieldID=escapehtml($_POST['fieldID']);
    $units=escapehtml($_POST['units']);
-/*
-   $CSA=escapehtml($_POST['CSA49']);
-   $dining=escapehtml($_POST['dining']);
-   $market=escapehtml($_POST['market']);
-   $other=escapehtml($_POST['other']);
-   $total=escapehtml($_POST['total']);
-*/
    mysql_query("delete from harvestListItem where crop='".$crop."' and id =".$currentID);
 echo mysql_error();
   for ($i = 0; $i < count($targs); $i++) {
@@ -177,8 +173,11 @@ if($deleteCrop&&$deleteCrop!=$crop){
 }
 ?>
 
-<table border="1">
-<caption> Harvest List For: <?php echo $date ?></caption>
+<center>
+<h3> Harvest List For: <?php echo $date ?></h3>
+</center>
+<table class="pure-table pure-table-bordered">
+<thead>
 <tr>
         <th>Crop </th>
         <th>Field</th>
@@ -191,6 +190,8 @@ if($deleteCrop&&$deleteCrop!=$crop){
         <th>Total</th>
 	<th>Delete</th>
 </tr>
+</thead>
+<tbody>
 
 
 <?php
@@ -222,63 +223,20 @@ foreach ($tabArr as $crp=>$arr) {
    echo "<td><form method=\"POST\" action=\"harvestListAdmin.php?tab=admin:admin_add:admin_harvestlist&crop=".
       $crp."&date=".$date."&year=".$year."&month=".$month."&day=".$day.
       "&currentID=".$currentID."\">";
-   echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"></form> </td>";
+   echo "<input type=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"></form> </td>";
 
-/*
-dirTable.php?month=".$month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.  "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop'])."&tab=admin:admin_delete:deleteseed:deletedirplant&submit=Submit\">";
-
-   echo "<td><a href=\"
- Delete  </a> </td>";
-*/
    echo "</tr>";
 }
-/*
-while($row=mysql_fetch_array($result)){ 
-	$itemCrop=$row['crop'];
-	$itemField=$row['fieldID'];
-	$itemUnits=$row['units'];
-	$itemCSA=$row['CSA'];
-	$itemD=$row['dining'];
-	$itemM=$row['market'];
-	$itemO=$row['other'];
-	$itemT=$row['Total'];
-
-	//$itemYield=0;	
-	//$sql2="SELECT yield FROM harvested where hardate='$date' and crop='$itemCrop'";
-	//$result2=mysql_query($sql2);
-	//$sql3= "SELECT conversion FROM (SELECT 1 as conversion FROM units WHERE crop='".$itemCrop."' and default_unit='".$itemUnits."'union select conversion from units where crop='".$itemCrop."' and unit='".$itemUnits."') as temp";
-	//$conversionTable=mysql_query($sql3);
-	//$row3=mysql_fetch_array($conversionTable);
-	//$conversionNum=$row3['conversion'];
-	
-	//while($row=mysql_fetch_array($result2)){
-	//	$itemYield=($itemYield+$row['yield'])/$conversionNum;
-//	}
-
-
-	echo "<tr>  <td> $itemCrop </td>";
-	echo "	<td> $itemField </td>
-		<td> $itemUnits</td>
-		<td> $itemCSA</td>
-		<td> $itemD</td>
-		<td> $itemM</td>
-		<td> $itemO</td>
-		<td> $itemT</td>
-		<td><a href=\"harvestListAdmin.php?tab=admin:admin_add:admin_harvestlist&crop=".$itemCrop."&date=".$date."&year=".$year."&month=".$month."&day=".$day."&currentID=".$currentID.
-"\";> Delete  </a> </td>
-</tr>";
-
-}
-*/
+echo "<tbody>";
 echo "</table>";
 ?>
 <br clear="all"/>
 
 <form name='comment' method='POST'>
-<label for="comment">Add Notes</label>
-<br clear="all"/>
+<center>
+<h3>Add Notes</h3>
 <?php
-echo "<textarea name=\"comments\" rows=\"20\" col=\"30\" class='mobile-comments'>";
+echo "<textarea name=\"comments\" rows=\"10\" cols=\"50\" class='mobile-comments'>";
 $sqlGetValue="SELECT comment from harvestList where id=".$currentID;
 
 if(isset($_POST['submit'])){
@@ -291,9 +249,10 @@ $row2=mysql_fetch_array( mysql_query($sqlGetValue));
 echo $row2['comment'];
 ?>
 </textarea>
+</center>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" name="submit" class = "submitbutton" value="Update Notes" >
+<input type="submit" name="submit" class = "submitbutton pure-button wide" value="Update Notes" >
 </form>
 
 </body>

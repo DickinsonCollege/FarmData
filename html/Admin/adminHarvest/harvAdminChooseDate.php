@@ -5,16 +5,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='date' method='POST'>
-<h3> Date of Harvest List (to Create or Edit): </h3>
-<br>
+<form name='date' class='pure-form pure-form-aligned'  method='POST'>
+<center>
+<h2> Date of Harvest List (to Create or Edit): </h2>
+</center>
 
+<div class="pure-control-group">
+<label>Date:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
 <br clear="all">
-<br clear="all">
-<input class="submitbutton" type="submit" name="date" value="Choose" >
+<input class="submitbutton pure-button wide" type="submit" name="date" value="Choose" >
 </form>
 
 <?php

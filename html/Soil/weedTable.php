@@ -31,7 +31,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        echo "<script>alert(\"Could not Generate Weed Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
    }
 */
-echo "<table >";
 if ($weed=="%"){ 
    $var="All";
 }else {
@@ -42,14 +41,15 @@ if ($fieldID=="%") {
 }else {
    $var2=$_GET['fieldID'];
 }
-echo "<caption> Weed Scouting Records for Weed: ".$var." in Field: ".
-   $var2."</caption>";
+echo "<center><h2> Weed Scouting Records for Weed: ".$var." in Field: ".
+   $var2."</h2></center>";
 
-echo "<tr><th>Scout Date</th><th>Field</th><th>Species</th><th>Infestation</th><th>Seed</th><th>&nbsp;&nbsp;&nbsp;&nbsp;Comment</th>";
+echo "<table class='pure-table pure-table-bordered' >";
+echo "<thead><tr><th>Scout Date</th><th>Field</th><th>Species</th><th>Infestation</th><th>Seed</th><th>Comment</th>";
 if ($_SESSION['admin']) {
    echo "<th>Edit</th><th>Delete</th>";
 }
-echo "</tr>";
+echo "</tr></thead>";
 while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         //echo str_replace("-","/",$row['sDate']);
@@ -72,7 +72,7 @@ while ( $row = mysql_fetch_array($result)) {
              "&tab=soil:soil_scout:soil_weed:weed_report&fieldID=".
              encodeURIComponent($_GET['fieldID']).
              "&weed=".encodeURIComponent($_GET['weed'])."\">";
-           echo "<input type='submit' class='editbutton' value='Edit'/></form>";
+           echo "<input type='submit' class='editbutton pure-button wide' value='Edit'/></form>";
            echo "</td><td>";
            echo "<form method='POST' action=\"weedTable.php?month=".$month.
               "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
@@ -80,7 +80,7 @@ while ( $row = mysql_fetch_array($result)) {
               "&tab=soil:soil_scout:soil_weed:weed_report&fieldID=".
               encodeURIComponent($_GET['fieldID']).
               "&weed=".encodeURIComponent($_GET['weed'])."\">";
-           echo "<input type='submit' class='deletebutton' value='Delete'";
+           echo "<input type='submit' class='deletebutton pure-button wide' value='Delete'";
            echo "onclick='return warn_delete();'/></form>";
       echo "</td>";
         }
@@ -88,9 +88,16 @@ while ( $row = mysql_fetch_array($result)) {
 }
 echo "</table>";
 echo '<br clear="all"/>';
+echo '<br clear="all"/>';
+echo "<div class='pure-g'>";
+echo "<div class='pure-u-1-2'>";
 echo "<form name='form' method='POST' action='/down.php'>";
 echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
-echo '<input type="submit" name="submit" class="submitbutton" value="Download Report">';
+echo '<input type="submit" name="submit" class="submitbutton pure-button wide" value="Download Report">';
 echo "</form>";
-echo '<form method="POST" action = "weedReport.php?tab=soil:soil_scout:soil_weed:weed_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo "</div>";
+echo "<div class='pure-u-1-2'>";
+echo '<form method="POST" action = "weedReport.php?tab=soil:soil_scout:soil_weed:weed_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo "</div>";
+echo "</div>";
 ?>

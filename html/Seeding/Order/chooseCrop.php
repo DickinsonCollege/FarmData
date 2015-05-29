@@ -6,18 +6,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<h3> Seed Order and Inventory </h3>
-<br clear="all"/>
+<center>
+<h2> Seed Order and Inventory </h2>
+</center>
 
-<form name='form' id = 'seedform' method='POST' action='updateSeed.php?tab=seeding:ordert:ordert_input'>
+<form name='form' id='seedform' class='pure-form pure-form-aligned' method='POST' action='updateSeed.php?tab=seeding:ordert:ordert_input'>
 <?php
 if ($_SESSION['cover']) {
-   echo '<table>';
-   echo '<tr><th>Vegetable</th><th>Cover Crop</th></tr><td>';
+   echo '<table class="pure-table pure-table-bordered">';
+   echo '<thead><tr><th align="center">Vegetable</th><th align="center">Cover Crop</th></tr></thead><td>';
 }
 ?>
-<label for="crop">Crop:&nbsp;</label>
-<div id='cropdiv' class='styled-select'>
+<div class="pure-control-group" id="cropdiv">
+<label for="crop">Crop:</label>
 <select name='crop' id='crop' class='mobile-select'>
 <?php
 $sql = "select crop from plant where active=1";
@@ -32,7 +33,6 @@ while ($row = mysql_fetch_array($res)) {
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
 
 <?php
 function printYear($name) {
@@ -42,8 +42,9 @@ function printYear($name) {
       $isCov = "false";
    }
    $curYear = strftime("%Y");
-   echo '<label for="'.$name.'">Planting Year:&nbsp;</label>';
-   echo "<div id='".$name."div' class='styled-select'>";
+   echo '<div class="pure-control-group">';
+   echo '<label for="'.$name.'">Planting Year:</label> ';
+   // echo "<div id='".$name."div' class='styled-select'>";
    echo "<select name='".$name."' id='".$name."' class='mobile-select'>";
    for ($y = $curYear - 3; $y < $curYear + 5; $y++) {
       echo "<option value='".$y."'";
@@ -60,12 +61,13 @@ printYear("year");
 
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" name="submitCrop" class = "submitbutton" value="Choose Crop and Year" >
+<input type="submit" name="submitCrop" class = "submitbutton pure-button wide" value="Choose Crop and Year" >
 <?php 
 if ($_SESSION['cover']) {
    echo '</td><td>';
-   echo '<label for="cover">Crop:&nbsp;</label>';
-   echo "<div id='covercropdiv' class='styled-select'>";
+   echo '<div class="pure-control-group">';
+   echo '<label for="cover">Crop:</label> ';
+   // echo "<div id='covercropdiv' class='styled-select'>";
    echo "<select name='cover' id='cover' class='mobile-select'>";
    $sql = "select crop from coverCrop where active = 1";
    $res = mysql_query($sql);
@@ -77,11 +79,10 @@ if ($_SESSION['cover']) {
       echo ">".$row['crop']."</option>";
    }
    echo "</select></div>";
-   echo "<br clear='all'/>";
    printYear("coverYear");
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<input type="submit" name="submitCoverCrop" class = "submitbutton" value="Choose Crop and Year" >';
+   echo '<input type="submit" name="submitCoverCrop" class = "submitbutton pure-button wide" value="Choose Crop and Year" >';
    echo '</td></tr></table>';
 }
 ?>

@@ -30,26 +30,30 @@ table.primary tr.other{
 
 </style>
 <?php
-echo '<table class="primary">';
-echo '<caption> Harvest List for '.$date.'</caption>';
+echo "<center>";
+echo '<h2> Harvest List for '.$date.'</h2>';
+echo "</center>";
+echo '<table class="primary pure-table pure-table-bordered">';
+//echo '<caption> Harvest List for '.$date.'</caption>';
 if($detail==1){
 
-echo "<tr class=\"other\">
+// <tr class=\"other\">
+echo "<thead>
         <th>Crop </th>
         <th>Field</th>
         <th>Units </th>";
    for ($i = 0; $i < count($targs); $i++) {
       echo '<th>'.$targs[$i].'</th>';
    }
-echo "<th>Total</th> <th>Harvested</th> </tr>";
+echo "<th>Total</th> <th>Harvested</th> </tr></thead>";
 }else{
-echo "<tr>
+echo "<thead><tr>
         <th>Crop </th>
         <th>Field</th>
         <th>Units </th>
         <th>Total</th>
         <th>Harvested</th>
-</tr>";
+</tr></thead>";
 }
 
 $sql = "select * from harvestListItem where id=".$currentID;
@@ -111,7 +115,9 @@ if ($_SESSION['mobile']) {
 }
 ?>
 <h3>Comments</h3>
+<!--
 <br clear="both"/>
+-->
 <?php
 $sql="SELECT comment from harvestList where id=".$currentID;
 $row= mysql_fetch_array( mysql_query($sql));
@@ -129,19 +135,35 @@ if ($_SESSION['mobile']) {
 }
 
 echo '<br clear="all"/>';
+/*
 if($detail==1){
 echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton mobile-submit" value = "Harvest List Summary"></form>';
 }else{
 echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=1"><input type="submit" class="submitbutton" value = "Detailed Harvest List"></form>';
 }
+*/
+$det = "";
+if ($detail == 0) {
+  $det = 'Detailed ';
+}
+echo "<div class='pure-g'>";
+echo "<div class='pure-u-1-2'>";
+echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year='.$year.
+   '&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail='.!$detail.
+   '"><input type="submit" class="submitbutton pure-button wide" value = "'.$det.
+   ' Harvest List"></form>';
 ?>
+</div>
 
 <?php
-echo '<form method="post" action = "addComment.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton" value = "Add Comment"></form>';
+echo "<div class='pure-u-1-2'>";
+echo '<form method="post" action = "addComment.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton pure-button wide" value = "Add Comment"></form>';
 echo '<br clear="all"/>';
 echo ' <meta http-equiv="refresh" content=60;URL="harvestList.php?tab=harvest:harvestList&year='.
    $year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.
    '&detail='.$detail.' ">';
 ?>
+</div>
+</div>
 </html>
 

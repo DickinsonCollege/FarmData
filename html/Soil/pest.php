@@ -5,18 +5,21 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3> Insect Scouting Input Form </h3>
-<br clear="all"/>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_pest:pest_input">
-<label for='date'>Date: &nbsp;</label>
+<center>
+<h2> Insect Scouting Input Form </h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_pest:pest_input">
+<div class='pure-control-group'>
+<label for='date'>Date: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
+</div>
+
+<div class='pure-control-group'>
+<label for="fieldID">Name of Field: </label>
 <select name ="fieldID" id="fieldID" class="mobile-select">
-<option value = 0 selected disabled> FieldID</option>
+<option value = 0 selected disabled> Field Name</option>
 <?php
 $result=mysql_query("Select fieldID from field_GH where active=1");
 while ($row1 =  mysql_fetch_array($result)){
@@ -25,9 +28,9 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="Pest"> Insect:&nbsp; </label>
-<div class="styled-select">
+
+<div class='pure-control-group'>
+<label for="Pest"> Insect: </label>
 <select name="pest" id="pest" class="mobile-select">
 <option  value = 0 selected disabled > Insect </option>
 <?php
@@ -42,23 +45,25 @@ echo "\n<option value= \"$row1[pestName]\">$row1[pestName]</option>";
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
 <br clear="all"/>
-<?php
-echo '<table id="samples"';
-if (!$_SESSION['mobile']) {
-   echo ' style="width:10%"';
-}
-echo '>';
-?>
-<tr><th>Insects&nbsp;per&nbsp;Plant</th></tr>
+<center>
+<table id="samples" style="width:auto;" class="pure-table pure-table-bordered">
+<thead><tr><th>Insects&nbsp;per&nbsp;Plant</th></tr></thead>
+<tbody></tbody>
 </table>
+</center>
 <br clear="all"/>
-<input type="button" id="addSample" name="addSample" class="submitbutton" 
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" id="addSample" name="addSample" class="submitbutton pure-button wide" 
  onClick="addSampleRow();"
 value="Add Sample">
-&nbsp;&nbsp;&nbsp;
+</div>
+<div class="pure-u-1-2">
 <input type="button" id="removeSample" name="removeSample" 
-class="submitbutton" onClick="removeSampleRow();"
+class="submitbutton pure-button wide" onClick="removeSampleRow();"
 value="Remove Sample">
+</div>
+</div>
 <br clear="all"/>
 
 <input type="hidden" name="numSamples" id="numSamples" value="0">
@@ -77,10 +82,12 @@ function calculate() {
 }
 
 function addSampleRow() {
-  var table = document.getElementById("samples");
+  // var table = document.getElementById("samples");
+  var table = document.getElementById("samples").getElementsByTagName('tbody')[0];
+ 
   numSamples++;
   document.getElementById("numSamples").value = numSamples;
-  var row = table.insertRow(numSamples);
+  var row = table.insertRow(-1);
   row.id = "sampleRow" + numSamples;
 
   var cell = row.insertCell(0);
@@ -108,16 +115,18 @@ function removeSampleRow() {
    }
 }
 </script>
-<br clear="all"/>
-<label for="average">Average Insects Per Plant:&nbsp; </label>
-<input  type="text" class ="textbox2 mobile-input" id="average" name="average">
 
-<br clear="all"/>
-<label for="average">Comments:&nbsp; </label>
-<br clear="all"/>
+<div class="pure-control-group">
+<label for="average">Average Insects Per Plant: </label>
+<input  type="text" readonly class ="textbox2 mobile-input" id="average" name="average">
+</div>
+
+<div class="pure-control-group">
+<label >Comments:</label>
 <textarea name="comments" id="comments"
-cols=30 rows=10>
+cols=30 rows=5>
 </textarea>
+</div>
 <script type="text/javascript">
 function show_confirm() {
    var fld = document.getElementById("fieldID").value;
@@ -169,8 +178,16 @@ function show_confirm() {
 
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" class = "submitbutton" value="Submit" name="submit" onClick="return show_confirm();">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" class = "submitbutton pure-button wide" value="Submit" name="submit" onClick="return show_confirm();">
 </form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "pestReport.php?tab=soil:soil_scout:soil_pest:pest_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table">
+</form>
+</div>
+</div>
 
 <?php
 if (isset($_POST['submit'])) {
@@ -199,5 +216,3 @@ if (isset($_POST['submit'])) {
 }
 ?>
 
-<form method="POST" action = "pestReport.php?tab=soil:soil_scout:soil_pest:pest_report"><input type="submit" class="submitbutton" value = "View Table">
-</form>

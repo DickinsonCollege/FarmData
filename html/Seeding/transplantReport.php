@@ -5,20 +5,24 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='GET' action="transTable.php">
+<form name='form' class='pure-form pure-form-aligned' method='GET' action="transTable.php">
 <input type="hidden" name="tab" value="seeding:transplant:transplant_report">
-<h3 class="hi"> Transplanted Crops Report </h3>
-<br clear="all"/>
+<center>
+<h2 class="hi"> Transplanted Crops Report </h2>
+</center>
+<fieldset>
+<div class='pure-control-group'>
 <?php
-echo "<label for='from'>From:&nbsp;</label>";
+echo "<label for='from'>From:</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
-echo "<label for='to'>To:&nbsp;</label>";
+echo "</div>";
+echo "<div class='pure-control-group'>";
+echo "<label for='to'>To:</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
-echo "<br clear=\"all\">";
-echo'<label for="crop">Crop:&nbsp;</label>';
+echo "</div>";
 ?>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="crop">Crop:</label>
 <select name="transferredCrop" class='mobile-select'>
 <option value = "%"> All </option>
 <?php
@@ -29,9 +33,8 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all"/>
-<label for="fieldID">Name of Field:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="fieldID">Name of Field:</label>
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
@@ -45,10 +48,9 @@ while ($row1 =  mysql_fetch_array($result)){
 
 <?php
 if ($_SESSION['gens']) {
-echo '<br clear="all"/>';
-echo '<label for="genSel">Succession #:&nbsp;</label>';
-echo '<div class="styled-select">';
-echo '<select name="genSel" class="mobile-select">';
+echo "<div class='pure-control-group'>";
+echo '<label for="genSel">Succession #:</label> ';
+echo '<select name="genSel">';
 echo '<option value = "%" selected="selected"> All </option>';
 $result = mysql_query("SELECT distinct gen from transferred_to order by gen");
 while ($row1 =  mysql_fetch_array($result)){
@@ -61,5 +63,7 @@ echo '<input type="hidden" name="genSel" value="%">';
 }
 echo "<br clear=\"all\">";
 echo "<br clear=\"all\">";
-echo'<input class="submitbutton" type="submit" name="submitTrans" value="Submit">';
+echo'<input class="submitbutton pure-button wide" type="submit" name="submitTrans" value="Submit">';
 ?>
+</fieldset>
+</form>

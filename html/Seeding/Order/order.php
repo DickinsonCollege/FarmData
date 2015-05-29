@@ -12,12 +12,13 @@ $calc_SEEDS = $_GET['calc_SEEDS'];
 if (!isset($calc_SEEDS) || $calc_SEEDS == "") {
   $calc_SEEDS = 1000;
 }
-echo "<h3> Seed Order and Inventory for ".$crop." in ".$year."</h3>";
+echo "<center>";
+echo "<h2> Seed Order and Inventory for ".$crop." in ".$year."</h2>";
+echo "</center>";
 ?>
 
-<br clear="all"/>
 
-<form name='form' id = 'seedform' method='POST' action='handleOrder.php'>
+<form name='form' class='pure-form pure-form-aligned' id = 'seedform' method='POST' action='handleOrder.php'>
 <?php 
 $seeds = "";
 $rowft = "";
@@ -76,12 +77,19 @@ function convertFromGram($unit, $seeds) {
 }
 
    $units = array('GRAM', 'OUNCE', 'POUND');
+   echo '<fieldset>';
 if (!$isCover) {
-   echo '<label for="rowft">Seeds per row foot: '.$rowft.'</label>';
-   echo '<br clear="all"/>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="rowft">Seeds per row foot:</label><label> '.$rowft.'</label>';
+   // echo '<br clear="all"/>';
+   echo '</div>';
+   echo '<div class="pure-control-group">';
+   echo '<label>Seed unit:</label>';
    echo '<label for="seedsIn">'.number_format((float) convertFromGram($defUnit, $seeds), 1, '.','').
-     ' seeds per '.$defUnit.'</label>';
-   echo '<br clear="all"/>';
+     ' seeds / '.$defUnit.'</label>';
+   echo '</div>';
+   // echo '<br clear="all"/>';
+   echo '<div class="pure-control-group">';
    echo '<label for="rowftToPlant">Total row feet';
    if (isset($crop)) { 
     echo " of ".$crop;
@@ -90,14 +98,18 @@ if (!$isCover) {
    if (isset($year)) {
      echo " in ".$year;
    }
-   echo ': '.$rowftToPlant.'</label>';
-   echo '<br clear="all"/>';
+   echo ': </label><label>'.$rowftToPlant.'</label>';
+   echo '</div>';
+   // echo '<br clear="all"/>';
 } else {
-   echo '<label for="acres">Acres of '.$cover.' to plant in '.$year.': '.$acres.'</label>';
-   echo '<br clear="all"/>';
-   echo '<label for="rate">Seeding rate for '.$cover.': '.$rate.' (lbs/acre)</label>';
-   echo '<br clear="all"/>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="acres">Acres of '.$cover.' to plant in '.$year.':</label><label>'.$acres.'</label>';
+   echo '</div>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="rate">Seeding rate for '.$cover.':</label><label>'.$rate.' (lbs/acre)</label>';
+   echo '</div>';
 }
+   echo '</fieldset>';
 ?>
 <input type="hidden" id="invRows" name="invRows" value="0">
 <input type="hidden" id="orderRows" name="orderRows" value="0">
@@ -318,7 +330,7 @@ function addRowInven(code, variety, rowft, defUnit, toPlant, inInventory, sYear)
   
    cell = row.insertCell(col);
    col++;
-   cell.innerHTML = "<input type='button' class='deletebutton' value='Delete'" +
+   cell.innerHTML = "<input type='button' class='deletebutton pure-button wide' value='Delete'" +
      "onclick='deleteInvButton(" + invRows + ");'>";
    update_totals();
 }
@@ -470,7 +482,7 @@ while ($row = mysql_fetch_array($res)) {
       month = parseInt(dt[1]);
       year = parseInt(dt[0]);
    }
-   htm = '<div class="styled-select"><select name="month' + num + '_' + row + '" id="month' +
+   htm = '<select name="month' + num + '_' + row + '" id="month' +
     num + '_' + row + '" class="mobile-select">';
    for (var i = 1; i <= 12; i++) {
       htm += '<option value=' + i;
@@ -479,8 +491,8 @@ while ($row = mysql_fetch_array($res)) {
       }
       htm += '>' + monthArray[i - 1] + ' </option>';
    }
-   htm += '</select></div>';
-   htm += '<div class="styled-select"><select name="day' + num + '_' + row + '" id="day' +
+   htm += '</select>';
+   htm += '<select name="day' + num + '_' + row + '" id="day' +
     num + '_' + row + '" class="mobile-select">';
    for (var i = 1; i <= 31; i++) {
       htm += '<option value=' + i;
@@ -489,8 +501,8 @@ while ($row = mysql_fetch_array($res)) {
       }
       htm += '>' + i + ' </option>';
    }
-   htm += '</select></div>';
-   htm += '<div class="styled-select"><select name="year' + num + '_' + row + '" id="year' +
+   htm += '</select>';
+   htm += '<select name="year' + num + '_' + row + '" id="year' +
     num + '_' + row + '" class="mobile-select">'
    for (var i = year - 4; i <= year + 3; i++) {
       htm += '<option value=' + i;
@@ -499,7 +511,7 @@ while ($row = mysql_fetch_array($res)) {
       }
       htm += '>' + i + ' </option>';
    }
-   htm += '</select></div>';
+   htm += '</select>';
    cellDate.innerHTML = htm;
 }
 
@@ -732,11 +744,11 @@ while ($row = mysql_fetch_array($res)) {
    cell.innerHTML = htm;
 
    var cell = row.insertCell(11);
-   cell.innerHTML = "<input type='button' class='deletebutton' value='Delete'" +
+   cell.innerHTML = "<input type='button' class='deletebutton pure-button wide' value='Delete'" +
      "onclick='deleteOrderButton(" + orderRows + ");'>";
 
    var cell = row.insertCell(12);
-   cell.innerHTML = "<input type='submit' class='submitbutton' value='Add'" +
+   cell.innerHTML = "<input type='submit' class='submitbutton pure-button wide' value='Add'" +
      "onclick='return confirm_order_row(" + orderRows + ", 0);' name='add_inventory" + orderRows + "'>";
 
    var cell = row.insertCell(13);
@@ -839,12 +851,11 @@ function convertToGram($amt, $unit) {
 }
 
 if (!$isCover && $seeds != "") {
-   echo '<br clear="all"/>';
    echo "<h3>Seed Calculator</h3>";
-   echo '<br clear="all"/>';
-   echo "<table>";
-   echo "<tr><th>Unit</th><th>".$crop." Seeds Per Unit</th><th>Row Feet Per Unit</th><th>";
-   echo "Calculator: Enter A Number In Any Row To Convert To Other Units</th></tr>";
+   // echo '<br clear="all"/>';
+   echo "<table class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>Unit</th><th>".$crop." Seeds Per Unit</th><th>Row Feet Per Unit</th><th>";
+   echo "Calculator: Enter A Number In Any Row To Convert To Other Units</th></tr></thead>";
    echo "<tr><td>SEEDS</td><td>1</td><td>0</td><td>";
    echo '<input class="textbox2 mobile-input inside_table" type="text"';
    echo ' name ="calc_SEEDS" id="calc_SEEDS" value="'.$calc_SEEDS.
@@ -887,9 +898,8 @@ if ($isCover) {
    $showCrop = $cover;
    $defUnit = "POUND";
 }
-echo '<br clear="all"/>';
 echo "<h3>Seed Summary</h3>";
-echo '<br clear="all"/><table><tr><td>';
+echo '<table class="pure-table pure-table-bordered"><tr><td>';
 if ($isCover) {
    $needed = number_format((float) ($acres * $rate), 3, '.', '');
 } else {
@@ -918,31 +928,17 @@ echo '<tr><td>Total '.$crop.' seed on hand:&nbsp;</td><td> '.$inInven.'</td><td>
 echo "<tr><td>Quantity to order:&nbsp;</td><td> ".
    number_format((float) ($needed - $inInven), 3, '.', '')."</td><td>".
    $defUnit.'(S)</td></tr></table>';
-echo '<br clear="all"/>';
 echo '<h3>Seed Inventory</h3>';
-   echo '<br clear="all"/>';
-   echo "<table id='inven'>";
-   echo "<tr><th>&nbsp;&nbsp;Seed&nbsp;Code&nbsp;&nbsp;</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variety&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Purchase Year</th>";
+   echo "<table id='inven' class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>&nbsp;&nbsp;Seed&nbsp;Code&nbsp;&nbsp;</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variety&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Purchase Year</th>";
    if ($isCover) {
       echo "<th>Acres to Plant</th>";
       echo "<th>POUND(S) To Plant</th><th>POUND(S) In Inventory</th><th>POUND(S) To Buy</th>";
-      echo "<th>Delete</th></tr>";
-/*
-      echo "<tr id='totrow'><td>Totals:</td><td>&nbsp;</td><td>&nbsp;</td><td>";
-      echo '<input class="textbox2 mobile-input" type="text" name ="totAcres" id="totAcres" style="width:100%"';
-      echo ' readonly value="0" onkeypress="stopSubmitOnEnter(event);"></td><td>';
-      echo '<input class="textbox2 mobile-input" type="text" name ="totToPlant" id="totToPlant"';
-      echo ' onkeypress="stopSubmitOnEnter(event);" style="width:100%"';
-      echo ' readonly value="0"></td><td>';
-      echo '<input class="textbox2 mobile-input" type="text" name ="totInven" id="totInven" style="width:100%"';
-      echo ' readonly value="0" onkeypress="stopSubmitOnEnter(event);"></td><td>';
-      echo '<input class="textbox2 mobile-input" type="text" name ="totToBuy" id="totToBuy" style="width:100%"';
-      echo ' readonly value="0" onkeypress="stopSubmitOnEnter(event);"></td><td>&nbsp';
-*/
+      echo "<th>Delete</th></tr></thead>";
    } else {
       echo "<th>Row Feet To Plant</th><th>Seed Unit</th>";
       echo "<th>Units To Plant</th><th>Units In Inventory</th><th>Units To Buy</th>";
-      echo "<th>Delete</th></tr>";
+      echo "<th>Delete</th></tr></thead>";
    }
    echo "<tr id='totrow'><td>Totals:</td><td>&nbsp;</td><td>";
    echo "&nbsp;</td><td>";
@@ -983,11 +979,11 @@ echo '<h3>Seed Inventory</h3>';
    }
    echo "</script>";
    // echo '<br clear="all"/>';
-   echo '<input type="submit" class="submitbutton" id="updateInven" name="updateInven"';
+   echo '<input type="submit" class="submitbutton pure-button" id="updateInven" name="updateInven"';
    echo ' value="Save Inventory" onclick="return show_inven_confirm();">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<table>';
+   echo '<table class="pure-table pure-table-bordered"><thead>';
 // function addRowInven(code, variety, rowft, defUnit, toPlant, inInventory, sYear) {
    if ($isCover) {
       echo "<tr><th>Variety</th><th>Acres To Plant</th>";
@@ -996,7 +992,7 @@ echo '<h3>Seed Inventory</h3>';
       echo "<tr><th>Variety</th><th>Row Feet To Plant</th><th>Seed Unit</th>";
       echo "<th>Units In Inventory</th>";
    }
-   echo "<th>Purchase Year</th><th>Organic?</th></tr>";
+   echo "<th>Purchase Year</th><th>Organic?</th></tr></thead>";
    echo "<tr><td><div id='vardiv' class='styled-select'> <select name='var' id='var' class='mobile-select'>";
    if ($isCover) {
       $sql = "select variety from coverVariety where crop = '".$cover."' order by variety";
@@ -1019,7 +1015,7 @@ echo '<h3>Seed Inventory</h3>';
    echo '<input class="textbox2 mobile-input" type="text" name ="varInven" id="varInven" value=0 ';
    echo 'style="width:100%" onkeypress="stopSubmitOnEnter(event);">';
    echo '</td><td><div id="yeardiv" class="styled-select"><select name="varYear"';
-   echo ' id="varYear" class="mobile-select">';
+   echo ' id="varYear" class="wide">';
    $curYear = strftime("%Y");
    for ($j = $curYear - 4; $j <= $curYear + 1; $j++) {
       echo "<option value='".$j."'";
@@ -1028,29 +1024,31 @@ echo '<h3>Seed Inventory</h3>';
       }
       echo ">".$j."</option>";
    }
-   echo "</select></div></td><td><div id='orgdiv' class='styled-select'><select name='varOrg' id='varOrg' class='mobile-select'>";
+   echo "</select></div></td><td><div id='orgdiv' class='styled-select'><select name='varOrg' id='varOrg' class='wide'>";
    echo "<option value='1' selected>OG</option><option value='0'>UT</option>";
    echo '</select></div></td></tr></table>';
-   echo '<input type="button" class="submitbutton" id="addInven" name="addInven"';
+   echo '<input type="button" class="submitbutton pure-button" id="addInven" name="addInven"';
    echo ' value="Add To Inventory" onclick="return add_inven(\''.$defUnit.'\');">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<label for="newVar">New Variety:&nbsp;</label>';
-   echo '<input class="textbox3 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="newVar"'.
+   //echo '<div class="pure-control-group">';
+   echo '<label for="newVar">New Variety:</label>';
+   echo '<input  type="text" onkeypress="stopSubmitOnEnter(event);" name ="newVar"'.
      ' id="newVar">';
-   echo '<br clear="all"/>';
-   echo '<input type="submit" class="submitbutton" id="addVar" name="addVar"';
+    echo '<br clear="all"/>';
+   // echo '</div>';
+   echo '<input type="submit" class="submitbutton pure-button" id="addVar" name="addVar"';
    echo ' value="Add New Variety" onclick="return show_var_confirm();">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
    echo '<h3>Seed Order</h3>';
    echo '<br clear="all"/>';
-   echo "<table id='order'>";
+   echo "<table id='order' class='pure-table pure-table-bordered'>";
    $unt = "Default Units";
    if ($isCover) {
       $unt = "Pounds";
    }
-   echo "<tr><th>Variety</th><th>Source</th><th>Catalog #</th><th>Organic?</th><th>Catalog Unit</th>";
+   echo "<thead><tr><th>Variety</th><th>Source</th><th>Catalog #</th><th>Organic?</th><th>Catalog Unit</th>";
    echo "<th>Price Per Catalog Unit</th><th>".$unt." Per Catalog Unit</th>";
    echo "<th>Number of Catalog Units Ordered</th><th>".$unt." Ordered</th><th>Total&nbsp;Price</th>";
    echo "<th>Order Status</th>";
@@ -1058,7 +1056,7 @@ echo '<h3>Seed Inventory</h3>';
    echo "<th>Source 1</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;Searched&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>";
    echo "<th>Source 2</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;Searched&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>";
    echo "<th>Source 3</th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;Searched&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>";
-   echo "</tr>";
+   echo "</tr></thead>";
    echo "<tr id='totorderrow'><td>Totals:</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
    echo "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp</td><td>";
    echo '<input class="textbox2 mobile-input" type="text" name ="totUnits" id="totUnits" style="width:100%"';
@@ -1087,25 +1085,25 @@ echo '<h3>Seed Inventory</h3>';
         $row['source3']."', '".$row['sdate3']."');";
    }
    echo "</script>";
-   echo '<input type="button" class="submitbutton" id="addrow_order" name="addrow_order"';
+   echo '<input type="button" class="submitbutton pure-button" id="addrow_order" name="addrow_order"';
    echo ' value="Add Order Row" onclick="addRowOrder(\'\', \'\', \'\', 1, \'\', 0, 0, 0,
         \'\', \'\', \'\', \'\', \'\', \'\', \'\', \'\');">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<input type="submit" class="submitbutton" id="update_order" name="update_order"';
+   echo '<input type="submit" class="submitbutton pure-button" id="update_order" name="update_order"';
    echo ' value="Save Order" onclick="return show_order_confirm();">';
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<label for="newSource">New Source:&nbsp;</label>';
+   echo '<label for="newSource">New Source:</label>';
    echo '<input class="textbox3 mobile-input" type="text" onkeypress="stopSubmitOnEnter(event);" name ="newSource"'.
      ' id="newSource">';
    echo '<br clear="all"/>';
-   echo '<input type="submit" class="submitbutton" id="addSource" name="addSource"';
+   echo '<input type="submit" class="submitbutton pure-button" id="addSource" name="addSource"';
    echo ' value="Add New Source" onclick="return show_source_confirm();">';
 
 ?>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" value="Submit" class="submitbutton" name="submitAll" onclick="return confirm_all();">
+<input type="submit" value="Submit" class="submitbutton pure-button wide" name="submitAll" onclick="return confirm_all();">
 </form>
 

@@ -47,58 +47,62 @@ $comments = $row['comments'];
 $numBeds = $row['numBeds'];
 $rate = $row['rate'];
 $totalApply = $row['totalApply'];
-echo "<form name='form' method='post' action='".$_SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&crop=".$origCrops."&fieldID=".$origFieldID."&material=".$material."&id=".$id."'>";
 
-echo "<H3> Edit Dry Fertilizer Application Record </H3>";
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo '<center>';
+echo "<H2> Edit Dry Fertilizer Application Record </H2>";
+echo '</center>';
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<label>Crops:&nbsp</label>';
+echo '</select></div>';
+
+echo '<div class="pure-control-group">';
+echo '<label>Crops:</label> ';
 echo '<textarea name="crops">'.$crops.'</textarea>';
-echo '<br clear="all"/>';
-echo '<label>Fertilizer:&nbsp</label>';
-echo '<div class="styled-select"><select name="fertilizer" id="fertilizer">';
+echo '</div>';
+
+echo '<div class="pure-control-group">';
+echo '<label>Fertilizer:</label> ';
+echo '<select name="fertilizer" id="fertilizer">';
 echo '<option value="'.$fertilizer.'" selected>'.$fertilizer.' </option>';
 $sql = 'select fertilizerName from fertilizerReference';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fertilizerName'].'">'.$row['fertilizerName'].' </option>';
 }
-echo '</div></select>';
+echo '</select></div>';
 
-echo '<br clear="all"/>';
-
-echo '<label>Field:&nbsp</label>';
-echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
+echo '<div class="pure-control-group">';
+echo '<label>Field:</label> ';
+echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
 $sqldata = mysql_query($sql) or die("ERROR3");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
-echo '</div></select>';
+echo '</select></div>';
 
-echo '<br clear="all"/>';
-echo '<label>User Name:&nbsp</label>';
-echo '<div class="styled-select"><select name="username" id="username">';
+echo '<div class="pure-control-group">';
+echo '<label>User Name:</label> ';
+echo '<select name="username" id="username">';
 echo '<option value="'.$username.'" select>'.$username.'</option>';
 if ($farm == 'dfarm') {
     $sql = 'select username from users where active = 1';
@@ -109,32 +113,32 @@ if ($farm == 'dfarm') {
 } else {
    echo $useropts;
 }
-  
-//echo '<input type="text" class="textbox3" name="username" id="username" value="'.$username.'">';
-
 echo '</select></div>';
-echo '<br clear="all"/>';
-echo '<label>Rate of Application (lbs/acre):&nbsp</label>';
-echo '<input type="text" class="textbox25"name="rate" id="rate" value="'.$rate.'">';
 
-echo '<br clear="all"/>';
+echo '<div class="pure-control-group">';
+echo '<label>Rate of Application (lbs/acre):</label> ';
+echo '<input type="text" class="textbox25" name="rate" id="rate" value="'.$rate.'">';
+echo '</div>';
 
-echo '<label>Number of Beds:&nbsp</label>';
+echo '<div class="pure-control-group">';
+echo '<label>Number of Beds:</label> ';
 echo '<input type="text" class="textbox2" name="numBeds" id="numBeds" value="'.$numBeds.'">';
-echo '<br clear="all"/>';
+echo '</div>';
 
-echo '<label>Total Material Applied:&nbsp</label>';
+echo '<div class="pure-control-group">';
+echo '<label>Total Material Applied:</label> ';
 echo '<input type="text" class="textbox3" name="totalApply" id="totalApply" value="'.$totalApply.'">';
-echo '<br clear="all"/>';
+echo '</div>';
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if (isset($_POST['submit'])) {
    $comSanitized = escapehtml($_POST['comments']);

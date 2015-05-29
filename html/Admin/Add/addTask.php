@@ -5,14 +5,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3 class="hi"><b>Add Labor Task</b></h3>
-<br clear="all"/>
-<label for="task">Task:&nbsp;</label>
+<form name='form' class = "pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center><h2 class="hi"><b>Add Labor Task</b></h2></center>
+<div class = "pure-control-group">
+<label for="task">Task:</label>
 <input class="textbox3 mobile-input" type="text" name="task" id="task">
+</div>
+
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="add" value="Add" id="add">
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add">
 </form>
 <?php
 if (isset($_POST['add'])) {

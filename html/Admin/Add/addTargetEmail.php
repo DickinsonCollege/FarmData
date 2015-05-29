@@ -5,11 +5,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add Email to Sales Target</b></h3>
-<br>
+
+<form name="form" class = "pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center><h2><b>Add Email to Sales Target</b></h2></center>
+
+<div class = "pure-control-group">
 <label for="target">Sales Target:&nbsp;</label> 
-<div id='targDiv' class='styled-select'>
+<!--<div id='targDiv' class='styled-select'>-->
 <select name="target" id="target">
 <option value=0 selected disabled>Sales Target</option>
 <?php
@@ -20,10 +22,13 @@ while ($row1 =  mysql_fetch_array($result)){
 }
 ?>
 </select>
-<br clear="all"/>
+</div>
+
+<div class = "pure-control-group">
 <label for="email">Email:&nbsp;</label> 
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3" type="text" name="email" id="email">
-<br clear="all"/>
+</div>
+
 <script type="text/javascript">
 function show_confirm() {
 	var targ = document.getElementById("target").value;
@@ -42,8 +47,7 @@ function show_confirm() {
 }
 </script>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="done" value="Add" onclick="return show_confirm();">
+<input class="submitbutton pure-button wide" type="submit" name="done" value="Add" onclick="return show_confirm();">
 
 <?php
 if (isset($_POST['done'])) {

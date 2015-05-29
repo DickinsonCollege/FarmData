@@ -1,4 +1,6 @@
+<!--
 <div  class="styled-select">
+-->
 <select name="month" id = "month">
 <?php
 if (!$dMonth) {
@@ -40,4 +42,6 @@ for($year = $curYear - 3; $year < $curYear+5; $year++) {
 }
 ?>
 </select>
+<!--
 </div>
+-->

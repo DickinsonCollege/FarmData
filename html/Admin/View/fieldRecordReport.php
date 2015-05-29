@@ -1,23 +1,27 @@
 <?php session_start(); ?>
-<form name='form' method='GET' action='fieldRecordTable.php'>
+<form name='form' class = "pure-form pure-form-aligned" method='GET' action='fieldRecordTable.php'>
 <?php 
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 class="hi"> Select Date Range and Field </h3>
-<br>
+<center><h2 class="hi"> Select Date Range and Field </h2></center>
 <input type="hidden" name = "tab" value = "admin:admin_view:view_tables:viewfieldrecord">
+
 <?php
-echo '<label for="from">From:&nbsp;</label> ';
+echo '<div class = "pure-control-group">';
+echo '<label for="from">From:</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo '<br clear="all"/>';
-echo '<label for="to"> To:&nbsp</label> ';
+echo '</div>';
+
+echo '<div class = "pure-control-group">';
+echo '<label for="to"> To:</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo '</div>';
 ?>
-<br clear="all"/>
-<label for="fieldID"> FieldID:&nbsp;</label>
-<div class ="styled-select">
+
+<div class = "pure-control-group">
+<label for="fieldID">FieldID:</label>
 <select id = "fieldID" name="fieldID" class='mobile-select'>
 <?php
 $result = mysql_query("SELECT distinct fieldID from field_GH");
@@ -28,6 +32,5 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="submit" value="Submit" >
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit" >
 </form>

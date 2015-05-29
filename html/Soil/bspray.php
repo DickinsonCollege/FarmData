@@ -1,17 +1,20 @@
 <?php session_start(); ?>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_spray:bspray:bspray_input">
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<h3> Backpack Spraying Input Form </h3>
-<br clear="all"/>
-<label for='date'> Date: &nbsp; </label>
+<form name='form' id='test' class='pure-form pure-form-aligned' method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_spray:bspray:bspray_input">
+<center>
+<h2> Backpack Spraying Input Form </h2>
+</center>
+
+<div class="pure-control-group">
+<label for='date'> Date: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
 <script>
 function show_confirm() {
    var mth = document.getElementById("month").value;
@@ -75,10 +78,10 @@ function show_confirm() {
    return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
-<label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
+<div class="pure-control-group">
+<label for="fieldID"> Name of Field: </label>
 <select name ="fieldID" id="fieldID" class="mobile-select">
-<option value = 0 selected disabled> FieldID</option>
+<option value = 0 selected disabled> Field Name</option>
 <?php 
 $result=mysql_query("Select fieldID from field_GH where active=1");
 while ($row1 =  mysql_fetch_array($result)){  
@@ -87,9 +90,9 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="tractor"> Water (Gallons): &nbsp;</label>
-<div class="styled-select" id="water2">
+
+<div class="pure-control-group">
+<label for="tractor"> Water (Gallons):</label>
 <select onchange="addInput();" name ="water" id="water" class="mobile-select">
 <option value = 0 selected disabled> Gallons </option>
 <?php 
@@ -101,10 +104,10 @@ $num++;
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="implement"> Material Sprayed: &nbsp;</label>
-<div class="styled-select" id="material2">
-<select onchange=" addInput2(); addInput3(); addInput();" name ="material" id="material" class="mobile-select">
+
+<div class="pure-control-group">
+<label for="implement"> Material Sprayed: </label>
+<select onchange=" addInput2(); addInput();" name ="material" id="material" class="mobile-select">
 <option value = 0 selected disabled> Material </option>
 <?php 
 $result=mysql_query("Select sprayMaterial from tSprayMaterials where active = 1");
@@ -114,8 +117,7 @@ echo "\n<option value= \"$row1[sprayMaterial]\">$row1[sprayMaterial]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="rate"> Rate:&nbsp; </label>
+
 <script type="text/javascript">
  function addInput2(){
     var newdiv = document.getElementById('rate2');
@@ -123,9 +125,15 @@ echo '</div>';
     xmlhttp= new XMLHttpRequest();
     xmlhttp.open("GET", "update_rate.php?material="+mat, false);
     xmlhttp.send();
-    console.log(xmlhttp.responseText);
-    newdiv.innerHTML="<div class='styled-select' id ='rate2'>  <select onchange='addInput();' name= 'rate' id= 'rate' class='mobile-select'>"+xmlhttp
-        .responseText+"</select> </div>";
+    var content = '<div class="pure-control-group" id="rate2">' +
+       '<label for="rate"> Rate: </label> ' + 
+       '<select onchange="addInput();" name ="rate" id="rate" class="mobile-select">' + 
+      xmlhttp.responseText + '</select>&nbsp;';
+
+    xmlhttp.open("GET", "update_unit.php?material="+mat, false);
+    xmlhttp.send();
+    content += xmlhttp.responseText + "PER GALLON</div>";
+    newdiv.innerHTML = content;
 }
 
 function addInput() {
@@ -133,67 +141,64 @@ function addInput() {
     var e = document.getElementById("rate");
     var strUser = e.value;
     var strUser2 = document.getElementById("water").value;
-    var strUser3 = document.getElementById("material").value;
+    var mat = document.getElementById("material").value;
     var total = strUser * strUser2;
-    newdiv.innerHTML="<div id ='total2'> <input name='total4' class='textbox2 mobile-input' type='text' id='total4' disabled value="+total+">";
-}
-
-function addInput3() {
-    var mat = encodeURIComponent(document.getElementById("material").value);
-    xmlhttp= new XMLHttpRequest();
+    var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "update_unit.php?material="+mat, false);
     xmlhttp.send();
-    console.log(xmlhttp.responseText);
-    document.getElementById('unit4').innerHTML = "<label for='unit'>&nbsp;"+xmlhttp.responseText+"PER GALLON</label>";
-    document.getElementById('total25').innerHTML = "<label for='unit35'>&nbsp;"+xmlhttp.responseText+"</label>";
-    document.getElementById('total3').innerHTML = "<label for='unit2'>&nbsp;"+xmlhttp.responseText+"</label>";
-
+    newdiv.innerHTML = '<div class="pure-control-group" id="total2">' +
+       '<label > Total Material, Suggested: </label> ' + 
+       '<input name="total4" type="text" readonly id="total4" value = "' +
+       total + '">&nbsp;' + xmlhttp.responseText + '</div>';
 }
+
  </script>
-<div class="styled-select" id="rate2">
+
+<div class="pure-control-group" id="rate2">
+<label for="rate"> Rate: </label>
 <select onchange="addInput();" name ="rate" id="rate" class="mobile-select">
 <option value=0 selected disabled>Rate</option>
 </select>
 </div>
-<div class="styled-select" id="unit4">
-<label for="unit"> </label>
+
+<div class="pure-control-group" id="total2">
+<label > Total Material, Suggested: </label>
+<input name="total4" class= "textbox2 mobile-input single_table"  type="text" readonly id="total4">
 </div>
-<br clear = "all"/>
-<label for="passes"> Total Material, Suggested:&nbsp; </label>
-<div id="total2">
-<input name="total4" class= "textbox2 mobile-input single_table"  type="text" disabled id="total4">
-</div>
-<div id="total25">
-<label for="unit35"> </label>
-</div>
+
 <br clear="all"/>
-<label style="margin-top:10px; font-size: 18pt;" for="passes2">(Please Input Total Material Actual Even if You Agree with the Suggested Amount) </label>
-<br clear="all"/>
-<label for="total"> Total Material Actual:&nbsp; </label>
+<label>(Please Input Total Material Actual Even if You Agree with the Suggested Amount) </label>
+<div class="pure-control-group">
+<label for="total"> Total Material Actual: </label>
 <input type="text" class="textbox2 mobile-input single_table" id="tot" name="tot">
-<div id="total3">
-<label for="unit2"> </label>
 </div>
-<br clear="all"/>
-<label for="minues"> Mixed With:&nbsp; </label>
+
+<div class="pure-control-group">
+<label for="minues"> Mixed With: </label>
 <input type="text" class="textbox2 mobile-input single_table" id="mix" name="mix">
+</div>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
 
-<div>
-<label for="comments"><b>Comments:</b></label>
-<br clear="all"/>
+<div class="pure-control-group">
+<label for="comments">Comments:</label>
 <textarea name ="comments"
-rows="10" cols="30">
+rows="5" cols="30">
 </textarea>
 </div>
 <br clear="all"/>
-<input type="submit" class = "submitbutton" name="submit" value="Submit" onclick= "return show_confirm();">
 <br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" class = "submitbutton pure-button wide" name="submit" value="Submit" onclick= "return show_confirm();">
 </form>
-<form method="POST" action = "/Soil/sprayReport.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "View Table">
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Soil/sprayReport.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table">
 </form>
+</div>
+</div>
 <?php
 if(!empty($_POST['submit'])) {
    $comSanitized=escapehtml($_POST['comments']);
@@ -211,7 +216,7 @@ if(!empty($_POST['submit'])) {
       $crops .= escapehtml($_POST['crop'.$i]);
     }
    $rate=escapehtml($_POST['rate']);
-   echo $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, crops, comments) values('".
+   $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, crops, comments) values('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','" .
       $fieldID."',".$water.",'".$material."',".$rate.",".$tot.",'".$mix.
       "','".$crops."','".  $comSanitized."');";

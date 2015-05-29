@@ -7,6 +7,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 $id = $_GET['id'];
+//$origPileID = encodeURIComponent($_GET['pileID']);
+//$origFieldID = encodeURIComponent($_GET['fieldID']);
 $origPileID = $_GET['pileID'];
 $origFieldID = $_GET['fieldID'];
 $origMaterial = $_GET['material'];
@@ -35,36 +37,36 @@ $curDay = $row['dy'];
 ?>
 
 <?php
-echo "<form name='form' method='post' action=\"".$SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_compost:compost_report&year=".$origYear.
    "&month=".$origMonth.  "&day=".$origDay."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&id=".$id.
    "&pileID=".encodeURIComponent($origPileID)."&fieldID=".encodeURIComponent($origFieldID)."\">";
 
-echo "<H3> Edit Compost Accumulation Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo "<center>";
+echo "<H2> Edit Compost Accumulation Record </H2>";
+echo "</center>";
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth <= 12; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day <= 31; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 4; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
 echo "</select>";
 echo "</div>";
-echo "<br clear='all'>";
 
-echo "<label>Compost Pile ID:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo '<div class="pure-control-group">';
+echo "<label>Compost Pile ID:</label> ";
 echo "<select name='pileID' id='pileID'>";
 echo "<option value=\"".$pileID."\" selected>".$pileID."</selected>";
 $sql = "select pileID from compost_pile";
@@ -73,10 +75,10 @@ while ($row = mysql_fetch_array($result)) {
    echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
 }
 echo "</select></div>";
-echo "<br clear='all'/>";
 
-echo '<label>Compost Material:&nbsp</label>';
-echo '<div class="styled-select"><select name="material" id="material">';
+echo '<div class="pure-control-group">';
+echo '<label>Compost Material:</label> ';
+echo '<select name="material" id="material">';
 echo '<option value="'.$material.'" selected>'.$material.' </option>';
 $sql = 'select materialName from compost_materials';
 $sqldata = mysql_query($sql) or die();
@@ -84,26 +86,29 @@ while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['materialName'].'">'.$row['materialName'].' </option>';
 }
 echo '</select></div>';
-echo '<br clear="all"/>';
 
-echo "<label>Pounds:&nbsp</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Pounds:</label> ";
 echo "<input type='text' class='textbox25' name='pounds' id='pounds' value=".$pounds.">";
-echo "<br clear='all'>";
+echo "</div>";
 
-echo "<label>Cubic Yards:&nbsp</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Cubic Yards:</label> ";
 echo "<input type='text' class='textbox25' name='cubicyards' id='cubicyards' value=".$cubicyards.">";
-echo "<br clear='all'/>";
+echo "</div>";
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo "</div>";
+
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
    $comments = escapehtml($_POST['comments']);

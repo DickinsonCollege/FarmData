@@ -1,5 +1,4 @@
 <?php session_start(); ?>
-<html>
 <head>
 	<!--Load the AJAX API-->
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>

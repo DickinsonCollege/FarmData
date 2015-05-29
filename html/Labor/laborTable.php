@@ -5,11 +5,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
+   echo "<center><h2>  Labor Report for All tasks for All Crops in All Fields"."</h2></center>";
    if ($_SESSION['admin']) {
-      echo '<h1>Note for administrative users: use "Harvest->Report", ';
+      echo '<h3>Note for administrative users: use "Harvest->Report", ';
       echo '"Seed->Direct Seeding->Report" or ';
       echo '"Seed->Transplanting->Report" to edit/delete records for ';
-      echo 'those tasks</h1>';
+      echo 'those tasks</h3>';
       echo "<br clear='all'/>";
    }
    if (isset($_GET['id'])) {
@@ -52,7 +53,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        "' and hours > 0 order by crop, ldate";
    $sqldata = mysql_query($sql);
    echo mysql_error();
-   echo "<table>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    if($fieldID == "%") {
       $fld = "All Fields";
    } else {
@@ -68,12 +69,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    } else {
       $tsk = $task;
    }
-   echo "<caption>  Labor Report for ".$tsk." for ".$crp." in ".$fld."</caption>";
-   echo "<tr><th>Date of Labor</th><th>Crop</th><th>Name of Field</th><th>Task</th><th>Hours</th><th>Comments</th>";
+   echo "<thead><tr><th>Date of Labor</th><th>Crop</th><th>Name of Field</th><th>Task</th><th>Hours</th><th>Comments</th>";
    if ($_SESSION['admin']) {
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
-   echo "</tr>";
+   echo "</tr></thead>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['ldate'];
@@ -123,17 +123,22 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        "' and task like '".$task."'";
    $result=mysql_query($sql2);
    while ($row1 = mysql_fetch_array($result)  ) {
-      echo "<label for='total'>Total Hours:&nbsp</label>";
-      echo "<input class='textbox2 mobile-input' style='width: 120px;' type ='text' value=".
-         number_format((float) $row1['total'], 1, '.', '').">";
+      echo "<div class = 'pure-form pure-form-aligned'><div class = 'pure-control-group'><label for='total'>Total Hours:&nbsp</label>";
+      echo "<input class='textbox2 mobile-input' type ='text' readonly value=".
+         number_format((float) $row1['total'], 1, '.', '')."></div></div>";
    }
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
+echo '<div class = "pure-g">';
+echo '<div class = "pure-u-1-2">';
 echo "<form name='form' method='POST' action='/down.php'>";
    echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
-echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Report">';
 echo '</form>';
-echo '<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '</div>';
+echo '<div class = "pure-u-1-2">';
+echo '<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo '</div>';
 ?>
 </body>
 </html>

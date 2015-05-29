@@ -29,82 +29,76 @@ $curDay = $row['dy'];
 $curCrops = $row['crops'];
 $comments = $row['comments'];
 
-echo "<form name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
+echo "<form class='pure-form pure-form-aligned' name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_scout:soil_pest:pest_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&crop=".encodeURIComponent($origCrop).
    "&fieldID=".encodeURIComponent($origField).
    "&pest=".encodeURIComponent($origPest)."&id=".$id."\">";
-echo "<H3> Edit Insect Scouting Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo "<center>";
+echo "<H2> Edit Insect Scouting Record </H2>";
+echo "</center>";
+
+echo "<div class='pure-control-group'>";
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<label>Crops:&nbsp</label>';
-echo '<br clear="all"/>';
-echo '<textarea name="crops">'.$curCrops.'</textarea>';
-/*
-echo '<div class="styled-select"><select name="crop" id="crop">';
-echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
-$sql = 'select crop from plant where active=1';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
-   echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
-}
-echo '</div></select>';
-*/
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Field:&nbsp</label>';
-echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
+echo "<div class='pure-control-group'>";
+echo '<label>Crops:</label> ';
+echo '<textarea name="crops">'.$curCrops.'</textarea>';
+echo "</div>";
+
+echo "<div class='pure-control-group'>";
+echo '<label>Name of Field:</label> ';
+echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
 $sqldata = mysql_query($sql) or die("ERROR3");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Insect:&nbsp</label>';
-echo '<div class="styled-select"><select name="pest" id="pest">';
+echo "<div class='pure-control-group'>";
+echo '<label>Insect:</label> ';
+echo '<select name="pest" id="pest">';
 echo '<option value="'.$pest.'" selected>'.$pest.' </option>';
 $sql = 'select pestName from pest';
 $sqldata = mysql_query($sql) or die("ERROR4");
 while ($row = mysql_fetch_array($sqldata)) {
 	echo '<option value="'.$row['pestName'].'">'.$row['pestName'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Average Count:&nbsp</label>';
+echo "<div class='pure-control-group'>";
+echo '<label>Average Count:</label> ';
 echo '<input type="text" class="textbox3" name="avgCount" id="avgCount" value="'.$avgCount.'">';
-echo '<br clear="all"/>';
+echo '</div>';
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo "<div class='pure-control-group'>";
+echo '<label>Comments:</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
    $comSanitized=escapehtml($_POST['comments']);

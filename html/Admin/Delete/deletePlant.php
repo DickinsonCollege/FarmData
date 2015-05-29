@@ -15,11 +15,22 @@ function populate() {
    xmlhttp.send();
    var plantarray = eval(xmlhttp.responseText);
    var renamediv = document.getElementById("renamediv");
-   renamediv.innerHTML='<div id ="renamediv"><input onkeypress="stopSubmitOnEnter(event)"; type="text" name="rename" id="rename" class="textbox25 mobile-input" value="'+escapeHtml(crp)+'"></div>';
+   renamediv.innerHTML = '<div class="pure-control-group" id="renamediv">' +
+     '<label for="rename">Rename Plant:</label> ' +
+     '<input onkeypress="stopSubmitOnEnter(event)"; type="text" name="rename" id="rename" value="' + 
+     escapeHtml(crp)+'"></div>';
+
    var dhdiv = document.getElementById("dhdiv");
    if (dhdiv != null) {
    var dhunit = decodeURIComponent(plantarray[2]);
+   dhdiv.innerHTML = ' <div class="pure-control-group" id="dhdiv"> ' +
+      "<label for='dh_units'>Change Invoice Units: </label> " +
+      "<select name='dh_units' id='dh_units' >" + 
+
+/*
+      "</select></div>";
    dhdiv.innerHTML="<div id='dhdiv' class='styled-select'><select name='dh_units' id='dh_units' class='mobile-select'>" + 
+*/
    '<option value="'+dhunit+'">' + dhunit + '</option>' +
 '<?php
     $sql = "select distinct unit from extUnits";
@@ -29,15 +40,24 @@ function populate() {
                 echo "<option value= \"".$row1['unit']."\">".$row1['unit']."</option>";
         }
 ?>' + "</select></div>";
+
    var ucdiv = document.getElementById("ucdiv");
-   ucdiv.innerHTML="<div id='ucdiv'> <input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case' class='textbox25 mobile-input' value='" +
-  plantarray[1] + "'></div>";
+   ucdiv.innerHTML = ' <div class="pure-control-group" id="ucdiv"> ' +
+      "<label for='units_per_case'>Change Units Per Case: </label> " +
+      "<input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case' value='" +
+      plantarray[1] + "'></div>";
    }
 
    var adiv = document.getElementById("activediv");
    var active = plantarray[3];
-   var newActive = "<div class=\"styled-select\" id=\"activediv\"> <select name=\"active\" id=\"active\" class='mobile-select'>";
+   var newActive = '<div class="pure-control-group" id="activediv"> ' +
+      '<label for="admin">Change Active Status:</label> ' +
+      '<select name="active" id="active">';
+
+/*
+"<div class=\"styled-select\" id=\"activediv\"> <select name=\"active\" id=\"active\" class='mobile-select'>";
 console.log(active);
+*/
    if (active == "1") {
       newActive += "<option selected value='1'>Yes</option><option value='0'>No</option>";
    }  else {
@@ -48,11 +68,13 @@ console.log(active);
 }
 </script>
 
-<h3> Edit/Delete Crop</h3>
-<br>
-<form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
-<label for="crop"><b>Crop:&nbsp;</b></label>
-<div id='crop2' class='styled-select'>
+<center>
+<h2> Edit/Delete Crop</h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
+
+<div class="pure-control-group">
+<label for="crop">Crop:</label>
 <select name='crop' id='crop' class='mobile-select' onchange='populate();'>
 <option disabled selected>Crop</option>
 <?php
@@ -62,31 +84,29 @@ $result = mysql_query("SELECT crop from plant");
         }
         echo "</select></div>";
 ?>
-<br clear="all"/>
 
+<div class="pure-control-group" id="renamediv">
 <label for="rename">Rename Plant:</label>
-<div id="renamediv">
 <input onkeypress='stopSubmitOnEnter(event)'; type="text" name="rename" id="rename" class="textbox25 mobile-input">
 </div>
 
 <?php
 if ($_SESSION['sales_invoice']) {
-   echo "<br clear='all'>";
-   echo "<label for='dh_units'>Change Invoice Units: </label>";
-
-   echo "<div id='dhdiv' class='styled-select'><select name='dh_units' id='dh_units' class='mobile-select'> </select></div>";
+   echo ' <div class="pure-control-group" id="dhdiv"> ';
+   echo "<label for='dh_units'>Change Invoice Units: </label> ";
+   echo "<select name='dh_units' id='dh_units' class='mobile-select'> </select></div>";
 
 //   echo "<input onkeypress='stopSubmitOnEnter(event)'; type='text' name='dh_units' id='dh_units' class='textbox25 mobile-input'>";
 
-   echo "<br clear='all'>";
-   echo "<label for='units_per_case'>Change Units Per Case: </label>";
-   echo "<div id='ucdiv'> <input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case' class='textbox25 mobile-input'></div>";
+
+   echo ' <div class="pure-control-group" id="ucdiv"> ';
+   echo "<label for='units_per_case'>Change Units Per Case: </label> ";
+   echo "<input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case'></div>";
 }
 ?>
-<br clear="all"/>
 
-<label for="admin">Change Active Status:&nbsp;</label>
-<div class="styled-select" id="activediv">
+<div class="pure-control-group" id="activediv"> 
+<label for="admin">Change Active Status:</label>
 <select name="active" id="active" class='mobile-select'>
 </select>
 </div>
@@ -94,8 +114,8 @@ if ($_SESSION['sales_invoice']) {
 
  
 <br clear="all"/>
+<input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 <br clear="all"/>
-<input class="submitbutton" name="submit" type="submit" id="submit" value="Submit">
 <?php
 if(!empty($_POST['submit'])) {
    $crop = escapehtml($_POST['crop']);

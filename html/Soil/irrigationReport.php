@@ -95,12 +95,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <link rel='stylesheet' href='/pure-release-0.5.0/pure-min.css'>
 </head>
 <?php
-$colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '994C00');
+$colorArray = array('#FFE5CC','#FFCC99', '#FFB266', '#FF9933', '#FF8000', '#CC6600', '#994C00');
 ?>
 <center>
-<h5>Irrigation Report from <?php echo $starttime;?> to <?php echo $endtime;?></h5>
+<h2>Irrigation Report from <?php echo $starttime;?> to <?php echo $endtime;?></h2>
 <div id="tbl-container">
+<!--
 <table id='tbl' class='pure-table'>
+<table id='tbl'>
+-->
+<table id='tbl' class='pure-table pure-table-bordered'>
 <thead>
 <tr>
    <th rowspan='2'>Date</th>
@@ -161,6 +165,7 @@ $colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '
              $dataArray, $dateArray, $rainArray, 0)-1];
          // put color in that field
          echo '<td style="background-color:'.$color.'">';
+         //echo '<td style="background-color:red">';
          $cell = $dataArray[$dateArray[$i]][$arrayOverHead[$j]][0];
          echo $cell;
          echo '</td>';
@@ -170,7 +175,7 @@ $colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '
       }
       for ($j = 0; $j < $numD; $j++){
          $color = $colorArray[noWater($dateArray[$i], $arrayDrip[$j],$dataArray, $dateArray, $rainArray, 1)-1];
-         echo '<td style="background-color:'.$color.';">';
+         echo '<td style="background-color:'.$color.'">';
          $cell = $dataArray[$dateArray[$i]][$arrayDrip[$j]][1];
          echo $cell;
          echo '</td>';
@@ -179,8 +184,8 @@ $colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '
          echo $dateArray[$i];
       echo '</td>';   
       echo '<td>'.$commentArray[$dateArray[$i]].'</td>';
-      echo '<form method="POST" action="rainUpdate.php?tab=soil:soil_irrigation:irrigation_report&curDate='.$dateArray[$i].'&day='.$day.'&month='.$month.'&year='.$year.'&tday='.$tday.'&tmonth='.$tmonth.'&tyear='.$tyear.'"><td><input type="text" class="textbox4" id="rain" name="rain" style="height: 30px; font-size: 16;" value='.$rainArray[$dateArray[$i]].'></td>';
-      echo '<td><input type="submit" class="secondbutton" value="update" style="font-size:16;"></td></form>';
+      echo '<form method="POST" action="rainUpdate.php?tab=soil:soil_irrigation:irrigation_report&curDate='.$dateArray[$i].'&day='.$day.'&month='.$month.'&year='.$year.'&tday='.$tday.'&tmonth='.$tmonth.'&tyear='.$tyear.'"><td><input type="text" class="textbox4" id="rain" name="rain" size="5" value='.$rainArray[$dateArray[$i]].'></td>';
+      echo '<td><input type="submit" class="genericbutton pure-button wide" value="update" ></td></form>';
       echo '</tr>';
    }
 ?>
@@ -190,10 +195,18 @@ $colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '
 </center>
 <br clear="all"/>
 <br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
 <form name='form' method='POST' action='/down.php'>
 <input type="hidden" name="query" value="<?php
 echo "select pumpDate, fieldID, irr_device, elapsed_time/60 as elapsed_time, comment from pump_field, ".
    "pump_master where pump_field.id = pump_master.id and pumpDate between '".$starttime."' and '".$endtime.
    "' order by pumpDate"; ?>">
-<input class="submitbutton" type="submit" name="submit" value="Download Report">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Report">
+</form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "irrigation.php?tab=soil:soil_irrigation:irrigationreport"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>
+</div>
+</div>
 </form>

@@ -109,7 +109,9 @@ hours, comments
    from dir_planted);
 
 create table comments(
-   username varchar(30),comDate date not null, comments text) ENGINE=INNODB;
+   username varchar(30),
+   comDate date not null,
+   comments text) ENGINE=INNODB;
 
 create table gh_seeding(
    username varchar(30),

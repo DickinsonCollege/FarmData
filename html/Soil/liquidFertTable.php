@@ -24,7 +24,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       "from liquid_fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and fertilizer like '".$material."' order by inputDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
-   echo "<table>";
    if( $fieldID == "%") {
       $fld = "All Fields";
    } else {
@@ -35,14 +34,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    } else {
       $mat = $_GET['material'];
    } 
-   echo "<caption> Liquid Fertilizer Application Report for ".$mat." in Field: ".$fld."  </caption>";
+   echo "<center>";
+   echo "<h2> Liquid Fertilizer Application Report for ".$mat." in Field: ".$fld."  </h2>";
+   echo "</center>";
+   echo "<table class='pure-table pure-table-bordered'>";
    
-   echo "<tr><th>Date</th><th>Field</th><th>Material</th><th>number of drip rows</th><th>unit<br>".
+   echo "<thead><tr><th>Date</th><th>Field</th><th>Material</th><th>number of drip rows</th><th>unit<br>".
      "</th><th>Total Material Applied</th><th>Comments</th>";
    if ($_SESSION['admin']) {
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
-   echo "</tr>";
+   echo "</tr></thead>";
    while ($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['inputDate'];
@@ -66,13 +68,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
            "&year=".$year."&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
            "&fieldID=".$_GET['fieldID']."&material=".$_GET['material'].
            "&tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report\">";
-         echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton\" value=\"Edit\"></form></td>";
+         echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form></td>";
    
          echo "<td><form method=\"POST\" action=\"liquidFertTable.php?month=".$month."&day=".$day.
             "&year=".$year."&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
             "&fieldID=".$_GET['fieldID']."&material=".$_GET['material'].
            "&tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report\">";
-         echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+         echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"";
          echo "onclick='return warn_delete();'></form>";
          echo "</td>";
       }
@@ -88,21 +90,31 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and fertilizer like '".$material."'";
 
       $result=mysql_query($total) or die(mysql_error());
+      echo "<div class='pure-form pure-form-aligned'>";
       while ($row1 = mysql_fetch_array($result)  ) {
-        echo "<label for='total'>Total ".$material." Applied:&nbsp;</label>";
-	echo "<input disabled class='textbox2' style='width: 120px;' type ='text' value=".
+         echo "<div class='pure-control-group'>";
+        echo "<label for='total'>Total ".$material." Applied:</label> ";
+	echo "<input readonly class='textbox2'  type ='text' value=".
           number_format((float)$row1['total'], 2, '.', '').">";
         echo "&nbsp; GALLONS";
-        echo '<br clear="all"/>';
+        echo '</div>';
      }
-     echo '<br clear="all"/>';
+     echo '</div>';
   }
+   echo '<br clear="all"/>';
+   echo '<br clear="all"/>';
 
+   echo '<div class="pure-g">';
+   echo '<div class="pure-u-1-2">';
    echo "<form name='form' method='POST' action='/down.php'>";
    echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
-   echo '<input type="submit" class="submitbutton mobile-submit" name="submit" value="Download Report">';
+   echo '<input type="submit" class="submitbutton pure-button wide" name="submit" value="Download Report">';
    echo "</form>";
-   echo '<form method="POST" action = "liquidFertReport.php?tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report"><input type="submit" class="submitbutton mobile-submit" value = "Run Another Report"></form>';
+   echo '</div>';
+   echo '<div class="pure-u-1-2">';
+   echo '<form method="POST" action = "liquidFertReport.php?tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+   echo '</div>';
+   echo '</div>';
 
 ?>
 </div>

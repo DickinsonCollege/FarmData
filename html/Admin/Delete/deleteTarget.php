@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $farm = $_SESSION['db'];
 ?>
 
@@ -18,36 +19,42 @@ function addInput() {
    }
    var js_array = eval(xmlhttp.responseText);
    var thediv = document.getElementById('renamediv');
-   thediv.innerHTML = '<div id="renamediv">'+
-      '<input type="text" onchange="stopSubmitOnEnter(event)" name="rename" id="rename" class="textbox25 mobile-input" value="'+js_array[0]+'"></div>';
+   thediv.innerHTML = '<div class="pure-control-group" id="renamediv">' +
+      '<label for="rename">Rename Target:</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event);" type="text" name="rename" id="rename" value="' +
+      js_array[0] + '"></div>';
 
    thediv = document.getElementById('prefixdiv');
-   thediv.innerHTML = '<div id="prefixdiv">'+
-      '<input type="text" onchange="stopSubmitOnEnter(event)" name="prefix" id="prefix" class="textbox25 mobile-input" value="'+js_array[1]+'"></div>';
+   thediv.innerHTML = '<div class="pure-control-group" id="prefixdiv">' +
+      '<label for="prefix">Change Invoice Prefix:</label> ' +
+      '<input onkeypress="stopSubmitOnEnter(event);" type="text" name="prefix" ' +
+      'id="prefix" value="' +
+      js_array[1] + '"></div>';
 
    thediv = document.getElementById('activediv');
+   var str = '<div class="pure-control-group" id="activediv">' +
+      '<label for="active">Change Active Status:</label> ' +
+      '<select name="active" id="active">';
    if (js_array[2] == 1) {
-      thediv.innerHTML = '<div id="activediv" class="styled-select">'+
-         '<select name="active" id="active" class="mobile-select">'+
-            '<option value="1" selected>Active</option>'+
-            '<option value="0">Inactive</option>'+
-         '</select></div>';
+      str += '<option value="1" selected>Active</option>' +
+            '<option value="0">Inactive</option>';
    } else {
-      thediv.innerHTML = '<div id="activediv" class="styled-select">'+
-         '<select name="active" id="active" class="mobile-select">'+
-            '<option value="1">Active</option>'+
-            '<option value="0" selected>Inactive</option>'+
-         '</select></div>';
+      str += '<option value="1">Active</option>' +
+            '<option value="0" selected>Inactive</option>';
    }
+   str += '</select></div>';
+   thediv.innerHTML = str;
 }
 </script>
 
 <body id= "delete">
-<h3> Edit/Delete Sales Target</h3>
-<br>
-<form name='form' method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
-<label for="target"><b>Sales Target:&nbsp;</b></label>
-<div id='target2' class='styled-select'>
+<center>
+<h2> Edit/Delete Sales Target</h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
+
+<div class="pure-control-group" id="target2">
+<label for="target">Sales Target:</label>
 <select name='target' id='target' onChange='addInput();' class='mobile-select'>
 <option disabled selected></option>
 <?php
@@ -56,35 +63,30 @@ while ($row1 =  mysql_fetch_array($result)){
    echo '\n<option value= "'.$row1['targetName'].'">'.
       $row1['targetName'].'</option>';
    }
-echo "</select>";
+echo "</select></div>";
 ?>
-<br clear="all"/>
 
-<label for="rename">Rename Target:&nbsp;</label>
-<div id="renamediv">
-<input onkeypress='stopSubmitOnEnter(event)' type="text" name="rename" id="rename" class="textbox25 mobile-input" value="">
+<div class="pure-control-group" id="renamediv">
+<label for="rename">Rename Target:</label>
+<input onkeypress="stopSubmitOnEnter(event);" type="text" name="rename" id="rename" value="">
 </div>
-<br clear="all">
 
-<label for="prefix">Change Invoice Prefix:&nbsp;</label>
-<div id="prefixdiv">
-<input onkeypress='stopSubmitOnEnter(event)' type="text" name="prefix"
-   id="prefix" class="textbox25 mobile-input">
+<div class="pure-control-group" id="prefixdiv">
+<label for="prefix">Change Invoice Prefix:</label>
+<input onkeypress="stopSubmitOnEnter(event);" type="text" name="prefix"
+   id="prefix">
 </div>
-<br clear="all">
 
+<div class="pure-control-group" id="activediv">
 <label for="active">Change Active Status:</label>
-<div id="activediv" class="styled-select">
    <select name="active" id="active" class='mobile-select'>
       <option value="1" selected>Active</option>
       <option value="0">Inactive</option>
    </select>
 </div>
 <br clear="all"> 
-<br clear="all">
 
-
-<input class="submitbutton" name="submit" type="submit" id="submit" value="Submit">
+<input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 
 <?php
 if(!empty($_POST['submit'])) {

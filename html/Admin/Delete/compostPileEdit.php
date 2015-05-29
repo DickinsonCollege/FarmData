@@ -24,36 +24,38 @@ if ($active == 1) {
 ?>
 
 <?php
-echo "<form name='form' method='post' action=\"".$SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$SERVER['PHP_SELF'].
    "?tab=admin:admin_delete:deleteother:deletecompost&pileID=".encodeURIComponent($pileID)."\">";
 
-echo "<H3> Edit Compost Record </H3>";
-echo '<br clear="all"/>';
+echo "<center>";
+echo "<H2> Edit Compost Record </H2>";
+echo "</center>";
 
-echo '<label>Pile ID:&nbsp</label>';
+echo "<div class='pure-control-group'>";
+echo '<label>Name of Pile:</label>';
 echo "<input type='text' id='pileID' name='pileID' value=\"".$pileID."\" class='textbox25'>";
-echo "<br clear='all'>";
+echo "</div>";
 
-echo "<label>Active:&nbsp</label>";
-echo "<div class='styled-select'>";
+echo "<div class='pure-control-group'>";
+echo "<label>Active:</label>";
 echo "<select name='active' id='active' class='mobile-select'>";
 echo "<option value='".$activeText."'>".$activeText."</option>";
 echo "<option value='Yes'>Yes</option>";
 echo "<option value='No'>No</option>";
 echo "</select>";
 echo "</div>";
-echo "<br clear='all'>";
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo "<div class='pure-control-group'>";
+echo '<label>Comments:</label>';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo "</div>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
 	$comments = escapehtml($_POST['comments']);

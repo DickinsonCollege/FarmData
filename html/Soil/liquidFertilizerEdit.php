@@ -23,11 +23,11 @@ $id=$_GET['id'];
 $origYear = $_GET['year'];
 $origMonth = $_GET['month'];
 $origDay = $_GET['day'];
-$origFieldID = $_GET['fieldID'];
+$origFieldID = encodeURIComponent($_GET['fieldID']);
 $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
-$material = $_GET['material'];
+$material = encodeURIComponent($_GET['material']);
 //echo $origFieldID. 'material '.$material.' group '.$group;
 $sqlget = "SELECT id, year(inputdate) as yr, month(inputdate) as mth, day(inputdate) as dy, username,".
    "fertilizer ,fieldID, dripRows, unit, quantity, comments FROM liquid_fertilizer where id = ".$id;
@@ -45,55 +45,57 @@ $comments = $row['comments'];
 $dripRows = $row['dripRows'];
 $unit = $row['unit'];
 $quantity = $row['quantity'];
-echo "<form name='form' method='post' action='".$_SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&fieldID=".$origFieldID."&material=".$material."&id=".$id."'>";
 
-echo "<H3> Edit Liquid Fertilizer Application Record </H3>";
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo '<center>';
+echo "<H2> Edit Liquid Fertilizer Application Record </H2>";
+echo '</center>';
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Fertilizer:&nbsp</label>';
-echo '<div class="styled-select"><select name="fertilizer" id="fertilizer">';
+echo '<div class="pure-control-group">';
+echo '<label>Fertilizer:</label> ';
+echo '<select name="fertilizer" id="fertilizer">';
 echo '<option value="'.$fertilizer.'" selected>'.$fertilizer.' </option>';
 $sql = 'select fertilizerName from liquidFertilizerReference';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fertilizerName'].'">'.$row['fertilizerName'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>Field:&nbsp</label>';
-echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
+echo '<div class="pure-control-group">';
+echo '<label>Name of Field:</label> ';
+echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
 $sqldata = mysql_query($sql) or die("ERROR3");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>User Name:&nbsp</label>';
-echo '<div class="styled-select"><select name="username" id="username">';
+echo '<div class="pure-control-group">';
+echo '<label>User Name:</label> ';
+echo '<select name="username" id="username">';
 echo '<option value="'.$username.'" select>'.$username.'</option>';
 if ($farm == 'dfarm') {
     $sql = 'select username from users where active = 1';
@@ -104,34 +106,31 @@ if ($farm == 'dfarm') {
 } else {
    echo $useropts;
 }
-  
-//echo '<input type="text" class="textbox3" name="username" id="username" value="'.$username.'">';
 echo '</select></div>';
-echo '<br clear="all"/>';
 
-echo "<label>Drip Rows:&nbsp</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Drip Rows:</label> ";
 echo "<input type='text' class='textbox25' name='dripRows' id='dripRows' value='".$dripRows."'>";
-echo "<br clear='all'>";
+echo "</div>";
 
-echo "<label>Quantity/Units:&nbsp</label>";
-echo "<input type='text' class='textbox3' name='quantity' id='quantity' value='".$quantity."'>";
-/*echo "<label>Unit:&nbsp</label>";*/
-echo "<div class='styled-select'>";
+echo '<div class="pure-control-group">';
+echo "<label>Quantity/Units:</label> ";
+echo "<input type='text' size='8' name='quantity' id='quantity' value='".$quantity."'>";
+echo "&nbsp;";
 echo "<select name='unit' id='unit'>";
 echo "<option value='".$unit."' selected>".$unit."</option>";
-echo "<option value='quarts'> quarts </option>";
-echo "<option value='gallons'> gallons </option>";
+echo "<option value='QUARTS'>QUARTS</option>";
+echo "<option value='GALLONS'>GALLONS</option>";
 echo "</select></div>";
-echo "<br clear='all'>";
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if (isset($_POST['submit'])) {
    $comSanitized = escapehtml($_POST['comments']);

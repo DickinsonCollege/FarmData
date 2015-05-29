@@ -1,12 +1,30 @@
-<head><meta name="google-translate-customization" content="8bca6d16755ec7ea-88689800f992b82a-g914b132bacc77839-20"></meta>
- <meta charset="UTF-8"> 
-</head>
 <?php
 session_start();
+?>
+<!--
+<!DOCTYPE html>
+<?php
+// $_SESSION['mobile']=1;
+if (!$_SESSION['mobile']) {
+   echo "<html>";
+}
+?>
+-->
+<head><meta name="google-translate-customization" content="8bca6d16755ec7ea-88689800f992b82a-g914b132bacc77839-20"></meta>
+ <meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" />
+<link href="/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" />
+<link href="/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/icon-hires.png" rel="icon" sizes="192x192" />
+</head>
+<?php
 //$cookieLifetime = 3 * 24 * 60 * 60; // three days in seconds
 //setcookie(session_name(),session_id(),time()+$cookieLifetime, '/');
 
-//echo '<link type="text/css" href="/tabs.css" rel = "stylesheet">';
+echo '<link type="text/css" href="/color.css" rel = "stylesheet">';
 // HTTPSON
 if($_SERVER["HTTPS"] != "on") {
    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
@@ -15,31 +33,38 @@ if($_SERVER["HTTPS"] != "on") {
 // HTTPSOFF
 $farm = $_SESSION['db'];
 date_default_timezone_set('America/New_York');
-//  $_SESSION['mobile']=1;
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 
+echo '<link rel="stylesheet" href="/pure-release-0.5.0/pure-min.css">';
 if ($_SESSION['mobile']) {
 	// Set initial-scale=0.3 and minimum-scale=0.3 when pushing to production server
-	echo "<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>";
+//	echo "<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>";
+  echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
 	//echo "<meta name='viewport' content='width=device-width, initial-scale=0.3, minimum-scale=0.3, maximum-scale=1'>";
 	include $_SERVER['DOCUMENT_ROOT'].'/header.php';
 	echo '<link type="text/css" href="/mobileTabs.css" rel = "stylesheet">';
 //   echo '<link type="text/css" href="/tabs.css" rel="stylesheet">';
+ /*
    echo '<link type="text/css" href="/mobileTable.css" rel = "stylesheet">';
    echo '<link type="text/css" href="/mobileDesign2.css" rel = "stylesheet">';
 	echo '<link type="text/css" href="/tableDesignMobile.css" rel="stylesheet">';
+ */
 } else {
 	echo '<link type="text/css" href="/tabs.css" rel = "stylesheet">';
+ /*
    echo '<link type="text/css" href="/tableDesign.css" rel = "stylesheet">';
    echo '<link type="text/css" href="/design.css" rel = "stylesheet">';
+ */
 }
 if (isset($_GET['tab'])) {
    $tabar = explode(":", $_GET['tab']);
    $tab = $tabar[0];
 }
+/*
 if (!$_SESSION['mobile']) {
   echo '<div id="google_translate_element"></div>';
 }
+*/
 ?>
 <script type="text/javascript">
 function googleTranslateElementInit() {
@@ -52,6 +77,7 @@ function googleTranslateElementInit() {
 
 <style type="text/css">iframe.goog-te-banner-frame{ display: none !important;}</style>
 <style type="text/css">body {position: static !important; top:0px !important;}</style>
+<title>FARMDATA</title>
 
 <?php
 echo '<div id="menubar" style="">';
@@ -166,6 +192,11 @@ if ($tab=='harvest') {
 <!-- to end menubar div
 -->
 </div>
+<?php
+if (!$_SESSION['mobile']) {
+  echo '<div id="google_translate_element"></div>';
+}
+?>
 
 <div id="here">
 </div>

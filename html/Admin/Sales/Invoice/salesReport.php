@@ -3,21 +3,24 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<form name='form' method='POST' action="<?php $_PHP_SELF ?>">
-<h3> Invoice/Sales Report </h3>
-<br clear="all"/>
+<form name='form' class = 'pure-form pure-form-aligned' method='POST' action="<?php $_PHP_SELF ?>">
+<center><h2> Invoice/Sales Report </h2></center>
+<div class = 'pure-control-group'>
 <label for="form">From:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
+
+<div class = 'pure-control-group'>
 <label for="to">To:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
-<br clear="all"/>
-<label for="target">Sales Target:&nbsp;</label>
-<div id='targDiv' class='styled-select'>
+</div>
+
+<div class = 'pure-control-group'>
+<label for="target">Sales Target:</label>
 <select name="target" id="target">
 <option value="%" selected>All</option>
 <?php
@@ -31,11 +34,10 @@ while ($row1 =  mysql_fetch_array($result)){
 }
 ?>
 </select>
-
+</div>
 <br clear="all"/>
-<br clear="all"/>
 
-<input class = "submitbutton" type="submit" name="submit" value="Submit">
+<input class = "submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 </form>
 <?php
 if(isset($_POST['submit'])) {
@@ -60,12 +62,12 @@ if(isset($_POST['submit'])) {
 
       echo '<br clear="all"/>';
       echo '<br clear="all"/>';
-      echo "<table border>";
-      echo "<caption>Sales Report Between ".$year."-".$month
-      ."-".$day." and ".$tcurYear."-".$tcurMonth."-".$tcurDay."  </caption>";
-      echo "<tr><th>Sales Date</th><th><center>Invoice #</center></th>".
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<center><h2>Sales Report Between ".$year."-".$month
+      ."-".$day." and ".$tcurYear."-".$tcurMonth."-".$tcurDay."  </h2></center>";
+      echo "<thead><tr><th>Sales Date</th><th><center>Invoice #</center></th>".
         "<th>Target</th><th>View Invoice</th><th>Send Email</th>".
-        "<th><center>Total</center></th><th><center>Notes</center></th></tr>";
+        "<th><center>Total</center></th><th><center>Notes</center></th></tr></thead>";
       while ($row= mysql_fetch_array($result)) {
         echo "<tr><td>";
         echo $row['date(salesDate)'];
@@ -81,7 +83,7 @@ if(isset($_POST['submit'])) {
            $row['invoice_no']."&target=".encodeURIComponent($row['target']).
            "&invoiceID=".$row['invoice_id'].
            "&total=".$row['total']."&tab=admin:admin_sales:invoice:invoicereport\">";
-        echo "<input type='submit' class='submitbutton' value='View'></form>";
+        echo "<input type='submit' class='submitbutton pure-button wide' value='View'></form>";
         echo "</td><td>";
         //echo "<a href=\"/Admin/Sales/Invoice/view2.php?invoice=".$row['invoice_no']."&total=".
          //  $row['total']."&salesDate=".$row['date(salesDate)'].
@@ -92,7 +94,7 @@ if(isset($_POST['submit'])) {
            "&target=".encodeURIComponent($row['target']).
            "&invoiceID=".$row['invoice_id'].
            "&tab=admin:admin_sales:invoice:invoicereport\">";
-        echo "<input type='submit' class='submitbutton' value='Send'></form>";
+        echo "<input type='submit' class='submitbutton pure-button wide' value='Send'></form>";
         echo "</td><td>";
         echo "$".number_format((float) $row['total'], 2, '.', '');
         echo "</td><td>";
@@ -106,7 +108,7 @@ if(isset($_POST['submit'])) {
       $sql="Select salesDate,invoice_master.invoice_id,target,product, cases, price_case as price_per_case, price_case*cases as total, approved_by, comments from invoice_entry,invoice_master where date(salesDate) between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and invoice_master.invoice_no=invoice_entry.invoice_no  order by salesDate,invoice_master.invoice_no";
       
       echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
-      echo '<input class="submitbutton" type="submit" name="submit" value="Download Full Report">';
+      echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Full Report">';
       echo "</form>";
 }
 ?>

@@ -9,7 +9,7 @@ $date = date('Y-m-d-H-i-s');
 $file=$farm."-".$date.".sql";
 ?>
 <form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Database Backup</b></h1>
+<h2>Database Backup</h2>
 <input type="hidden" name="filename" value="<?php echo $file;?>">
 
 Pressing the button below will back up your database in file:
@@ -25,7 +25,7 @@ privileges.  Please contact your system administrator if such a restoration
 is needed.
 <br clear="all"/>
 <br clear="all"/>
-<input class="submitbutton" type="submit" name="done" value="Backup Database">
+<input class="submitbutton pure-button wide" type="submit" name="done" value="Backup Database">
 </form>
 <?php
 if (!empty($_POST['done'])) {

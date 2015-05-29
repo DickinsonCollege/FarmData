@@ -1,67 +1,84 @@
 <?php session_start(); ?>
 <?php 
-//include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $farm = $_SESSION['db'];
 
 ?>
-<form name='form' method='POST'>
-<h3>Tractor Spray Input</h3>
-<br>
-<label for="date">Date:&nbsp;</label>
+<form name='form' class='pure-form pure-form-aligned' method='POST'>
+<center>
+<h2>Tractor Spray Input</h2>
+</center>
+
+<div class="pure-control-group">
+<label for="date">Date:</label>
 <?php include $_SERVER['DOCUMENT_ROOT'].'/date.php'?>
-<br clear="all">
-<label for="status">Status:&nbsp;</label>
-<div class="styled-select" id="statusDiv"> <select class="mobile-select" id="status" name="status">
+</div>
+
+<div class="pure-control-group">
+<label for="status">Status:</label>
+<select class="mobile-select" id="status" name="status" onchange="updateHeader();">
 <option value=1 selected>Completed</option>
 <option value=0>Queued</option>
 </select>
 </div>
-<br clear="all">
-<br clear="all">
-<table name="fieldTable" id="fieldTable">
-<tr>
-	<th>Field</th>
-	<th>Num Beds Sprayed</th>
-	<th>Acreage Sprayed</th>
-</tr>
 
+<br clear="all">
+<br clear="all">
+<table name="fieldTable" id="fieldTable" class="pure-table pure-table-bordered">
+<thead><tr>
+	<th><center>Field</center></th>
+	<th><center>Num Beds Sprayed</center></th>
+	<th><center>Acreage Sprayed</center></th>
+	<th><center>Selected Crop</center></th>
+</tr></thead>
+<tbody></tbody>
 
 </table>
 <br clear="all"/>
-<input type="button" value="Add Field" class="submitbutton"  name="Add Field Spray" onclick="addRow()"/>
-&nbsp;&nbsp;&nbsp;
-<input type="button" value="Remove Field" class="submitbutton"  name="Remove Field Spray" onclick="removeRow()"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" value="Add Field" class="submitbutton pure-button wide"  name="Add Field Spray" onclick="addRow()"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" value="Remove Field" class="submitbutton pure-button wide"  name="Remove Field Spray" onclick="removeRow()"/>
+</div>
+</div>
 <br clear="all"/>
 <br clear="all"/>
-<table name="materialTable" id="materialTable">
-<tr>
+<table name="materialTable" id="materialTable" class="pure-table pure-table-bordered">
+<thead><tr>
 	<th>Material Sprayed</th>
 	<th>Rate (in units per acre)</th>
 	<th>Unit</th>
 	<th>Suggested Total Material</th>
 	<th>Actual Total Material</th>
-	<th>Personal&nbsp;Protective Equipment</th>
+	<th>Personal Protective Equipment</th>
 	<th>Restricted Entry Interval (Hours)</th>
-</tr>
+</tr></thead>
+<tbody></tbody>
 </table>
 <br clear="all"/>
-<input type="button" value="Add Material" class="submitbutton" name="Add Material Spray" onclick="addRowMat()"/>
-&nbsp;&nbsp;&nbsp;
-<input type="button" value="Remove Material" class="submitbutton" name="Delete Material Spray" onclick="removeRowMat()"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" value="Add Material" class="submitbutton pure-button wide" name="Add Material Spray" onclick="addRowMat()"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" value="Remove Material" class="submitbutton pure-button wide" name="Delete Material Spray" onclick="removeRowMat()"/>
+</div>
+</div>
 <br clear="all"/>
 <br clear="all"/>
-<table>
-<tr>
+<table class="pure-table pure-table-bordered">
+<thead><tr>
 	<th>Water (Gallons) Used Per Acre</th>
 	<th>Total Gallons of Water Used </th>
 
-</tr>
+</tr></thead>
 <tr><td><center><input class='textbox4 mobile-input single_table' type="text" name="waterPerAcre" id="waterPerAcre" value=
 <?php
 if ($farm == 'wahlst_spiralpath') {
-   echo 90;
+   echo 72;
 } else {
    echo 0;
 }
@@ -69,33 +86,30 @@ if ($farm == 'wahlst_spiralpath') {
   onkeyup="calculateWater();"></center></td>
 <td><center><input type="text" class='textbox4 mobile-input single_table' name="totalWater" id="totalWater" value=0></center></td></tr>
 </table>
-<?php
-include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
-?>
-<script type="text/javascript">
-var table = document.getElementById("cropTable");
-table.style = <?php 
-  if ($_SESSION['mobile']) {
-      echo '"width: 99%";';
-  } else {
-      echo '"width:1000px";';
-  } ?>
-</script>
 
-<br clear="all"/>
-<table>
-<tr>
-<th>
-Reason For Spray & Comments</th></tr>
 
-<tr><td><textarea style="width: 980px;" name="textarea" rows="4" cols="50"></textarea></td></tr>
-</table>
+<br clear = "all">
+<br clear = "all">
+<div class="pure-control-group">
+<label id="reasonlabel">Reason for Spray & Comments:</label>
+<textarea name="textarea" rows=5 cols=30></textarea>
+</div>
 <br clear="all"/>
-<input type="submit" value = 'Submit' class='submitbutton' name="submit" onclick="return show_confirm();  ">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" value = 'Submit' class='submitbutton pure-button wide' name="submit" onclick="return show_confirm();  ">
+<input type = 'hidden' name = 'numCropRows' id = 'numCropRows'>
+
 <?php
 // pass values back through on post
 echo '<input type="hidden" name = "numField" id="numField">';
 echo '<input type="hidden" name = "numMaterial" id="numMaterial" >';
+echo "</form>";
+echo '</div>';
+echo '<div class="pure-u-1-2">';
+echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
+echo '</div>';
+echo '</div>';
 ?>
 <?php
 	include $_SERVER['DOCUMENT_ROOT'].'/Soil/Tspray/functions.php';
@@ -109,32 +123,34 @@ $comSanitized=escapehtml($_POST['textarea']);
 $waterPerAcre=escapehtml($_POST['waterPerAcre']);
 $username=escapehtml($_SESSION['username']);
 $numField = escapehtml($_POST['numField']);
-$numCrops = $_POST['numCropRows'];
-$crops = "";
-for ($i = 1; $i <= $numCrops; $i++) {
-   if ($crops != "") {
-      $crops .= "; ";
-   }
-   $crops .= escapehtml($_POST['crop'.$i]);
-}
+$numCropRows = $_POST['numCropRows'];
+echo '<br>';
+
 $numMaterial = escapehtml($_POST['numMaterial']);
-$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre,crops, "
+$sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre, "
    ."comment, user, complete, initials) VALUES ('"
    .$_POST['year']."-".$_POST['month']."-".$_POST['day']."' , ".$numField." , ".
-   $numMaterial." , ".$waterPerAcre." , '".$crops."' , '".$comSanitized.
+   $numMaterial." , ".$waterPerAcre." , '".$comSanitized.
    "' , '".$username. "', ".$_POST['status'].", '')";
 $rusultM=mysql_query($sqlM);
-//echo $sqlM;
 echo mysql_error();
 $currentID= mysql_insert_id();
 
 $fieldInd=1;
+$crop_array = JSON_decode($numCropRows);
 while($fieldInd<= $_POST['numField']){
    $field = escapehtml($_POST['field'.$fieldInd]);
    $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
-   $sqlF="INSERT INTO tSprayField VALUES(".$currentID." , '". $field."' , ".$bed.");";
+$crops = "";
+for ($i = 1; $i <= $crop_array[$fieldInd]; $i++) {
+   if ($crops != "") {
+      $crops .= "; ";
+   }
+   $crops .= escapehtml($_POST['crop_'.$fieldInd.'_'.$i]);
+}
+   $sqlF="INSERT INTO tSprayField VALUES(".$currentID." , '". $field."' , ".$bed.",'".$crops."')";
+
    mysql_query($sqlF);
-   //echo $sqlF;
 	echo mysql_error();
    $fieldInd++;
 }
@@ -158,8 +174,6 @@ if(!empty($_POST['submit'])) {
    echo "<script> showAlert('Entered Data Succesfully!'); </script>";
 }
 
-echo "</form>";
-echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton" value = "View Table"></form>';
 ?>
 <body id="soil">
 </html>

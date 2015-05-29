@@ -25,10 +25,12 @@ while ($row = mysql_fetch_array($result)) {
 var mat_units = eval(<?php echo json_encode($materials); ?>);
 </script>
 
-<h3>Compost Accumulation Form</h3>
+<center>
+<h2>Compost Accumulation Form</h2>
+</center>
 
 
-<form method='post' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_accumulation">
+<form method='post' class='pure-form pure-form-aligned' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_accumulation">
 <script type='text/javascript'>
 function show_confirm() {
     var fields = ["pileID", "material", "amount", "units"];
@@ -75,27 +77,17 @@ function show_confirm() {
 function getUnits(num) {
   var material = document.getElementById('material' + num).value;
   material = escapeHtml(material);
+console.log(material);
   var unitDiv = document.getElementById('unitsDiv' + num);
-/*
-  xmlhttp = new XMLHttpRequest();
-  var mat = encodeURIComponent(material);
-  xmlhttp.open("GET", "compostUnit.php?material=" + mat, false);
-  xmlhttp.send();
-  unitDiv.innerHTML = "<div class='styled-select' id='unitsDiv" + num + "'>" + 
-     "<select name ='units" + num + "' id='units" + num + 
-     "' class='mobile-select'>" + 
-     "<option value=0 selected disabled>Unit</option>" +
-     xmlhttp.responseText + "</select></div>";
-*/
   opts = "";
   units = mat_units[material];
   for (i = 0; i < units.length; i++) {
      unit = units[i];
      opts += '<option value = "' + unit + '">' + unit + '</option>';
   }
-  unitDiv.innerHTML = "<div class='styled-select' id='unitsDiv" + num + "'>" + 
+  unitDiv.innerHTML = "<div id='unitsDiv" + num + "'>" + 
      "<select name ='units" + num + "' id='units" + num + 
-     "' class='mobile-select'>" + 
+     "' class='wide'>" + 
      "<option value=0 selected disabled>Unit</option>" +
      opts + "</select></div>";
 }
@@ -105,16 +97,20 @@ function addMaterialToTable() {
      numMaterialsInput.value++;
      var numMaterials = numMaterialsInput.value;
 
+/*
      var tbl = document.getElementById("materialsTable");
      var row = tbl.insertRow(-1);
+*/
+     var tbl = document.getElementById("materialsTable").getElementsByTagName('tbody')[0];
+      var row = tbl.insertRow(-1);
+
 
      // Material
      var cell = row.insertCell(0);
 
      var cellHTML = "";
-     cellHTML += "<div class='styled-select' id='materialDiv'>" + 
-          "<select name='material" + numMaterials + "' id='material" + 
-           numMaterials + "' class='mobile-select' onChange='getUnits(" + numMaterials + ");'>" + 
+     cellHTML +=  "<select name='material" + numMaterials + "' id='material" + 
+           numMaterials + "' class='wide' onChange='getUnits(" + numMaterials + ");'>" + 
           "<option value=0 selected disabled>Material</option>";
 
           <?php
@@ -125,14 +121,14 @@ function addMaterialToTable() {
           }
           ?>
 
-     cellHTML += "</select></div>";
+     cellHTML += "</select>";
      cell.innerHTML = cellHTML;
 
      // Amount
      var cell = row.insertCell(1);
 
      var cellHTML = "";
-     cellHTML += "<input onkeypress='stopSubmitOnEnter(event)' type='text' id='amount" + numMaterials + "' name='amount" + numMaterials + "' class='textbox2 mobile-input' value=0>";
+     cellHTML += "<input onkeypress='stopSubmitOnEnter(event)' type='text' id='amount" + numMaterials + "' name='amount" + numMaterials + "' class='textbox2 mobile-input wide' value=0>";
 
      cell.innerHTML = cellHTML;
 
@@ -140,8 +136,8 @@ function addMaterialToTable() {
      var cell = row.insertCell(2);
      
      var cellHTML = "";
-     cellHTML += "<div class='styled-select' id='unitsDiv" + numMaterials + "'>" + 
-          "<select name ='units" + numMaterials + "' id='units" + numMaterials + "' class='mobile-select'>" + 
+     cellHTML += "<div id='unitsDiv" + numMaterials + "'>" + 
+          "<select name ='units" + numMaterials + "' id='units" + numMaterials + "' class='wide'>" + 
           "<option value=0 selected disabled>Unit</option>";
      cellHTML += "</select></div>";
      cell.innerHTML = cellHTML;
@@ -161,15 +157,15 @@ function removeMaterialFromTable() {
 </script>
 
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="Seed">Date:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
 
-<br clear="all"/>
-<label for="pileIDlabel">Pile ID: </label>
-<div class="styled-select" id="pileIDDiv">
+<div class="pure-control-group">
+<label for="pileIDlabel">Pile ID:</label>
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled> Pile ID</option>
 <?php
@@ -181,35 +177,42 @@ echo '</select>';
 echo '</div>';
 ?>
 
-<br clear="all">
 <br clear="all"/>
-<table id="materialsTable">
-<tr>
+<table id="materialsTable" class="pure-table pure-table-bordered">
+<thead><tr>
 <th>
-Materials:&nbsp;
+Materials
 </th>
 <th>
-Amount:&nbsp;
+Amount
 </th>
 <th>
-Unit:&nbsp;
+Unit:
 </th>
-</tr>
+</tr></thead>
+<tbody></tbody>
 </table>
 <input type='hidden' id='numMaterials' name='numMaterials' value=0>
 <br clear="all">
-<input type='button' class='genericbutton' id='addMaterial' name='addMaterial' onclick='addMaterialToTable();' value='Add Material'>
-<input type='button' class='genericbutton' id='removeMaterial' name='removeMaterial' onclick='removeMaterialFromTable();' value='Remove Material'>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='addMaterial' name='addMaterial' onclick='addMaterialToTable();' value='Add Material'>
+</div>
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='removeMaterial' name='removeMaterial' onclick='removeMaterialFromTable();' value='Remove Material'>
+</div>
+</div>
 <script type="text/javascript">
 addMaterialToTable();
 </script>
 <br clear='all'>
+<!--
 <?php if ($_SESSION['mobile']) echo "<div style='margin-top:100px'></div>"; ?>
+-->
 
-<div>
+<div class="pure-control-group">
 <label for="comments">Comments:</label>
-<br clear="all"/>
-<textarea name="comments"rows="20" cols="30">
+<textarea name="comments"rows="5" cols="30">
 </textarea>
 </div>
 
@@ -217,10 +220,15 @@ addMaterialToTable();
 <br clear="all"/>
 <br clear="all"/>
 
-<input onclick="return show_confirm();" type="submit" class = "submitbutton" name="submit" id="submit" value="Submit">
-<br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input onclick="return show_confirm();" type="submit" class = "submitbutton pure-button wide" name="submit" id="submit" value="Submit">
 </form>
-<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 
 
 <?php

@@ -5,19 +5,24 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_disease:disease_input">
-<h3> Disease Scouting Input Form </h3>
-<br clear="all"/>
-<label for='date'> Date: &nbsp; </label>
+<form name='form' id='test' class='pure-form pure-form-aligned'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_disease:disease_input">
+<center>
+<h2> Disease Scouting Input Form </h2>
+</center>
+
+<div class="pure-control-group">
+<label for='date'> Date: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
+
 <input type="hidden" name="hid" id="hid">
-<label for="fieldID"> Field ID: &nbsp; </label>
-<div class="styled-select" id="field">
+
+<div class="pure-control-group">
+<label for="fieldID"> Name of Field: </label>
 <select name ="fieldID" id="fieldID" class="mobile-select">
-<option value = 0 selected disabled> FieldID</option>
+<option value = 0 selected disabled> Field Name</option>
 <?php
 $result=mysql_query("Select fieldID from field_GH where active=1");
 while ($row1 =  mysql_fetch_array($result)){
@@ -26,39 +31,32 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<!--
-<br clear="all">
-<label for="Crop"> Crop Group:&nbsp; </label>
-<div class="styled-select">
-<select name="cropGroup" id="cropGroup" class="mobile-select">
-<option value = 0 disabled selected="selected"> Crop Group</option>
-<?php
-$result=mysql_query("select cropGroup from cropGroupReference");
-while ($row1 =  mysql_fetch_array($result)){
-echo "\n<option value= \"$row1[cropGroup]\">$row1[cropGroup]</option>";
-}
-?>
-</select>
-</div>
-<br clear="all"><br>
--->
+
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
-<br clear="all" />
-<table name="fieldTable" id="fieldTable">
+
+<br clear="all"/>
+<center>
+<table name="fieldTable" id="fieldTable"  
+ class="pure-table pure-table-bordered">
+<thead>
    <tr><th>Disease</th><th>Infestation</th><th>Stage</th></tr>  
+</thead>
+<tbody>
+</tbody>
 </table>
+</center>
 <script type="text/javascript">
 var numRows=0;
 function addRow(){
    numRows++;
-   var table = document.getElementById("fieldTable");
-   var row = table.insertRow(numRows);
+   var table = document.getElementById("fieldTable").getElementsByTagName('tbody')[0];
+   var row = table.insertRow(-1);
    row.id = "row" + numRows;
    row.name = "row" + numRows;
    var cell0 = row.insertCell(0);                        
-   cell0.innerHTML = '<div class="styled-select" id="speciesDiv'+numRows+'"> <select class="mobile-select" name="species'+numRows+'" id="species'+numRows+'">'+
+   cell0.innerHTML = '<div class="styled-select" id="speciesDiv'+numRows+'"> <select class="wide" name="species'+numRows+'" id="species'+numRows+'">'+
                      '<option value = 0 selected disabled>Disease</option>'+
                      '<?php
                         $sql = 'Select diseaseName from disease';
@@ -68,9 +66,9 @@ function addRow(){
                         }
                       ?>' + '</select></div>';
    var cell1 = row.insertCell(1);                               
-   cell1.innerHTML = '<div class="styled-select" id="infestDiv'+numRows+'"><select class="mobile-select" name="infest'+numRows+'" id="infest'+numRows+'"><option value = 0 selected disabled> Infestation</option> <option>0</option> <option>1</option> <option>2</option> <option>3</option><option>4</option></select></div>';
+   cell1.innerHTML = '<div class="styled-select" id="infestDiv'+numRows+'"><select class="wide" name="infest'+numRows+'" id="infest'+numRows+'"><option value = 0 selected disabled> Infestation</option> <option>0</option> <option>1</option> <option>2</option> <option>3</option><option>4</option></select></div>';
    var cell2 = row.insertCell(2);   
-   cell2.innerHTML = '<div class="styled-select" id="stageDiv'+numRows+'"><select class="mobile-select" name="stage'+numRows+'" id="stage'+numRows+'">'+
+   cell2.innerHTML = '<div class="styled-select" id="stageDiv'+numRows+'"><select class="wide" name="stage'+numRows+'" id="stage'+numRows+'">'+
                      '<option value = 0 selected disabled>Stage</option>'+
                '<?php
                   $result = mysql_query("select stage from stage");
@@ -101,20 +99,24 @@ function removeRow() {
 }
 </script>
 
-<div id="container"></div>
 <br clear="all"/>
-
-<input type="button" class = "submitbutton" 
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" class = "submitbutton pure-button wide" 
   id="add" value="Add Species" onclick="addRow();"/>
-&nbsp;&nbsp;&nbsp;
-<input type="button" id="remove" class = "submitbutton" value="Remove Species" onClick="removeRow();"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="remove" class = "submitbutton pure-button wide" value="Remove Species" onClick="removeRow();"/>
+</div>
+</div>
 <br clear="all">
 <br clear="all">
-<label for="average">Comments:&nbsp; </label>
-<br clear="all">
+<div class="pure-control-group">
+<label >Comments: </label>
 <textarea name="comments" id="comments"
-cols=30 rows=10>
+cols=30 rows=5>
 </textarea>
+</div>
 <script type="text/javascript">
 function show_confirm() {
    var hid = document.getElementById("hid");
@@ -191,13 +193,21 @@ function show_confirm() {
    return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
-<br><br>
-<input type="submit" class="submitbutton" name="submit" 
+
+<br clear="all"/>
+<br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" class="submitbutton pure-button wide" name="submit" 
        value="Submit" onclick="return show_confirm();">
 
 <?php
 echo "</form>";
-echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton" value = "View Table"></form>';
+echo "</div>";
+echo '<div class="pure-u-1-2">';
+echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
+echo "</div>";
+echo "</div>";
 $var=$_POST['hid'];
 if (isset($_POST['submit'])) {
    $success = true;

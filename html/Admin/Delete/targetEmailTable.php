@@ -13,10 +13,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
    $sqlget = "SELECT * from targetEmail";
    $sqldata = mysql_query($sqlget) or die("ERROR");
-   echo "<table border>";
-   echo "<caption> Sales Target Email Report </caption>";
-   echo "<tr><th>Email</th><th>Target</th>".
-   "<th>Delete</th></tr>";
+   echo "<center><h2> Delete Sales Target Email </h2></center>";
+   echo "<table class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>Email</th><th>Target</th>".
+   "<th>Delete</th></tr></thead>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['email'];
@@ -27,7 +27,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
          encodeURIComponent($row['email']).
         "&target=".encodeURIComponent($row['target']).
         "&tab=admin:admin_delete:deletesales:delete_targetemail&submit=Submit\">";
-      echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"></form> </td>";
+      echo "<input type=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"></form> </td>";
       
       echo "</tr>";
    }

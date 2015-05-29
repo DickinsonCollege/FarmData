@@ -10,7 +10,11 @@ if ($farm == 'wahlst_spiralpath') {
    $result=mysql_query($sql);
    while ($row=mysql_fetch_array($result)) {
       $ind=1;	
-      while($ind<=$row['numberOfBeds']){
+      $max = $row['numberOfBeds'];
+      if ($max <1) {
+	$max =1;
+      }
+      while($ind<=$max){
          echo "<option value=\"".$ind."\">".$ind."</option> \n";
          $ind++;
       }

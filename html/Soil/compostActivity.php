@@ -5,8 +5,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3>Compost Activity Form</h3>
-<form method='post' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_activity">
+<center>
+<h2>Compost Activity Form</h2>
+</center>
+<form method='post' class='pure-form pure-form-aligned' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_activity">
 <script>
         function show_confirm() {
         var m = document.getElementById("month");
@@ -49,10 +51,14 @@ function addActivityToTable() {
 	numActivitiesInput.value++;
 	var numActivities = numActivitiesInput.value;
 
-	console.log(numActivities);
 
+/*
 	var tbl = document.getElementById("activitiesTable");
 	var row = tbl.insertRow(-1);
+*/
+        var tbl = document.getElementById("activitiesTable").getElementsByTagName('tbody')[0];
+        var row = tbl.insertRow(-1);
+
 	row.id = "row" + numActivities;
 	var cell = row.insertCell(0);
 
@@ -86,15 +92,15 @@ function removeActivityFromTable() {
 }
 </script>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="Seed">Date:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="activitylabel">Activity: </label>
-<div class="styled-select" id="activityDiv">
 <select name="activity" id="activity" class='mobile-select'>
 <option value = 0 selected disabled>Activity</option>
 <?php
@@ -108,12 +114,15 @@ echo '</div>';
 <br clear="all">
 <br clear="all">
 
-<table id="activitiesTable">
-<tr>
+<center>
+<table id="activitiesTable" class="pure-table pure-table-bordered"
+ style="width:auto;">
+<thead><tr>
 <th>
-Pile ID:&nbsp;
+Pile ID
 </th>
-</tr>
+</tr></thead>
+<tbody>
 <tr id="row1">
 <td>
 <div class='styled-select' id='pileIDDiv'>
@@ -129,28 +138,39 @@ while ($row = mysql_fetch_array($result)) {
 </div>
 </td>
 </tr>
+</tbody>
 </table>
+</center>
 <input type='hidden' id='numActivities' name='numActivities' value=1>
 <br clear='all'>
-<input type='button' class='genericbutton' id='addActivity' name='addActivity' onclick='addActivityToTable();' value='Add Pile'>
-<input type='button' class='genericbutton' id='removeActivity' name='removeActivity' onclick='removeActivityFromTable();' value='Remove Pile'>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='addActivity' name='addActivity' onclick='addActivityToTable();' value='Add Pile'>
+</div>
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='removeActivity' name='removeActivity' onclick='removeActivityFromTable();' value='Remove Pile'>
+</div>
+</div>
 <br clear='all'>
-<?php if ($_SESSION['mobile']) echo "<div style='margin-top:100px'></div>"; ?>
 
-<div>
-<label for="commentslabel">Comments:&nbsp;</label>
-<br clear='all'>
-<textarea name='comments' rows='20' cols='30'>
+<div class="pure-control-group">
+<label for="commentslabel">Comments:</label>
+<textarea name='comments' rows='5' cols='30'>
 </textarea>
 </div>
 
 <br clear="all"/>
 <br clear="all"/>
 
-<input onclick="return show_confirm();" type="submit" class = "submitbutton" name="submit" id="submit" value="Submit">
-<br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input onclick="return show_confirm();" type="submit" class = "submitbutton pure-button wide" name="submit" id="submit" value="Submit">
 </form>
-<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 if (isset($_POST['submit'])) {
 	$year = $_POST['year'];

@@ -20,11 +20,11 @@ if (!$_SESSION['mobile']) {
 ?>
 <p>
 <?php
-if (!$_SESSION['mobile']) {
-   echo "<img src='farmdata.png'>"; 
-} else { 
+if ($_SESSION['mobile']) {
    //echo "<img src='farmdata.png' style='padding-top:20px;' width='100%'>";
-   echo "<img src='farmdata.png' width='100%'>";
+   echo "<img src='farmdata.png' width='30%'>";
+} else { 
+   echo "<img src='farmdata.png' width='25%'>"; 
 }
 ?>
 <!--

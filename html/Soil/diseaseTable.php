@@ -31,7 +31,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    if(!$result){
        echo "<script>alert(\"Could not Generate Disease Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
    }
-   echo "<table border>";
    if ($disease=="%"){
       $var="All";
    }else {
@@ -52,13 +51,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    }else {
       $var4=$_GET['stage'];
    }
-   echo "<caption> Disease Scouting Records in Field: ".$var." for Crop: ".$var3." Disease: ".$var." at Stage: ".$var4."</caption>";
+   echo "<center><h2> Disease Scouting Records in Field: ".$var2." for Crop: ".$var3." Disease: ".$var." at Stage: ".$var4."</h2></center>";
 
-   echo "<tr><th>Scout Date</th><th>Field ID</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th><th>Crop Stage</th><th>Comments</th>";
+   echo "<table class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>Scout Date</th><th>Field ID</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th><th>Crop Stage</th><th>Comments</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
-   echo "</tr>";
+   echo "</tr></thead>";
    while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         //echo str_replace("-","/",$row['sDate']);
@@ -85,7 +85,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
               "&disease=".encodeURIComponent($_GET['disease']).
               "&stage=".encodeURIComponent($_GET['stage']).
               "&tab=soil:soil_scout:soil_disease:disease_report\">";
-           echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton\" value=\"Edit\"></form></td>";
+           echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form></td>";
 
            echo "<td><form method=\"POST\" action=\"diseaseTable.php?month=".
               $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
@@ -95,7 +95,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
               "&disease=".encodeURIComponent($_GET['disease']).
               "&stage=".encodeURIComponent($_GET['stage']).
               "&tab=soil:soil_scout:soil_disease:disease_report\">";
-           echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton\"";
+           echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton pure-button wide\"";
            echo "onclick='return warn_delete();' value=\"Delete\"></form></td>";
 
         }
@@ -103,9 +103,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    }
    echo "</table>";
    echo '<br clear="all"/>';
+   echo '<div class="pure-g">';
+   echo '<div class="pure-u-1-2">';
    echo "<form name='form' method='POST' action='/down.php'>";
    echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
-   echo '<input type="submit" class="submitbutton" name="submit" value="Download Report">';
+   echo '<input type="submit" class="submitbutton pure-button wide" name="submit" value="Download Report">';
    echo "</form>";
-   echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+   echo "</div>";
+   echo '<div class="pure-u-1-2">';
+   echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+   echo "</div>";
+   echo "</div>";
 ?>

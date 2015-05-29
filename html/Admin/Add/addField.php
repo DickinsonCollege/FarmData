@@ -51,40 +51,49 @@ function show_confirm() {
 </script>
 
 
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3 class="hi"><b>Add Field</b></h3>
-<br clear="all"/>
-<label for="fieldID">FieldID:&nbsp;</label>
-<input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input" type="text" name="fieldID" id="fieldID">
+<form name='form' class = "pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center><h2>Add Field</h2></center>
+
+<div class = "pure-control-group">
+<label>Name of Field:</label>
+<input onkeypress="stopSubmitOnEnter(event);" type="text" name="fieldID" id="fieldID">
+</div>
+
 <?php
-echo '<br clear="all"/>';
-echo'<label for="length">Length:&nbsp;';
+echo'<div class = "pure-control-group">';
+echo'<label for="length">Length:';
 if ($_SESSION['mobile']) echo "(feet)";
-echo '</label>';
-echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="length" id="length" onkeyup="updateSize();updateBeds();">';
-if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;feet</label>'; 
-echo '<br clear="all"/>';
+echo '</label> ';
+echo'<input onkeypress= "stopSubmitOnEnter(event);" type="text" name="length" id="length" onkeyup="updateSize();updateBeds();">';
+if (!$_SESSION['mobile']) echo'&nbsp;feet'; 
+//if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">feet</label>'; 
+echo'</div>';
 
-echo'<label for="bspace">Bed spacing on center:&nbsp;';
+echo'<div class = "pure-control-group">';
+echo'<label for="bspace">Bed spacing on center:';
 if ($_SESSION['mobile']) echo "(inches)";
-echo "</label>";
+echo "</label> ";
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; value = 60 class="textbox2 mobile-input" type="text" name="bspace" id="bspace" onkeyup = "updateSize();updateBeds();">';
-if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;inches</label>'; 
-echo '<br clear="all"/>';
+if (!$_SESSION['mobile']) echo'&nbsp;inches'; 
+//if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">inches</label>'; 
+echo'</div>';
 
-echo'<label for="size">Size:&nbsp;';
+echo'<div class = "pure-control-group">';
+echo'<label for="size">Size:';
 if ($_SESSION['mobile']) echo "(acres)";
-echo '</label>'; 
+echo '</label> '; 
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="size" id="size" onkeyup = "updateBeds();">';
-if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>'; 
-echo '<br clear="all"/>';
+if (!$_SESSION['mobile']) echo'&nbsp;acres'; 
+//if (!$_SESSION['mobile']) echo'<label style="margin-top: 8px;" for="acres">acres</label>'; 
+echo'</div>';
 
-echo'<label for="beds">Number of beds:&nbsp;</label>'; 
+echo'<div class = "pure-control-group">';
+echo'<label for="beds">Number of beds:</label> '; 
 echo'<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="beds" id="beds" onkeyup="updateSize();">';
+echo'</div>';
 
 echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo'<input class="submitbutton" type="submit" name="add" value="Add" onclick = "return show_confirm();">';
+echo'<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" onclick = "return show_confirm();">';
 echo "<br>";
 if (isset($_POST['add'])) {
    $fieldID = escapehtml(strtoupper($_POST['fieldID']));

@@ -4,7 +4,6 @@
    include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
    include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<html>
 <head>
    <!--Load the AJAX API-->
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -44,7 +43,7 @@
          $array[0][$count] = escapeescapehtml($header[$count]);
       }
       // $array[0] = $header; // set header for the table
-      echo '<h4>Quantity harvested in each field of '.$crop.' between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h4><br clear="all">';
+      echo '<center><h2>Quantity harvested in each field of '.$crop.' between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h2></center>';
       $count = 0;
       for ($count; $count < count($dateArray); $count++){
          $sql= "select fieldID, sum(yield) from harvested where crop='".$crop."' and hardate='".$dateArray[$count]."' group by fieldID";
@@ -65,6 +64,7 @@
          }
          $array[$count+1] = $rowdata;
       }   
+//print_r($array);
       // find the unit of the chart
       $sql = mysql_query("select distinct unit from harvested where crop='".$crop."'");
       $row = mysql_fetch_array($sql);
@@ -77,7 +77,12 @@
    // Set a callback to run when the google visualization API is loaded.
    google.setOnLoadCallback(drawChart);
    // callback that creates and populates a data table, instantiates the chart, passes in the data and draws it.
-   function drawChart() {
+function drawChart() {
+   if (<?php echo count($array); ?> == 1) {
+     var body = document.getElementById('chart_div');
+     body.innerHTML = "There is not enough data to display. Please select a wider date range.";
+   }
+   else {
       // Create the data table.
       var data2 = eval(<?php echo $json;?>);
       console.log(data2);
@@ -95,9 +100,10 @@
       var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
       chart.draw(data, options);
    }
+}
  
    </script>
    <!--Div that will hold the pie chart-->
-   <div id="chart_div"></div>
+  <center><div id="chart_div"></div></center>
 </body>
 </html>

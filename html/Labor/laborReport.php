@@ -1,21 +1,22 @@
 <?php session_start();?>
-<form name='form' method='GET' action='laborTable.php'>
+<form name='form' class = 'pure-form pure-form-aligned'  method='GET' action='laborTable.php'>
 <input type="hidden" name="tab" value='labor:labor_report'>
 <?php 
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-echo '<h3 class="hi"> Labor Report </h3>';
-echo "<br clear=\"all\">";
-echo '<label for="from">From:&nbsp;</label> ';
+echo '<center><h2 class="hi"> Labor Report </h2></center>';
+echo '<div class = "pure-control-group">';
+echo '<label for="from">From:</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
-echo '<label for="to"> To:&nbsp;</label> ';
+echo '</div>';
+echo '<div class = "pure-control-group">';
+echo '<label for="to"> To:</label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo '</div>';
 ?>
-<br clear="all">
-<label for="crop"> Crop:&nbsp;</label>
-<div id="crop2" class ="styled-select">
+<div class = "pure-control-group">
+<label for="crop"> Crop:</label>
 <select name="crop" id="crop" onChange="addFieldID();" class="mobile-select">
 <option value = "%"> All </option>
 <?php
@@ -26,9 +27,8 @@ while ($row =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all">
-<label for="fieldID">Name of Field:&nbsp; </label>
-<div id="fieldID2" class="styled-select">
+<div class = "pure-control-group">
+<label for="fieldID">Name of Field: </label>
 <select id= "fieldID" name="fieldID" class="mobile-select">
 <option value="%"> All </option>
 <option value="N/A"> N/A </option>
@@ -56,9 +56,8 @@ while ($row =  mysql_fetch_array($result)){
 addFieldID();
 </script>
 
-<br clear="all">
-<label for="taskDiv"> Task:&nbsp;</label>
-<div id="taskDiv" class ="styled-select">
+<div class = "pure-control-group">
+<label for="taskDiv"> Task:</label>
 <select name="task" id="task" class="mobile-select">
 <option value = "%"> All </option>
 <?php
@@ -75,5 +74,5 @@ while ($row =  mysql_fetch_array($result)){
 
 <br clear="all"/>
 <br clear="all"/>
-<input class="submitbutton" type="submit" name="submit" value="Submit">
-</form>
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
+

@@ -1,5 +1,5 @@
 <?php session_start(); ?>
-<form name='form' method='GET' action='liquidFertTable.php'>
+<form name='form' method='GET' class='pure-form pure-form-aligned' action='liquidFertTable.php'>
 <input type="hidden" name="tab" 
   value="soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report">
 <?php 
@@ -8,21 +8,25 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<h3 class="hi"> Liquid Fertilizer Report </h3>
-<br clear="all">
-<h1> Fertilizer Application Date Range </h1>
-<label for="from">From:&nbsp;</label>
+<center>
+<h2 class="hi"> Liquid Fertilizer Report </h2>
+</center>
+
+<div class="pure-control-group">
+<label for="from">From:</label>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
-echo '<label for="to"> To: &nbsp;</label> ';
-include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo "</div>";
 
-echo "<br clear=\"all\">";
+echo '<div class="pure-control-group">';
+echo '<label for="to"> To: </label> ';
+include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo "</div>";
+
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
+<div class="pure-control-group">
 <label for="material"> Material:</label>
-<div class ="styled-select">
 <select name="material" id="material" class="mobile-select">
 <option value = "%" selected> All </option>
 <?php
@@ -36,5 +40,5 @@ while ($row =  mysql_fetch_array($result)){
 
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" class="submitbutton" name="submit" value="Submit">
+<input type="submit" class="submitbutton pure-button wide" name="submit" value="Submit">
 </form>

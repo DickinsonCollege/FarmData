@@ -2,10 +2,10 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
+// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
-
 <?php
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM harvested WHERE id=".$_GET['id'];
@@ -26,7 +26,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       $tcurDay."' and harvested.crop like '" .$crop."' and fieldID like '".
       $fieldID."' and gen like '".$genSel."' order by hardate";
    $sqldata = mysql_query($sql) or die("ERROR");
-   echo "<table>";
+   echo "<table class='pure-table pure-table-bordered'>";
    $crp = $crop;
    if ($fieldID == "%") {
        $flb = "All Fields";
@@ -43,25 +43,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    } else {
        $glb = "Succession ".$genSel;
    }
-  echo "<caption> Harvest Report for ".$clb." in ".$flb;
+  echo "<center>";
+  echo "<h2> Harvest Report for ".$clb." in ".$flb;
   if ($_SESSION['gens']) {
      echo " of ".$glb;
   }
-  echo "</caption>";
-/*
-   if($fieldID == "%" && $crp == "%") {
-      echo "<caption> Harvest Report for All Crops in All Fields </caption>";
-   } else if ($crp != "%" && $fieldID == "%") {
-      echo "<caption> Harvest Report for ".$crp." in All Fields </caption>";
-   } else if ($crp != "%" && $fieldID != "%") {
-      echo "<caption> Harvest Report for ".$crp." in Field ".$fieldID.
-           " </caption>";
-   }else  {
-      echo "<caption> Harvest Report for All Crops in Field ".$fieldID.
-      " </caption>";
-   }
-*/
-   echo "<tr><th>Date</th><th>Field</th><th>Crop</th><th>Yield</th><th>Unit</th>";
+  echo "</h2>";
+  echo "</center>";
+   echo "<thead><tr><th>Date</th><th>Field</th><th>Crop</th><th>Yield</th><th>Unit</th>";
    if ($_SESSION['gens']) {
       echo "<th>Succ&nbsp;#</th>";
    }
@@ -74,7 +63,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th>";
       echo "<th>Delete</th>";
    }
-   echo "</tr>";
+   echo "</tr></thead>";
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['hardate'];
@@ -104,14 +93,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
             "&crop=".encodeURIComponent($_GET['crop']).
             "&fieldID=".encodeURIComponent($_GET['fieldID'])."&genSel=".$genSel.
             "&tab=harvest:harvestReport&submit=Submit\">";
-         echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"></form> </td>";
+         echo "<input type=\"submit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form> </td>";
 
          echo "<td><form method=\"POST\" action=\"harvestTable.php?month=".$month."&day=".$day."&year=".$year.
             "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
             "&crop=".encodeURIComponent($_GET['crop']).
             "&fieldID=".encodeURIComponent($_GET['fieldID'])."&genSel=".$genSel.
             "&tab=harvest:harvestReport&submit=Submit\">";
-         echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+         echo "<input type=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"";
          echo "onclick='return warn_delete();'></form></td>";
       }
       echo "</tr>";
@@ -150,10 +139,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
             $fieldID."' and gen like '".$genSel."' group by unit order by unit";
       $res3=mysql_query($yieldr);
       echo mysql_error();
-      echo "<table>";
-      echo "<tr><th>Total Yield</th>";
+      echo "<table class='pure-table pure-table-border'>";
+      echo "<thead><tr><th>Total Yield</th>";
       echo "<th>Average Yield (bed feet)</th>";
-      echo "<th>Average Yield (row feet)</th><th>Hours</th><th>Hours/Unit</th></tr>";
+      echo "<th>Average Yield (row feet)</th><th>Hours</th><th>Hours/Unit</th></tr></thead>";
       while ($row1 = mysql_fetch_array($res)) {
           $row2 = mysql_fetch_array($res2);
           $row3 = mysql_fetch_array($res3);
@@ -169,9 +158,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "</table>";
       echo "<br clear = 'all'>";
    }
+echo "<div class='pure-g'>";
+echo "<div class='pure-u-1-2'>";
 echo "<form name='form' method='POST' action='/down.php'>";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
-echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Report">';
 echo "</form>";
-echo '<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo "</div>";
+echo "<div class='pure-u-1-2'>";
+echo '<form method="POST" action = "harvestReport.php?tab=harvest:harvestReport"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo "</div>";
+echo "</div>";
+echo "<div class='pure-u-1-2'>";
+echo "<div class='pure-u-1-2'>";
 ?>

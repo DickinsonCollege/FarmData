@@ -5,15 +5,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Sales Target</b></h3>
-<br>
-<label for="target">Sales Target Name:&nbsp;</label>
+<form name="form" class = "pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center><h2><b>Add New Sales Target</b></h2></center>
+
+<div class = "pure-control-group">
+<label for="target">Sales Target Name:</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; type="text" name="target" id="target">
-<br clear="all"/>
-<label for="prefix">Invoice Prefix:&nbsp;</label>
+</div>
+
+<div class = "pure-control-group">
+<label for="prefix">Invoice Prefix:</label>
 <input class="textbox2 mobile-input"type="text" name="prefix" onkeypress= 'stopSubmitOnEnter(event)'; id="prefix">
-<br clear="all"/>
+</div>
+
 <br clear="all"/>
 <script type="text/javascript">
 function show_confirm() {
@@ -32,7 +36,7 @@ function show_confirm() {
    return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Add">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 <?php
 if (!empty($_POST['done'])) {
    $name = escapehtml($_POST['target']);

@@ -5,7 +5,6 @@
    include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<html>
 <head>
    <!--Load the AJAX API-->
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -17,7 +16,7 @@
       $crop = escapehtml($_GET['crop']);
       $array = array();
       $array[0] = array("fieldID", "Yield");
-      echo '<h4>Total Yield for each field of '.$crop.' in '.$year.'</h4><br clear="all">';   
+      echo '<center><h2>Total Yield for each field of '.$crop.' in '.$year.'</h2></center>';   
       $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year." group by fieldID";
       $sqldata = mysql_query($sql);
       $count=0;
@@ -38,10 +37,12 @@
    // Set a callback to run when the google visualization API is loaded.
    google.setOnLoadCallback(drawChart);
    // callback that creates and populates a data table, instantiates the chart, passes in the data and draws it.
-   function drawChart() {
+function drawChart() {
+if (<?php echo count($array); ?> == 1) {
+document.getElementById('chart_div').innerHTML = "There is no data for the given year. Please select another year to graph.";
+}
+else {
       // Create the data table.
-      //var colors = ["blue", "red", "orange", "green" , "yellow", "purple", "gold", "grey", "aero"];
-      var count = 0;
       var data2 = eval(<?php echo $json;?>);
       var data = new google.visualization.arrayToDataTable(data2);
       // Set chart options
@@ -60,9 +61,10 @@
       var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
       chart.draw(view, options);
    }
- 
+ }
+
    </script>
    <!--Div that will hold the pie chart-->
-   <div id="chart_div"></div>
+  <center><div id="chart_div"></div></center>
 </body>
 </html>

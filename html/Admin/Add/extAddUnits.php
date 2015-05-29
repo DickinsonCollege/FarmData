@@ -6,11 +6,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="add">
-<form name='form' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
-<h3><b>Add New Units For Harvesting</b></h3>
-<br>
-<label for="unit">New Unit Name:&nbsp;</label>
+<form name='form' class="pure-form pure-form-aligned" method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
+<center>
+<h2>Add New Harvest Unit</h2>
+</center>
+
+<div class="pure-control-group">
+<label for="unit">New Unit Name:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3" type="text" name="unit" id="unit">
+</div>
 <script>
         function show_confirm() {
         var i = document.getElementById("unit").value;
@@ -23,8 +27,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 }
 	</script>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="add" value="Add" onclick = "return show_confirm();">
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" onclick = "return show_confirm();">
 
 <?php
 if (isset($_POST['add'])) {

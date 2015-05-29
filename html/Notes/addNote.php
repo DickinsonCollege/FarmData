@@ -1,25 +1,23 @@
 <?php session_start();?>
-<html>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<h1> <b> Add a Comment</b> </h1>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>?tab=notes:notes_input">
-
+<center><h2> <b> Add a Comment</b> </h2></center>
+<form name="form" method="post" class = "pure-form pure-form-aligned"  action="<?php $_PHP_SELF ?>?tab=notes:notes_input">
+<div class = "pure-control-group">
 <label for="date">Date:</label>
-<br clear="all"/>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
+<div class ="pure-control-group"><label for="note">Comment:</label>
+<textarea name="comments" rows="5" cols="30"> </textarea>
 <br clear="all"/>
-<label for="note">Comment:</label>
+</div>
 <br clear="all"/>
-<textarea name="comments" rows="10" cols="30"> </textarea>
-<br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="submit" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 </form>
 <?php
 if (!empty($_POST['submit'])) {

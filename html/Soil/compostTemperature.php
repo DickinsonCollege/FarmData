@@ -5,8 +5,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3>Compost Temperature Form</h3>
-<form method='post' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_temperature">
+<center>
+<h2>Compost Temperature Form</h2>
+</center>
+<form method='post' class='pure-form pure-form-aligned' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_temperature">
 <script>
         function show_confirm() {
          var fields = ["pileID", "averageTemperature", "numReadings"];
@@ -47,7 +49,7 @@ function addTemperatureToTable() {
 
    var cellHTML = "";
    cellHTML += "<input type='text' name='temperature" + numReadings + "' id='temperature" + 
-      numReadings + "' class='textbox25 mobile-input' onchange='calculateAverageTemperature();' value=0>"
+      numReadings + "' class='textbox25 mobile-input' onkeyup='calculateAverageTemperature();' value=0>"
 
    cell.innerHTML = cellHTML;
 
@@ -82,15 +84,15 @@ function calculateAverageTemperature() {
 }
 </script>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="Seed">Date:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="pileIDlabel">Pile ID: </label>
-<div class="styled-select" id="pileIDDiv">
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled>Pile ID</option>
 <?php
@@ -104,39 +106,58 @@ echo '</div>';
 <br clear="all">
 <br clear="all">
 
-<table id="temperatureTable">
-<tr>
+<center>
+<table id="temperatureTable"  class="pure-table pure-table-bordered"
+ style="width:auto;">
+<thead><tr>
 <th>
-Temperature Readings: (&deg;F)
+Temperature Readings (&deg;F)
 </th>
-</tr>
+</tr></thead>
+<tbody>
 <td>
-<input type='text' name='temperature1' id='temperature1' class='textbox25 mobile-input' onchange='calculateAverageTemperature();' value=0>
+<input type='text' name='temperature1' id='temperature1' class='textbox25 mobile-input' onkeyup='calculateAverageTemperature();' value=0>
 </td>
 </tr>
+</tbody>
 </table>
+</center>
 <input type='hidden' id='numReadings' name='numReadings' value=1>
 
-<label for='averagelabel'>Average Temperature:&nbsp;</label>
+<br clear='all'>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='addTemperature' name='addTemperature' onclick='addTemperatureToTable();' value='Add Temperature Reading'>
+</div>
+<div class="pure-u-1-2">
+<input type='button' class='genericbutton pure-button wide' id='removeTemperature' name='removeTemperature' onclick='removeTemperatureFromTable();' value='Remove Temperature Reading'>
+</div>
+</div>
+<br clear='all'>
+<div class="pure-control-group">
+<label for='averagelabel'>Average Temperature:</label>
 <input readonly type='text' id='averageTemperature' name='averageTemperature' class='textbox25 mobile-input' value=0>
-<br clear='all'>
-<input type='button' class='genericbutton' id='addTemperature' name='addTemperature' onclick='addTemperatureToTable();' value='Add Temperature Reading'>
-<input type='button' class='genericbutton' id='removeTemperature' name='removeTemperature' onclick='removeTemperatureFromTable();' value='Remove Temperature Reading'>
-<br clear='all'>
-<?php if ($_SESSION['mobile']) echo "<div style='margin-top:100px'></div>"; ?>
+</div>
 
-<label for="commentslabel">Comments:&nbsp;</label>
-<br clear='all'>
-<textarea name='comments' rows='20' cols='30'>
+<div class="pure-control-group">
+<label for="commentslabel">Comments:</label>
+<textarea name='comments' rows='5' cols='30'>
 </textarea>
+</div>
 
 <br clear="all"/>
 <br clear="all"/>
 
-<input onclick="return show_confirm();" type="submit" class = "submitbutton" name="submit" id="submit" value="Submit">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input onclick="return show_confirm();" type="submit" class = "submitbutton pure-button wide" name="submit" id="submit" value="Submit">
 <br clear="all"/>
 </form>
-<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 if (isset($_POST['submit'])) {
    $pileID = escapehtml($_POST['pileID']);

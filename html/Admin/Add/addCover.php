@@ -5,28 +5,40 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Cover Crop Species</b></h3>
-<br>
-<label for="covercrop">Cover Crop Species Name:&nbsp;</label>
+<form name="form" class = "pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center><h2><b>Add New Cover Crop Species</b></h2></center>
+
+<div class = "pure-control-group">
+<label for="covercrop">Cover Crop Species Name:</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; type="text" name="cover" id="cover">
-<br clear="all"/>
-<label for="covercrop">Drill Rate Minimum:&nbsp;</label>
+</div>
+
+<div class = "pure-control-group">
+<label for="covercrop">Drill Rate Minimum:</label>
 <input class="textbox2 mobile-input"type="text" name="min" onkeypress= 'stopSubmitOnEnter(event)'; id="min">
-<br clear="all"/>
-<label for="covercrop">Drill Rate Maximum:&nbsp;</label>
+</div>
+
+<div class = "pure-control-group">
+<label for="covercrop">Drill Rate Maximum:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input"type="text" name="max" id="max">
-<br clear="all"/>
-<label for="covercrop">Broadcaster Rate Minimum:&nbsp;</label>
+</div>
+
+<div class = "pure-control-group">
+<label for="covercrop">Broadcaster Rate Minimum:</label>
 <input class="textbox2 mobile-input"type="text" name="bmin" onkeypress= 'stopSubmitOnEnter(event)'; id="bmin">
-<br clear="all"/>
-<label for="covercrop">Broadcaster Rate Maximum:&nbsp;</label>
+</div>
+
+<div class = "pure-control-group">
+<label for="covercrop">Broadcaster Rate Maximum:</label>
 <input class="textbox2 mobile-input"type="text" name="bmax"onkeypress= 'stopSubmitOnEnter(event)'; id="bmax">
+</div>
+
+<div class = "pure-control-group">
+<label for="legume">Legume:</label>
+<input type="checkbox" name="legume" id="legume" /><label for="checkboxFiveInput"></label>
+</div>
 <br clear="all"/>
-<label for="admin">Legume:&nbsp;</label>
-<input style="margin-top: 10px;" type="checkbox" name="legume" id="legume" class="imgClass2 regular-checkbox big-checkbox"  /><label for="checkboxFiveInput"></label>
-<br clear="all"/>
-<br clear="all"/>
+
 <script type="text/javascript">
 function show_confirm() {
    var i = document.getElementById("cover").value;
@@ -45,7 +57,9 @@ function show_confirm() {
    return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Add">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
+<br clear = "all">
+<br clear = "all">
 <?php
  $legume = 0;
 if (!empty($_POST['done'])) {

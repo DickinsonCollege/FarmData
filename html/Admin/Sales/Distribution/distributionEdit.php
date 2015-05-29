@@ -7,8 +7,13 @@ function getUnit(){
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "getDefUnit.php?crop="+crp, false);
    xmlhttp.send();
-   newdiv.innerHTML= '<div id="unitDiv"> <input type="text" class="textbox25" readonly name="unit" ' +
+   newdiv.innerHTML =  '<label>Unit:</label> ' +
+      '<input type="text" readonly name="unit" id="unit" value="' +
+      xmlhttp.responseText + '">';
+/*
+'<div id="unitDiv"> <input type="text" class="textbox25" readonly name="unit" ' +
       ' id="unit" value="' + xmlhttp.responseText + '"></div>';
+*/
 }
 </script>
 
@@ -52,48 +57,42 @@ echo "<form class='pure-form pure-form-aligned' name='form' method='post' action
    "&crop_product=".encodeURIComponent($origCrop).
    "&target=".encodeURIComponent($origTarget).
    "&grade=".encodeURIComponent($origGrade)."&id=".$id."\">";
-echo '<div class="pure-controls">';
-echo "<H3> Edit Distribution Record </H3>";
-echo '</div>';
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
+
+echo "<center><h2> Edit Distribution Record </h2></center>";
 echo "<div class='pure-control-group'>";
-echo "<label for='from'>Date:&nbsp;</label>";
+echo "<label for='from'>Date:</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 echo"</div>";
-echo '<br clear="all"/>';
+
 echo '<div class="pure-control-group">';
-echo '<label>Crop/Product:&nbsp</label>';
-echo '<div class="styled-select"><select name="crop" id="crop" onchange="getUnit();">';
+echo '<label>Crop/Product:</label>';
+echo '<select name="crop" id="crop" onchange="getUnit();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
-$sql = 'select crop from plant where active=1';
+$sql = 'select crop from (select crop from plant where active=1 union select product as crop from product where active=1) tmp order by crop';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
-echo '</select></div></div>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
 echo '<div class="pure-control-group">';
-echo '<label>Grade:&nbsp</label>';
-echo '<div class="styled-select"><select name="grade" id="grade" class="mobile-select">';
+echo '<label>Grade:</label>';
+echo '<select name="grade" id="grade" class="mobile-select">';
 echo '<option value="'.$grade.'" selected>'.$grade.' </option>';
 echo '<option value="1">1</option>';
 echo '<option value="2">2</option>';
 echo '<option value="3">3</option>';
 echo '<option value="4">4</option>';
-echo '</select></div></div>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
 echo '<div class="pure-control-group">';
-echo '<label>Amount:&nbsp</label>';
+echo '<label>Amount:</label>';
 echo '<input type="text" class="textbox2" name="amount" id="amount" value="'.$amount.'"></div>';
-echo '<br clear="all"/>';
 
-echo '<div class="pure-control-group">';
-echo '<label>Unit:&nbsp</label>';
-echo '<div id="unitDiv"><input type="text" class="textbox25" readonly name="unit" id="unit" value="'.
-   $unit.'"></div></div>';
+echo '<div class="pure-control-group" id="unitDiv">';
+echo '<label>Unit:</label> ';
+echo '<input type="text" readonly name="unit" id="unit" value="'.
+   $unit.'"></div>';
 /*
 echo '<div class="styled-select"><select name="unit" id="unit">';
 echo '<option value="'.$unit.'" selected>'.$unit.' </option>';
@@ -104,33 +103,29 @@ while ($row = mysql_fetch_array($sqldata)) {
 }
 echo '</select></div></div>';
 */
-echo '<br clear="all"/>';
 
 echo '<div class="pure-control-group">';
-echo '<label>Target:&nbsp</label>';
-echo '<div class="styled-select"><select name="target" id="target">';
+echo '<label>Target:</label>';
+echo '<select name="target" id="target">';
 echo '<option value="'.$target.'" selected>'.$target.' </option>';
 $sql = "select distinct targetName from targets where targetName <> '".$target."'";
 $sqldata = mysql_query($sql) or die("ERROR4");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['targetName'].'">'.$row['targetName'].' </option>';
 }
-echo '</select></div></div>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
 echo '<div class="pure-control-group">';
-echo '<label>Price Per Unit:&nbsp</label>';
+echo '<label>Price Per Unit:</label>';
 echo '<input type="text" class="textbox25" name="price" id="price" value="'.
    number_format((float) $price, 2, '.', '').'"></div>';
-echo '<br clear="all"/>';
 
 echo '<div class="pure-control-group">';
-echo '<label>Comments:&nbsp</label>';
+echo '<label>Comments:</label>';
 echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea></div>";
-echo '<div class="pure-controls">';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'></div>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 
 if ($_POST['submit']) {

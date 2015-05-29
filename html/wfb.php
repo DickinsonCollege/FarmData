@@ -7,6 +7,18 @@ $user = $_SESSION['dbuser'];
 if ($user == "guest" || $user == "") {
    die("Files access not authorized.");
 }
+?>
+<link type="text/css" href="/tableDesign.css" rel = "stylesheet">
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+table {
+  width: 1000px !important;
+}
+</style>
+
+<?php
 
 //======================================================================
 //
@@ -578,7 +590,7 @@ function pageHeader() {
 	echo "\na:visited  { color: $linkcolor; text-decoration: none; }";
 	echo "\na:hover    { color: $actlinkcolor; text-decoration: underline; }";
 	echo "\n</style>";
-*/
+//*/
 	echo "\n<script type=\"text/javascript\">";
 	echo "\nfunction statusMsg(txt) {";
 	echo "\nif (txt == '') txt = '$defaultstatusmsg';";
@@ -600,6 +612,7 @@ function quoteJS($str) {
 // Page footer
 function pageFooter() {
 	echo "\n</body>";
+	echo "\n</center>";
 	echo "\n</html>";
 }
 
@@ -1252,7 +1265,7 @@ echo '<script type="text/javascript">
    }
 </script>';
 
-	echo "<h1>$title</h1>";
+	echo "<center><h2>$title</h2>";
 
 	if (isset($msg)) echo $msg; // Displays message after redirection if required
 

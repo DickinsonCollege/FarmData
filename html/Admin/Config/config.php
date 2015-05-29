@@ -29,27 +29,27 @@ $sig = $row['sig'];
 // print_r($vals);
 ?>
 <link type="text/css" href="config.css" rel="stylesheet">
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h1><b>Configure FARMDATA</b></h1>
+<form name="form" class="pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center><h2>Configure FARMDATA</h2></center>
 In the list below, check each FARMDATA component that you wish to include:
 <ul>
-<li> <input type="checkbox" name="notes" id="notes"><b>Comments</b> (entry and reporting of comments or
+<li> <input type="checkbox" name="notes" id="notes"> <b>Comments</b> (entry and reporting of comments or
  observations by any user) </input>
-<li> <input type="checkbox" name="labor" id="labor"><b>Labor</b>
+<li> <input type="checkbox" name="labor" id="labor"> <b>Labor</b>
   (tracking labor hours for direct seeding, transplanting, harvesting and any other tasks)</input>
-<li> <input type="checkbox" name="seed_order" id="seed_order"><b>Seed Ordering and Inventory</b>
+<li> <input type="checkbox" name="seed_order" id="seed_order"> <b>Seed Ordering and Inventory</b>
   (tracking seed orders and inventory, including seed usage during planting)</input>
-<li> <input type="checkbox" name="harvlist" id="harvlist"><b>Harvest List</b> (entering and editing a harvest
+<li> <input type="checkbox" name="harvlist" id="harvlist"> <b>Harvest List</b> (entering and editing a harvest
  plan for a specific day plus real time harvest tracking)</input>
-<li> <input type="checkbox" name="gens" id="gens"><b>Succession Numbers</b> (distinguishing 
+<li> <input type="checkbox" name="gens" id="gens"> <b>Succession Numbers</b> (distinguishing 
  generations/successions of a crop over multiple seedings in the same field)</input>
 <li> <input type="checkbox" name="soil" class="soil" id="soil" 
-   onclick="toggle('soil',document.getElementById('soil').checked);"><b>Soil</b></input>
+   onclick="toggle('soil',document.getElementById('soil').checked);"> <b>Soil</b></input>
 <ul>
 <li>
 <li> <input type="checkbox" name="fertility" class="soil fertility" id="fertility"
    onclick="toggle('fertility',document.getElementById('fertility').checked);
-  selectParens(['soil'], document.getElementById('fertility').checked);"><b>Fertility</b></input>
+  selectParens(['soil'], document.getElementById('fertility').checked);"> <b>Fertility</b></input>
   <ul>
   <li> <input type="checkbox" name="cover" class="soil fertility cover" 
    onclick="selectParens(['soil', 'fertility'], document.getElementById('cover').checked);" id="cover">
@@ -80,7 +80,7 @@ In the list below, check each FARMDATA component that you wish to include:
 <li> <input type="checkbox" name="spraying" class="soil spraying" 
    onclick="toggle('spraying',document.getElementById('spraying').checked);
   selectParens(['soil'], document.getElementById('spraying').checked);"
-  id="spraying"><b>Spraying</b></input>
+  id="spraying"> <b>Spraying</b></input>
   <ul>
   <li> <input type="checkbox" name="backspray" class="soil spraying backspray" 
    onclick="selectParens(['soil', 'spraying'], document.getElementById('backspray').checked);" 
@@ -94,7 +94,7 @@ In the list below, check each FARMDATA component that you wish to include:
 <li> <input type="checkbox" name="scouting" class="soil scouting" 
    onclick="toggle('scouting',document.getElementById('scouting').checked);
   selectParens(['soil'], document.getElementById('scouting').checked);"
-  id="scouting"><b>Scouting</b></input>
+  id="scouting"> <b>Scouting</b></input>
   <ul>
   <li> <input type="checkbox" name="insect" class="soil scouting insect" 
    onclick="selectParens(['soil', 'scouting'], document.getElementById('insect').checked);" 
@@ -112,16 +112,16 @@ In the list below, check each FARMDATA component that you wish to include:
 <li> <input type="checkbox" name="irrigation" class="soil irrigation" 
    onclick="toggle('irrigation',document.getElementById('irrigation').checked);
   selectParens(['soil'], document.getElementById('irrigation').checked);"
-  id="irrigation"><b>Irrigation</b> (tracking irrigation time per field plus rainfall)</input>
+  id="irrigation"> <b>Irrigation</b> (tracking irrigation time per field plus rainfall)</input>
    <ul>
    <li> <input type="checkbox" name="pump" class="soil irrigation pump" 
      onclick="toggle('pump',document.getElementById('pump').checked);
     selectParens(['soil', 'irrigation'], document.getElementById('pump').checked);"
-    id="pump"><b>Pump Log</b> (tracking pump runtime and electricity usage - electric motor only)</input>
+    id="pump"> <b>Pump Log</b> (tracking pump runtime and electricity usage - electric motor only)</input>
    </ul>
 </ul>
 <li> <input type="checkbox" name="sales" class="sales" id="sales"
-   onclick="toggle('sales',document.getElementById('sales').checked);"><b>Sales</b></input>
+   onclick="toggle('sales',document.getElementById('sales').checked);"> <b>Sales</b></input>
   <ul>
   <li> <input type="checkbox" name="sales_packing" class="sales sales_packing" id="sales_packing"
    onclick="selectParens(['sales'], document.getElementById('sales_packing').checked);">
@@ -133,26 +133,28 @@ In the list below, check each FARMDATA component that you wish to include:
 </ul>
 <b>Seed by the:</b>
 <ul>
-<li> <input type="radio" name="bedftv" value="bedftv" id="bedftv"><b>Bed Foot</b></input> (use if different crops
+<li> <input type="radio" name="bedftv" value="bedftv" id="bedftv"> <b>Bed Foot</b></input> (use if different crops
  can be planted in the same bed)
-<li> <input type="radio" name="bedftv" value="row" id="bed"><b>Bed</b></input> (use if only one crop can be
+<li> <input type="radio" name="bedftv" value="row" id="bed"> <b>Bed</b></input> (use if only one crop can be
  planted per bed)
 </ul>
-<b>Invoice Information:</b> (leave blank if not using invoices)
-<ul>
-<li> <label>Farm Name: &nbsp;</label> <input type="text" name="FarmName" class="textbox3 mobile-input"
+<h3>Invoice Information (leave blank if not using invoices): </h3>
+<div class="pure-control-group">
+ <label>Farm Name (as it should appear on invoices): </label> 
+    <input type="text" name="FarmName" class="textbox3 mobile-input"
     value="<?php echo $farm;?>">
-    </input> (as it should appear on invoices)
-   <br clear = "all"/>
-<li> <label>Farm Email: &nbsp;</label> <input type="text" name="FarmEmail" class="textbox3 mobile-input"
+    </input> 
+</div>
+<div class="pure-control-group">
+ <label>Farm Email (return email address for invoices): </label> 
+  <input type="text" name="FarmEmail" class="textbox3 mobile-input"
     value="<?php echo $farmemail;?>">
-    </input> (return address for invoices)
-   <br clear = "all"/>
-<li> <label>Farm Signature:</label>
+    </input> 
+</div>
+<div class="pure-control-group">
+<label>Farm Signature (signature on email invoices):</label>
    <textarea name="sig"><?php echo $sig;?></textarea>
-   <br clear = "all"/>
-   (signature on email invoices)
-</ul>
+</div>
 
 
 <script type="text/javascript">
@@ -195,7 +197,8 @@ function show_confirm() {
 <br clear="all"/>
 <br clear = "all"/>
 
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Submit">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Submit">
+<br clear = "all">
 <?php
 if (!empty($_POST['done'])) {
    for ($i = 0; $i < count($ids); $i++) {

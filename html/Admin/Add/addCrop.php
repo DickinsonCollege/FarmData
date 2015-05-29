@@ -5,14 +5,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Crop</b></h3>
-<br>
-<label for="crop">Crop Name:&nbsp;</label> 
+<form name="form" class="pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center>
+<h2>Add New Crop</h2>
+</center>
+<div class="pure-control-group">
+<label>Crop Name:</label> 
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3 mobile-input" type="text" name="name" id="name">
-<br clear="all"/>
-<label for="default">Default Unit:&nbsp;</label> 
-<div id='crop'class='styled-select'>
+</div>
+
+<div class="pure-control-group">
+<label for="default">Default Unit:</label> 
 <select name="default_unit" id="default_unit" class='mobile-select'>
 <option value=0 selected>Unit </option>
 <?php
@@ -22,10 +25,12 @@ while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[uni
 }
 ?>
 </select>
+</div>
+
 <?php
 if ($_SESSION['sales_invoice']) {
-   echo '<br clear="all"/>';
-   echo '<label for="dh_unit">Invoice Unit:&nbsp;</label> ';
+   echo '<div class="pure-control-group">';
+   echo '<label for="dh_unit">Invoice Unit:</label> ';
    echo '<select name="dh_unit" id="dh_unit" class="mobile-select">';
    echo '<option value=0 selected>Unit </option>';
    $result=mysql_query("Select distinct unit from extUnits");
@@ -33,15 +38,16 @@ if ($_SESSION['sales_invoice']) {
       echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
    }
    echo '</select>';
-   echo '<br clear="all"/>';
-   echo '<label for="dh_case">Units per Case:&nbsp;</label> ';
+   echo '</div>';
+
+   echo '<div class="pure-control-group">';
+   echo '<label for="dh_case">Units per Case:</label> ';
    echo '<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox3 mobile-input" type="text" name="dh_case" id="dh_case">';
    echo '</div>';
 }
 ?>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="done" value="Add">
+<input class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 
 
 <?php

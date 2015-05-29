@@ -19,7 +19,7 @@ if ($farm != 'dfarm') {
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 ?>
-<form name='form' method='POST'>
+<form name='form' class="pure-form pure-form-aligned" method='POST'>
 <?php
 $date = $_GET['date'];
 $id    = $_GET['id'];
@@ -37,27 +37,32 @@ $tcurDay = $_GET['tday'];
 $complete=$_GET['complete'];
 $initials=$_GET['initials'];
 ?>
-<label for="date">Date:&nbsp;</label>
+<center>
+<h2>Edit Tractor Spray Record</h2>
+</center>
+
+<div class="pure-control-group">
+<label for="date">Date:</label>
 <?php 
-echo '<div class="styled-select"><select name="month" id="month">';
+echo '<select name="month" id="month">';
 echo '<option value='.$month.' selected>'.date("F", mktime(0,0,0, $month,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$day.' selected>'.$day.' </option>';
 for($day1 = 1; $day1 < 32; $day1++) {echo "\n<option value =\"$day1\">$day1</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$year.' selected>'.$year.'</option>';
 for($yr = $year - 3; $yr < $year+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo '<label>User:&nbsp</label>';
-echo '<div class="styled-select"><select name="user" id="user">';
+echo '<div class="pure-control-group">';
+echo '<label>User:</label> ';
+echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
@@ -68,12 +73,12 @@ if ($farm == 'dfarm') {
 } else {
    echo $useropts;
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
 ?>
-<label for="status">Status:&nbsp;</label>
-<div class="styled-select" id="statusDiv"> <select class="mobile-select" id="status" name="status">
+<div class="pure-control-group">
+<label for="status">Status:</label>
+<select class="mobile-select" id="status" name="status">
 <?php
 echo '<option value=1';
 if ($complete == 1) {
@@ -88,20 +93,23 @@ echo '>Queued</option>';
 ?>
 </select>
 </div>
-<br clear="all">
-<label for="initials">Initials:&nbsp;</label>
+
+<div class="pure-control-group">
+<label for="initials">Initials:</label>
 <?php
 echo "<input class='textbox mobile-input ' type='text' id='initials' name='initials' value='".
    $initials."'>";
 ?>
+</div>
 <br clear="all">
 <br clear="all">
-<table name="fieldTable" id="fieldTable">
-<tr>
+<table name="fieldTable" id="fieldTable" class="pure-table pure-table-bordered">
+<thead><tr>
    <th>Field</th>
    <th>Num Beds Sprayed</th>
    <th>Acreage Sprayed</th>
-</tr>
+   <th>Crop</th>
+</tr></thead>
 <?php
    $sql = "select * from tSprayField where id=".$id;
    $sqldata = mysql_query($sql);
@@ -116,6 +124,7 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
       $numBedOptions ="";
       $sqlnumBeds="SELECT numberOfBeds as numberOfBeds FROM field_GH where fieldID='".
           $row['fieldID']."'";
+      $crops = $row['crops'];
       $result=mysql_query($sqlnumBeds);
       $rowBeds=mysql_fetch_array($result); 
       $ind=1;
@@ -124,28 +133,36 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
          $ind++;
       }
 
+      echo  '<tr><td><center><div class="styled-select" id="fieldDiv'.$numRows.'"> <select name ="field'.$numRows.'" class="wide" id="field'.$numRows.'" onChange="addInput('.$numRows.'); addAcre('.$numRows.'); calculateTotalUpdate(); calculateWater();"><option value='.$row[fieldID].'>'.$row[fieldID].'</option>'.$option.'</select></div></center></td>';
 
-      echo  '<tr><td><center><div class="styled-select" id="fieldDiv'.$numRows.'"> <select name ="field'.$numRows.'" id="field'.$numRows.'" onChange="addInput('.$numRows.'); addAcre('.$numRows.'); calculateTotalUpdate(); calculateWater();"><option value='.$row[fieldID].'>'.$row[fieldID].'</option>'.$option.'</select></div></center></td>';
-      echo "<td><center><div id=\"maxBed".$numRows."\" class='styled-select2'> <select id=\"maxBed2".$numRows."\" name=\"maxBed2".$numRows."\"  onChange=\"addAcre(".$numRows."); calculateTotalUpdate(); calculateWater(); \"><option value=\"".$row[numOfBed]."\">".$row[numOfBed]."</option>".$numBedOptions."</select></div></center></td>";
-      echo "<td><center><div id=\"acreDiv".$numRows."\"><input style='position:relative;' class='textbox4' type=\"text\" id=\"acre".$numRows."\" value=0 readonly></div> </center></td></tr>";   
+      echo "<td><center><div id=\"maxBed".$numRows."\" class='styled-select2'> <select id=\"maxBed2".$numRows."\" name=\"maxBed2".$numRows."\"  onChange=\"addAcre(".$numRows."); calculateTotalUpdate(); calculateWater(); \" class='wide'><option value=\"".$row[numOfBed]."\">".$row[numOfBed]."</option>".$numBedOptions."</select></div></center></td>";
+
+      echo "<td><center><div id=\"acreDiv".$numRows."\"><input class='wide' size = '4' type=\"text\" id=\"acre".$numRows."\" value=0 readonly></div> </center></td>";   
+      echo "<td><center><input type = 'text' name = 'crop".$numRows."' class = 'wide' size = '40'  value ='".$crops."'></center></td></tr>";
    }
    echo "<input type='hidden' value='".$numRows."' name='numRows' id='numRows'>";
 ?>
 
 </table>
 <br clear="all"/>
-<input type="button" value="Add Field" class="submitbutton"  name="Add Field Spray" onclick="addRow()"/>
-<input type="button" value="Remove Field" class="submitbutton"  name="Remove Field Spray" onclick="removeRow(); calculateWater();calculateTotalUpdate()"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" value="Add Field" class="submitbutton pure-button wide"  name="Add Field Spray" onclick="addRow()"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" value="Remove Field" class="submitbutton pure-button wide"  name="Remove Field Spray" onclick="removeRow(); calculateWater();calculateTotalUpdate()"/>
+</div>
+</div>
 <br clear="all"/>
 <br clear="all"/>
-<table name="materialTable" id="materialTable">
-<tr>
+<table name="materialTable" id="materialTable" class="pure-table pure-table-bordered">
+<thead><tr>
    <th>Material Sprayed</th>
    <th>Rate (in units per acre)</th>
    <th>Unit</th>
    <th>Suggested Total Material</th>
    <th>Actual Total Material</th>
-</tr>
+</tr></thead>
 <?php
    $sql = "select * from tSprayWater where id=".$id;
    $sqldata = mysql_query($sql);
@@ -155,7 +172,6 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
       $materialSprayed = "";
       $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
       $resultM=mysql_query($sqlM);
-         //echo mysql_error();
       while($rowM=mysql_fetch_array($resultM)){
          $materialSprayed = $materialSprayed."<option value='".$rowM[sprayMaterial]."'>".$rowM[sprayMaterial]."</option>";
       };
@@ -173,30 +189,35 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
             $ind=$ind + $formatDif;
          }
       }
-      echo  "<tr><td><center><div id =\"material".$numRowsMat."\" class='styled-select2'><select id=\"material2".$numRowsMat."\" name=\"material2".$numRowsMat."\"  onChange=\"addInputRates(".$numRowsMat."); calculateSuggested(".$numRowsMat."); addUnit(".$numRowsMat.");  \"\n>"."<option value=".$row[material].">".$row[material]."</option>\n".$materialSprayed."</select></div></center></td>";
+      echo  "<tr><td><center><div id =\"material".$numRowsMat."\" class='styled-select2'><select class='wide' id=\"material2".$numRowsMat."\" name=\"material2".$numRowsMat."\"  onChange=\"addInputRates(".$numRowsMat."); calculateSuggested(".$numRowsMat."); addUnit(".$numRowsMat.");  \"\n>"."<option value=".$row[material].">".$row[material]."</option>\n".$materialSprayed."</select></div></center></td>";
       echo  "<td><center><div id =\"rate".$numRowsMat.
-            "\" class='styled-select2'><select id='rate2".$numRowsMat.
+            "\" class='wide'><select class='wide' id='rate2".$numRowsMat.
             "' name='rate2".$numRowsMat."'  onChange=\"calculateSuggested(".
             $numRowsMat.");\"><option value=".$row[rate].">".$row[rate]."</option>".$rateOptions."</select></div></center></div></td>";
       echo  "<td><div id=\"unitDiv".$numRowsMat."\"><label style=\"font-size:12pt\" id='unit".$numRowsMat."'>Unit</label></div></td>";
-      echo  "<td><center><div id=\"calculatedTotalDiv".$numRowsMat."\"><input type=\"text\" id=\"calculatedTotal".$numRowsMat."\" class='textbox4' value=0 readonly></div></center></td>";
-      echo  "<td><center><div id=\"actualTotalDiv".$numRowsMat."\"><input class='textbox4' type=\"text\" id=\"actuarialTotal".$numRowsMat."\" name=\"actuarialTotal".$numRowsMat."\" value=".$row[actualTotalAmount]."></div></center></td></tr>";
+      echo  "<td><center><div id=\"calculatedTotalDiv".$numRowsMat."\"><input type=\"text\" id=\"calculatedTotal".$numRowsMat."\" class='wide' value=0 readonly></div></center></td>";
+      echo  "<td><center><div id=\"actualTotalDiv".$numRowsMat."\"><input class='wide' type=\"text\" id=\"actuarialTotal".$numRowsMat."\" name=\"actuarialTotal".$numRowsMat."\" value=".$row[actualTotalAmount]."></div></center></td></tr>";
    }
    echo "<input type='hidden' value='".$numRowsMat."' name='numRowsMat' id='numRowsMat'/>";
 ?>
 
 </table>
 <br clear="all"/>
-<input type="button" value="Add Material" class="submitbutton" name="Add Material Spray" onclick="addRowMat()"/>
-<input type="button" value="Remove Material" class="submitbutton" name="Delete Material Spray" onclick="removeRowMat()"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" value="Add Material" class="submitbutton pure-button wide" name="Add Material Spray" onclick="addRowMat()"/>
+</div>
+<div class="pure-u-1-2">
+<input type="button" value="Remove Material" class="submitbutton pure-button wide" name="Delete Material Spray" onclick="removeRowMat()"/>
+</div>
+</div>
 <br clear="all"/>
-<br clear="all"/>
-<table>
-<tr>
+<table class='pure-table pure-table-bordered'>
+<thead><tr>
    <th>Water (Gallons) Used Per Acre</th>
    <th>Total Gallons of Water Used </th>
 
-</tr>
+</tr></thead>
 <?php
 $sql = "select * from tSprayMaster where id=".$id;
 $sqldata = mysql_query($sql) or die (mysql_error());
@@ -204,19 +225,11 @@ $row = mysql_fetch_array($sqldata);
 $water = $row['waterPerAcre'];
 $crops = $row['crops'];
 $comment = $row['comment'];
-echo "<tr><td><center><input class='textbox4' type='text' name='waterPerAcre' id='waterPerAcre' value=".$water."  onkeyup='calculateWater();'></center></td>";
+echo "<tr><td><center><input class='wide' type='text' name='waterPerAcre' id='waterPerAcre' value=".$water."  onkeyup='calculateWater();'></center></td>";
 ?>
-<td><center><input type="text" class='textbox4' name="totalWater" id="totalWater" value=0 ></center></td></tr>
+<td><center><input type="text" class='wide' name="totalWater" id="totalWater" value=0 ></center></td></tr>
 </table>
 <br clear="all"/>
-<table>
-<tr><th>Crops</th></tr>
-
-<tr><td>
-<textarea name="crops" id="crops">
-<?php echo $crops; ?>
-</textarea>
-</td></tr>
 
 <!--
 <tr><td><center><div id="cropGroup" class='styled-select2'><select class='styled-select' name="cropGroup2" id="cropGroup2"  >
@@ -224,7 +237,6 @@ echo "<tr><td><center><input class='textbox4' type='text' name='waterPerAcre' id
 <?php 
 $sqlG="SELECT * FROM cropGroupReference";
 $resultG=mysql_query($sqlG);
-//echo mysql_error();
 while($rowG=mysql_fetch_array($resultG)){
 
 echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n";
@@ -233,13 +245,13 @@ echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n
 </select></div></center></td></tr>
 -->
 
-<tr>
-<th>
-Reason For Spray & Comments</th></tr>
-
-<tr><td><textarea style="width: 980px;" name="textarea" rows="4" cols="50"><?php echo $comment;?>
-</textarea></td></tr>
-</table>
+<br clear="all"/>
+<div class="pure-control-group">
+<label>Reason For Spray & Comments:</label>
+<textarea  name="textarea" rows="5" cols="30"><?php echo $comment;?>
+</textarea>
+</div>
+<br clear="all"/>
 <br clear="all"/>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/functions.php';
@@ -257,7 +269,7 @@ while( $count <= $numRowsMat){
 
 echo "<script type='text/javascript'>calculateWater(); </script>";
 ?>
-<input type="submit" value = 'Submit' class='submitbutton' name="submit" onclick="return show_confirm();  ">
+<input type="submit" value = 'Submit' class='submitbutton pure-button wide' name="submit" onclick="return show_confirm();  ">
 <?php
 // pass values back through on post
 echo '<input type="hidden" name = "numField" id="numField">';
@@ -269,7 +281,6 @@ echo '<input type="hidden" name = "numMaterial" id="numMaterial" >';
 <?php
 if(!empty($_POST['submit'])) {
 $comSanitized=escapehtml($_POST['textarea']);
-$crops=escapehtml($_POST['crops']);
 $waterPerAcre=escapehtml($_POST['waterPerAcre']);
 $username=escapehtml($_POST['user']);
 $numField = escapehtml($_POST['numRows']);
@@ -278,7 +289,7 @@ $complete = $_POST['status'];
 $initials = escapehtml($_POST['initials']);
 $sqlM="update tSprayMaster SET sprayDate='".$_POST['year']."-".$_POST['month'].
    "-".$_POST['day']."',noField=".$numField.",noMaterial=".$numMaterial.
-   ",waterPerAcre=".$waterPerAcre.",crops = '".$crops."', comment= '".
+   ",waterPerAcre=".$waterPerAcre.", comment= '".
    $comSanitized."', user='".$username. "', complete = ".$complete.
    ", initials = '".$initials."' where id=".$id;
 $rusultM=mysql_query($sqlM);
@@ -292,7 +303,8 @@ mysql_query($sqlDelete) or die(mysql_error());
 while($fieldInd<= $_POST['numRows']){
    $field = escapehtml($_POST['field'.$fieldInd]);
    $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
-   $sqlF="INSERT INTO tSprayField VALUES(".$id." , '". $field."' , ".$bed.");";
+   $crops = escapehtml($_POST['crop'.$fieldInd]);
+   $sqlF="INSERT INTO tSprayField VALUES(".$id." , '". $field."' , ".$bed.", '".$crops."');";
    mysql_query($sqlF) or die (mysql_error());
    $sqlF;
    echo mysql_error();

@@ -5,26 +5,33 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3> Disease Scout Report </h3>
-<br clear="all"/>
-<form name='form' id='test'  method='GET' action="diseaseTable.php">
+<center>
+<h2> Disease Scout Report </h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" id='test'  method='GET' action="diseaseTable.php">
 <input type="hidden" name="tab" 
    value="soil:soil_scout:soil_disease:disease_report">
-<label for='date'> From: &nbsp;</label>
+
+<div class="pure-control-group">
+<label for='date'> From: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for='date2'> To:&nbsp; </label>
+</div>
+
+<div class="pure-control-group">
+<label for='date2'> To: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
-<br clear="all"/>
+</div>
+
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
-<label for="disease"> Disease Species:&nbsp; </label>
- <div class="styled-select">
+
+<div class="pure-control-group">
+<label for="disease"> Disease Species: </label>
  <select name ="disease" id="disease" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -35,9 +42,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  echo '</select>';
  echo '</div>';
  ?>
-<br clear="all"/>
-<label for="cropDiv"> Crop:&nbsp; </label>
- <div class="styled-select" id="cropDiv">
+
+<div class="pure-control-group">
+<label> Crop: </label>
  <select name ="crop" id="crop" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -48,10 +55,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  echo '</select>';
  echo '</div>';
  ?>
-<br clear="all"/>
 
-<label for="Stage"> Stage: &nbsp;</label>
- <div class="styled-select">
+<div class="pure-control-group">
+<label for="Stage"> Stage: </label>
  <select name ="stage" id="stage" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -64,6 +70,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  ?>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" class="submitbutton" name="submit" value="Submit">
+<input type="submit" class="submitbutton pure-button wide" name="submit" value="Submit">
 </body>
 </html>

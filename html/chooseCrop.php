@@ -39,8 +39,8 @@ function update() {
    }
 }
 </SCRIPT>
-<label for="cropButton">Crop:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="cropButton">Crop:</label>
 <select name="crop" id="cropButton" class='mobile-select' onChange="update();">
 <option disabled selected="selected"  value = 0> Crop </option>
 </select>

@@ -5,25 +5,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name='form' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
-<h3><b>Edit/Delete an Existing Field </b></h3>
-<br>
-<label for="fieldID"> Field ID:&nbsp; </label>
-<div id="fieldID23" class="styled-select">
-<!--
-<select id= "fieldID" name="fieldID" class='mobile-select' onChange='addInput();addInput2();addInput3();getActive();'>
--->
-<select id= "fieldID" name="fieldID" class='mobile-select' onChange='getFieldInfo();'>
-<option value="0" selected disabled> Field </option>
-<?php
-$result = mysql_query("SELECT distinct fieldID from field_GH");
-while ($row1 =  mysql_fetch_array($result)){
-  echo "\n<option value= \"".$row1[fieldID]."\">".
-   $row1[fieldID]."</option>";
-}
-?>
-</select></div>
-<br clear="all"/>
+<form name='form' method='post' class="pure-form pure-form-aligned" action='<?php $_SERVER['PHP_SELF'] ?>'>
+<center>
+<h2>Edit/Delete an Existing Field</h2>
+</center>
+
 <script type="text/javascript"> 
 function getFieldInfo() {
    var fld = encodeURIComponent(document.getElementById("fieldID").value);
@@ -34,93 +20,42 @@ function getFieldInfo() {
    console.log(arr);
    if (arr.length == 4) {
       var newdiv = document.getElementById('sizeDiv');
-      newdiv.innerHTML="<div id= \"sizeDiv\">" +
-      '<label for="size">Size:&nbsp;</label>' +
-      "<input class= \"textbox25 mobile-input\" type= \"text\" onkeyup = \"updateBeds();\" name = \"size\" id = \"size\"" + 
-      'onkeypress= "stopSubmitOnEnter(event)"; value=' +
-      arr[0] +">" +
-      '<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>' +
-      "</div>";
+      newdiv.innerHTML = '<label for="size">Size:</label> ' +
+         '<input onkeypress= "stopSubmitOnEnter(event)";  value="' + arr[0] +
+         '" type="text" name="size" id="size" onkeyup= "updateBeds();"> ' + 
+         '&nbsp;acres';
 
       newdiv = document.getElementById('bedsDiv');
-      newdiv.innerHTML="<div id= \"bedsDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"beds\" id = \"beds\" value = " + arr[1] + "></div>";
+      newdiv.innerHTML = '<label for="beds">Number of Beds:</label>  ' +
+         '<input type="text" name = "beds" id="beds" value="' + arr[1] +
+         '" onkeyup="updateSize();"> ';
 
       var activeDiv = document.getElementById("activeDiv");
-      var str = '<div id="activeDiv" class="styled-select"><select ' +
+      var str = '<label for="active">Active:</label> <select ' +
         'name = "active" id = "active" class="mobile-select">';
       if (arr[3] == 1) {
          str += '<option value=1>Yes</option><option value=0>No</option>';
       } else {
          str += '<option value=0>No</option><option value=1>Yes</option>';
       }
-      str += '</select></div>';
+      str += '</select>';
       activeDiv.innerHTML=str;
 
+
       newdiv = document.getElementById('lengthDiv');
-      newdiv.innerHTML="<div id= \"lengthDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"length\" id = \"length\" value = "
-      + arr[2] +
-     '> <label style="margin-top: 8px;" for="length">&nbsp;feet</label>' +
-     "</div>";
+      newdiv.innerHTML = '<label for="length">Length:</label> ' +
+        '<input type="text" name="length" id="length" value="' +
+        arr[2] + '" onkeyup="updateSize();"> &nbsp;feet';
+
 
      var width = ((arr[0] * 43560) / arr[2]).toFixed(2);
      newdiv = document.getElementById('widthDiv');
-     newdiv.innerHTML = '<div id="widthDiv">' +
-       '<input class="textbox25 mobile-input" type="textbox" name="width" id="width" value=' + width + 
-       ' onkeyup="updateSizeWidth();">' + 
-       '<label style="margin-top: 8px;" for="length">&nbsp;feet (optional)</label>' +
-       '</div>';
+     newdiv.innerHTML = '<label for="width">Average Width:</label> ' +
+         '<input type="text" name="width" id="width" ' +
+         'value="' + width + '" onkeyup="updateSizeWidth();">' + 
+         ' &nbsp;feet (optional)';
    }
 }
-
-/*
-function addInput2(){
-   var newdiv = document.getElementById('sizeDiv');
-   var fld = encodeURIComponent(document.getElementById("fieldID").value);
-   xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "getSize.php?fieldID="+fld, false);
-   xmlhttp.send();
-
-   newdiv.innerHTML="<div id= \"sizeDiv\">" +
-   '<label for="size">Size:&nbsp;</label>' +
-   "<input class= \"textbox2 mobile-input\" type= \"text\" onkeyup = \"updateBeds();\" name = \"size\" id = \"size\"" + 
-   'onkeypress= "stopSubmitOnEnter(event)"; ' +
-   xmlhttp.responseText+">" +
-   '<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>' +
-   "</div>";
-}
-
-function addInput(){
-   var newdiv = document.getElementById('bedsDiv');
-   var fld = encodeURIComponent(document.getElementById("fieldID").value);
-   xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "getBeds.php?fieldID="+fld, false);
-   xmlhttp.send();
-   newdiv.innerHTML="<div id= \"bedsDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"beds\" id = \"beds\" "+ xmlhttp.responseText+"></div>";
-}
-
-function getActive() {
-   var fld = encodeURIComponent(document.getElementById("fieldID").value);
-   xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "getActive.php?fieldID="+fld, false);
-   xmlhttp.send();
-   var activeDiv = document.getElementById("activeDiv");
-   activeDiv.innerHTML='<div id="activeDiv" class="styled-select"><select ' +
-     'name = "active" id = "active" class="mobile-select">' + xmlhttp.responseText + 
-     '</select></div>';
-   console.log('active: ' + xmlhttp.responseText);
-}
-
-function addInput3(){
-   var newdiv = document.getElementById('lengthDiv');
-   var fld = encodeURIComponent(document.getElementById("fieldID").value);
-   xmlhttp= new XMLHttpRequest();xmlhttp.open("GET", "getLength.php?fieldID="+fld, false);
-   xmlhttp.send();
-   newdiv.innerHTML="<div id= \"lengthDiv\"> <input onkeyup=\"updateSize();\" class=\"textbox2 mobile-input\" type=\"text\" name= \"length\" id = \"length\" "
-      + xmlhttp.responseText +
-     '> <label style="margin-top: 8px;" for="length">&nbsp;feet</label>' +
-     "</div>";
-}
-*/
 
 function updateSize() {
    var len = parseFloat(document.getElementById('length').value);
@@ -137,6 +72,7 @@ function updateSizeWidth() {
    var size = (len * width)/43560;
    if (isNaN(size)) { size = 0; }
    document.getElementById('size').value = size.toFixed(3);
+   updateBeds();
 }
 
 function updateBeds() {
@@ -150,60 +86,59 @@ function updateBeds() {
 }
 </script>
 
-<label for="length">Length:&nbsp;</label>
-<div id="lengthDiv">
-<input class="textbox2 mobile-input" type="textbox" name="length" id="length">
-<label style="margin-top: 8px;" for="length">&nbsp;feet</label>
+<fieldset>
+
+<div class="pure-control-group">
+<label for="fieldID">Name of Field: </label>
+<select id= "fieldID" name="fieldID" class='mobile-select' onChange='getFieldInfo();'>
+<option value="0" selected disabled> Field </option>
+<?php
+$result = mysql_query("SELECT distinct fieldID from field_GH");
+while ($row1 =  mysql_fetch_array($result)){
+  echo "\n<option value= \"".$row1[fieldID]."\">".
+   $row1[fieldID]."</option>";
+}
+?>
+</select></div>
+
+<div class="pure-control-group" id="lengthDiv">
+<label>Length:</label>
+<input type="text" name="length" id="length">
+ &nbsp;feet
 </div>
-<br clear="all"/>
-<label for="width">Average Width:&nbsp;</label>
-<div id="widthDiv">
-<input class="textbox2 mobile-input" type="textbox" name="width" id="width">
-<label style="margin-top: 8px;" for="length">&nbsp;feet (optional)</label>
+
+<div class="pure-control-group" id="widthDiv">
+<label for="width">Average Width:</label>
+<input type="text" name="width" id="width">
+&nbsp;feet (optional)
 </div>
-<br clear="all"/>
-<label for="beds">Number of Beds:&nbsp;</label> 
-<div id="bedsDiv">
-<input class = "textbox2 mobile-input" type="text" name = "beds" id="beds">
+
+<div class="pure-control-group" id="bedsDiv">
+<label for="beds">Number of Beds:</label> 
+<input type="text" name = "beds" id="beds">
 </div>
-<br clear="all"/>
-<label for="bspace">Bed spacing on center:&nbsp;</label>
-<input onkeypress= "stopSubmitOnEnter(event)"; value = 60 class="textbox2 mobile-input" type="text" name="bspace" id="bspace" onkeyup = "updateSize();">
-<label style="margin-top: 8px;" for="acres">&nbsp;inches</label>
-<br clear="all"/>
-<div id = "sizeDiv">
-<label for="size">Size:&nbsp;</label>
-<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox2 mobile-input" type="text" name="size" id="size" onkeyup= "updateBeds();">
-<label style="margin-top: 8px;" for="acres">&nbsp;acres</label>
+
+<div class="pure-control-group">
+<label for="bspace">Bed spacing on center:</label>
+<input onkeypress= "stopSubmitOnEnter(event)"; value = 60 type="text" name="bspace" id="bspace" onkeyup = "updateSize();">
+&nbsp;inches
 </div>
-<br clear="all"/>
-<label for="active">Active:&nbsp;</label>
-<div class="styled-select" id="activeDiv">
+
+<div id = "sizeDiv" class="pure-control-group">
+<label for="size">Size:</label>
+<input onkeypress= "stopSubmitOnEnter(event)";  type="text" name="size" id="size" onkeyup= "updateBeds();">
+&nbsp;acres
+</div>
+
+<div id = "activeDiv" class="pure-control-group">
+<label for="active">Active:</label>
 <select name="active" id="active" class='mobile-select'>
 </select>
 </div>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="add" id="submit" value="Update">
-<br clear="all"/>
-<br clear="all"/>
-<!--
-<script type="text/javascript">
-function show_confirm() {
-  var fieldID = document.getElementById('fieldID').value;
-console.log(fieldID);
-  if (checkEmpty(fieldID)) {
-      alert('Please Select a Field');
-      return false;
-  } else {
-     return confirm('Confirm Deletion of Field ' + fieldID + '?');
-  }
-}
-</script>
 
-<input class="submitbutton" type="submit" name="delete" id="Delete" value="Delete"
-   onclick= "return show_confirm();">
--->
+<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Update">
+</fieldset>
 </form>
 <?php
 $size = escapehtml($_POST['size']);

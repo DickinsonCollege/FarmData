@@ -3,16 +3,18 @@
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
-?>
-<html>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_input" >
-<h3> Input Cover Crop Seeding Record</h3>
-<br clear="all"/>
-<label for='date'> Date:&nbsp; </label>
-<?php
-include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_input" >
+<center>
+<h2> Input Cover Crop Seeding Record</h2>
+</center>
+<div class="pure-control-group">
+<label for='date'> Date:</label>
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/date.php';
+?>
+</div>
 <input type='hidden' value=0 id='numRows' name='numRows'>
 <script type="text/javascript">
 <?php
@@ -91,9 +93,8 @@ function show_confirm() {
 }   
 </script>
 
-<br clear="all"/>
+<div class="pure-control-group" id="field">
 <label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
 <select name ="fieldID" id="fieldID" onChange="callAll();" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
@@ -104,25 +105,20 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="percent"> Percent of Field Seeded:&nbsp; </label>
-<div class="styled-select" id="field">
-<?php if(!$_SESSION['mobile']) {
+<div class="pure-control-group">
+<label for="percent"> Percent of Field Seeded:</label>
+<?php
 echo '<select name ="percent" id="percent" onChange="callAll();">';
-} else {
-echo '<select name ="percent" id="percent" onChange="callAll();" class="mobile-select">';
-}
 $result= 10;
 while ($result <= 100) {
 echo "\n<option value= \"$result\">$result</option>";
 $result= $result + 10;
 }
 echo '</select>';
-echo '</div>'
+echo '</div>';
 ?>
-<br clear="all"/>
-<label for="method">Seeding Method:&nbsp;</label>
-<div class="styled-select" id="seedM">
+<div class="pure-control-group" id="seedM">
+<label for="method">Seeding Method:</label>
 <select name ="seed_method" id="seed_method" onChange="callAll();" class='mobile-select'> 
 <option value= 0 selected disabled> Seeding Method </option>
 <?php
@@ -134,10 +130,8 @@ echo "\n<option value= \"$row1[seed_method]\">$row1[seed_method]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
+<div class="pure-control-group" id="incorp_toolis">
 <label for="incorp">Incorporation Tool:</label>
-<br clear="all"/>
-<div class="styled-select" id="incorp_toolis">
 <select name ="incorp_tool" id="incorp_tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool </option>
 <?php
@@ -148,10 +142,9 @@ while ($row1 =  mysql_fetch_array($result)){
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
 
+<div class="pure-control-group" id="tractor2">
 <label for="tractor"> Tractor: </label>
-<div class="styled-select" id="tractor2">
    <select name="tractor" id="tractor" class='mobile-select'>
       <option value=0 selected disabled> Tractor </option>
       <?php
@@ -164,10 +157,9 @@ echo '</div>';
       ?>
    </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group" id="numPasses2">
 <label for="numPasses"> Number of Passes: </label>
-<div class="styled-select" id="numPasses2">
    <select name="numPasses" id="numPasses" class='mobile-select'>
       <option value=0 selected disabled> Passes </option>
       <?php
@@ -179,10 +171,9 @@ echo '</div>';
       ?>
    </select>
 </div>
-<br clear="all">
 
+<div class="pure-control-group" id="minutes2">
 <label for="minutes"> Minutes in Field: </label>
-<div class="styled-select" id="minutes2">
    <select name="minutes" id="minutes" class='mobile-select'>
       <option value=0 selected disabled> Minutes </option>
       <?php
@@ -194,18 +185,18 @@ echo '</div>';
       ?>
    </select>
 </div>
-<br clear="all">
 
 
 <br clear="all"/>
-<table id='covercrop' name='covercrop'>
- <tr><th>Species</th>
+<table id='covercrop' name='covercrop' class='pure-table pure-table-bordered'>
+ <thead><tr><th>Species</th>
 <?php
 if ($_SESSION['seed_order']) {
   echo "<th>Seed Code</th>";
 }
 ?>
-<th>Rate of Seed</th><th>Total Pounds</th></tr>
+<th>Rate of Seed</th><th>Total Pounds</th></tr></thead>
+<tbody></tbody>
 </table>
 <script type='text/javascript'>
    var numRows=0;
@@ -225,15 +216,19 @@ function get_code(row) {
 
    function addRow(){
       numRows++;
+/*
       var table    = document.getElementById('covercrop');
       var row      = table.insertRow(numRows);
+*/
+      var table = document.getElementById("covercrop").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
       row.id      = "row" + numRows;
       row.name      = "row" + numRows;
       var cell0    = row.insertCell(0);
-      cell0.innerHTML = '<div class="styled-select" id="cropDiv'+numRows+'"><select name ="crop'+
+      cell0.innerHTML = '<div class="styled-select wide" id="cropDiv'+numRows+'"><select name ="crop'+
          numRows+'" id="crop'+numRows+'" onChange="addPounds(\'num_poundsDiv'+numRows+
          '\',\''+numRows+'\'); addTotalPound(\'id'+numRows+'\',\''+numRows+
-         '\');get_code(' + numRows + ');" class="mobile-select">'+
+         '\');get_code(' + numRows + ');" class="wide">'+
          '<option value = 0 selected disabled>Species</option>'+
          '<?php
             $result=mysql_query("Select crop from coverCrop where active = 1");
@@ -247,17 +242,17 @@ function get_code(row) {
          col++;
          ccell.innerHTML="<div class='styled-select' id ='codediv" + numRows + 
             "''>  <select name= 'code" +numRows + "' id= 'code" + numRows + 
-            "' class='mobile-select' style='width:100%'><option value='N/A'>Not Available</option>" +
+            "' class='wide' style='width:100%'><option value='N/A'>Not Available</option>" +
             "</select> </div>";
       }
       var cell1   = row.insertCell(col);
       col++;
-      cell1.innerHTML = '<div class="styled-select"  id="num_poundsDiv'+numRows+'"><select name="numpounds'+numRows+'" id="numpounds'+numRows+'" onChange="addTotalPound(\'id'+numRows+'\',\''+numRows+'\');" class="mobile-select">'+
+      cell1.innerHTML = '<div class="styled-select"  id="num_poundsDiv'+numRows+'"><select name="numpounds'+numRows+'" id="numpounds'+numRows+'" onChange="addTotalPound(\'id'+numRows+'\',\''+numRows+'\');" class="wide">'+
          '<option value = 0 selected disabled> Rate of Seed </option></select></div>';
       var cell2    = row.insertCell(col);
       col++;
       cell2.innerHTML = '<div id="idDiv'+numRows+'"><input type="text"' +
-       ' class="textbox25 mobile-input inside_table" ' +
+       ' class="wide" ' +
        ' id="id'+numRows+'" name="pound'+numRows+'"  value="">';   
    }
    addRow();
@@ -279,8 +274,14 @@ function get_code(row) {
    }
 </script>
 <br clear='all'>
-<input type="button" id="add" name="add" class="genericbutton" onClick="addRow();" value="Add Row">
-<input type="button" id="remove" name="remove" class="genericbutton" onClick="removeRow();" value="Remove Row">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" id="add" name="add" class="genericbutton pure-button wide" onClick="addRow();" value="Add Row">
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="remove" name="remove" class="genericbutton pure-button wide" onClick="removeRow();" value="Remove Row">
+</div>
+</div>
 <br clear="all"/>
 
 
@@ -328,15 +329,23 @@ function callAll() {
    }
 }
 </script>
-<br clear="all"/>
       
-<label for="comments"> Comments:&nbsp; </label>
-<br clear="all"/>
-<textarea name="comments" rows="10" cols="30">
+<div class="pure-control-group">
+<label for="comments"> Comments:</label>
+<textarea name="comments" rows="5" cols="30">
 </textarea>
+</div>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" name="submit" class="submitbutton" id="submit" value="Submit" onclick= " return show_confirm();  ">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" name="submit" class="submitbutton pure-button wide" id="submit" value="Submit" onclick= " return show_confirm();  ">
+</form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "coverReport.php?tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 if(!empty($_POST['submit'])) {
    // Insert Into coverSeed_master
@@ -409,5 +418,3 @@ if(!empty($_POST['submit'])) {
    } 
 } 
 ?>
-</form>
-<form method="POST" action = "coverReport.php?tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_report"><input type="submit" class="submitbutton" value = "View Table"></form>

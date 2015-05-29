@@ -574,3 +574,225 @@ input.toggle:disabled +label:after {
    font-size=30px;
    background:white;
 }
+
+
+/* moved from mobileTabs.css */
+
+h3 {
+	font-size: 26pt !important;
+}
+
+label, b{
+	font-size: 16pt !important;
+}
+
+/******************
+ * Tabs           *
+ * ****************/
+.activetab {
+   background: peru;
+   color: ivory;
+}
+
+.inactivetab {
+   background: wheat;
+   color: black;
+}
+
+.visibletab {
+	visibility: visible;
+}
+
+.hiddentab {
+	visibility: hidden;
+	padding: 0px !important;
+	margin: 0px !important;
+	border: 0px !important;
+}
+
+.tabs7 ul li,
+.tabs6 ul li,
+.tabs5 ul li,
+.tabs4 ul li,
+.tabs3 ul li,
+.tabs2 ul li {
+   width: 102%;
+	position: relative;
+	right: 1%;
+	padding-bottom: 45px; /*155px;*/
+}
+
+.tabs7nospace ul li,
+.tabs6nospace ul li,
+.tabs5nospace ul li,
+.tabs4nospace ul li,
+.tabs3nospace ul li,
+.tabs2nospace ul li {
+	width: 102%;
+	position: relative;
+	right: 1%;
+	padding: 0px !important;
+	margin: 0px !important;
+	border: 0px !important;
+}
+
+.tabs7nospace ul,
+.tabs6nospace ul,
+.tabs5nospace ul,
+.tabs4nospace ul,
+.tabs3nospace ul,
+.tabs2nospace ul {
+	margin: 0px !important;
+	border 0px !important;
+}
+
+/******************
+ * Header Bar     *
+ * ****************/
+.header {
+	width: 101%;
+	height: 55px; /*180px;*/
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	background: #222222;
+	z-index: 10000;
+}
+
+.header_container {
+	width: 18.8%;
+	height: 50px; /*170px;*/
+	z-index: 10001;
+	font-size: 14px; /*42px*/
+	text-align: center;
+	background: #444444;
+	background: linear-gradient(#555555, #333333);
+	background: -webkit-linear-gradient(#555555, #333333);
+	background: -o-linear-gradient(#555555, #333333);
+	background: -moz-linear-gadient(#555555, #333333);
+}
+
+.header_link {
+	display: block;
+	height: 100%;
+	width: 100%;
+	text-decoration: none;
+	font-weight: bold;
+	color: #cccccc;
+}
+
+.header_back {
+	position: relative;
+	left: .4%;
+	bottom: -2px; /*-4px;*/
+}
+
+.header_home {
+	position: relative;
+	left: 19.6%;
+	bottom: 48px; /*166px;*/
+}
+
+.header_middle {
+	position: relative;
+	left: 38.8%;
+	bottom: 98px; /*336px;*/
+	width: 40.8%;
+}
+
+.header_logout {
+	position: relative;
+	left: 80%;
+	bottom: 148px; /*506px;*/
+}
+
+/******************
+ * Input Forms    *
+ * ****************/
+.mobile-month-select {
+	width: 47%;
+	height: 50px; /*150px;*/
+	margin-right: 1%;
+	font-size: 16pt !important;
+
+	border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-o-border-radius: 0px !important;
+}
+.mobile-day-select {
+	width: 19%;
+	height: 50px; /*150px;*/
+	margin-right: 1%;
+	font-size: 16pt !important;
+
+	border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-o-border-radius: 0px !important;
+}
+.mobile-year-select {
+	width: 29%;
+	height: 50px; /*150px;*/
+	font-size: 16pt !important;
+
+	border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-o-border-radius: 0px !important;
+
+}
+
+.mobile-input {
+	width: 99% !important;
+	height: 50px !important; /*150px !important;*/
+	position: relative;
+	left: 10%;
+	margin-bottom: 15px !important; /*50px !important;*/
+	font-size: 16pt !important;
+}
+
+.mobile-input-half {
+	width: 49% !important;
+	height: 50px !important; /*150px !important;*/
+	position: relative;
+	left: 10%;
+	margin-bottom: 15px !important; /*50px !important;*/
+	font-size: 16pt !important;
+}
+
+.mobile-select {
+	width: 100%;
+	height: 50px; /*150px;*/
+	margin-bottom: 15px !important; /*50px !important;*/
+	font-size: 16pt !important;
+
+	border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-o-border-radius: 0px !important;
+}
+
+.mobile-select-half {
+	width: 49%;
+	height: 60px; /*150px;*/
+	position: relative;
+	left: 12%;
+	top: 8px;
+	font-size: 16pt !important;
+
+	border-radius: 0px !important;
+	-webkit-border-radius: 0px !important;
+	-moz-border-radius: 0px !important;
+	-o-border-radius: 0px !important;
+
+}
+
+.inside_table {
+	left: 6% !important;
+}
+
+.single_table {
+	left: 3% !important;
+}
+

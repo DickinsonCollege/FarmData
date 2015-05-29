@@ -5,26 +5,32 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3 class="hi"> Weed Scout Report </h3>
-<form name='form' id='test'  method='GET' action="weedTable.php">
+<center>
+<h2 class="hi"> Weed Scout Report </h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='GET' action="weedTable.php">
 <input type="hidden" name="tab" value="soil:soil_scout:soil_weed:weed_report">
-<br clear="all"/>
-<label for='date'> From:&nbsp; </label>
+
+<div class="pure-control-group">
+<label for='date'> From: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for='date2'> To:&nbsp; </label>
+</div>
+
+<div class="pure-control-group">
+<label for='date2'> To:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
-<br clear="all"/>
+</div>
+
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
 
-<label for="weed"> Weed Species:&nbsp; </label>
- <div class="styled-select">
+<div class="pure-control-group">
+<label for="weed"> Weed Species: </label>
  <select name ="weed" id="weed" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -38,5 +44,5 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 <br clear="all"/>
 <br clear="all"/>
 
-<input type="submit" name="submit" class="submitbutton" value="Submit">
+<input type="submit" name="submit" class="submitbutton pure-button wide" value="Submit">
 

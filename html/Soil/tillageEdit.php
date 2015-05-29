@@ -30,87 +30,90 @@ $num_passes = $row['num_passes'];
 $comments = $row['comment'];
 $minutes = $row['minutes'];
 $percent_filled = $row['percent_filled'];
-echo "<form name='form' method='post' action='".$_SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_till:till_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
    "&fieldID=".$origFieldID."&id=".$id."'>";
-echo "<H3> Edit Tillage Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo '<center>';
+echo "<H2> Edit Tillage Record </H2>";
+echo '</center>';
+
+echo '<div class="pure-control-group">'; 
+echo '<label>Date:</label> ';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth < 13; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day < 32; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 3; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<label>Implement:&nbsp</label>';
-echo '<div class="styled-select"><select name="tool" id="tool">';
+echo '</select></div>';
+
+echo '<div class="pure-control-group">'; 
+echo '<label>Implement:</label> ';
+echo '<select name="tool" id="tool">';
 echo '<option value="'.$implement.'" selected>'.$implement.' </option>';
 $sql = 'select tool_name as tool from tools';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['tool'].'">'.$row['tool'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
-echo '<label>Tractor:&nbsp</label>';
-echo '<div class="styled-select"><select name="tractor" id="tractor">';
+echo '</select></div>';
+
+echo '<div class="pure-control-group">'; 
+echo '<label>Tractor:</label> ';
+echo '<select name="tractor" id="tractor">';
 echo '<option value="'.$tractor.'" selected>'.$tractor.' </option>';
 $sql = 'select tractorName from tractor';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['tractorName'].'">'.$row['tractorName'].' </option>';
 }
-echo '</div></select>';
+echo '</select></div>';
 
-echo '<br clear="all"/>';
-
-echo '<label>Field:&nbsp</label>';
-echo '<div class="styled-select"><select name="fieldID" id="fieldID">';
+echo '<div class="pure-control-group">'; 
+echo '<label>Name of Field:</label> ';
+echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
 $sqldata = mysql_query($sql) or die("ERROR3");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
-echo '</div></select>';
+echo '</select></div>';
 
-echo '<br clear="all"/>';
-echo '<label>Number of Passes:&nbsp</label>';
+echo '<div class="pure-control-group">'; 
+echo '<label>Number of Passes:</label> ';
 echo '<input type="text" class="textbox2"name="num_passes" id="num_passes" value="'.$num_passes.'">';
+echo '</div>';
 
-
-echo '<br clear="all"/>';
-echo '<label>Percent Tilled:&nbsp</label>';
+echo '<div class="pure-control-group">'; 
+echo '<label>Percent Tilled:</label> ';
 echo '<input type="text" class="textbox2"name="percent_filled" id="percent_filled" value="'.$percent_filled.'">';
+echo '</div>';
 
-echo '<br clear="all"/>';
-
-echo '<label>Minutes:&nbsp</label>';
+echo '<div class="pure-control-group">'; 
+echo '<label>Minutes:</label> ';
 echo '<input type="text" class="textbox2" name="minutes" id="minutes" value="'.$minutes.'">';
-echo '<br clear="all"/>';
+echo '</div>';
 
-
-echo '<label>Comments&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\" >";
+echo '<div class="pure-control-group">'; 
+echo '<label>Comments</label> ';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\" >";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
    $comSanitized = escapehtml($_POST['comments']);

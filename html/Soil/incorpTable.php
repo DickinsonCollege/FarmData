@@ -43,17 +43,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    } else {
       echo  "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
    }
-   echo "<table border>";
+   echo "<center>";
    if($fieldID != "%") {
-      echo "<caption> Incorporation Records for: Field ".$_POST['fieldID']."</caption>";
+      echo "<h2> Incorporation Records for: Field ".$_GET['fieldID']."</h2>";
    } else {
-      echo "<caption> Incorporation Records for All Fields </caption>";
+      echo "<h2> Incorporation Records for All Fields </h2>";
    }
-   echo "<tr><th>Kill Date</th><th>Cover Crop</th><th>Seed Date</th><th> Field </th><th>Incorporation Tool</th><th>Total Biomass</th><th> Biomass Pounds Per Acre </th><th>Comments</th>";
+   echo "</center>";
+   echo "<table class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>Kill Date</th><th>Cover Crop</th><th>Seed Date</th><th> Field </th><th>Incorporation Tool</th><th>Total Biomass</th><th> Biomass Pounds Per Acre </th><th>Comments</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
-   echo "</tr>";
+   echo "</tr></thead>";
    while ( $row = mysql_fetch_array($result)) {
       $allCropsQuery = "SELECT coverCrop FROM coverKill WHERE id=".$row['id'];
       $cropResult = mysql_query($allCropsQuery);
@@ -90,12 +92,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
               "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
               "&fieldID=".encodeURIComponent($_GET['fieldID']).
               "&tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report\">";
-           echo "<input type='submit' class='editbutton' value='Edit'></form></td>";
+           echo "<input type='submit' class='editbutton pure-button wide' value='Edit'></form></td>";
            echo "<td><form method='POST' action=\"incorpTable.php?month=".$month."&day=".$day."&year=".$year.
               "&tmonth=".$tcurMonth."&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
               "&fieldID=".encodeURIComponent($_GET['fieldID']).
               "&tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report\">";
-           echo "<input type='submit' class='deletebutton' value='Delete'";
+           echo "<input type='submit' class='deletebutton pure-button wide' value='Delete'";
            echo "onclick='return warn_delete();'></form></td>";
         }
         echo "</tr>";
@@ -103,25 +105,37 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "</table>";
 
 echo '<br clear="all"/>';
+echo '<div class="pure-form pure-form-aligned">';
 $sqlget = "Select sum(totalBiomass) as total, avg(totalBiomass) as average from coverKill_master where killDate between '"
     .$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
      $tcurDay."' and fieldID like '".$fieldID."'";
 $result = mysql_query($sqlget);
 while($row1 = mysql_fetch_array($result)) {
-   echo "<label for='total'>Total Biomass:&nbsp;</label>";
-   echo "<input class='textbox2 mobile-input' style='width: 120px;' type ='text' value=".$var=number_format($row1['total'],3,'.','').">";
-        echo '<br clear="all"/>';
+   echo "<div class='pure-control-group'>";
+   echo "<label for='total'>Total Biomass:</label> ";
+   echo "<input class='textbox2 mobile-input' readonly type='text' value=".$var=number_format($row1['total'],3,'.','').">";
+        echo '</div>';
         $row3Deci3=number_format((float)$row1['average'], 3, '.', '');
-        echo "<label for='total'>Average Biomass:&nbsp</label>";
-        echo "<input class='textbox2 mobile-input' style='width: 120px;' type ='text' value=".$row3Deci3.">";
+   echo "<div class='pure-control-group'>";
+        echo "<label for='total'>Average Biomass:</label> ";
+        echo "<input class='textbox2 mobile-input' readonly type ='text' value=".$row3Deci3.">";
+        echo '</div>';
+        $row3Deci3=number_format((float)$row1['average'], 3, '.', '');
 }
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
+echo '<div class="pure-g">';
+echo '<div class="pure-u-1-2">';
 echo "<form name='form' method='POST' action='/down.php'>";
 echo '<input type="hidden" value="'.escapehtml($hiddensql).'" name = "query" id="query">';
-echo '<input type="submit" class="submitbutton" name="submit" value="Download Report">';
+echo '<input type="submit" class="submitbutton pure-button wide" name="submit" value="Download Report">';
 echo "</form>";
-echo '<form method="POST" action = "incorpReport.php?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '</div>';
+echo '<div class="pure-u-1-2">';
+echo '<form method="POST" action = "incorpReport.php?tab=soil:soil_fert:soil_cover:soil_coverincorp:coverincorp_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo '</div>';
+echo '</div>';
 ?>
 
 

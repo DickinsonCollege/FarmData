@@ -5,28 +5,34 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 <body id="add">
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h1> Add a New User </h1>
-<label for="user">Username:&nbsp;</label>
+<form name='form' method='post' class = 'pure-form pure-form-aligned' action="<?php $_PHP_SELF ?>">
+<center><h2> Add a New User </h2></center>
+<div class = 'pure-control-group'>
+<label for="user">Username:</label>
 <input class="textbox3" type="text" name="userid" id="userid">
-<br clear="all">
-<label for="pass">Password:&nbsp;</label>
+</div>
+
+<div class = 'pure-control-group'>
+<label for="pass">Password:</label>
 <input class="textbox3" type="password" name="pass" id="pass">
-<br clear="all">
-<label for="pass2">Retype Password:&nbsp;</label>
+</div>
+
+<div class = 'pure-control-group'>
+<label for="pass2">Retype Password:</label>
 <input class="textbox3" type="password" name="pass2" id="pass2">
-<br clear="all">
-<label for="admin">Admin:&nbsp;</label> 
-<div class="styled-select">
+</div>
+
+<div class = 'pure-control-group'>
+<label for="admin">Admin:</label> 
 <select name="admin" id="admin">
 <option selected value="0">No</option>
 <option value="1">Yes</option>
 </select>
 </div>
 
+</div>
 <br clear="all">
-<br clear="all">
-<input class="submitbutton" type="submit" name="submit" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 <?php
 if (!empty($_POST['submit'])){
    $admin=$_POST['admin'];

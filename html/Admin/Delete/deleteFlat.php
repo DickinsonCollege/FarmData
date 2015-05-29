@@ -4,13 +4,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 > Delete Tray Size </h3>
-<br>
-<form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
-<label for="flat">Tray Size:&nbsp;</label>
-<div id='crop2' class='styled-select'>
+<center>
+<h2 > Delete Tray Size </h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
+<div class = "pure-control-group">
+<label for="flat">Tray Size:</label>
 <select name='flat' id='flat' class='mobile-select'>
 <option disabled selected>Tray Size</option>
+</div>
 <?php
 $result = mysql_query("SELECT cells from flat");
         while ($row1 =  mysql_fetch_array($result)){
@@ -19,8 +21,9 @@ $result = mysql_query("SELECT cells from flat");
         echo "</select></div>";
 ?>
 <br clear="all"/>
+<input name="submit" type="submit" class="submitbutton pure-button wide" id="submit" value="Submit">
 <br clear="all"/>
-<input name="submit" type="submit" class="submitbutton" id="submit" value="Submit">
+
 <?php
 if(!empty($_POST['submit'])) {
    $flat = escapehtml($_POST['flat']);

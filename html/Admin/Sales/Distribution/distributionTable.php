@@ -28,7 +28,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       ORDER by distDate, crop_product, target, grade";
    $result = mysql_query($sql);
    
-   echo "<table>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    $crpProd = $_GET['crop_product'];
    if ($crpProd === "%") {
       $crpProd = "All Crops/Products";
@@ -50,11 +50,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       $dat = "From: ".$monthName." ".$day." ".$year."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To: ".$tcurMonthName." ".$tcurDay." ".$tcurYear;
    }
 
-   echo "<caption>Distribution Report for ".$crpProd."<br>
+   echo "<center><h2>Distribution Report for ".$crpProd."<br>
          To: ".$trg." &nbsp;&nbsp;&nbsp Grade: ".$grd."<br>
-         ".$dat."</caption>";
+         ".$dat."</h2></center>";
 
-   echo "<tr><th>Date</th>
+   echo "<thead><tr><th>Date</th>
       <th>Crop/Product</th>
       <th>Target</th>
       <th>Grade</th>
@@ -62,7 +62,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       <th>Unit</th>
       <th>Price/Unit</th>
       <th>Total Price</th>
-      <th style='width:20%'>Comments</th><th>Edit</th><th>Delete</th></tr>";
+      <th style='width:20%'>Comments</th><th>Edit</th><th>Delete</th></tr></thead>";
    $total = 0;
    while ($row = mysql_fetch_array($result)) {
       echo "<tr>";
@@ -109,7 +109,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "&crop_product=".encodeURIComponent($crop_product).
          "&target=".encodeURIComponent($target)."&grade=".$grade.
          "&tab=admin:admin_sales:distribution:distribution_report\">";
-      echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"></form> </td>";
+      echo "<input type=\"submit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form> </td>";
 
       echo "<td><form method=\"POST\" action=\"distributionTable.php?month=".
          $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
@@ -117,26 +117,33 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "&crop_product=".encodeURIComponent($crop_product).
          "&target=".encodeURIComponent($target)."&grade=".$grade.
          "&tab=admin:admin_sales:distribution:distribution_report\">";
-      echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+      echo "<input type=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"";
       echo "onclick='return warn_delete();'></form></td>";
 
       echo "</tr>";
    }
    echo "</table>";
    echo "<br clear='all'>";
+
    if ($total > 0) {
-      echo '<label for="total"> Total Revenue ($): &nbsp;</label> '.
+      echo '<div class = "pure-form pure-form-aligned">';
+      echo '<div class = "pure-control-group">';
+      echo '<label for="total"> Total Revenue ($):</label> '.
          '<input disabled type="textbox" name="total" '.
          'id="total" class="textbox25" value='
          .number_format((float) $total, 2, '.', '').'>';
-      echo "<br clear='all'>";
+      echo '</div>';
+      echo '</div>';
       echo "<br clear='all'>";
    }
- 
-echo "<form name='form' method='POST' action='/down.php'>";
-echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
-echo "<input class='submitbutton' type='submit' name='submit' value='Download Report'>";
+
+echo "<div class = 'pure-g'>";
+echo "<form name='form' class = 'pure-u-1-2' method='POST' action='/down.php'>";
+echo "<input type=\"hidden\"' name=\"query\" value=\"".escapehtml($sql)."\">";
+echo "<input class='submitbutton pure-button wide' type='submit' name='submit' value='Download Report'>";
 echo "</form>";
-echo "<form method='POST' action='distributionReport.php?tab=admin:admin_sales:distribution:distribution_report'>";
-echo "<input type='submit' class='submitbutton' value='Run Another Report'></form>";
+
+echo "<form method='POST' class = 'pure-u-1-2' action='distributionReport.php?tab=admin:admin_sales:distribution:distribution_report'>";
+echo "<input type='submit' class='submitbutton pure-button wide' value='Run Another Report'></form>";
+echo '</div>';
 ?>

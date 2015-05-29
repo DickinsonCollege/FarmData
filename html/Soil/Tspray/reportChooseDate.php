@@ -5,26 +5,32 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 
-<form name='form' method='GET' action='report.php?tab=soil:soil_spray:tspray:tspray_report'>
+<form name='form' class='pure-form pure-form-aligned' method='GET' action='report.php?tab=soil:soil_spray:tspray:tspray_report'>
 <input type="hidden" name="tab" value="soil:soil_spray:tspray:tspray_report">
-<h3 class="hi"> Tractor Spray Report </h3>
-<br clear="all"/>
-<label for='from'>From:&nbsp;</label>
+<center>
+<h2 class="hi"> Tractor Spray Report </h2>
+</center>
+
+<div class="pure-control-group">
+<label for='from'>From:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for='to'>To:&nbsp;</label>
+</div>
+
+<div class="pure-control-group">
+<label for='to'>To:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
+</div>
 
-<br clear="all"/>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
-<label for='from'>Material:&nbsp;</label>
-<div class="styled-select">
+
+<div class="pure-control-group">
+<label for='from'>Material:</label>
 <select id="material" name="material" class="mobile-select"> <option value=%>All</option>
 <?php
 $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
@@ -36,9 +42,9 @@ echo "<option value=\"".$rowM['sprayMaterial']."\">".$rowM['sprayMaterial']."</o
 echo "</select>";
 echo "</div>";
 ?>
-<br clear="all"/>
-<label for='from'>Crop:&nbsp;</label>
-<div class="styled-select">
+
+<div class="pure-control-group">
+<label>Crop:</label>
 <select id="crop" name="crop" class="mobile-select"> <option value=%>All</option>
 <?php
 $sqlM="SELECT crop FROM plant";
@@ -50,15 +56,15 @@ echo "<option value=\"".$rowM['crop']."\">".$rowM['crop']."</option>\n";
 echo "</select>";
 echo "</div>";
 ?>
-<br clear="all"/>
-<label for='inst'>Show Spray Queue:&nbsp;</label>
-<div class="styled-select">
+
+<div class="pure-control-group">
+<label for='inst'>Show Spray Queue:</label>
 <select id="inst" name="inst" class="mobile-select"> 
 <option value=0 selected>No</option>
 <option value=1>Yes</option>
 </select></div>
 <br clear="all"/>
 <br clear="all"/>
-<input class="submitbutton" value="Submit" type="submit" name="submit" >
+<input class="submitbutton pure-button wide" value="Submit" type="submit" name="submit" >
 </body>
 </html>

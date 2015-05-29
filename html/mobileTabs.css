@@ -1,27 +1,3 @@
-/* #tabs :link, #tabs:visited {background:#f00; color:#fff}*/
-/*
-#tabs :link {
-   background:WHEAT;
-   color:BLACK;
-}
-#tabs :visited {background:WHEAT;}
-#tabs :hover {background:WHEAT;}
-#tabs :active {background:teal;}
-*/
-/*
-#harvestInput #harvestInput, #harvest #harvest, #seeding #seeding, #soil #soil, #notes #notes, #labor #labor, #logout #logout {
-color: #fff;
-background: peru;
-}
-*/
-
-h3 {
-	font-size: 26pt !important;
-}
-
-label, b{
-	font-size: 16pt !important;
-}
 
 /******************
  * Tabs           *
@@ -143,92 +119,46 @@ label, b{
 	bottom: 148px; /*506px;*/
 }
 
-/******************
- * Input Forms    *
- * ****************/
-.mobile-month-select {
-	width: 49%;
-	height: 50px; /*150px;*/
-	margin-right: 1%;
-	font-size: 16pt !important;
-
-	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
-	-o-border-radius: 0px !important;
-}
-.mobile-day-select {
-	width: 19%;
-	height: 50px; /*150px;*/
-	margin-right: 1%;
-	font-size: 16pt !important;
-
-	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
-	-o-border-radius: 0px !important;
-}
-.mobile-year-select {
-	width: 29%;
-	height: 50px; /*150px;*/
-	font-size: 16pt !important;
-
-	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
-	-o-border-radius: 0px !important;
-
+body{
+/*-moz-transform: rotate(-90deg);
+ * -o-transform: rotate(-90deg);
+ * -webkit-transform: rotate(-90deg);
+ * -ms-transform: rotate(-90deg);*/
+/* set to make tabs work in mobile - no idea why this works */
+/*
+font-size: 0em;
+*/
+background-color: ivory;
 }
 
-.mobile-input {
-	width: 99% !important;
-	height: 50px !important; /*150px !important;*/
-	position: relative;
-	left: 10%;
-	margin-bottom: 15px !important; /*50px !important;*/
-	font-size: 16pt !important;
+.tabs ul {
+width: auto;
+padding: 0;
+margin: 0;
+position: relative;
+padding-top: 60px; 
+list-style-type: none;
 }
 
-.mobile-input-half {
-	width: 49% !important;
-	height: 50px !important; /*150px !important;*/
-	position: relative;
-	left: 10%;
-	margin-bottom: 15px !important; /*50px !important;*/
-	font-size: 16pt !important;
+.tabs ul li {
+display: inline-block;
+clear: none;
+float: left;
+height: 12px;
+}
+.tabs ul li a {
+position: relative;
+padding-left: 5%;
+display: block;
+line-height: 55px; 
+border-top: 1px solid #f6f6f6;
+border-bottom: 1px solid #f6f6f6; 
+width: auto;
+text-decoration: none;
+font-weight: bold;
+font-size: 18pt; 
 }
 
-.mobile-select {
-	width: 100%;
-	height: 50px; /*150px;*/
-	margin-bottom: 15px !important; /*50px !important;*/
-	font-size: 16pt !important;
-
-	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
-	-o-border-radius: 0px !important;
-}
-
-.mobile-select-half {
-	width: 49%;
-	height: 60px; /*150px;*/
-	position: relative;
-	left: 12%;
-	top: 8px;
-	font-size: 16pt !important;
-
-	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
-	-o-border-radius: 0px !important;
-
-}
-
-.inside_table {
-	left: 6% !important;
-}
-
-.single_table {
-	left: 3% !important;
+.tabs ul li a:hover {
+text-decoration: underline;
 }

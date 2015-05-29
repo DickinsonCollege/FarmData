@@ -5,15 +5,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Tool/Implement</b></h3>
-<br>
-<label for="name"> Tool/Implement Name:&nbsp;</label>
+<form name="form" class="pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center>
+<h2>Add New Tool/Implement</h2>
+</center>
+
+<div class="pure-control-group">
+<label for="name"> Tool/Implement Name:</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; 
   type="text" name="name" id="name">
-<br clear="all"/>
-<label for="type">Incorporation Tool?: &nbsp;</label>
-<div class="styled-select">
+</div>
+
+<div class="pure-control-group">
+<label for="type">Incorporation Tool?: </label>
 <select name="type" id="type" class='mobile-select'>
 <option selected value="0">No</option>
 <option value="1">Yes</option>
@@ -34,8 +38,7 @@ function show_confirm() {
 }
 </script>
 <br clear="all"/>
-<br clear="all"/>
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Add">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 <?php
 if (!empty($_POST['done'])) {
    if(!empty($_POST['name'])) {

@@ -24,14 +24,16 @@ if(!$result){
     echo "<script>alert(\"Could not Generate Pump Log Report: Please try again!\\n".mysql_error()."\");</script>\n";
 }
 echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
-echo "<table >";
-echo "<caption> Pump Log Report from ".$start." to ".$end."</caption>";
+echo "<center>";
+echo "<h2> Pump Log Report from ".$start." to ".$end."</h2>";
+echo "</center>";
+echo "<table class='pure-table pure-table-bordered' >";
 
-echo "<tr><th>Date</th><th>Run Time (Hours)</th><th>Drive Hz</th><th>Pump KWH</th>";
+echo "<thead><tr><th>Date</th><th>Run Time (Hours)</th><th>Drive Hz</th><th>Pump KWH</th>";
 if ($farm == "dfarm") {
    echo "<th>Solar KWH</th>";
 }
-echo "<th>&nbsp;&nbsp;&nbsp;&nbsp;Comment</th></tr>";
+echo "<th>&nbsp;&nbsp;&nbsp;&nbsp;Comment</th></tr></thead>";
 while ( $row = mysql_fetch_array($result)) {
         echo "<tr><td>";
         //echo str_replace("-","/",$row['sDate']);
@@ -52,7 +54,12 @@ if ($farm == "dfarm") {
 }
 echo "</table>";
 echo '<br clear="all"/>';
-        echo '<input type="submit" name="submit" class="submitbutton" value="Download Report">';
+echo '<div class="pure-g"><div class="pure-u-1-2">';
+        echo '<input type="submit" name="submit" class="submitbutton pure-button wide" value="Download Report">';
 echo "</form>";
-echo '<form method="POST" action = "weedReport.php?tab=soil:soil_scout:soil_weed:weed_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '</div>';
+echo '<div class="pure-u-1-2">';
+echo '<form method="POST" action = "pump.php?tab=soil:soil_irrigation:pump_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+echo '</div>';
+echo '</div>';
 ?>

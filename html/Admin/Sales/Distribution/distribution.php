@@ -1,4 +1,5 @@
 <?php session_start();
+echo "<html>";
 
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
@@ -75,19 +76,15 @@ function getInventoryUnit(cropProd, grade) {
   return default_unit[cropProd];
 }
 </script>
-<h3 style="font-size:52px; margin-top:-30px;"> Distribution Input Table </h3>
-<br>
+<center><h2 style="font-size:52px; margin-top:-30px;"> Distribution Input Table </h2></center>
 
-<input type="button" class="largesubmitbutton" id="insertRows" name="insertRows" value="Submit Data to Database" onclick="insertAllRows()">
-<br clear="all"/>
-<br clear="all"/>
-
-<table id="populateEntriesTable">
-<caption>Populate Entries From Packing Record</caption>
-<tr>
+<div id = 'mainbody' class = "pure-form pure-form-aligned">
+<table class = 'pure-table pure-table-bordered' id="populateEntriesTable">
+<center><h2>Populate Entries From Packing Record</h2></center>
+<thead><tr>
 <th style="width:50%;">Packing Date</th>
 <th style="width:50%;"></th>
-</tr>
+</tr></thead>
 <tr>
 <td>
 <div id="selectPackDateDiv" class="styled-select">
@@ -128,27 +125,27 @@ do {
 ?>
          
 </select>
-</div>
-</td>
+</div></td>
 <td>
-<input type="button" class="largesubmitbutton" id="populateFromPacking" name="populateFromPacking" value="Populate Entries From Packing Record" onclick="populateEntries();">
+<input type="button" class="submitbutton pure-button wide" id="populateFromPacking" name="populateFromPacking" value="Populate Entries From Packing Record" onclick="populateEntries();">
 </td>
 </tr>
 </table>
+<br clear = 'all'>
 
-<table id="packInterfaceTable">
-<caption>Create New Crop/Product Data Set</caption>
-<tr>
+<table class = 'pure-table pure-table-bordered' id="packInterfaceTable">
+<center><h2>Create New Crop/Product Data Set</h2></center>
+<thead><tr>
 <th style="width:45%;">Crop/Product Name</th>
 <th style="width:20%;">Grade</th>
 <th style="width:35%;"></th>
-</tr>
+</tr></thead>
 <tr>
 <td>
 <div id="selectCropProdDiv" class="styled-select">
 <select id="selectCropProd" name="selectCropProd" class="mobile-select" style="width:100%;" onchange="getGrades();">
 <?php
-$sql = "SELECT crop FROM plant WHERE active=1 union SELECT product FROM product as crop ORDER BY crop";
+$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union SELECT product as crop FROM product as crop) tmp ORDER BY crop";
 $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
    echo "<option value='".$row[0]."'>".$row[0]."</option>";
@@ -164,21 +161,28 @@ while ($row = mysql_fetch_array($result)) {
 </div>
 </td>
 <td>
-<input type="button" class="submitbutton" id="createNewTable" name="createNewTable" style="width:100%;" value="Create" onclick="createNewTable();">
+<input type="button" class="submitbutton pure-button wide" id="createNewTable" name="createNewTable" style="width:100%;" value="Create" onclick="createNewTable();">
 </td>
 </tr>
 </table>
 <br clear='all'>
 <br clear='all'>
 
-<div id="DistributionTableHeader" style="display:none;">
-<label>Distribution Date:&nbsp;</label>
+<div class = 'pure-form pure-form-aligned'>
+<div id="DistributionTableHeader" class = 'pure-control-group' style="display:none;">
+<label>Distribution Date:</label>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 <br clear='all'>
 <br clear='all'>
 </div>
+</div>
+
+</div>
+
+<input type="button" class="submitbutton pure-button wide" id="insertRows" name="insertRows" value="Submit Data to Database" onclick="insertAllRows()">
+<br clear="all"/>
 
 <script type="text/javascript">
 // Actual Amount in Inventory/Packed
@@ -203,7 +207,7 @@ var numTables = 0;
 var tableSize = 8;
 
 var fields_array = ["distDate", "crop_product", "grade", "target", "amount", "unit", "pricePerUnit", "comments"];
-var table_array = ["Row", "Target", "Amount", "Unit", "Price/Unit", "Total Price", "Comments"];
+var table_array = ["Row", "Target", "Amount", "Unit", "Price/Unit", "Total&nbsp;Price", "Comments"];
 var numericalFields = ["grade", "amount", "pricePerUnit"];
 //var targets_array = ["CSA", "Dining Services", "Market", "Other"];
 
@@ -243,8 +247,9 @@ function createNewTable() {
    // Create new table
    numTables++;
    var tbl = document.createElement("table");
+   tbl.className = "pure-table pure-table-bordered";
    tbl.id = "table" + numTables;
-   tbl.style.width = "99%";
+//   tbl.style.width = "99%";
    tbl.style.marginBottom = "30px";
 
    // Create Caption
@@ -305,7 +310,8 @@ function createNewTable() {
    createTotalSoFar(tbl, numTables, crop_product_amounts_array[1]);
 
    // Append table to body of document
-   document.body.appendChild(tbl);
+   //document.body.appendChild(tbl);
+   document.getElementById('mainbody').appendChild(tbl);
 
    // Create Hidden Inputs
    createHiddenInputs(numTables, numRows, crop_product_amounts_array[0], crop_product_amounts_array[1], eCropProd, grade);
@@ -320,14 +326,14 @@ function createNewTable() {
 function createTableCaption(tableNum, amount, unit, cropProd, grade) {
    var HTMLString = "";
 
-   // Amount Packed
-   HTMLString += "<input readonly type='text' style='float:left; width:25%; margin-top:-10px' class='textbox25' value='Inventory: " + amount + " " + unit + "(s)'>";
-
    // Crop/Product Name + Grade
-   HTMLString += cropProd + "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Grade: " + grade;
+   HTMLString += "<center><h3>" + cropProd + "&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Grade: " + grade + "</h3></center>";
+
+   // Amount Packed
+   HTMLString += "<input readonly type='text' style='float:left; height: 40px; width:25%; margin-top:-10px' class='textbox25' value='Inventory: " + amount + " " + unit + "(s)'>";
 
    // Delete Table Button
-   HTMLString += "<input type='button' style='float:right; height:30px; width:10%; background-color:#FF0000; color:#FFFFFF;' value='Delete Table' onclick='deleteTable("
+   HTMLString += "<input type='button' style='float:right; height:40px; width:10%; background-color:#FF0000; color:#FFFFFF;' value='Delete Table' onclick='deleteTable("
        + tableNum + ", \"" + escapeHtml(cropProd) + "\", \"" + grade + "\");'>";
 
    return HTMLString;
@@ -391,7 +397,7 @@ function createAmountInput(data, tableNum, rowNum) {
    var HTMLString = "";
 
    HTMLString += "<div id='amountTable" + tableNum + "Row" + rowNum + "Div'>" + 
-      "<input type='text' style='width:100%;'" + 
+      "<input type='text' size='5' style='width:100%;'" + 
       "oninput='calculateTotalSoFar(" + tableNum + "); checkInventoryAmounts(" + tableNum + ")'" + 
       "id='amountTable" + tableNum + "Row" + rowNum + "'" + 
       "class='textbox25' value='" + data + "'></div>";
@@ -502,7 +508,7 @@ function createCommentsInput(data, tableNum, rowNum) {
 function createDeleteButton(tableNum, rowNum) {
    var HTMLString = "";
 
-   HTMLString += "<input type='button' class='deletebutton' value='Delete'" + 
+   HTMLString += "<input type='button' class='deletebutton pure-button' value='Delete'" + 
       "onclick='deleteRow(" + tableNum + ", " + rowNum + ");'>";
 
    return HTMLString;
@@ -514,7 +520,7 @@ function createDeleteButton(tableNum, rowNum) {
 function createCopyButton(tableNum, rowNum) {
    var HTMLString = "";
 
-   HTMLString += "<input type='button' class='addbutton' value='Copy'" + 
+   HTMLString += "<input type='button' class='addbutton pure-button' value='Copy'" + 
       "onclick='copyRow(" + tableNum + ", " + rowNum + ");'>";
 
    return HTMLString;
@@ -830,17 +836,11 @@ console.log(packing_array[i]);
    numTables++;
    var tbl = document.createElement("table");
    tbl.id = "table" + numTables;
-   tbl.style.width = "99%";
+   tbl.className = "pure-table pure-table-bordered";
    tbl.style.marginBottom = "30px";
 
    // Caption
    var caption = tbl.createCaption();
-/*
-   xmlhttp.open("GET", "get_inventory.php?cropProd=" + encodeURIComponent(currCrop)
-         + "&grade=" + currGrade, false);
-   xmlhttp.send();
-   var inventory_array = eval(xmlhttp.responseText);
-*/
    var inventory_array = [getInventoryAmount(currCrop, currGrade), getInventoryUnit(currCrop, currGrade)];
    caption.innerHTML = createTableCaption(numTables, inventory_array[0], inventory_array[1], packing_array[currIndex][2], packing_array[currIndex][4]);
 
@@ -853,7 +853,8 @@ console.log(packing_array[i]);
 
          // If currCrop or currGrade are not the same as the previous entries crop and grade: Finish creation of table   
          createTotalSoFar(tbl, numTables, packing_array[currIndex-1][3]);
-         document.body.appendChild(tbl);
+         //document.body.appendChild(tbl);
+         document.getElementById('mainbody').appendChild(tbl);
          // createHiddenInputs(numTables, numRows, inventory_array[0], inventory_array[1], packing_array[currIndex-1][2], packing_array[currIndex-1][4]);
          createHiddenInputs(numTables, numRows, inventory_array[0], inventory_array[1], packing_array[currIndex-1][2], packing_array[currIndex-1][4]);
 // console.log("crop in pop from pack: " + packing_array[currIndex-1][2]);
@@ -874,19 +875,14 @@ console.log(packing_array[i]);
          // Create new Table
          numTables++;
          tbl = document.createElement("table");
+	 tbl.className = "pure-table pure-table-bordered";
          tbl.id = "table" + numTables;
-         tbl.style.width = "99%";
          tbl.style.marginBottom = "30px";
 
          // Create Caption
          var caption = tbl.createCaption();
-/*
-         xmlhttp.open("GET", "get_inventory.php?cropProd=" + encodeURIComponent(packing_array[currIndex][2])
-              + "&grade=" + packing_array[currIndex][4], false);
-         xmlhttp.send();
-         var inventory_array = eval(xmlhttp.responseText);
-*/
-         currCrop = packing_array[currIndex][2];
+         
+	 currCrop = packing_array[currIndex][2];
          currGrade = packing_array[currIndex][4];
          var inventory_array = [getInventoryAmount(currCrop, currGrade), getInventoryUnit(currCrop, currGrade)];
 

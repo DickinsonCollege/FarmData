@@ -4,11 +4,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<h3 > Delete Labor Task </h3>
-<br>
-<form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
-<label for="task">Labor Task:&nbsp;</label>
-<div id='task2' class='styled-select'>
+<center>
+<h2> Delete Labor Task </h2>
+</center>
+<form name='form' method='POST' class='pure-form pure-form-aligned' action='<?php  $_SERVER['PHP_SELF']?>'>
+<div class="pure-control-group">
+<label for="task">Labor Task:</label>
 <select name='task' id='task' class='mobile-select'>
 <option disabled selected>Labor Task</option>
 <?php
@@ -19,8 +20,7 @@ $result = mysql_query("SELECT task from task");
         echo "</select></div>";
 ?>
 <br clear="all"/>
-<br clear="all"/>
-<input name="submit" type="submit" class="submitbutton" id="submit" value="Submit">
+<input name="submit" type="submit" class="submitbutton pure-button wide" id="submit" value="Submit">
 <?php
 if(!empty($_POST['submit'])) {
    $task = escapehtml($_POST['task']);

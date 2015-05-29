@@ -4,18 +4,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<form name='form' method='GET' action='inventoryTable.php?tab=admin:admin_sales:inventory'>
+<form name='form' class = 'pure-form pure-form-aligned' method='GET' action='inventoryTable.php?tab=admin:admin_sales:inventory'>
 <input type='hidden' name='tab' value='admin:admin_sales:inventory'>
 
-<h3>Inventory Report</h3>
-
-<br clear='all'>
-<label>Crop/Product:&nbsp;</label>
-<div class='styled-select'>
+<center><h2>Inventory Report</h2></center>
+<div class = 'pure-control-group'>
+<label>Crop/Product:</label>
 <select name='crop_product' id='crop_product' class='mobile-select'>
 <option value='%'>All</option>
 <?php
-$sql = "SELECT crop FROM plant WHERE active=1 union SELECT product as crop FROM product ORDER BY crop";
+$sql = "SELECT crop FROM plant WHERE active=1 union SELECT product as crop FROM product where active = 1 ORDER BY crop";
 $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
    echo "<option value='".$row[0]."'>".$row[0]."</option>";
@@ -23,9 +21,8 @@ while ($row = mysql_fetch_array($result)) {
 ?>
 </select></div>
 
-<br clear='all'>
-<label>Grade:&nbsp;</label>
-<div class='styled-select'>
+<div class = "pure-control-group">
+<label>Grade:</label>
 <select name='grade' id='grade' class='mobile-select'>
 <option value='%'>All</option>
 <option value='1'>1</option>
@@ -35,8 +32,7 @@ while ($row = mysql_fetch_array($result)) {
 </select></div>
 
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" value="Submit" type="submit" name="submit" >
+<input class="submitbutton pure-button wide" value="Submit" type="submit" name="submit" >
 
 
 </form>

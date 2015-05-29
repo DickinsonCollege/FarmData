@@ -5,7 +5,6 @@
    include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<html>
 <head>
    <!--Load the AJAX API-->
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -21,7 +20,7 @@
       $tday = $_GET['tday'];
       $array = array();
       $array[0] = array("Product", "Amount($)");
-      echo '<h4>Total income from invoices between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h4><br clear="all">';   
+      echo '<center><h2>Total income from invoices between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h2></center>'; 
       $sql = "select product, sum(cases* price_case) as income from invoice_master natural join invoice_entry where salesDate between '".$year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' group by product";
       $sqldata = mysql_query($sql);
       $count=0;
@@ -56,6 +55,6 @@
  
    </script>
    <!--Div that will hold the pie chart-->
-   <div id="chart_div"></div>
+  <center><div id="chart_div"></div></center>
 </body>
 </html>

@@ -11,13 +11,18 @@ echo "<form name='comment' method='POST' action='addComment.php?year=".
    $_GET['currentID']."&detail=0'>";
 ?>
 
-<h3>Add Comment to Harvest List:</h3>
+<center>
+<h2>Add Comment to Harvest List:</h2>
+</center>
 <br clear = "all"/>
 <textarea  name="comments" rows="20" cols="50" >
 </textarea>
 <br clear = "all"/>
 <br clear = "all"/>
-<input type='submit' name='submit' value='Update Comments' class='submitbutton' >
+<div class="pure-g">
+<div class="pure-u-1"">
+<input type='submit' name='submit' value='Update Comments' class='submitbutton pure-button wide' >
+</div></div>
 <?php
 if(isset($_POST['submit'])){
    $comSanitized=escapehtml($_POST['comments']);

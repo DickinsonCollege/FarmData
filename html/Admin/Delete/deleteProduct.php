@@ -1,0 +1,139 @@
+<?php 
+session_start(); 
+include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
+include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
+$farm = $_SESSION['db'];
+?>
+<script type="text/javascript">
+function populate() {
+   var prd = document.getElementById("product").value;
+   var product = encodeURIComponent(prd);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "getProduct.php?product="+product, false);
+   xmlhttp.send();
+   var plantarray = eval(xmlhttp.responseText);
+
+   var renamediv = document.getElementById("renamediv");
+   renamediv.innerHTML = '<div class="pure-control-group" id="renamediv">' +
+     '<label for="rename">Rename Product:</label> ' +
+     '<input onkeypress="stopSubmitOnEnter(event)"; type="text" name="rename" id="rename" value="' + 
+     escapeHtml(prd)+'"></div>';
+
+   var unit = decodeURIComponent(plantarray[0]);;
+   var unitdiv = document.getElementById("unitdiv");
+   unitdiv.innerHTML = '<div class = "pure-control-group" id = "unitdiv">' + 
+     '<label for = "newunit">Change Unit:</label> ' +
+     '<input onkeypress = "stopSubmitOnEnter(event)"; type = "text" name = "newunit" id = "newunit" value = "' +
+     escapeHtml(unit) + '"></div>';
+
+   var dhdiv = document.getElementById("dhdiv");
+   if (dhdiv != null) {
+   var dhunit = decodeURIComponent(plantarray[2]);
+   dhdiv.innerHTML = ' <div class="pure-control-group" id="dhdiv"> ' +
+      '<label for="dh_units">Change Invoice Units: </label> ' +
+      '<input onkeypress = "stopSubmitOnEnter(event)"; type= "text" name="dh_units" id="dh_units" value = "'+
+     escapeHtml(dhunit) + '"></select></div>';
+
+   var ucdiv = document.getElementById("ucdiv");
+   ucdiv.innerHTML = ' <div class="pure-control-group" id="ucdiv"> ' +
+      "<label for='units_per_case'>Change Units Per Case: </label> " +
+      "<input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case' value='" +
+      plantarray[1] + "'></div>";
+   }
+
+   var adiv = document.getElementById("activediv");
+   var active = plantarray[3];
+   var newActive = '<div class="pure-control-group" id="activediv"> ' +
+      '<label for="admin">Change Active Status:</label> ' +
+      '<select name="active" id="active">';
+
+/*
+"<div class=\"styled-select\" id=\"activediv\"> <select name=\"active\" id=\"active\" class='mobile-select'>";
+console.log(active);
+*/
+   if (active == "1") {
+      newActive += "<option selected value='1'>Yes</option><option value='0'>No</option>";
+   }  else {
+      newActive += "<option selected value='0'>No</option><option value='1'>Yes</option>";
+   }
+   newActive += "</select></div>";
+   adiv.innerHTML= newActive;
+}
+</script>
+
+<center>
+<h2> Edit/Delete Product</h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" method='POST' action='<?php $_SERVER['PHP_SELF']?>'>
+
+<div class="pure-control-group">
+<label for="product">Product:</label>
+<select name='product' id='product' class='mobile-select' onchange='populate();'>
+<option disabled selected>Product</option>
+<?php
+$result = mysql_query("SELECT product from product");
+        while ($row1 =  mysql_fetch_array($result)){
+                echo "\n<option value= \"$row1[product]\">$row1[product]</option>";
+        }
+        echo "</select></div>";
+?>
+
+<div class="pure-control-group" id="renamediv">
+<label for="rename">Rename Product:</label>
+<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="rename" id="rename" class="textbox25 mobile-input">
+</div>
+
+
+<div class="pure-control-group" id="unitdiv">
+<label for="newunit">Change Unit:</label>
+<input onkeypress='stopSubmitOnEnter(event)'; type="text" name="newunit" id="newunit" class="textbox25 mobile-input">
+</div>
+
+<?php
+if ($_SESSION['sales_invoice']) {
+   echo ' <div class="pure-control-group" id="dhdiv"> ';
+   echo "<label for='dh_units'>Change Invoice Units: </label> ";
+   echo '<input onkeypress = "stopSubmitOnEnter(event)"; type= "text" name="dh_units" id="dh_units" "></div>';
+
+
+   echo ' <div class="pure-control-group" id="ucdiv"> ';
+   echo "<label for='units_per_case'>Change Units Per Case: </label> ";
+   echo "<input onkeypress='stopSubmitOnEnter(event)'; type='text' name='units_per_case' id='units_per_case'></div>";
+}
+?>
+
+<div class="pure-control-group" id="activediv"> 
+<label for="admin">Change Active Status:</label>
+<select name="active" id="active" class='mobile-select'>
+</select>
+</div>
+
+
+ 
+<br clear="all"/>
+<input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
+<br clear="all"/>
+<?php
+if(!empty($_POST['submit'])) {
+   $product = escapehtml($_POST['product']);
+   $rename = escapehtml(strtoupper($_POST['rename']));
+   $unit = escapehtml($_POST['newunit']);
+   $active = $_POST['active'];
+      $dh_units = escapehtml($_POST['dh_units']);
+      $units_per_case = escapehtml($_POST['units_per_case']);
+      $query = "UPDATE product SET product=upper('".$rename."'), dh_units=upper('".$dh_units."'), units_per_case=".
+       $units_per_case.", active= ".$active.", unit =upper('".$unit. "') WHERE product='".$product."'";
+      $sql = mysql_query($query) or die(mysql_error());
+      if (!$sql) {
+         echo '<script> alert("Could not edit product, please try again"); </script>';
+      } else {
+         echo '<script> alert("Changed product successfully"); </script>';
+      }
+}
+
+?>
+</form>
+</body>
+</html>

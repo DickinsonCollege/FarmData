@@ -12,15 +12,15 @@ $tcurDay = $_GET['tday'];
 $fieldID = escapehtml($_GET["fieldID"]);
 $farm = $_SESSION['db'];
 
-echo '<h3>Field Record for Field:&nbsp;'.$fieldID.'</h3>';
+echo '<center><h2>Field Record for Field:&nbsp;'.$fieldID.'</h2></center>';
 $sql = "select  size, numberOfBeds, length from field_GH where fieldID = '".$fieldID."'";;
 $sqldata = mysql_query($sql) or die(mysql_error());
 $row = mysql_fetch_array($sqldata);
 $length = $row['length'];
 $size = $row['size'];
 $numBeds = $row['numberOfBeds'];
-echo '<h4>Field Characteristics: Length '.$length.' ft, '.$numBeds.' Beds, '.$size.' acres</h4>';
-echo '<br clear="all"/>';
+
+echo '<h3>Field Characteristics: Length '.$length.' ft, '.$numBeds.' Beds, '.$size.' acres</h3>';
 
 $sql="select plantdate,crop,bedft,rowsBed,bedft * rowsBed as rowft, ".
    "comments from dir_planted where fieldID like '".$fieldID."' and plantdate between '".$year."-".
@@ -28,12 +28,12 @@ $sql="select plantdate,crop,bedft,rowsBed,bedft * rowsBed as rowft, ".
    "' order by plantdate ";
 $sqldata = mysql_query($sql) or die(mysql_error());
 if (mysql_num_rows($sqldata)==0) {
-   echo 'DIRECT SEEDING<br clear="all"/>No records this period.';
+   echo '<h3>DIRECT SEEDING</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table>";
-   echo "<caption>DIRECT SEEDING</caption>";
-   echo "<tr><th>Date</th><th>Crop</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th><th> Comments </th></tr>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
+   echo "<h3>DIRECT SEEDING</h3>";
+   echo "<thead><tr><th>Date</th><th>Crop</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th><th> Comments </th></tr></thead>";
    while ( $row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['plantdate'];
@@ -58,12 +58,12 @@ $sql="Select crop,bedft, rowsBed, bedft * rowsBed as rowft, transdate, comments 
    "' and fieldID like '".$fieldID."' order by transdate";
 $sqldata = mysql_query($sql) or die(mysql_error());
 if (mysql_num_rows($sqldata)==0) {
-   echo 'TRANSPLANTING<br clear="all"/>No records this period.';
+   echo '<h3>TRANSPLANTING</h3><br clear="all"/>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table>";
-   echo "<caption>TRANSPLANTING</caption>";
-   echo "<tr><th>Date</th><th>Crop<center></th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th><center> Comments</center></th></tr>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
+   echo "<h3>TRANSPLANTING</h3>";
+   echo "<thead><tr><th>Date</th><th>Crop<center></th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th><center> Comments</center></th></tr></thead>";
    while ($row= mysql_fetch_array($sqldata)) {
       echo "<tr><td>";
       echo $row['transdate'];
@@ -87,12 +87,12 @@ $cropsql = "select distinct crop from harvested where hardate BETWEEN '".$year."
    $tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".$fieldID."' order by crop";
 $cropdata = mysql_query($cropsql) or die(mysql_error());
 if (mysql_num_rows($cropdata)==0) {
-   echo 'HARVESTING<br clear="all"/>No records this period.';
+   echo '<h3>HARVESTING</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table>";
-   echo "<caption>HARVESTING</caption>";
-   echo "<tr><th>Date</th><th>Crop</th><th>Unit</th><th>Yield</th><th>  Comments  </th></tr>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
+   echo "<h3>HARVESTING</h3>";
+   echo "<thead><tr><th>Date</th><th>Crop</th><th>Unit</th><th>Yield</th><th>  Comments  </th></tr></thead>";
    while ($rowcrop = mysql_fetch_array($cropdata)) {
       $crop = $rowcrop['crop'];
       $totyield = 0;
@@ -142,13 +142,13 @@ if ($_SESSION['tillage']) {
       $fieldID."'  order by tilldate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'TILLAGE<br clear="all"/>No records this period.';
+      echo '<h3>TILLAGE</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>TILLAGE</caption>";
+      echo "<table class = 'pure-table pure-table-bordered>";
+      echo "<h3>TILLAGE</h3>";
    
-      echo "<tr><th>Date</th><th>Tractor</th><th>Implement</th><th>% tilled</th><th>Passes</th><th>Comments</th></tr>";
+      echo "<thead><tr><th>Date</th><th>Tractor</th><th>Implement</th><th>% tilled</th><th>Passes</th><th>Comments</th></tr></thead>";
       while ($row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['tilldate'];
@@ -175,12 +175,12 @@ if ($_SESSION['compost']) {
       $fieldID."' order by util_date";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'COMPOST<br clear="all"/>No records this period.';
+      echo '<h3>COMPOST</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>COMPOST</caption>";
-      echo "<tr><th> Date</th><th>Pile ID</th><th>Incorporation Tool</th><th>Incorporation Timing</th><th>Tons per Acre</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>COMPOST</h3>";
+      echo "<thead><tr><th> Date</th><th>Pile ID</th><th>Incorporation Tool</th><th>Incorporation Timing</th><th>Tons per Acre</th><th>Comments</th></tr></thead>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['util_date'];
@@ -207,12 +207,12 @@ if ($_SESSION['irrigation']) {
      $fieldID."' order by pumpDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'IRRIGATION<br clear="all"/>No records this period.';
+      echo '<h3>IRRIGATION</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>IRRIGATION</caption>";
-      echo "<tr><th>Date</th><th>Irrigation Device</th><th>Hours</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>IRRIGATION</h3>";
+      echo "<thead><tr><th>Date</th><th>Irrigation Device</th><th>Hours</th><th>Comments</th></tr></thead>";
       while ($row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['pumpDate'];
@@ -234,12 +234,12 @@ if ($_SESSION['liquidfertilizer']) {
       $tcurYear."-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' order by inputDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'LIQUID FERTILIZER<br clear="all"/>No records this period.';
+      echo '<h3>LIQUID FERTILIZER</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>LIQUID FERTILIZER</caption>";
-      echo "<tr><th>Date</th><th>Material</th><th>Total Material Applied</th><th>Unit</th><th>Drip Rows</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>LIQUID FERTILIZER</h3>";
+      echo "<thead><tr><th>Date</th><th>Material</th><th>Total Material Applied</th><th>Unit</th><th>Drip Rows</th><th>Comments</th></tr></thead>";
       while ($row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['inputDate'];
@@ -266,12 +266,12 @@ if ($_SESSION['dryfertilizer']) {
       $tcurYear."-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' order by inputDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'DRY FERTILIZER<br clear="all"/>No records this period.';
+      echo '<h3>DRY FERTILIZER</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>DRY FERTILIZER</caption>";
-      echo "<tr><th>Date</th><th>Product</th><th>Application Rate<br>"."(lbs/acre)</th><th>Bed Feet</th><th>Total Applied</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>DRY FERTILIZER</h3>";
+      echo "<thead><tr><th>Date</th><th>Product</th><th>Application Rate<br>"."(lbs/acre)</th><th>Bed Feet</th><th>Total Applied</th><th>Comments</th></tr></thead>";
       while ($row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['inputDate'];
@@ -352,12 +352,12 @@ if ($_SESSION['cover']) {
 	$field = $_POST['fieldID'];
 	if ($_POST['fieldID']=='%'){$field='All';}
 	if (mysql_num_rows($sqldata)==0) {
-      echo 'COVER CROP SEEDING<br clear="all"/>No records this period.';
+      echo '<h3>COVER CROP SEEDING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-		echo "<table>";
-      echo "<caption>COVER CROP SEEDING</caption>";
-		echo "<tr><th style='width:45%;'>Date</th> <th>FieldID</th> <th>Seeding Method</th> <th>Area Seeded</th><th>Incorporation Tool</th><th style='width: 60%;' >Crop</th><th>Comments</th></tr>";
+		echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>COVER CROP SEEDING</h3>";
+		echo "<thead><tr><th style='width:45%;'>Date</th> <th>FieldID</th> <th>Seeding Method</th> <th>Area Seeded</th><th>Incorporation Tool</th><th style='width: 60%;' >Crop</th><th>Comments</th></tr></thead>";
 		while($row = mysql_fetch_array($sqldata)) {
    		$area=number_format($row['areaSeeded'],3,'.','');
    		echo "<tr><td>";
@@ -399,13 +399,13 @@ if ($_SESSION['cover']) {
 		ORDER BY killDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'COVER CROP INCORPORATION<br clear="all"/>No records this period.';
+      echo '<h3>COVER CROP INCORPORATION</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>COVER CROP INCORPORATION</caption>";
-      echo "<tr><th>Date</th><th>Cover Crop</th><th>Seed Date</th><th>Incorporation Tool</th>".
-         "<th>Total Biomass</th><th> Biomass Pounds Per Acre </th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>COVER CROP INCORPORATION</h3>";
+      echo "<thead><tr><th>Date</th><th>Cover Crop</th><th>Seed Date</th><th>Incorporation Tool</th>".
+         "<th>Total Biomass</th><th> Biomass Pounds Per Acre </th><th>Comments</th></tr></thead>";
       while($row = mysql_fetch_array($sqldata)) {
          $var=number_format($row['bioPerAcre'],2,'.','');
 			$allCropsQuery = "SELECT coverCrop FROM coverKill WHERE id=".$row['id'];
@@ -455,12 +455,12 @@ if ($_SESSION['insect']) {
       "' order by sDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'INSECT SCOUTING<br clear="all"/>No records this period.';
+      echo '<h3>INSECT SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>INSECT SCOUTING</caption>";
-      echo "<tr><th>Date</th><th>Crops</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered>";
+      echo "<h3>INSECT SCOUTING</h3>";
+      echo "<thead><tr><th>Date</th><th>Crops</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr></thead>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['sDate'];
@@ -485,13 +485,13 @@ if ($_SESSION['weed']) {
       $fieldID."' order by sDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'WEED SCOUTING<br clear="all"/>No records this period.';
+      echo '<h3>WEED SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>WEED SCOUTING</caption>";
-      echo "<tr><th>Date</th><th>Species</th><th>Infestation Level</th><th>% Gone to Seed</th>".
-         "<th>Comment</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>WEED SCOUTING</h3>";
+      echo "<thead><tr><th>Date</th><th>Species</th><th>Infestation Level</th><th>% Gone to Seed</th>".
+         "<th>Comment</th></tr></thead>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['sDate'];
@@ -516,13 +516,13 @@ if ($_SESSION['disease']) {
       $fieldID."'";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'DISEASE SCOUTING<br clear="all"/>No records this period.';
+      echo '<h3>DISEASE SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>DISEASE SCOUTING</caption>";
-      echo "<tr><th>Date</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th>".
-         "<th>Crop Stage</th><th>Comments</th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>DISEASE SCOUTING</h3>";
+      echo "<thead><tr><th>Date</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th>".
+         "<th>Crop Stage</th><th>Comments</th></tr></thead>";
       while ( $row = mysql_fetch_array($sqldata)) {
          echo "<tr><td>";
          echo $row['sDate'];
@@ -550,13 +550,13 @@ if ($_SESSION['backspray']) {
      "' and fieldID like '".$fieldID."' order by sprayDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'BACKPACK SPRAYING<br clear="all"/>No records this period.';
+      echo '<h3>BACKPACK SPRAYING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>BACKPACK SPRAYING</caption>";
-      echo "<tr><th>Date</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th>".
-         "<th>Crops</th><th> Comments </th></tr>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>BACKPACK SPRAYING</h3>";
+      echo "<thead><tr><th>Date</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th>".
+         "<th>Crops</th><th> Comments </th></tr></thead>";
       while($row = mysql_fetch_array($sqldata)) {
          $unit = $row['BRateUnits'];
          echo "<tr><td>";
@@ -591,13 +591,13 @@ if ($_SESSION['tractorspray']) {
       " order by sprayDate";
    $sqldata = mysql_query($sql) or die(mysql_error());
    if (mysql_num_rows($sqldata)==0) {
-      echo 'TRACTOR SPRAYING<br clear="all"/>No records this period.';
+      echo '<h3>TRACTOR SPRAYING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table>";
-      echo "<caption>TRACTOR SPRAYING</caption>";
-      echo '<tr><th>Date</th><th>% Sprayed</th> <th>Material</th> <th>Rate</th> <th>Total Material</th>'.
-         '<th>Crops</th> <th>Comments</th> </tr>';
+      echo "<table class = 'pure-table pure-table-bordered'>";
+      echo "<h3>TRACTOR SPRAYING</h3>";
+      echo '<thead><tr><th>Date</th><th>% Sprayed</th> <th>Material</th> <th>Rate</th> <th>Total Material</th>'.
+         '<th>Crops</th> <th>Comments</th> </tr></thead>';
       while($rowM=mysql_fetch_array($sqldata)){
          $theUnit=$rowM['tRateUnits'];
          echo "<tr><td>".$rowM['sprayDate']."</td><td>".
@@ -618,12 +618,12 @@ $sql = "SELECT hours, ldate,crop,task,comments FROM laborview where ldate BETWEE
    "' and hours > 0 order by crop, ldate";
 $sqldata = mysql_query($sql) or die(mysql_error());
 if (mysql_num_rows($sqldata)==0) {
-   echo 'LABOR<br clear="all"/>No records this period.';
+   echo '<h3>LABOR</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table>";
-   echo "<caption>LABOR</caption>";
-   echo "<tr><th>Date</th><th>Crop</th><th>Task</th><th>Hours</th><th>Comments </th></tr>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
+   echo "<h3>LABOR</h3>";
+   echo "<thead><tr><th>Date</th><th>Crop</th><th>Task</th><th>Hours</th><th>Comments </th></tr></thead>";
    $hours=0;
    while($row = mysql_fetch_array($sqldata)) {
       echo "<tr><td>";

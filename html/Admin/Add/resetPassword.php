@@ -6,11 +6,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/escapehtml.php';
 $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or die ("Connect Failed! :".mysql_error());
 mysql_select_db('wahlst_users');
 ?>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h1> Update User Status</h1>
-<label for="user">Username:&nbsp;</label>
-<div id="useriddiv" class="styled-select">
-<select name="userid" id="userid">
+<form name='form' class="pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center>
+<h2> Update User Status</h2>
+</center>
+<div class="pure-control-group">
+<label for="user">Username:</label>
+<select name="userid" id="userid" onchange="update();">
 <option value=0 selected disabled>Username</option>
 <?php
 $sql="select username from users where dbase='".$_SESSION['db']."'";
@@ -22,24 +24,23 @@ while ($row = mysql_fetch_array($result)) {
 ?>
 </select>
 </div>
-<!--
-<input class="textbox3" type="text" name="userid" id="userid">
--->
-<br clear="all">
-<input class="genericbutton" type="button" id="setpass"
+<br clear="all"/>
+<input class="genericbutton pure-button wide" type="button" id="setpass"
    value="Reset Password" onClick="addBoxes();"/>
+<br clear="all"/>
+<br clear="all">
 <div id="container"></div>
 <script type="text/javascript">
 function addBoxes() {
    var but = document.getElementById("setpass");
    var container = document.getElementById('container');
    if (but.value == "Reset Password") {
-      var str = '<label for="pass">New Password:&nbsp;</label>';
-      str = str + '<input class="textbox3" type="password" name="pass" id="pass">';
-      str = str + '<br clear="all">';
-      str = str + '<label for="pass2">Retype New Password:&nbsp;</label>';
-      str = str + '<input class="textbox3" type="password" name="pass2" id="pass2">';
-      str = str + '<br clear="all">';
+      var str = '<div class="pure-control-group"> <label for="pass">New Password:</label> ';
+      str = str + '<input type="password" name="pass" id="pass">';
+      str = str + '</div><div class="pure-control-group">';
+      str = str + '<label for="pass2">Retype New Password:</label> ';
+      str = str + '<input  type="password" name="pass2" id="pass2">';
+      str = str + '</div><br clear="all">';
       container.innerHTML=str;
       but.value = "Leave Password Unchanged";
    } else {
@@ -47,25 +48,34 @@ function addBoxes() {
       container.innerHTML="";
    }
 }
+
+function update() {
+   var user = document.getElementById("userid").value;
+   var xmlhttp = new XMLHttpRequest();
+   xmlhttp.open("GET", "getUserExt.php?user=" + encodeURIComponent(user), false);
+   xmlhttp.send();
+   var info = eval("(" + xmlhttp.responseText + ")");
+   DOCument.getElementById("active").selectedIndex = info['active'];
+   document.getElementById("adminS").selectedIndex = info['admin'];
+}
 </script>
-<label for="admin">Admin:&nbsp;</label> 
-<div class="styled-select">
-<select name="admin" id="admin">
-<option selected value="0">No</option>
+<div class="pure-control-group">
+<label for="admin">Admin:</label> 
+<select name="admin" id="adminS">
+<option value="0">No</option>
 <option value="1">Yes</option>
 </select>
 </div>
-<br clear="all">
-<label for="admin">Active:&nbsp;</label> 
-<div class="styled-select">
+<div class="pure-control-group">
+<label for="active">Active:</label> 
 <select name="active" id="active">
 <option value="0">No</option>
-<option selected value="1">Yes</option>
+<option value="1">Yes</option>
 </select>
 
 <br clear="all">
 <br clear="all">
-<input class="submitbutton" type="submit" name="submit" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 <?php
 if (!empty($_POST['submit'])){
    $admin=$_POST['admin'];

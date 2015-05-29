@@ -1,5 +1,5 @@
 <?php session_start(); ?>
-<form name='form' method='GET' action='fertTable.php'>
+<form name='form' class='pure-form pure-form-aligned' method='GET' action='fertTable.php'>
 <input type="hidden" name="tab" value='soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report'>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
@@ -7,21 +7,24 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<h3 class="hi"> Dry Fertilizer Report </h3>
-<br clear="all">
-<h1> Fertilizer Application Date Range </h1>
-<label for="from">From:&nbsp;</label>
+<center>
+<h2 class="hi"> Dry Fertilizer Report </h2>
+</center>
+<div class="pure-control-group">
+<label for="from">From:</label>
 <?php 
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear=\"all\">";
-echo '<label for="to"> To: &nbsp;</label> ';
+echo "</div>";
+echo '<div class="pure-control-group">';
+echo '<label for="to"> To: </label> ';
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo "</div>";
 
-echo "<br clear=\"all\">";
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
-<label for="cropDiv"> Crop: &nbsp; </label>
-<div id="cropDiv" class="styled-select">
+
+<div class="pure-control-group">
+<label for="cropDiv"> Crop:  </label>
 <select id= "crop" name="crop" class="mobile-select">
 <option value="%" selected> All </option>
 <?php
@@ -33,9 +36,8 @@ while ($row =  mysql_fetch_array($result)){
 </select>
 </div>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="material"> Material:</label>
-<div class ="styled-select">
 <select name="material" id="material" class="mobile-select">
 <option value = "%" selected> All </option>
 <?php
@@ -49,5 +51,5 @@ while ($row =  mysql_fetch_array($result)){
 
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" class="submitbutton" name="submit" value="Submit">
+<input type="submit" class="submitbutton pure-button wide" name="submit" value="Submit">
 </form>

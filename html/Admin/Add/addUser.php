@@ -4,17 +4,21 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3> Add a New User </h3>
-<br>
-<label for="user">New User:&nbsp;</label>
+<form name='form' class = "pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center><h2> Add a New User </h2></center>
+
+<div class = "pure-control-group">
+<label for="user">New User:</label>
 <input class="textbox3 mobile-input" type="text" name="userid" id="userid">
-<br clear="all"/>
-<label for="admin">Admin:&nbsp;</label> 
+</div>
+
+<div class = "pure-control-group">
+<label for="admin">Admin:</label> 
 <input type="checkbox"name="admin" id="admin" class="imgClass2 regular-checkbox big-checkbox"  /><label for="checkboxFiveInput"></label>
+</div>
+
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="submit" value="Submit"><label for="checkbox-2-1"></label> 
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit"><label for="checkbox-2-1"></label> 
 <?php
 $admin=0;
 if(!empty($_POST['submit'])){

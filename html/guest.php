@@ -28,11 +28,10 @@ $_SESSION['mobile'] = isMobileG($useragent);
 include 'design.php';
 include 'footer.php';
 ?>
-<h1> Welcome to the College Farm!</h1> <br>
-<!--
-Please Click on One of the Tabs to Meet Your Needs! 
--->
-<h1>Guest users: </h1>
+<center>
+<h2> Welcome to the College Farm!</h2> 
+</center>
+<h3>Guest users: </h3>
 <p>
 
 <!--
@@ -65,6 +64,6 @@ use the "back" button in your browser to return to FARMDATA.
 -->
 <p>
 <center>
-<img src="farmdata.png">
+<img src="farmdata.png" width="25%">
 </center>
 

@@ -1,4 +1,5 @@
 <?php session_start(); ?>
+<html>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
@@ -7,13 +8,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $farm = $_SESSION['db'];
 ?>
 
+<center>
+<h2>  Backdater  </h2>
+</center>
 
-<h3 style="font-size:52px; margin-top:-30px;"> Backdater  </h3>
-<br>
-<form name='form' method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
+<form name='form' class="pure-form pure-form-aligned" method='POST' action='<?php  $_SERVER['PHP_SELF']?>'>
 
-<label for="table">Select Table:&nbsp;</label>
-<div id='table2' class='styled-select'>
+<div id='table2' class='pure-control-group'>
+<label for="table">Select Table:</label>
 <select name='tableSelector' id='tableSelector' onChange='createTableHeader();'>
 <option value='default' disabled selected>&nbsp;</option>
 <option value='dir_planted'>Direct Seeding</option>
@@ -79,9 +81,9 @@ function createTableHeader() {
    if (seed_order) {
       var warndiv = document.getElementById("warnMessage");
       if (tableName == "dir_planted" || tableName == "gh_seeding") {
-         warndiv.innerHTML="<div id='warnMessage'>Note: entering seeding records on this page does NOT update " +
+         warndiv.innerHTML="<div id='warnMessage'><h3>Note: entering seeding records on this page does NOT update " +
             "seed inventory.<br clear='all'/>Please use the input forms under the Seed tab if you wish to " +
-            "enter variety information and track seed inventory.<br clear='all'><br clear='all'></div>";
+            "enter variety information and track seed inventory.</h3><br clear='all/'></div>";
       } else {
          warndiv.innerHTML="<div id='warnMessage'></div>";
       }
@@ -119,8 +121,21 @@ function createTableHeader() {
    for (i = 1; i < tableSize; i++) {
       var cell = row.insertCell(i);
       cell.innerHTML = fields_array[i];
+/*
       if (dateArray.indexOf(fields_array[i]) > -1) {
          cell.style.width = "20%";
+      } else if (fields_array[i] == 'gen') {
+         cell.style.width = "7%";
+      } else if (fields_array[i] == 'fieldID') {
+         cell.innerHTML = "Name&nbsp;of&nbsp;Field";
+      } else if (fields_array[i] == 'crop') {
+         cell.style.width = "15%";
+      }
+*/
+      if (dateArray.indexOf(fields_array[i]) > -1 && !(tableName == 'transferred_to' && fields_array[i] == 'seedDate')) {
+         cell.style.width = "17%";
+      } else if (fields_array[i] == 'fieldID') {
+         cell.innerHTML = "Name&nbsp;of&nbsp;Field";
       }
    }
 
@@ -138,22 +153,23 @@ function createTableHeader() {
    var insertButton = document.getElementById('insertRowsButtonDiv');
    
    insertButton.innerHTML = "<form method='POST' action=''>" + 
-      "<input type='button' class='largesubmitbutton' id='insertRows' name='insertRows' value='Submit Data to Database'" +
+      "<input type='button' class='submitbutton pure-button wide' id='insertRows' name='insertRows' value='Submit Data to Database'" +
       "onclick='insertAllRows();'></form>";
 
    // Create New Row Buttons
    var buttonsTop = document.getElementById('buttonsTopDiv');
    var buttonsBottom = document.getElementById('buttonsBottomDiv');
 
-   buttonsTop.innerHTML = "<input type='button' class='submitbutton' id='newRow' name='newRow' value='New Row'" + 
-      "onclick='copyTheRow(-1);'>";
-   buttonsTop.innerHTML += "<input type='button' class='submitbutton' id='copyRow' name='copyRow' value='Copy Last Row'" + 
-      "onclick='copyTheRow(0);'>";
+   var bot = "<div class='pure-g'><div class='pure-u-1-2'> " +
+     "<input type='button' class='pure-button submitbutton wide' " +
+     " id='newRow' name='newRow' value='New Row' onclick='copyTheRow(-1);'>" +
+     " </div> <div class='pure-u-1-2'> " +
+     "<input type='button' class='pure-button submitbutton wide' " +
+     " id='copyRow' name='copyRow' value='Copy Last Row' onclick='copyTheRow(0);'>" +
+     "</div></div>";
+   buttonsTop.innerHTML = bot;
+   buttonsBottom.innerHTML = bot;
 
-   buttonsBottom.innerHTML = "<input type='button' class='submitbutton' id='newRow' name='newRow' value='New Row'" +
-      "onclick='copyTheRow(-1);'>";
-   buttonsBottom.innerHTML += "<input type='button' class='submitbutton' id='copyRow' name='copyRow' value='Copy Last Row'" +
-      "onclick='copyTheRow(0);'>";
 
    // Creates first row
    copyTheRow(-1);
@@ -221,7 +237,6 @@ function copyTheRow(rowNum) {
                   }
                } else {
                   data = document.getElementById(fields_array[i] + j);
-            
                   if (data != null) {
                      data = data.value;
                   }
@@ -270,10 +285,10 @@ function copyTheRow(rowNum) {
          cell.innerHTML = createDateDropdown(fields_array[i], monthData, dayData, yearData, numRows);
       } else {
          cell.innerHTML = "<div id='" + fields_array[i] + numRows + "div' name='" + fields_array[i] + numRows + "div'>" + 
-            " <input type='text' style='width:100%;'" + 
+            " <input type='text' size='3' " + 
             " onchange='stopSubmitOnEnter(event);'" +
             " name='" + fields_array[i] + numRows + "' id='" + fields_array[i] + numRows + "'" +
-            " class='textbox25' value='" + data + "'></div>";
+            " class='wide' value='" + data + "'></div>";
       }
 
       data = null;
@@ -281,11 +296,11 @@ function copyTheRow(rowNum) {
 
    // Delete Button   
    cell = row.insertCell(tableSize);
-   cell.innerHTML = "<input type='button' class='deletebutton' value='Delete'" +
+   cell.innerHTML = "<input type='button' class='deletebutton pure-button wide' value='Delete'" +
       "onclick='deleteButton(" + numRows + ");'>";
    // Copy Button
    cell = row.insertCell(tableSize + 1);
-   cell.innerHTML = "<input type='button' class='addbutton' value='Copy'" +
+   cell.innerHTML = "<input type='button' class='addbutton pure-button wide' value='Copy'" +
       "onclick='copyTheRow(" + numRows + ");'>";
 
    numRows++;
@@ -362,7 +377,11 @@ function createDropdown(fieldname, data, rowNum){
       selectMenu += extraOptions;
    } else {
       for (q = 0; q < dropdownArray.length; q++) {
-         selectMenu += "<option value='" + dropdownArray[q] + "'>" + dropdownArray[q] + "</option>";
+         selectMenu += "<option value='" + dropdownArray[q] + "'";
+         if (dropdownArray[q] == data) {
+            selectMenu += " selected ";
+         }
+         selectMenu += ">" + dropdownArray[q] + "</option>";
       }
    }
 
@@ -386,32 +405,29 @@ function createDateDropdown(fieldname, monthData, dayData, yearData, rowNum) {
    var selectMenu = "";
 
    // Month   
-   selectMenu += "<div class='styled-select' id='" + fieldname + rowNum + "monthdiv' name='" + fieldname + rowNum + "monthdiv'>" + 
-      "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "month\");' name='" + fieldname + rowNum + "month' id='" + fieldname + rowNum + "month'>";
+   selectMenu += "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "month\");' name='" + fieldname + rowNum + "month' id='" + fieldname + rowNum + "month'>";
    selectMenu += "<option value='" + monthData + "' selected>" + monthData + "</option>";
    for (mth = 0; mth < 12; mth++) {
       selectMenu += "<option value='" + months[mth] + "'>" + months[mth] + "</option>";
    }
-   selectMenu += "</select></div>";
+   selectMenu += "</select>";
 
    // Day
-   selectMenu += "<div class='styled-select' id='" + fieldname + rowNum + "daydiv' name='" + fieldname + rowNum + "daydiv'>" + 
-      "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "day\");' name='" + fieldname + rowNum + "day' id='" + fieldname + rowNum + "day'>";
+   selectMenu += "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "day\");' name='" + fieldname + rowNum + "day' id='" + fieldname + rowNum + "day'>";
    selectMenu += "<option value='" + dayData + "' seleted>" + dayData + "</option>";
    for (dy = 1; dy < 32; dy++) {
       selectMenu += "<option value='" + dy + "'>" + dy + "</option>";
    }
-   selectMenu += "</select></div>";
+   selectMenu += "</select>";
 
    // Year
    var currYear = new Date().getFullYear();
-   selectMenu += "<div class='styled-select' id='" + fieldname + rowNum + "yeardiv' name='" + fieldname + rowNum + "yeardiv'>" + 
-      "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "year\");' name='" + fieldname + rowNum + "year' id='" + fieldname + rowNum + "year'>";
+   selectMenu += "<select onchange='addInput(" + rowNum + ", \"" + fieldname + "year\");' name='" + fieldname + rowNum + "year' id='" + fieldname + rowNum + "year'>";
    selectMenu += "<option value='" + yearData + "' selected>" + yearData + "</option>";
    for (yr = (currYear - 5); yr < (currYear + 4); yr++) {
       selectMenu += "<option value='" + yr + "'>" + yr + "</option>";
    }
-   selectMenu += "</select></div>"; 
+   selectMenu += "</select>"; 
 
    return selectMenu;
 }
@@ -641,12 +657,21 @@ function show_confirm() {
 
 <br clear="all"/>
 <div id="warnMessage"></div>
-<div id="insertRowsButtonDiv"></div>
 <br clear="all"/>
 <div id="buttonsTopDiv"></div>
-<br clear="all"/>
-<table style="width:99%" id="myTable"></table>
+<table class='pure-table pure-table-bordered' id="myTable"></table>
 <br clear="all"/>
 <div id="buttonsBottomDiv"></div>
+<div id="insertRowsButtonDiv"></div>
 
+<script type="text/javascript">
+window.onload=function() {
+    var wid = window.innerWidth || document.body.clientWidth;
+    var min = 1550;
+    if (wid < min) {
+       document.getElementById("myTable").style.width=min;
+    }
+}
+
+</script>
 </form>

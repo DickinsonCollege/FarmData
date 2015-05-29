@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php session_start();
+//include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
+// echo '<html>';
+include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
+ ?>
 <script type="text/javascript">
 
 function complete(row, id) {
@@ -19,9 +24,6 @@ function complete(row, id) {
 }
 </script>
 <?php
-//include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
-include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 $fromDate=$_GET['year']."-".$_GET['month']."-".$_GET['day'];
 $toDate=$_GET['tyear']."-".$_GET['tmonth']."-".$_GET['tday'];
@@ -29,21 +31,23 @@ $fieldCh=escapehtml($_GET['fieldID']);
 $materialCh=escapehtml($_GET['material']);
 $crop=escapehtml($_GET['crop']);
 if (!$_GET['inst']) {
-echo "<form name='form' method='POST' action='/down.php'>";
-echo "<table >";
-echo "<caption> Tractor Spraying Report </caption>";
-echo "<tr> <th >Date</th> <th>FieldID</th> <th>%Sprayed</th> <th>Material</th> <th>Units</th>";
-echo "<th>Rate</th> <th>Total</th> <th>Crops</th> <th>Comments</th><th>Initials</th> </tr>";
+echo "<form name='form' class='pure-form pure-form-aligned' method='POST' action='/down.php'>";
+echo "<center>";
+echo "<h2> Tractor Spraying Report </h2>";
+echo "</center>";
+echo "<table class='pure-table pure-table-bordered'>";
+echo "<thead><tr> <th >Date</th> <th>FieldID</th> <th>%Sprayed</th> <th>Material</th> <th>Units</th>";
+echo "<th>Rate</th> <th>Total</th> <th>Crops</th> <th>Comments</th><th>Initials</th> </tr></thead>";
 
 $sql="SELECT sprayDate, fieldID, (SELECT numOfBed/numberOfBeds FROM field_GH ".
    "WHERE field_GH.fieldID=tSprayField.fieldID) as percentSprayed, material, tRateUnits,rate, ".
    "initials, actualTotalAmount*(SELECT size FROM field_GH ".
        "WHERE field_GH.fieldID= tSprayField.fieldID)/".
        "(SELECT SUM(size) FROM field_GH, tSprayField as tf ".
-       "WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, crops, user, comment ".
+       "WHERE field_GH.fieldID= tf.fieldID AND tf.id=tSprayMaster.id ) as frac, tSprayField.crops, user, comment ".
        "FROM tSprayMaster, tSprayWater, tSprayField, tSprayMaterials ".
        "WHERE tSprayMaster.id= tSprayWater.id AND tSprayMaster.id=tSprayField.id AND material LIKE'".
-       $materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND crops like '%".$crop.
+       $materialCh."' AND tSprayField.fieldID LIKE '".$fieldCh."' AND tSprayField.crops like '%".$crop.
        "%' and tSprayMaster.sprayDate BETWEEN '".$fromDate."' AND '".$toDate.
        "' AND tSprayMaterials.sprayMaterial=tSprayWater.material and complete = 1";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
@@ -55,7 +59,6 @@ echo mysql_error();
 	$count++;
 	$totalMaterial=$totalMaterial+$rowM['frac'];
 	$theUnit=$rowM['tRateUnits'];	
-	//echo "<tr><td>".str_replace("-","/",$rowM['sprayDate'])."</td><td>".$rowM['fieldID']."</td><td>". number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".$rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate']."</td><td>".number_format($rowM['frac'],2,'.','')."</td><td>".$rowM['cropGroup']."</td><td>".$rowM['user']." </td><td>".$rowM['comment']."</td></tr>";
 	echo "<tr><td>".$rowM['sprayDate']."</td><td>".$rowM['fieldID']."</td><td>".
              number_format($rowM['percentSprayed']*100, 2, '.','')."%"."</td><td>".
              $rowM['material']."</td><td>".$rowM['tRateUnits']."</td><td>".$rowM['rate'].
@@ -66,73 +69,44 @@ echo mysql_error();
 	}
 echo '</table>';
 	if($materialCh!='%'){
-	echo "<label for='total'>Total ".$materialCh."  Used:&nbsp</label>";
-        echo "<input class='textbox2' style='width: 120px;' type ='text' value=".number_format($totalMaterial,2,'.','')."> <label for='total'> &nbsp".$theUnit."</label>";
-        echo '<br clear="all"/>';
-	echo "<label for='total'>Average Amount of ".$materialCh." Used:&nbsp</label>";
-        echo "<input class='textbox2' style='width: 120px;' type ='text' value=".number_format($totalMaterial/$count,2,'.','')."> <label for='total'> &nbsp".$theUnit."</label>";
+        echo '<br clear = "all"/>';
+        echo "<div class='pure-control-group'>";
+	echo "<label for='total'>Total ".$materialCh."  Used:</label> ";
+        echo "<input class='textbox2' readonly type ='text' value=".number_format($totalMaterial,2,'.','')."> &nbsp".$theUnit."(S)";
+        echo '</div>';
+        echo "<div class='pure-control-group'>";
+	echo "<label for='total'>Average Amount of ".$materialCh." Used:</label> ";
+        echo "<input class='textbox2' readonly type ='text' value=".number_format($totalMaterial/$count,2,'.','')."> &nbsp".$theUnit."(S)";
+        echo '</div>';
 
 	}	
 
-/*	
-space(1);
-$total = "Select tSprayMaster.id, TRateUnits as unit, sum(actualTotalAmount) as total2, avg(actualTotalAmount) as average2, avg(numOfBed/numberOfBeds)*100 as average FROM field_GH, tSprayMaster, tSprayField, tSprayWater, tSprayMaterials WHERE sprayDate between '".$fromDate."' AND '".$toDate."' AND tSprayField.fieldID LIKE '".$fieldCh. "'  AND material LIKE '".$materialCh."' AND tSprayField.id=tSprayMaster.id AND tSprayWater.id=tSprayMaster.id AND field_GH.fieldID=tSprayField.fieldID  AND tSprayWater.material=sprayMaterial order by tSprayMaster.sprayDate, tSprayField.fieldID";
-$result = mysql_query($total);
-while($row1 = mysql_fetch_array($result)) {
-	$row3Deci3=number_format((float)$row1['total2'], 2, '.', '');
-        echo "<label for='total'>Total Material Used:&nbsp</label>";
-        echo "<input class='textbox2' style='width: 120px;' type ='text' value=".$row3Deci3.">";
-        echo "<label for='unit'>&nbsp;".$row1['unit']."(S)</label>";
-	space(2);
-	$row3Deci3=number_format((float)$row1['average2'], 2, '.', '');
-        echo "<label for='total'>Average Amount of Material Used:&nbsp</label>";
-        echo "<input class='textbox2' style='width: 120px;' type ='text' value=".$row3Deci3.">";
-        echo "<label for='unit'>&nbsp;".$row1['unit']."(S)</label>";
-        space(2);
-	$row3Deci3=number_format((float)$row1['average'], 2, '.', '');
-        echo "<label for='total'>Average Percent of Field Sprayed:&nbsp</label>";
-        echo "<input class='textbox2' style='width: 120px;' type ='text' value=".$row3Deci3."%>";
-        space(1);
-
-	}
-
-if(!$_SESSION['mobile']) {
-space(1);
-}else {
-space(1);
-}
-echo '<label for="download"> Please click the button below to download the report  just generated </label>';
-        space(3);
-*/
         echo '<br clear = "all"/>';
-        echo '<input class="submitbutton" type="submit" name="submit" value="Download Report">';
+        echo "<div class='pure-g'>";
+        echo "<div class='pure-u-1-2'>";
+        echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Report">';
 echo "</form>";
+        echo "</div>";
+        echo "<div class='pure-u-1-2'>";
 } else {
-/*
-   echo '<form method="POST" action = "update_instructions.php">';
-$year=$_POST['year'];
-$month=$_POST['month'];
-$da."-".$_POST['day'];
-$toDate=$_POST['tyear']."-".$_POST['tmonth']."-".$_POST['tday'];
-$fieldCh=escapehtml($_POST['fieldID']);
-$materialCh=escapehtml($_POST['material']);
-$crop=escapehtml($_POST['crop']);
-*/
-echo "<table >";
 $numRows = 0;
-echo "<caption> Tractor Spraying Instructions </caption>";
-echo "<tr> <th >Date</th> <th>Fields</th><th>Materials</th><th>Water</th>";
-echo "<th>Additional Instructions</th><th>Initials</th><th>Complete</th></tr>";
-$masterSQL = "select id, sprayDate, waterPerAcre, comment, initials from tSprayMaster where sprayDate BETWEEN '".
-  $fromDate."' AND '".$toDate."' and complete=0";
+echo "<center>";
+echo "<h2> Tractor Spraying Instructions </h2>";
+echo "</center>";
+echo "<div class='pure-form pure-form-aligned'>";
+echo "<table class='pure-table pure-table-bordered'>";
+echo "<thead><tr> <th >Date</th> <th>Fields</th><th>Materials</th><th>Water</th>";
+echo "<th>Additional Instructions</th><th>Initials</th><th>Complete</th></tr></thead>";
+$masterSQL = "select tSprayMaster.id, sprayDate, waterPerAcre, comment, initials from tSprayMaster where sprayDate BETWEEN '".
+  $fromDate."' AND '".$toDate."' and complete=0 and exists (select * from tSprayField where tSprayField.id = tSprayMaster.id and tSprayField.crops like '%".$crop."%')";
 $result = mysql_query($masterSQL);
 echo mysql_error();
 while ($row = mysql_fetch_array($result)) {
    $numRows++;
    $id = $row['id'];
    echo "<tr><td>".$row['sprayDate']."</td><td>";
-   echo "<center><table style='width:5%'><tr><th>FieldID</th><th>Beds to Spray</th></tr>";
-   $sql = "select tSprayField.fieldID, numOfBed, numberOfBeds from tSprayField, field_GH".
+   echo "<center><table class='pure-table pure-table-bordered' ><thead><tr><th>Field Name</th><th>Beds to Spray</th><th>Crops</th></tr></thead><tbody>";
+   $sql = "select tSprayField.fieldID, numOfBed, numberOfBeds, crops from tSprayField, field_GH".
      " where tSprayField.fieldID LIKE '".
      $fieldCh."' and tSprayField.fieldID = field_GH.fieldID and id = ".$id;
    $fRes = mysql_query($sql);
@@ -140,10 +114,10 @@ while ($row = mysql_fetch_array($result)) {
    while ($fRow = mysql_fetch_array($fRes)) {
        echo "<tr><td>".$fRow['fieldID']."</td><td>".$fRow['numOfBed']."&nbsp;(".
          number_format((float) $fRow['numOfBed'] * 100 / $fRow['numberOfBeds'], 0, '.', '').
-         "%)</td></tr>";
+         "%)</td><td>".$fRow['crops']."</td></tr>";
    }
-   echo "</table></center></td><td>";
-   echo "<center><table style='width:5%'><tr><th>Material</th><th>Amount</th><th>Unit</th></tr>";
+   echo "</tbody></table></center></td><td>";
+   echo "<center><table class='pure-table pure-table-bordered'><thead><tr><th>Material</th><th>Amount</th><th>Unit</th></tr></thead>";
    $sql = "select material, actualTotalAmount, TRateUnits from tSprayWater, tSprayMaterials where id = ".
       $id." and tSprayWater.material = tSprayMaterials.sprayMaterial and material LIKE'".
      $materialCh."'";
@@ -164,14 +138,15 @@ while ($row = mysql_fetch_array($result)) {
       echo " GALLONS";
    }
 
+   echo "</td>";
    echo "<td>".$row['comment']."</td><td>";
-   echo "<input class='textbox mobile-input inside_table' type='text' id='initials".$numRows.
+   echo "<input class='wide' type='text' size = '5' id='initials".$numRows.
       "' name='initials".$numRows."' value='".$row['initials']."' style='width:100%'></td><td>";
-   echo '<input class = "submitbutton" type="button" name="done'.$numRows.
+   echo '<input class = "submitbutton pure-button wide" type="button" name="done'.$numRows.
        '" value="Done" onclick="complete('.$numRows.', '.$id.');"/>';
    echo "</td></tr>";
 }
-echo "</table>";
+echo "</table></div>";
 echo "<input type='hidden' name='numRows' value=".$numRows.">";
 echo '<br clear="all"/>';
 /*
@@ -179,6 +154,9 @@ echo "</form>";
 */
 }
 
-echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:tspray:tspray_report"><input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:tspray:tspray_report"><input type="submit" class="submitbutton pure-button wide" value = "Run Another Report"></form>';
+if (!$_GET['inst']) {
+   echo "</div></div>";
+}
 
 ?>

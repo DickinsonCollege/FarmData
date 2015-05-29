@@ -1,5 +1,4 @@
 <?php session_start();?>
-<!DOCTYPE html>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
@@ -7,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<label for="harvest"><h3> Input Labor Record</h3> </label>
+<center><h2> Input Labor Record</h2></center>
 
 <script type="text/javascript">
 function show_confirm() {
@@ -38,7 +37,6 @@ function show_confirm() {
 	var c = 1;
 	var allcrops = [];
 	var sum = 0;
-	// con += "<br>";
 	while (c <= numCrops) {
 		var crpsel = document.getElementById("crop"+c);
 		var crp = document.getElementById("crop"+c).value;
@@ -95,18 +93,19 @@ console.log(msg);
 }
 </script>
 
-<form name='form' id='laborform'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=labor:labor_input" >
+<form name='form' class = 'pure-form pure-form-aligned' id='laborform'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=labor:labor_input" >
+
+<fieldset>
 
 <input type="hidden" name="numCropsInp" id="numCropsInp">
-<br clear="all">
-<br clear="all">
-<label for="crop">Date of Labor:&nbsp;</label>
+<div class = "pure-control-group">
+<label for="crop">Date of Labor:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all">
-<label for="fieldID">Name of Field:&nbsp</label>
-<div  id = "fieldID2" class="styled-select">
+</div>
+<div class = "pure-control-group">
+<label for="fieldID">Name of Field:</label>
 <select name="fieldID" id="fieldID" onChange="setAllCrops();" class="mobile-select">
 <option value=0 selected disabled>Field Name</option>
 <option value="N/A">N/A</option>
@@ -120,22 +119,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 </select>
 </div>
-<br clear="all">
-<!--
-<div name = "showCrops" id = "showCrops">
-<label>Crop and Percent of Labor</label>
--->
 <br clear="all"/>
-</div>
-
-<?php
-//$labor = true;
-//include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
-?>
-<table name="cropTable" id="cropTable">
-	<tr><th>Crop</th><th>Percent Of Labor</th></tr>
+<table class = "pure-table pure-table-bordered" name="cropTable" id="cropTable">
+	<thead><tr><th>Crop</th><th>Percent Of Labor</th></tr></thead>
+	<tbody></tbody>
 </table>
-<br clear="all">
 
 <script type="text/javascript">
 var cropOps = "";
@@ -156,11 +144,11 @@ function setCrop(ind) {
   var cell0 = row.cells[0];
   var cell1 = row.cells[1];
   //var cropdiv = document.getElementById('cropDiv'+ind);
-  var cell0inner = '<div class="styled-select" id="cropDiv'+ind+'"><select class="mobile-select" name="crop'+ind+'" id = "crop'+ind+'"> ' +
+  var cell0inner = '<div class="styled-select" id="cropDiv'+ind+'"><select class="wide" name="crop'+ind+'" id = "crop'+ind+'"> ' +
   '<option value = 0 disabled selected>' +
   'Crop</option> <option value="N/A">N/A</option>' + cropOps + '</select></div>';
   //'<label style="width:2ex"></label>' +
-  var cell1inner = '<div class="styled-select" id="percDiv'+ind+'"><select class="mobile-select" name="perc'+ind+'" id = "perc'+ind+'">';
+  var cell1inner = '<div class="styled-select" id="percDiv'+ind+'"><select class="wide" name="perc'+ind+'" id = "perc'+ind+'">';
   var p = 5;
   var sel = '';
   while (p <= 100) {
@@ -170,7 +158,7 @@ function setCrop(ind) {
      cell1inner += '<option ' + sel + ' value="'+p+'">'+p+'%</option>';
      p += 5;
   }
-  cell1inner += '</select></div> <br clear="all"/>';
+  cell1inner += '</select></div>';
   cell0.innerHTML =  cell0inner;
   cell1.innerHTML =  cell1inner;
 }
@@ -188,8 +176,8 @@ function setAllCrops() {
 
 function addCrop() {
   numCrops++;
-  var table = document.getElementById("cropTable");
-  var row 	= table.insertRow(numCrops);
+  var table = document.getElementById("cropTable").getElementsByTagName('tbody')[0];
+  var row 	= table.insertRow(numCrops-1);
   row.id		= "row" + numCrops;
   row.name	= "row" + numCrops;
   row.insertCell(0);
@@ -246,24 +234,18 @@ addCrop();
 //console.log('c2'+xmlhttp.responseText+'d2');
 }
  </script>
-<?php
-if($_SESSION['mobile']){
- echo "<br clear=\"all\">";
-}
-?>
-
-<input type='button' id='add' class='genericbutton' value="Add Crop" onClick = "addCrop();">
-
-<!--
-<label style="width:2ex;float:left"></label>
--->
-
-<input type='button' id='remove' class='genericbutton' value="Remove Crop" onClick = "removeCrop();">
+</fieldset>
+<div class = "pure-g">
+<div class = "pure-u-1-2">
+<input type='button' id='add' class='genericbutton pure-button wide' value="Add Crop" onClick = "addCrop();">
+</div>
+<div class = "pure-u-1-2">
+<input type='button' id='remove' class='genericbutton pure-button wide' value="Remove Crop" onClick = "removeCrop();">
+</div>
+</div>
 <p>
-
-<label for="taskDiv"> Task:&nbsp;</label>
-
-<div class = "styled-select" id= "taskDiv">
+<div class = "pure-control-group">
+<label for="taskDiv"> Task:</label>
 <select class="mobile-select" name="task" id="task">
 <option disabled value = "0" selected>  TASK </option>
 <?php
@@ -275,35 +257,36 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 
-<br clear="all"/>
-<label for="numWorkers">Number of Workers:&nbsp;</label>
+<div class = "pure-control-group">
+<label for="numWorkers">Number of Workers:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input">  
-<br clear="all"/>
-<br clear="all"/>
+</div>
 
+<div class = "pure-control-group">
 <label>Enter time in Hours or Minutes:</label>
-<br clear="all"/>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="time" id="time" class="textbox2 mobile-input">  
-<div class="styled-select">
 <select name="timeUnit" id="timeUnit" class="mobile-select">
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
 </div>
-<br clear="all"/>
-<div>
+
+<div class = "pure-control-group">
 <label for="comments">Comments:</label>
-<br clear="all"/>
-<textarea  name="comments"rows="20" cols="30">
+<textarea  name="comments"rows="10" cols="31">
 </textarea>
 </div>
 <br clear="all"/>
-
-<input  class="submitbutton"  type="button"  value="Submit" onclick="show_confirm();">
-
+<div class = "pure-g">
+<div class = "pure-u-1-2">
+<input  class="submitbutton pure-button wide"  type="button"  value="Submit" onclick="show_confirm();">
+</div>
 </form>
-<br clear="all"/>
-<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+<div class = "pure-u-1-2">
+<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+<br clear = "all"/>
+</div>
+</div>
 
 <?php
 //if(isset($_POST['submit'])){

@@ -5,12 +5,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
 <body id="add">
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3> Update User Status</h3>
-<br>
-<label for="user">Username:&nbsp;</label>
-<div id="useriddiv" class="styled-select">
-<select name="userid" id="userid" class='mobile-select'>
+<form name='form' class="pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center>
+<h2> Update User Status</h2>
+</center>
+
+<div class="pure-control-group" id="useriddiv">
+<label for="user">Username:</label>
+<select name="userid" id="userid" onchange='update();'>
 <option value=0 selected disabled>Username</option>
 <?php
 $sql="select username from users";
@@ -22,26 +24,37 @@ while ($row = mysql_fetch_array($result)) {
 ?>
 </select>
 </div>
-<br clear="all">
-<label for="admin">Admin:&nbsp;</label> 
-<div class="styled-select">
-<select name="admin" id="admin" class='mobile-select'>
-<option selected value="0">No</option>
+
+<div class="pure-control-group">
+<label>Admin:</label> 
+<select name="admin" id="adminS" class='mobile-select'>
+<option value="0">No</option>
 <option value="1">Yes</option>
 </select>
 </div>
-<br clear="all">
-<label for="admin">Active:&nbsp;</label> 
-<div class="styled-select">
+
+<div class="pure-control-group">
+<label for="admin">Active:</label> 
 <select name="active" id="active" class='mobile-select'>
 <option value="0">No</option>
-<option selected value="1">Yes</option>
+<option value="1">Yes</option>
 </select>
 </div>
 
+<script type="text/javascript">
+function update() {
+   var user = document.getElementById("userid").value;
+   var xmlhttp = new XMLHttpRequest();
+   xmlhttp.open("GET", "getUser.php?user=" + encodeURIComponent(user), false);
+   xmlhttp.send();
+   var info = eval("(" + xmlhttp.responseText + ")");
+   document.getElementById("active").selectedIndex = info['active'];
+   document.getElementById("adminS").selectedIndex = info['admin'];
+}
+</script>
+
 <br clear="all">
-<br clear="all">
-<input class="submitbutton" type="submit" name="submit" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 <?php
 if (!empty($_POST['submit'])){
    $admin=$_POST['admin'];

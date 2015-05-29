@@ -50,34 +50,37 @@ $varieties = $row['varieties'];
 $flats = $row['flats'];
 $cellsFlat = $row['cellsFlat'];
 
-echo "<form name='form' method='post' action=\"".$SERVER['PHP_SELF'].
+echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$SERVER['PHP_SELF'].
    "?tab=seeding:flats:flats_report&year=".$origYear."&month=".$origMonth."&day=".$origDay.
    "&genSel=".$genSel."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&crop=".
    encodeURIComponent($origCrop)."&id=".$id."\">";
 
-echo "<H3> Edit Tray Seeding Record </H3>";
-echo '<br clear="all"/>';
-echo '<br clear="all"/>';
-echo '<label>Date:&nbsp</label>';
-echo '<div class="styled-select"><select name="month" id="month">';
+echo "<center>";
+echo "<H2> Edit Tray Seeding Record </H2>";
+echo "</center>";
+echo "<fieldset>";
+echo '<div class="pure-control-group">';
+echo '<label>Date:</label>';
+echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
 for($mth = 1; $mth <= 12; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="day" id="day">';
+echo '</select>';
+echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
 for($day = $curDay - $curDay+1; $day <= 31; $day++) {echo "\n<option value =\"$day\">$day</option>";
 }
-echo '</div></select>';
-echo '<div class="styled-select"><select name="year" id="year">';
+echo '</select>';
+echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
 for($yr = $curYear - 4; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select>';
+echo '</div>';
 
-echo '<label>Username:&nbsp;</label>';
-echo '<div class="styled-select"><select name="user" id="user">';
+echo '<div class="pure-control-group">';
+echo '<label>Username:</label>';
+echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.'</option>';
 if ($farm == 'dfarm') {
 	$sql = 'select username from users where active = 1';
@@ -88,52 +91,63 @@ if ($farm == 'dfarm') {
 } else {
 	echo $useropts;
 }
-echo '</div></select>';
-echo '<br clear="all">';
+echo '</select></div>';
 
-echo '<label>Crop:&nbsp</label>';
-echo '<div class="styled-select"><select name="crop" id="crop">';
+echo '<div class="pure-control-group">';
+echo '<label>Crop:</label>';
+echo '<select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
 $sqldata = mysql_query($sql) or die("ERROR2");
 while ($row = mysql_fetch_array($sqldata)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
-echo '</div></select>';
-echo '<br clear="all"/>';
+echo '</select></div>';
 
-echo "<label>Number of Seeds Planted:&nbsp;</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Number of Seeds Planted:</label>";
 echo "<input type='text' class='textbox2' name='numseeds_planted' id='numseeds_planted' value='".$numseeds_planted."'>";
-echo "<br clear='all'/>";
+echo '</div>';
 
-echo "<label>Varieties:&nbsp;</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Varieties:</label>";
 //echo "<input type='text' class='textbox3' name='varieties' id='varieties' value='".$varieties."'>";
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"varieties\" id = \"varieties\">";
+echo "<textarea rows=\"5\" cols=\"30\" name = \"varieties\" id = \"varieties\">";
 echo $varieties;
 echo "</textarea>";
-echo "<br clear='all'/>";
+echo '</div>';
 
-echo "<label>Trays:&nbsp;</label>";
+echo '<div class="pure-control-group">';
+echo "<label>Trays:</label>";
 echo "<input type='text' class='textbox2' name='flats' id='flats' value='".$flats."'>";
-echo "<br clear='all'/>";
+echo '</div>';
 
-echo "<label>Cells/Tray:&nbsp;</label>";
-echo "<input type='text' class='textbox2' name='cellsFlat' id='cellsFlat' value='".$cellsFlat."'>";
-echo "<br clear='all'/>";
-echo "<br clear='all'/>";
+echo '<div class="pure-control-group">';
+echo "<label>Tray size:</label>";
+echo '<select name ="cellsFlat" id="cellsFlat" class="mobile-select">';
+echo "\n<option value=".$cellsFlat.">".$cellsFlat."</option>";
+$sql = "select cells from flat";
+$result = mysql_query($sql);
+while ($row1 =  mysql_fetch_array($result)) {
+   echo "\n<option value=".$row1['cells'].">".$row1['cells']."</option>";
+}
+echo '</select>';
+//echo "<input type='text' class='textbox2' name='cellsFlat' id='cellsFlat' value='".$cellsFlat."'>";
+echo '</div>';
 
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 
-echo '<label>Comments:&nbsp</label>';
-echo '<br clear="all"/>';
-echo "<textarea rows=\"10\" cols=\"30\" name = \"comments\" id = \"comments\">";
+echo '<div class="pure-control-group">';
+echo '<label>Comments:</label>';
+echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
+echo '</div>';
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton'>";
+echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
+echo "<fieldset>";
 echo "</form>";
 if ($_POST['submit']) {
 	$comSanitized = escapehtml($_POST['comments']);
@@ -148,7 +162,7 @@ if ($_POST['submit']) {
 	$user = escapehtml($_POST['user']);
         include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    
-	echo $sql = "update gh_seeding set username='".$user."',crop='".$crop."', seedDate='".$year."-".
+	$sql = "update gh_seeding set username='".$user."',crop='".$crop."', seedDate='".$year."-".
 		$month."-".$day."', numseeds_planted=".$numseeds_planted.", comments='".$comSanitized."', 
 		varieties='".$varieties."', flats=".$flats.", cellsFlat=".$cellsFlat.
                 ",gen=".$gen." WHERE id=".$id;

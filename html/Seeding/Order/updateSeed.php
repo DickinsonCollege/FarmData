@@ -7,9 +7,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 ?>
 
-<h3> Seed Order and Inventory </h3>
+<center>
+<h2> Seed Order and Inventory </h2>
+</center>
 
-<form name='form' id = 'seedform' method='POST' action='insertSeedInfo.php?tab=seeding:ordert:ordert_input'>
+<form name='form' class='pure-form pure-form-aligned' id = 'seedform' method='POST' action='insertSeedInfo.php?tab=seeding:ordert:ordert_input'>
 <?php
 if ($_POST['submitCrop']) {
    $crop = escapehtml($_POST['crop']);
@@ -78,16 +80,21 @@ function convertFromGram($unit, $seeds) {
 }
 
    $units = array('GRAM', 'OUNCE', 'POUND');
+echo "<fieldset>";
 if (!$isCover) {
-   echo '<label for="rowft">Seeds per row foot:&nbsp;</label>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="rowft">Seeds per row foot:</label>';
    echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowft"';
    echo 'id="rowft" value="'.$rowft.'">';
-   echo '<br clear="all"/>';
-   echo '<input class="textbox25 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" ';
+   echo '</div>';
+   echo '<div class="pure-control-group">';
+   echo '<label>Seed unit:</label>';
+   echo '<input style="width:12ex;" type="text" onkeypress="stopSubmitOnEnter(event);" ';
    echo 'name ="seedsIn" id="seedsIn" value="'.
      number_format((float) convertFromGram($defUnit, $seeds), 1, '.','').'"> ';
-   echo '<label for="seedsIn">&nbsp; seeds per&nbsp;</label>';
-   echo "<div id='defUnitdiv' class='styled-select'>";
+   // echo '<label for="seedsIn">seeds per</label>';
+   echo '&nbsp;seeds /&nbsp;';
+//   echo "<div id='defUnitdiv' class='styled-select'>";
    echo "<select name='defUnit' id='defUnit' class='mobile-select'>";
    for ($i = 0; $i < count($units); $i++) {
       echo "<option value='".$units[$i]."'";
@@ -98,7 +105,7 @@ if (!$isCover) {
    }
    echo '</select>';
    echo '</div>';
-   echo '<br clear="all"/>';
+   echo '<div class="pure-control-group">';
    echo '<label for="rowftToPlant">Total row feet';
    if (isset($crop)) { 
     echo " of ".$crop;
@@ -107,20 +114,25 @@ if (!$isCover) {
    if (isset($year)) {
      echo " in ".$year;
    }
-   echo ':&nbsp;</label>';
+   echo ':</label>';
    echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rowftToPlant" ';
      echo 'id="rowftToPlant" value="'.$rowftToPlant.'">';
+   echo '</div>';
 } else {
-   echo '<label for="acres">Acres of '.$crop.' to plant in '.$year.':&nbsp;</label>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="acres">Acres of '.$crop.' to plant in '.$year.':</label>';
    echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="acres"';
    echo 'id="acres" value="'.$acres.'">';
-   echo '<br clear="all"/>';
-   echo '<label for="rate">Seeding rate for '.$crop.' (lbs/acre):&nbsp;</label>';
+   echo '</div>';
+   echo '<div class="pure-control-group">';
+   echo '<label for="rate">Seeding rate for '.$crop.' (lbs/acre):</label>';
    echo '<input class="textbox2 mobile-input single_table" type="text" onkeypress="stopSubmitOnEnter(event);" name ="rate"';
    echo 'id="rate" value="'.$rate.'">';
+   echo '</div>';
 }
+echo "</fieldset>";
 echo '<br clear="all"/>';
-echo '<input type="submit" name="updateSeedInfo" class = "submitbutton" ';
+echo '<input type="submit" name="updateSeedInfo" class = "submitbutton pure-button wide" ';
 echo ' value="Submit Seeding Information" onclick="return show_confirm();">';
 ?>
 <script type="text/javascript">

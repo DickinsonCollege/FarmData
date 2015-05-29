@@ -5,22 +5,23 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3 class="hi"><b>Add Pile ID</b></h3>
-<br clear="all"/>
-<label for="pileID">PileID:&nbsp;</label>
+<form name='form' class = "pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
+<center><h2 class="hi"><b>Add Pile ID</b></h2></center>
+<div class = "pure-control-group">
+<label for="pileID">PileID:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input" type="text" name="pileID" id="pileID">
-<br clear="all"/>
-<br clear="all"/>
-<div>
-<label for="size">Comments:&nbsp;</label> 
-<br clear="all"/>
-<textarea name='comments' rows = '20' cols = '30'>
-</textarea>
 </div>
+
+<div class = "pure-control-group">
+<label for="size">Comments:</label> 
+<textarea name='comments' rows = '10' cols = '30'></textarea>
+</div>
+
 <br clear="all"/>
-<input class="submitbutton" type="submit" name="add" value="Add" id="add">
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add">
 </form>
+<br clear="all"/>
+
 <?php
 if (isset($_POST['add'])) {
    $pileID = escapehtml(strtoupper($_POST['pileID']));

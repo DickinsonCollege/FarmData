@@ -1,21 +1,21 @@
 <div id="soil" style="display:none;" class="hiddentab">
 <?php
 echo '<div class="tabs tabs'.$_SESSION['num_soil'].'">';
-echo '<ul>';
+echo '<ul class="pure-menu-children">';
 if ($_SESSION['fertility']) {
-echo '<li id="li_soil_fert">  
+echo '<li id="li_soil_fert" class="pure-menu-item pure-menu-has-children">  
    <a href="/design.php?tab=soil:soil_fert" id = "soil_fert_a" class="inactivetab">Fertility</a> </li>';
 }
 if ($_SESSION['spraying']) {
-echo '<li id="li_soil_spray">  
+echo '<li id="li_soil_spray" class="pure-menu-item pure-menu-has-children">  
    <a href="/design.php?tab=soil:soil_spray" id = "soil_spray_a" class="inactivetab">Spraying</a> </li>';
 }
 if ($_SESSION['scouting']) {
-echo '<li id="li_soil_scout">  
+echo '<li id="li_soil_scout" class="pure-menu-item pure-menu-has-children">  
    <a href="/design.php?tab=soil:soil_scout" id = "soil_scout_a" class="inactivetab">Scouting</a> </li>';
 }
 if ($_SESSION['irrigation']) {
-echo '<li id="li_soil_irrigation">
+echo '<li id="li_soil_irrigation" class="pure-menu-item pure-menu-has-children">
    <a href="/design.php?tab=soil:soil_irrigation" id = "soil_irrigation_a" class="inactivetab">Irrigation</a> </li>';
 }
 echo '</ul>';
@@ -38,10 +38,10 @@ echo '
 
 <div id="soil_fert" style="display:none;" class="hiddentab">
 <?php echo '<div class="tabs tabs'.$_SESSION['num_fertility'].'">'; ?>
-<ul>
+<ul class="pure-menu-children">
 <?php
 if ($_SESSION['cover']) {
-echo '<li id="li_soil_cover">  
+echo '<li id="li_soil_cover" class="pure-menu-item pure-menu-has-children">  
    <a href="/design.php?tab=soil:soil_fert:soil_cover" id = "soil_cover_a" class="inactivetab">Cover Crop</a> </li>';
 }
 if ($_SESSION['compost']) {

@@ -10,11 +10,12 @@ if ($_SESSION['cover']) {
 }
 ?>
 
-<form name='form' method='POST' action="orderTable.php?tab=seeding:ordert:ordert_report">
-<h3 class="hi"> Seed Order Report </h3>
-<br clear="all"/>
-<label for='year'>Year:&nbsp;</label>
-<div class='styled-select'>
+<form name='form' class='pure-form pure-form-aligned' method='POST' action="orderTable.php?tab=seeding:ordert:ordert_report">
+<center>
+<h2 class="hi"> Seed Order Report </h2>
+</center>
+<div class='pure-control-group'>
+<label for='year'>Year:</label>
 <select name='year' id='year' class='mobile-select'>
 <option value="%">All</option>
 <?php
@@ -28,11 +29,10 @@ for ($i = $curYear - 10; $i <= $curYear + 1; $i++) {
 }
 ?>
 </select></div>
-<br clear="all">
 <?php
 if (!$isCover) {
-   echo '<label for="crop">Crop:&nbsp;</label>';
-   echo '<div class="styled-select">';
+   echo "<div class='pure-control-group'>";
+   echo '<label for="crop">Crop:</label> ';
    echo '<select name="crop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
    $result = mysql_query("SELECT distinct crop from plant");
@@ -41,11 +41,10 @@ if (!$isCover) {
    }
    echo '</select>';
    echo '</div>';
-   echo '<br clear="all"/>';
 }
 ?>
-<label for="source">Source:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="source">Source:</label>
 <select name='source' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
@@ -57,9 +56,8 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 
-<br clear="all"/>
-<label for="status">Order Status:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="status">Order Status:</label>
 <select name='status' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
@@ -71,9 +69,8 @@ for ($i = 0; $i < count($statusArray); $i++) {
 </select>
 </div>
 
-<br clear="all"/>
-<label for="order">Order Result By:&nbsp;</label>
-<div class="styled-select">
+<div class='pure-control-group'>
+<label for="order">Order Result By:</label>
 <select name='order' class='mobile-select'>
 <option value = "crop" selected="selected"> Crop </option>
 <option value = "organic"> Organic Status </option>
@@ -83,9 +80,10 @@ for ($i = 0; $i < count($statusArray); $i++) {
 if ($isCover) {
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-   echo '<table><tr><th>Vegetable</th><th>Cover Crop</th></tr><tr><td>';
-   echo '<label for="crop">Crop:&nbsp;</label>';
-   echo '<div class="styled-select">';
+   echo '<table class="pure-table pure-table-bordered">';
+   echo '<thead><tr><th align="center">Vegetable</th><th align="center">Cover Crop</th></tr></thead><tr><td>';
+   echo "<div class='pure-control-group'>";
+   echo '<label for="crop">Crop:</label> ';
    echo '<select name="crop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
    $result = mysql_query("SELECT distinct crop from plant");
@@ -99,13 +97,13 @@ if ($isCover) {
 
 <br clear="all">
 <br clear="all">
-<input class="submitbutton" type="submit" name="submitCrop" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submitCrop" value="Submit">
 
 <?php
 if ($isCover) {
    echo '</td><td>';
-   echo '<label for="covercrop">Crop:&nbsp;</label>';
-   echo '<div class="styled-select">';
+   echo "<div class='pure-control-group'>";
+   echo '<label for="covercrop">Crop:</label> ';
    echo '<select name="covercrop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
    $result = mysql_query("SELECT distinct crop from coverCrop");
@@ -116,7 +114,7 @@ if ($isCover) {
    echo '</div>';
    echo '<br clear="all">';
    echo '<br clear="all">';
-   echo '<input class="submitbutton" type="submit" name="submitCover" value="Submit">';
+   echo '<input class="submitbutton pure-button wide" type="submit" name="submitCover" value="Submit">';
    echo '</td></tr></table>';
 }
 ?>

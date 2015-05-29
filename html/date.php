@@ -1,7 +1,9 @@
 <?php
-if ($_SESSION['mobile']) echo "<br clear='all'/>";
+// if ($_SESSION['mobile']) echo "<br clear='all'/>";
 ?>
+<!--
 <div  class= "styled-select">
+-->
 <select name="month" id = "month" class="mobile-month-select">
 <?php
 if (!$dMonth) {
@@ -45,4 +47,6 @@ for($year = $curYear - 3; $year < $curYear+5; $year++) {
 }
 ?>
 </select>
+<!--
 </div>
+-->

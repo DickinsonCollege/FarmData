@@ -19,9 +19,10 @@ $tcurDay = $_GET['tday'];
 $genSel = $_GET['genSel'];
 $crop = escapehtml($_GET['crop']);
 $fieldID = escapehtml($_GET['fieldID']);
-$sql="select id, plantdate,dir_planted.crop,fieldID,bedft,rowsBed,bedft * rowsBed as rowft, hours, comments";
-$sql .= ", gen, username from dir_planted where dir_planted.crop like '".$crop."' and ".
-   "fieldID like '".$fieldID."' and gen like '".$genSel."' and plantdate between '".$year."-".
+
+$sql="select id, plantdate,dir_planted.crop,dir_planted.fieldID,bedft,rowsBed,bedft * rowsBed as rowft, bedft / length as beds, hours, comments";
+$sql .= ", gen, username from dir_planted, field_GH where dir_planted.fieldID = field_GH.fieldID and dir_planted.crop like '".$crop."' and ".
+   "dir_planted.fieldID like '".$fieldID."' and gen like '".$genSel."' and plantdate between '".$year."-".
    $month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by plantdate ";
 if ($crop != "%") {
    $total = "select sum(bedft * rowsBed) as totalSum from dir_planted where ".
@@ -40,8 +41,9 @@ echo mysql_error();
 
 $result=mysql_query($sql);
 echo mysql_error();
-echo "<table border>";
-echo "<caption> Direct Seeding Report for ";
+echo "<table class='pure-table pure-table-bordered'>";
+echo "<center>";
+echo "<h2> Direct Seeding Report for ";
 if ($crop == "%") {
   echo "All Crops in ";
 } else {
@@ -59,9 +61,18 @@ if ($_SESSION['gens']) {
       echo " of Succession ".$genSel;
    }
 }
-echo "</caption>";
-echo "<tr><th>Date of Seeding</th><th>Crop</th>";
-echo "<th>Field</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th>";
+echo "</h2>";
+echo "</center>";
+echo "<thead><tr><th>Date of Seeding</th><th>Crop</th>";
+echo "<th>Field</th>";
+if ($_SESSION['bedft']) {
+echo "<th>Bed Feet</th>";
+}
+else {
+echo "<th>Beds</th>";
+}
+
+echo "<th>Rows/Bed</th><th>Row Feet</th>";
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
@@ -72,7 +83,7 @@ echo "<th> Comments </th>";
 if ($_SESSION['admin']) {
   echo "<th>User</th><th>Edit</th><th>Delete</th>";
 }
-echo "</tr>";
+echo "</tr></thead>";
 while ( $row = mysql_fetch_array($result)) {
    echo "<tr><td>";
    echo  $row['plantdate'];
@@ -81,7 +92,12 @@ while ( $row = mysql_fetch_array($result)) {
    echo "</td><td>";
    echo $row['fieldID'];
    echo "</td><td>";
-   echo number_format((float) $row['bedft'], 1, '.', '');
+   if ($_SESSION['bedft']) {
+      echo number_format((float) $row['bedft'], 1, '.', '');
+   }
+   else {
+      echo number_format((float) $row['beds'], 2, '.', '');
+   }
    echo "</td><td>";
    echo $row['rowsBed'];
    echo "</td><td>";
@@ -103,7 +119,7 @@ while ( $row = mysql_fetch_array($result)) {
          "&id=".$row['id']."&crop=".encodeURIComponent($_GET['crop']).
          "&genSel=".$_GET['genSel']."&fieldID=".encodeURIComponent($_GET['fieldID']).
          "&tab=seeding:direct:direct_report&submit=Submit\">";
-      echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"";
+      echo "<input type=\"submit\" class=\"editbutton wide pure-button\" value=\"Edit\"";
       echo 'onclick="return show_warning();">';
       echo "</form> </td>";
 
@@ -112,7 +128,7 @@ while ( $row = mysql_fetch_array($result)) {
           encodeURIComponent($_GET['crop']).
          "&genSel=".$_GET['genSel']."&fieldID=".encodeURIComponent($_GET['fieldID']).
          "&tab=seeding:direct:direct_report&submit=Submit\">";
-      echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+      echo "<input type=\"submit\" class=\"deletebutton wide pure-button\" value=\"Delete\"";
       echo 'onclick="return show_delete_warning();">';
       echo "</form> </td>";
    }
@@ -121,29 +137,36 @@ while ( $row = mysql_fetch_array($result)) {
 echo "</table>";
 if($crop != '%') {
         echo '<br clear="all"/>';
+   echo "<div class='pure-form pure-form-aligned'>";
    while($row5 = mysql_fetch_array($btotalResult)){
-      echo '<label for="total"> Total Bed Feet Planted: &nbsp;</label> '.
-              '<input disabled type="textbox" name="total" style="width: '.
-              '100px;" id="total" class="textbox2" value='
+      echo '<div class="pure-control-group">';
+      echo '<label for="total"> Total Bed Feet Planted:</label> '.
+              '<input disabled type="textbox" name="total" id="total" class="textbox2" value='
               .number_format((float) $row5['totalSum'], 1, '.', '').'>';
+      echo "</div>";
    }
-        echo '<br clear="all"/>';
+        //echo '<br clear="all"/>';
    while($row5 = mysql_fetch_array($totalResult)){
-      echo '<label for="total"> Total Row Feet Planted: &nbsp;</label>'.
-             ' <input disabled type="textbox" name="total" style="width: '.
-             '100px;" id="total" class="textbox2" value='.
+      echo '<div class="pure-control-group">';
+      echo '<label for="total"> Total Row Feet Planted:</label>'.
+             ' <input disabled type="textbox" name="total" id="total" class="textbox2" value='.
              number_format((float) $row5['totalSum'], 1, '.', '').'>';
+      echo "</div>";
    }
-        echo '<br clear="all"/>';
+        echo '</div>';
 }
         echo '<br clear="all"/>';
+echo '<div class="pure-g">';
+echo '<div class="pure-u-1-2">';
 echo "<form name='form' method='POST' action='/down.php'>";
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
  ?>
-<input class = "submitbutton" type="submit" name="submit" value="Download Report">
+<input class = "submitbutton wide pure-button" type="submit" name="submit" value="Download Report">
 <?php
-echo '</form>';
+echo '</form></div>';
+echo '<div class="pure-u-1-2">';
 echo '<form method="GET" action = "plantReport.php">';
 echo '<input type="hidden" name="tab" value="seeding:direct:direct_report">';
-echo '<input type="submit" class="submitbutton" value = "Run Another Report"></form>';
+echo '<input type="submit" class="submitbutton wide pure-button" value = "Run Another Report"></form>';
+echo '</div></div>';
 ?>

@@ -6,7 +6,7 @@
       xmlhttp.open('GET', 'get_device.php?fieldID='+field, false);
       xmlhttp.send();
       devDiv.innerHTML= '<div class="styled-select" id="irrigationDiv'+row+'"> <select name ="irrigation' + 
-         row + '" id="irrigation' + row + '" class="mobile-select" onchange="enableCheckBox('+row+');">' +
+         row + '" id="irrigation' + row + '" class="wide" onchange="enableCheckBox('+row+');">' +
          xmlhttp.responseText + '</select></div>';
       enableCheckBox(row);
    }
@@ -16,8 +16,12 @@
       function addRows(){
          numRows++;
          document.getElementById('numRows').value = numRows;
+/*
          var table   = document.getElementById('fieldTable');
          var row     = table.insertRow(numRows);
+*/
+         var table   = document.getElementById('fieldTable').getElementsByTagName('tbody')[0];
+         var row     = table.insertRow(-1);
          var id      = 'row' + numRows;
          var name    = 'row' + numRows;
          xmlhttp     = new XMLHttpRequest();
@@ -25,17 +29,17 @@
          xmlhttp.send();
          var cell0   = row.insertCell(0);
          cell0.innerHTML = '<div class="styled-select" id="fieldDiv'+numRows+'"> <select name ="fieldID' + numRows +
-             '" id="fieldID' + numRows + '" class="mobile-select" onchange=\'enableCheckBox('+numRows+
+             '" id="fieldID' + numRows + '" class="wide" onchange=\'enableCheckBox('+numRows+
              ');getDevices('+numRows+');\'>' +
-                           '<option value = 0 selected disabled> FieldID</option>' + xmlhttp.responseText +
+                           '<option value = 0 selected disabled> Field Name</option>' + xmlhttp.responseText +
                            '</select></div>';
          var cell1   = row.insertCell(1);
          cell1.innerHTML = '<div class="styled-select" id="irrigationDiv'+numRows+'"> <select name ="irrigation' + numRows +
-                           '" id="irrigation' + numRows + '" class="mobile-select" onchange="enableCheckBox('+numRows+');">' +
+                           '" id="irrigation' + numRows + '" class="wide" onchange="enableCheckBox('+numRows+');">' +
                            '<option value = 0 selected disabled> Device</option>' +
                            '</select></div>';
          var cell2   = row.insertCell(2);
-         cell2.innerHTML = '<div id="checkBox'+numRows+'" class="switch"><input type="checkbox" class="toggle" id="check'+numRows+'" name="check'+numRows+'" value="checked'+numRows+'" disabled onchange="setElapsedTime('+numRows+');"><label for="check'+numRows+'" style="margin-right: 0; margin-top:8px;"></label><input type="hidden" name="checked_first'+numRows+'" id="checked_first'+numRows+'" value=false></div>';
+         cell2.innerHTML = '<div id="checkBox'+numRows+'" class="switch"><center><input type="checkbox" class="toggle pure-checkbox" id="check'+numRows+'" name="check'+numRows+'" value="checked'+numRows+'" disabled onchange="setElapsedTime('+numRows+');"><label for="check'+numRows+'" style="margin-right: 0; margin-top:8px;"></label><input type="hidden" name="checked_first'+numRows+'" id="checked_first'+numRows+'" value=false></center></div>';
          var cell3 = row.insertCell(3);
          cell3.innerHTML="0";
 
@@ -144,7 +148,8 @@
             } else {
               echo 'butt.value = "Comments Updated!";';
             }?>
-            butt.style.background="green";
+            // butt.style.background="green";
+            butt.style.setProperty("background", "green", "important");
             window.setTimeout(changePumpButBack, 2000);
          }
          //showAlert("Pump Log Updated!");

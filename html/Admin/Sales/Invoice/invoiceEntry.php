@@ -16,20 +16,19 @@ $target=$_GET['target'];
 <script type="text/javascript">
 function addToDistribution() {
   var id = <?php echo $currentID;?>;
-  console.log(id);
 }
 </script>
-<br clear="all"/>
-<table >
 <?php
-echo '<caption>Date:&nbsp;'.$listDate.'&nbsp Customer:&nbsp;'.$target.
-   '&nbsp; Invoice #:&nbsp;'.$invoiceID.'</caption>';
+echo '<center><h2>Date:&nbsp;'.$listDate.'<br> Customer:&nbsp;'.$target.
+   '<br> Invoice #:&nbsp;'.$invoiceID.'</h2></center>';
 ?>
-<tr>    <th>Crop_Product:</th>
-        <th>Cases:</th>
-        <th>Price_case:</th>
+<div class='pure-form pure-form-aligned'>
+<table class="pure-table pure-table-borded">
+<thead><tr>    <th>Crop/Product</th>
+        <th>Cases</th>
+        <th>Price per Case</th>
 	<th> </th>
-</tr>
+</tr></thead>
 
 
 <?php
@@ -42,11 +41,8 @@ if($_GET['deleteProduct']){
 
 <script>
         function checkIfOnList(){
-       //	console.log(e);
 	var id=<?php echo $currentID; ?>;
         var eValue= document.getElementById('CP').value;
-//        console.log("HIHIHI");  
-//      console.log(id);
         xmlhttp= new XMLHttpRequest();
         xmlhttp.open("GET", "invoiceCheckInList.php?product=" +
           encodeURIComponent(eValue) + "&currentID=" + id +
@@ -54,7 +50,6 @@ if($_GET['deleteProduct']){
            false);
         xmlhttp.send();
         var responseVar=xmlhttp.responseText;
-//        console.log(responseVar);
         var c =document.getElementById('cases');
         var p =document.getElementById('pricePerCase');
         if(responseVar){        
@@ -67,9 +62,10 @@ if($_GET['deleteProduct']){
         }
 }
 </script>
+</div>
 
 <?php
-echo "<form name='sendValue' method='POST' action='".$_SERVER['PHP_SELF']."?year=".$listYear.
+echo "<form name='sendValue' class='pure-form pure-form-aligned' method='POST' action='".$_SERVER['PHP_SELF']."?year=".$listYear.
   "&month=".$listMonth."&day=".$listDay."&currentID=".$currentID."&invoiceID=".$invoiceID.
   "&target=".encodeURIComponent($target)."&tab=admin:admin_sales:invoice:editinvoice'>";
 /*
@@ -91,7 +87,7 @@ $target=$_GET['target'];
 <option value=1  selected> Crop/Product </option>
 <?php
 
-$sql="SELECT crop FROM plant where active=1 union SELECT product FROM product";
+$sql="SELECT crop from (select crop FROM plant where active=1 union SELECT product as crop FROM product where active=1) as tmp order by crop";
 $result=mysql_query($sql);
 echo mysql_error();
 while($row=mysql_fetch_array($result)){
@@ -102,11 +98,11 @@ while($row=mysql_fetch_array($result)){
 </div>
 </td>
 
-<td> <input type="text" name="cases" id="cases" placeholder="number of cases"> </td>
-<td> $<input type="text" name="pricePerCase" id="pricePerCase" placeholder="price Per Case"> </td>
+<td> <input type="text" name="cases" id="cases" size="3" class="wide"> </td>
+<td> <input type="text" name="pricePerCase" id="pricePerCase"  size="2" class="wide"> </td>
 
 <td>
-<input type="submit" name="submit" value="Submit" class="genericbutton">
+<input type="submit" name="submit" value="Submit" class="genericbutton pure-button wide">
 </td>
 </tr>
 </table>
@@ -146,10 +142,13 @@ if(isset($_POST['submit'])){
 
 <br clear="all"/>
 <form name='comment' method='POST'>
+<!--
 <label for="comment">Add Notes</label>
 <br clear="all"/>
+-->
+<h2>Add Notes</h2>
 <?php
-echo "<textarea name=\"comments\" rows=\"20\" col=\"30\" class='mobile-comments'>";
+echo "<textarea name=\"comments\" rows=\"5\" col=\"30\" class='mobile-comments'>";
 $sqlGetValue="SELECT comments from invoice_master where invoice_no=".$currentID;
 
 if(isset($_POST['submit_notes'])){
@@ -164,7 +163,7 @@ echo $row2['comments'];
 </textarea>
 <br clear="all"/>
 <br clear="all"/>
-<input type="submit" name="submit_notes" class = "submitbutton" value="Update Notes" >
+<input type="submit" name="submit_notes" class = "submitbutton pure-button wide" value="Update Notes" >
 <!--
 <br clear="all"/>
 <br clear="all"/>

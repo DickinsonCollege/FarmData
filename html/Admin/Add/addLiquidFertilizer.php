@@ -5,14 +5,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>">
-<h3 class="hi"><b>Add Liquid Fertilizer</b></h3>
+<form name='form' method='post' class = "pure-form pure-form-aligned" action="<?php $_PHP_SELF ?>">
+<center><h2 class="hi"><b>Add Liquid Fertilizer</b></h2></center>
 <br clear="all"/>
-<label for="task">Fertilizer Name:&nbsp;</label>
+<div class = "pure-control-group">
+<label for="task">Fertilizer Name:</label>
 <input class="textbox3 mobile-input" type="text" name="name" id="name">
+</div>
 <br clear="all"/>
-<br clear="all"/>
-<input class="submitbutton" type="submit" name="add" value="Add" id="add">
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add">
 </form>
 <?php
 if (isset($_POST['add'])) {

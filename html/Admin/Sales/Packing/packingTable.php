@@ -34,7 +34,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    
    $result = mysql_query($sql);
    
-   echo "<table>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    $crpProd = $_GET['crop_product'];
    if ($crpProd === "%") {
       $crpProd = "All Crops/Products";
@@ -56,18 +56,18 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       $dat = "From: ".$monthName." ".$day." ".$year."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To: ".$tcurMonthName." ".$tcurDay." ".$tcurYear;
    }
 
-   echo "<caption>Packing Report for ".$crpProd."<br>
+   echo "<center><h2>Packing Report for ".$crpProd."<br>
          To: ".$trg." of Grade: ".$grd."<br>
-         ".$dat."</caption>";
+         ".$dat."</h2></center>";
 
-   echo "<tr><th>Date</th>
+   echo "<thead><tr><th>Date</th>
       <th>Crop/Product</th>
       <th>Target</th>
       <th>Grade</th>
       <th>Amount</th>
       <th>Unit</th>
       <th style='width:20%'>Comments</th>
-      <th>Bring Back</th><th>Edit</th><th>Delete</th></tr>";
+      <th>Bring Back</th><th>Edit</th><th>Delete</th></tr></thead>";
    while ($row = mysql_fetch_array($result)) {
       echo "<tr>";
       echo "<td>";
@@ -108,7 +108,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
           "&crop_product=".encodeURIComponent($crop_product).
           "&target=".encodeURIComponent($target)."&grade=".$grade."&bringback=".$bringback.
           "&tab=admin:admin_sales:packing:packing_report\">";
-      echo "<input type=\"submit\" class=\"editbutton\" value=\"Edit\"></form> </td>";
+      echo "<input type=\"submit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form> </td>";
 
       echo "<td><form method=\"POST\" action=\"packingTable.php?month=".
          $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
@@ -116,17 +116,23 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "&crop_product=".encodeURIComponent($crop_product).
          "&target=".encodeURIComponent($target)."&grade=".$grade."&bringback=".$bringback.
           "&tab=admin:admin_sales:packing:packing_report\">";
-      echo "<input type=\"submit\" class=\"deletebutton\" value=\"Delete\"";
+      echo "<input type=\"submit\" class=\"deletebutton pure-button wide\" value=\"Delete\"";
       echo "onclick='return warn_delete();'></form></td>";
 
       echo "</tr>";
    }
    echo "</table>";
    echo "<br clear='all'>";
+echo "<div class = 'pure-g'>";
+echo "<div class = 'pure-u-1-2'>";
 echo "<form name='form' method='POST' action='/down.php'>";
 echo "<input type=\"hidden\" name=\"query\" value=\"".escapehtml($sql)."\">";
-echo "<input class='submitbutton' type='submit' name='submit' value='Download Report'>";
+echo "<input class='submitbutton pure-button wide' type='submit' name='submit' value='Download Report'>";
 echo "</form>";
+echo "</div>";
+
+echo "<div class = 'pure-u-1-2'>";
 echo "<form method='POST' action='packingReport.php?tab=admin:admin_sales:packing:packing_report'>";
-echo "<input type='submit' class='submitbutton' value='Run Another Report'></form>";
+echo "<input type='submit' class='submitbutton pure-button wide' value='Run Another Report'></form>";
+echo "</div>";
 ?>

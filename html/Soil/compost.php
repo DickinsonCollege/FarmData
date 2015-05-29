@@ -5,8 +5,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3 >Compost Application Form</h3>
-<form name='form' method='post' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_input">
+<center>
+<h2>Compost Application Form</h2>
+</center>
+<form name='form' method='post' class='pure-form pure-form-aligned' action="<?php $_PHP_SELF ?>?tab=soil:soil_fert:soil_compost:compost_input">
 <script>
         function show_confirm() {
         var i = document.getElementById("month");
@@ -66,15 +68,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
         }
 </script>
 
-<br clear="all"/>
+<div class="pure-control-group">
 <label for="Seed">Date:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
+</div>
 
-<br clear="all"/>
-<label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
+<div class="pure-control-group">
+<label for="fieldID">Name of Field: </label>
 <select name ="fieldID" id="fieldID" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
@@ -85,9 +87,8 @@ echo "\n<option value= '".$row1[fieldID]."'>".$row1[fieldID]."</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="percent"> Percent of Field Spread:&nbsp; </label>
-<div class="styled-select" id="field">
+<div class="pure-control-group">
+<label for="percent"> Percent of Field Spread: </label>
 <select name ="percent" id="percent" class='mobile-select'>
 <?php
 $result= 10;
@@ -98,10 +99,9 @@ $result= $result + 10;
 echo '</select>';
 echo '</div>'
 ?>
-<br clear="all"/>
 
-<label for="pile"> Compost Pile ID:&nbsp; </label>
-<div class="styled-select">
+<div class="pure-control-group">
+<label for="pile"> Compost Pile ID: </label>
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled> Pile ID</option>
 <?php
@@ -112,15 +112,19 @@ echo "\n<option value= '".$row1['pileID']."'>".$row1['pileID']."</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="pile"> Tons per Load:&nbsp; </label>
+
+<div class="pure-control-group">
+<label for="pile"> Tons per Load: </label>
 <input onkeypress="stopSubmitOnEnter(event)" id ="tperload"name="tperload" type="text" class="textbox2 mobile-input single_table" value=0 >
-<br clear="all"/>
-<label for="pile"> Number of Loads: &nbsp; </label>
+</div>
+
+<div class="pure-control-group">
+<label for="pile"> Number of Loads:  </label>
 <input id ="numloads"name="numloads" onkeypress= 'stopSubmitOnEnter(event)'; type="text" class="textbox2 mobile-input single_table" value=0 >
-<br clear="all"/>
-<label for="incorp">Incorporation Tool: &nbsp;</label>
-<div class="styled-select" id="incorp_toolis">
+</div>
+
+<div class="pure-control-group">
+<label for="incorp">Incorporation Tool:</label>
 <select name ="incorp_tool" id="incorp_tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool </option>
 <?php
@@ -131,9 +135,9 @@ echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
 echo '</select>';
 echo '</div>';
 ?>
-<br clear="all"/>
-<label for="incorpTime">Incorporation Timing: &nbsp;</label>
-<div class="styled-select">
+
+<div class="pure-control-group">
+<label for="incorpTime">Incorporation Timing: </label>
 <select name="incorpTiming" id="incorpTiming" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Timing </option>
 <option value = "Immediate"> Immediate </option>
@@ -142,17 +146,22 @@ echo '</div>';
 <option value = "Not Incorporated"> Not Incorporated </option>
 </select>
 </div>
-<br clear="all"/>
+
+<div class="pure-control-group">
 <label for="comments"> Comments: </label>
-<br clear="all"/>
-<textarea name="comments" rows="10" cols="30">
+<textarea name="comments" rows="5" cols="30">
 </textarea>
 <br clear="all"/>
 <br clear="all"/>
-<input onclick="return show_confirm();"type="submit" class = "submitbutton" name="submit" id="submit" value="Submit">
-<br clear="all"/>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input onclick="return show_confirm();" type="submit" class = "submitbutton pure-button wide" name="submit" id="submit" value="Submit">
 </form>
-<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton" value = "View Table"></form>
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "/Soil/compostReport.php?tab=soil:soil_fert:soil_compost:compost_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);

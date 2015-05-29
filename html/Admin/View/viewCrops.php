@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $farm = $_SESSION['db'];
 $result = mysql_query("Select crop, units, units_per_case, dh_units, active from plant");
 
-echo "<table>";
+echo "<table class = 'pure-table pure-table-bordered'>";
 
 /**
 echo "<colgroup>";
@@ -18,8 +18,8 @@ echo "</colgroup>";
 **/
 
 // Table Header
-echo "<caption> Crop Table </caption>";
-echo "<tr>
+echo "<center><h2>Crop Table </h2><center>";
+echo "<thead><tr>
 	<th>Crop</th>
 	<th>Default Unit</th>";
 // If Dickinson Version Database, include units_per_case and dh_units
@@ -27,7 +27,7 @@ if ($_SESSION['sales_invoice']) {
 	echo "<th>Units Per Case</th>
 		<th>Invoice Units</th>";
 }
-echo "<th>Active?</th></tr>";
+echo "<th>Active?</th></tr></thead>";
 
 
 // Display Data

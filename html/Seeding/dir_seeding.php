@@ -4,8 +4,11 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
+
+<div class="layout">
 
 <script type="text/javascript">
 function show_confirm() {
@@ -89,10 +92,14 @@ if ($_SESSION['seed_order']) {
 }
 </script>
 
-<form name='form' id='seedform' method='post' action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:direct:direct_input">
-<h3 class="hi"> Direct Seeding Input Form</h3>
-<br clear="all"/>
-<label for="planted">Date of Seeding:&nbsp;</label>
+<form name='form' id='seedform' class='pure-form pure-form-aligned' method='post' 
+  action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:direct:direct_input">
+<center>
+<h2 class="hi"> Direct Seeding Input Form</h2>
+</center>
+<fieldset>
+<div class="pure-control-group">
+<label for="planted">Date of Seeding:</label>
 <?php
 if ($_SESSION['mobile']) echo "<br clear='all'/>";
 if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
@@ -100,35 +107,40 @@ if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
    $dMonth = $_POST['month'];
    $dYear = $_POST['year'];
 }
+if (isset($_POST['fieldID'])) {
+   $field = escapehtml($_POST['fieldID']);
+}
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
 
-<label for="fieldcrop">Name of Field:&nbsp;</label>
-<div class="styled-select">
+<div class="pure-control-group">
+<label for="fieldcrop">Name of Field:</label>
 <select name="fieldID" id= "fieldID" class='mobile-select'>
-<option disabled selected="selected" value = 0  style="display:none; width: auto;"> Field Name</option>
 <?php
+echo '<option disabled value = 0  style="display:none; width: auto;" ';
+if (!isset($field)) {
+   echo 'selected';
+}
+echo '> Field Name</option>';
 $result=mysql_query("Select fieldID from field_GH where active = 1");
 while ($row1 =  mysql_fetch_array($result)){
-  echo "\n<option value= \"".$row1['fieldID']."\">".$row1['fieldID']."</option>";
+  $fieldID = $row1['fieldID'];
+  echo "\n<option value= \"".$fieldID."\"";
+  if (isset($field) && $field == $fieldID) {
+   echo ' selected';
+  }
+  echo ">".$fieldID."</option>";
 }
 ?>
 </select>
 </div>
 <input type="hidden" name="numRows" id="numRows" value=0>
-<?php 
-if (!$_SESSION['mobile']) {
-   echo "<label> &nbsp;</label>";
-   echo "<br clear='all'>";
-}
-//include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
-?>
-<label>Crop:&nbsp;</label>
-<div class="styled-select">
-<select name="cropButton" id="cropButton" class="mobile-select">
-<option disabled selected value="0">Crop</option>
+<div class="pure-control-group">
+<label>Crop:</label>
 <?php
+echo '<select name="cropButton" id="cropButton" class="mobile-select">';
+echo '<option disabled selected value="0">Crop</option>';
 $sql = "select distinct crop from plant where active=1";
 $res = mysql_query($sql);
 while ($row = mysql_fetch_array($res)) {
@@ -160,8 +172,11 @@ function addRow() {
       numRows++;
       var nr = document.getElementById("numRows");
       nr.value = numRows;
-      var table = document.getElementById("seedTable");
-      var row = table.insertRow(numRows);
+      // var table = document.getElementById("seedTable");
+      // var row = table.insertRow(numRows - 1);
+      var table = document.getElementById("seedTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
+
       row.id = "row"+numRows;
       row.name = "row"+numRows;
       var cell0 = row.insertCell(0);
@@ -199,12 +214,11 @@ function removeRow() {
 }
 </script>
 
-<br clear = "all"/>
 <?php
 if ($_SESSION['seed_order']) {
    echo '<br clear = "all"/>';
-   echo '<table id="seedTable" name="seedTable">';
-   echo '<tr><th>Seed&nbsp;Code</th><th>';
+   echo '<table id="seedTable" name="seedTable" class="pure-table pure-table-bordered">';
+   echo '<thead><tr><th>Seed&nbsp;Code</th><th>';
    if (!$_SESSION['bedft']) {
      echo "Beds Seeded</th></tr>";
    } else {
@@ -213,21 +227,28 @@ if ($_SESSION['seed_order']) {
      echo '<option value = "bed" selected>Bed Feet Seeded: </option>';
      echo '<option value = "row">Row Feet Seeded: </option>';
      echo '</select>';
-     echo '</div></th></tr>';
+     echo '</div></th></tr></thead>';
    }
-   echo '</table>';
+   echo '<tbody></tbody></table>';
    echo '<br clear = "all"/>';
    // echo '<br clear = "all"/>';
-   echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton" onClick="addRow();"';
+   echo '<div class="pure-g">';
+   echo '<div class="pure-u-1-2">';
+   echo '<input type="button" id="addVariety" name="addVariety" class="genericbutton pure-button wide" onClick="addRow();"';
    echo ' value="Add Variety">';
-   echo '&nbsp;&nbsp';
-   echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton" ';
+   echo "</div>";
+   echo '<div class="pure-u-1-2">';
+   // echo '&nbsp;&nbsp';
+   echo '<input type="button" id="removeVariety" name="removeVariety" class="genericbutton pure-button wide" ';
    echo 'onClick="removeRow();" value="Remove Variety">';
+   echo "</div>";
+   echo "</div>";
    echo '<p>';
   //  echo '<br clear = "all"/>';
    // echo '<br clear = "all"/>';
 }
 
+echo '<div class="pure-control-group">';
 if ($_SESSION['seed_order']) {
   echo '<label>Total number of ';
   if ($_SESSION['bedft']) {
@@ -235,26 +256,26 @@ if ($_SESSION['seed_order']) {
   } else {
      echo 'Beds';
   }
-  echo ' Seeded:&nbsp;</label>';
+  echo ' Seeded:</label> ';
 } else if ($_SESSION['bedft']) {
-  echo '<div class="styled-select">';
+  // echo '<div class="styled-select">';
   echo '<select name ="rowBed" id="rowBed" class="mobile-select">';
   echo '<option value = "bed" selected>Bed Feet Seeded: </option>';
   echo '<option value = "row">Row Feet Seeded: </option>';
-  echo '</select>';
-  echo '</div>';
+  echo '</select>&nbsp;';
+//  echo '</div>';
 } else {
   echo '<label for="bed">';
-  echo "Beds Seeded:&nbsp;";
+  echo "Beds Seeded:";
   echo '</label>';
 }
 ?>
-<input class="textbox2 mobile-input single_table" type="text" onkeypress= 'stopSubmitOnEnter(event);' 
+<input type="text" onkeypress= 'stopSubmitOnEnter(event);' 
 <?php if ($_SESSION['seed_order']) { echo ' readonly '; } ?>
 name ="bedftv" id="bedftv" value ="0">
-<br clear = "all"/>
-<div class="styled-select">
-<label for="rowbd">Rows per bed:&nbsp;</label>
+</div>
+<div class="pure-control-group">
+<label for="rowbd">Rows per bed:</label>
 <select name ="rowbd" id="rowbd" class='mobile-select'>
 <option value = 1 selected>1</option>
 <?php
@@ -268,45 +289,49 @@ while ($cons<8) {
 ?>
 </select>
 </div>
-<br clear = "all"/>
+
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Seeding/getGen.php';
 if ($_SESSION['labor']) {
 echo '
-<label for="numWorkers">Number of workers (optional):&nbsp;</label>
+<div class="pure-control-group">
+<label for="numWorkers">Number of workers (optional):</label>
 <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input single_table">
-<br clear="all"/>
+</div>
 
+<div class="pure-control-group">
 <label>Enter time in Hours or Minutes:</label>
-<br clear="all"/>
 <input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" 
    class="textbox2 mobile-input-half single_table" value="1">
-<div class="styled-select">
 <select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
-</div> 
-<br clear = "all"/> ';
+</div> ';
 }
 ?>
 
-<div>
+<div class="pure-control-group">
 <label for="comments">Comments:</label>
-<br clear = "all"/>
 <textarea name ="comments"
-rows="10" cols="30">
+rows="5" cols="30">
 </textarea>
 </div>
 <br clear = "all"/>
-<input class="submitbutton" type="button" value="Submit" 
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input class="submitbutton pure-button wide" type="button" value="Submit" 
  onclick= "show_confirm();">
+<fieldset>
 </form>
+</div>
 
-<br clear = "all"/>
+<div class="pure-u-1-2">
 <form method="GET" action = "plantReport.php">
 <input type="hidden" name="tab" value="seeding:direct:direct_report">
-<input type="submit" class="submitbutton" value = "View Table"></form>
+<input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+</div>
+</div>
 <?php
 //if(isset($_POST['submit'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

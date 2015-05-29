@@ -2,28 +2,31 @@
 
 <br clear="all"/>
 <br clear="all"/>
-<!--
 <center>
--->
 <?php
   echo ' <table id="cropTable"';
-  if (!$_SESSION['mobile']) {
-     echo ' style="width:10%"';
-  }
+//  if (!$_SESSION['mobile']) {
+//     echo ' style="width:10%"';
+//  }
+     echo ' style="width:auto" class="pure-table pure-table-bordered" ';
   echo '>';
 ?>
-<tr><th>Crops</th></tr>
+<thead><tr><th>Crops</th></tr></thead>
+<tbody></tbody>
 </table>
 <br clear="all"/>
-<input type="button" id="addCrop" name="addCrop" class="submitbutton" onClick="addCropRow();"
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="button" id="addCrop" name="addCrop" class="submitbutton pure-button wide" onClick="addCropRow();"
 value="Add Crop">
-&nbsp;&nbsp;&nbsp;
-<input type="button" id="removeCrop" name="removeCrop" class="submitbutton" onClick="removeCropRow();"
+</div>
+<div class="pure-u-1-2">
+<input type="button" id="removeCrop" name="removeCrop" class="submitbutton pure-button wide" onClick="removeCropRow();"
 value="Remove Crop">
+</div>
+</div>
 <br clear="all"/>
-<!--
 </center>
--->
 
 <script type="text/javascript">
    var numCropRows = 0;
@@ -32,9 +35,12 @@ value="Remove Crop">
       numCropRows++;
       var numCrops = document.getElementById("numCropRows");
       numCrops.value = numCropRows;
-      var table = document.getElementById("cropTable");
+      //var table = document.getElementById("cropTable");
       // table.style = "width:10%";
-      var row    = table.insertRow(numCropRows);
+      //var row    = table.insertRow(numCropRows);
+      var table = document.getElementById("cropTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(-1);
+
       row.id="cropRow" + numCropRows;
       var cell0 = row.insertCell(-1);
       var cropID = '<?php
@@ -45,7 +51,7 @@ value="Remove Crop">
        ?>';
       cell0.innerHTML = '<div class="styled-select<?php 
   if (!$_SESSION['mobile']) { echo "2"; }?>" id="cropDiv'+numCropRows+
-        '"> <select class="mobile-select inside_table" name ="crop' + 
+        '"> <select class="wide" name ="crop' + 
         numCropRows +'" id="crop' + numCropRows + '" >' +
        '<option value = 0 selected disabled> Crop </option>' +  cropID + '</select></div>';
    }

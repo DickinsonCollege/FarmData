@@ -4,23 +4,26 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 ?>
-<form name='form' id='test'  method='GET' action="compostTable.php">
+<form name='form' id='test' class='pure-form pure-form-aligned' method='GET' action="compostTable.php">
 <input type="hidden" name="tab" value="soil:soil_fert:soil_compost:compost_report">
-<h3 class="hi"> Compost Report </h3>
-<br clear="all"/>
-<label for='date'> From:&nbsp; </label>
+<center>
+<h2 class="hi"> Compost Report </h2>
+</center>
+<div class="pure-control-group">
+<label for='date'> From:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for='date2'> To:&nbsp; </label>
+</div>
+<div class="pure-control-group">
+<label for='date2'> To:</label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
+</div>
 
-<br clear="all">
-<label for='pileIDlabel'>Pile ID:&nbsp;</label>
-<div class='styled-select'>
+<div class="pure-control-group">
+<label for='pileIDlabel'>Pile ID:</label>
 <select class='mobile-select' id='pileID' name='pileID'>
 <option value='%'>All</option>
 <?php
@@ -32,12 +35,12 @@ while ($row = mysql_fetch_array($result)) {
 </select>
 </div>
 
-<br clear="all"/>
 <?php
 	$active = 'active';
 	include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
 
 <br clear="all"/>
-<input type="submit" class = "genericbutton" name="submit" value="Submit">
+<input type="submit" class = "genericbutton pure-button wide" name="submit" value="Submit">
+</form>
 

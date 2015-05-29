@@ -12,21 +12,16 @@
  }
 
  function addInput() {
-      var newdiv = document.getElementById('seedInput');
-        //for (i=0;i<newdiv.options.length-1;i++) {
-        //ne/wdiv.remove(i);
-//      }
-//document.getElementById(div).appendChild(newdiv);
-var e = document.getElementById("cropButton");
-var strUser= encodeURIComponent(e.value);
-//console.log(strUser);
-xmlhttp= new XMLHttpRequest();
-xmlhttp.open("GET", "update_trans.php?crop="+strUser, false);
-xmlhttp.send();
-//console.log(xmlhttp.responseText);
-newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
-   "<select name= 'seedDate' id= 'seedDate' onchange='getflats();'>" + 
-   xmlhttp.responseText+"</select> </div>";
+   var newdiv = document.getElementById('seedInput');
+   var e = document.getElementById("cropButton");
+   var strUser= encodeURIComponent(e.value);
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "update_trans.php?crop="+strUser, false);
+   xmlhttp.send();
+   newdiv.innerHTML= '<div class="pure-control-group" id="seedInput">' + 
+      '<label for="seedDate">Date of Tray Seeding: </label>' +
+      '<select name="seedDate" id= "seedDate" onchange="getflats();">' + 
+      xmlhttp.responseText+"</select> </div>";
    getflats();
 }
  </script>
@@ -50,14 +45,14 @@ newdiv.innerHTML="<div class='styled-select' id ='seedInput'>" +
 </select>
 </div>
 -->
-<br clear="all">
+<div class="pure-control-group" id="seedInput">
 <label for='seedDate'>Date of Tray Seeding: </label>
-<div id="seedInput" class="styled-select">
 <select name="seedDate" id= "seedDate" class='mobile-select'>
 <option value=0 selected="selected" style="display:none"> Seed Date </option>
 </select>
 </div>
-<br clear="all">
-<label for="flatsBox">Total Number of Trays Seeded:&nbsp;</label>
+<div class="pure-control-group">
+<label for="flatsBox">Total Number of Trays Seeded:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox2 mobile-input" type="text" disabled readonly name ="flatsBox" value= '' id="flatsBox">
+</div>
 

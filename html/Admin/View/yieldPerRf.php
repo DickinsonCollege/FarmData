@@ -5,7 +5,6 @@
    include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<html>
 <head>
    <!--Load the AJAX API-->
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -15,7 +14,8 @@
    <?php
       $year = $_GET['year'];
       $crop = escapehtml($_GET['crop']);
-      echo '<h4>Average yield per row foot for each field of '.$crop.' in '.$year.'</h4><br clear="all">';   
+      echo '<center>';
+      echo '<h2>Average yield per row foot for each field of '.$crop.' in '.$year.'</h2>';   
       $sql = "select sum(yield)/((select coalesce(sum(bedft*rowsBed), 0) from dir_planted where dir_planted.crop='"
     .   $crop."' and year(plantdate) = '".$year."')+ (select coalesce(sum(bedft*rowsBed), 0) from transferred_to where year(transdate)='".
         $year."' and transferred_to.crop='".$crop."')) as overalAvg from harvested where crop='".$crop."' and year(hardate)=".$year;
@@ -82,5 +82,6 @@
    </script>
    <!--Div that will hold the pie chart-->
    <div id="chart_div"></div>
+   </center>
 </body>
 </html>

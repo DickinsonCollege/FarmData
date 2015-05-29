@@ -6,13 +6,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <body id="add">
-<form name='form' method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
-<h3><b>Add Unit to Compost Material </b></h3>
-<br>
-<label for="crop">Material:&nbsp;</label>
-<div class="styled-select">
+<form name='form' class = "pure-form pure-form-aligned" method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
+<center><h2><b>Add Unit to Compost Material </b></h2></center>
+
+<div class = "pure-control-group">
+<label for="crop">Material:</label>
 <select name="mat" id="mat" onChange="addInput2();" class="mobile-select"> 
-<option value=0 selected disabled>Material&nbsp; </option>
+<option value=0 selected disabled>Material </option>
 <?php
 $result=mysql_query("Select materialName from compost_materials");
 while ($row1 =  mysql_fetch_array($result)){  
@@ -21,7 +21,6 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all"/>
 
 <script type="text/javascript"> 
 function updateNew() {
@@ -38,7 +37,12 @@ function addInput2(){
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "compostUnit.php?material="+mat, false);
    xmlhttp.send();
-   newdiv.innerHTML="<div id= \"units\"> <select class='mobile-select' name= \"unit\" id = \"unit\" onchange=\"updateNew();\"> "+ xmlhttp.responseText+"</div>";
+   var str = '<label for="unit">New Unit:</label> ' +
+      '<select name="unit" id="unit" onchange="updateNew();"> ' + 
+      xmlhttp.responseText + '</select>';
+   console.log(str);
+   newdiv.innerHTML = str;
+
    var newUnit = document.getElementById("unit").value;
    var inp = document.getElementById('newunit');
    var inp2 = document.getElementById('newunit2');
@@ -47,30 +51,41 @@ function addInput2(){
 }
 
 </script>
-
-<label for="unit">New Unit:&nbsp;</label> 
-<div id="units"class="styled-select">
+<div class = "pure-control-group" id="units">
+<label for="unit">New Unit:</label> 
 <select name="unit" id="unit" class="mobile-select">
-<option disabled value=0 selected>Unit&nbsp; </option>
+<option disabled value=0 selected>Unit</option>
 </select>
 </div>
+
+<div class = "pure-control-group">
+<label for="default">Conversion Factors for New Unit:</label>
+One&nbsp; 
+<input type="text" size="12" readonly name="newunit" id="newunit">
+&nbsp;equals&nbsp;
+<input type="text" size = "5" name="conversion" id="conversion">
+&nbsp;pounds
+</div>
+<div class = "pure-control-group">
+<label>&nbsp;</label>
+One&nbsp;
+<input readonly size="12" name="newunit2" id="newunit2">
+&nbsp;equals&nbsp;
+<input size="5" type="text" name="conversion2" id="conversion2">
+&nbsp;cubic yards
 <br clear="all"/>
-<label for="default">Conversion Factors for New Unit:&nbsp;</label>
-<br clear="all"/>
-<label>One&nbsp; </label>
-<input class="textbox3 mobile-input" type="textbox" readonly name="newunit" id="newunit">
-<label>&nbsp;equals&nbsp;</label>
-<input class="textbox3 mobile-input" type="textbox" name="conversion" id="conversion">
-<label>&nbsp;pounds</label>
-<br clear="all"/>
-<label>One&nbsp; </label>
-<input class="textbox3 mobile-input" type="textbox" readonly name="newunit2" id="newunit2">
-<label>&nbsp;equals&nbsp;</label>
-<input class="textbox3 mobile-input" type="textbox" name="conversion2" id="conversion2">
-<label>&nbsp;cubic yards</label>
 <br clear="all"/>
 <br clear="all"/>
-<input class="submitbutton" type="submit" name="add" id="submit" value="Add">
+<div class = "pure-g">
+<div class = "pure-u-1-2">
+<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add">
+</form>
+</div>
+<div class = "pure-u-1-2">
+<form method="POST" action = "viewCompostUnits.php?tab=admin:admin_add:admin_addsoil:addcompost:addcompostconv">
+<input type="submit" class="submitbutton pure-button wide" value = "View Units Table"></form>
+</div>
+</div>
 
 <?php
 if (isset($_POST['add'])) {
@@ -93,8 +108,5 @@ if (isset($_POST['add'])) {
       echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
    }
 }
-echo "</form>";
-# echo '<br clear="all"/>';
-echo '<form method="POST" action = "viewCompostUnits.php?tab=admin:admin_add:admin_addsoil:addcompost:addcompostconv"><input type="submit" class="submitbutton" value = "View Units Table"></form>';
 ?>
 

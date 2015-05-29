@@ -5,13 +5,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<form name="form" method="post" action="<?php $_PHP_SELF ?>">
-<h3><b>Add New Irrigation Device</b></h3>
-<br>
-<label for="name"> Irrigation Device:&nbsp;</label>
+<form name="form" class="pure-form pure-form-aligned" method="post" action="<?php $_PHP_SELF ?>">
+<center>
+<h2>Add New Irrigation Device</h2>
+</center>
+
+<div class="pure-control-group">
+<label for="name"> Irrigation Device:</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; 
   type="text" name="name" id="name">
-<br clear="all"/>
+</div>
 
 <script>
 function show_confirm() {
@@ -25,8 +28,7 @@ function show_confirm() {
 }
 </script>
 <br clear="all"/>
-<br clear="all"/>
-<input onclick= "return show_confirm()";  class="submitbutton" type="submit" name="done" value="Add">
+<input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 <?php
 if (!empty($_POST['done'])) {
     $sql="Insert into irrigation_device(irrigation_device) values ('".

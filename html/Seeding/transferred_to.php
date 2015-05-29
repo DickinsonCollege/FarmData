@@ -7,56 +7,68 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
-<form name='form' id='transform' method='POST' action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:transplant:transplant_input">
-<h3 class="hi"> Transplant Data Input Form </h3>
-<br clear="all"/>
-<label for="transferred"> Date of Transplant:&nbsp; </label>
+<form name='form' class='pure-form pure-form-aligned' id='transform' method='POST' action="<?php echo $_SERVER['PHP_SELF']; ?>?tab=seeding:transplant:transplant_input">
+<center>
+<h2 class="hi"> Transplant Data Input Form </h2>
+</center>
+<fieldset>
+<div class="pure-control-group">
+<label for="transferred"> Date of Transplant: </label>
 <?php
 if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
    $dDay = $_POST['day'];
    $dMonth = $_POST['month'];
    $dYear = $_POST['year'];
 }
+if (isset($_POST['fieldID'])) {
+   $field = escapehtml($_POST['fieldID']);
+}
 //include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all">
+</div>
 <?php
 include 'fieldID_trans.php';
-echo "<br clear=\"all\">";
 ?>
-<label for="field">Name of Field:&nbsp;</label>
-<div class="styled-select">
-<select name="fieldID" id="fieldID" class='mobile-select'>
-<option selected="selected" disabled="disabled" value = 0>Field Name</option>
+<div class="pure-control-group">
+<label for="fieldcrop">Name of Field:</label>
+<select name="fieldID" id= "fieldID" class='mobile-select'>
 <?php
-$result = mysql_query("SELECT fieldID from field_GH where active = 1");
+echo '<option disabled value = 0  style="display:none; width: auto;" ';
+if (!isset($field)) {
+   echo 'selected';
+}
+echo '> Field Name</option>';
+$result=mysql_query("Select fieldID from field_GH where active = 1");
 while ($row1 =  mysql_fetch_array($result)){
-  echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
+  $fieldID = $row1['fieldID'];
+  echo "\n<option value= \"".$fieldID."\"";
+  if (isset($field) && $field == $fieldID) {
+   echo ' selected';
+  }
+  echo ">".$fieldID."</option>";
 }
 ?>
 </select>
 </div>
-<br clear="all"/>
+
+<div class="pure-control-group">
 <?php
 $farm = $_SESSION['db'];
 if (!$_SESSION['bedft']) {
-   echo '<label for="bed">Beds Planted:&nbsp;</label>';
+   echo '<label for="bed">Beds Planted:</label>';
 } else {
-  echo '<div class="styled-select">';
   echo '<select name ="rowBed" id="rowBed" class="mobile-select">';
   echo '<option value = "bed" selected>Bed Feet Planted: </option>';
   echo '<option value = "row">Row Feet Planted: </option>';
-  echo '</select>';
-  echo '</div>';
+  echo '</select> ';
+  echo ' &nbsp; ';
 }
 ?>
-<label> &nbsp;</label>
 <input class="textbox2 mobile-input single_table" type="text" name ="bedftv" value= 0 id="bedftv">
-<br clear="all"/>
-<br clear='all'/>
-<label for="rows">Rows per Bed:&nbsp;</label>
-<div class="styled-select">
+</div>
+<div class="pure-control-group">
+<label for="rows">Rows per Bed:</label>
 <select name ="rowbd" id="rowbd" class="mobile-select">  
 <option selected="selected" value = 1>1 </option>
 <?php
@@ -71,15 +83,15 @@ while ($cons<8) {
 ?>
 </select>
 </div>
-<br clear="all"/>
-<label for="numFlats">Number of trays:&nbsp;</label>
+<div class="pure-control-group">
+<label for="numFlats">Number of trays:</label>
 <input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="numFlats" id="numFlats" class="textbox2 mobile-input single_table">
+</div>
 
-<br clear="all"/>
 <?php
 if ($_SESSION['gens']) {
-   echo '<label for="gen">Succession #:&nbsp; </label>';
-   echo '<div id="genDiv" class="styled-select">';
+   echo '<div class="pure-control-group" id="genDiv">';
+   echo '<label for="gen">Succession #:</label> ';
    echo '<select id= "gen" name="gen" class="mobile-select">';
    $sql = "select distinct gen from gh_seeding order by gen";
    $res = mysql_query($sql);
@@ -90,43 +102,46 @@ if ($_SESSION['gens']) {
    }
    echo '</select>';
    echo '</div>';
-   echo '<br clear="all">';
 }
 
 if ($_SESSION['labor']) {
+   echo '<div class="pure-control-group">';
    echo '
-<label for="numWorkers">Number of workers:&nbsp;</label>
+<label for="numWorkers">Number of workers:</label>
 <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2 mobile-input single_table">
-<br clear="all"/>
+  </div>
 
+   <div class="pure-control-group">
 <label>Enter time in Hours or Minutes:</label>
-<br clear="all"/>
 <input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" value="1"
   class="textbox2 mobile-input-half single_table">
-<div class="styled-select">
 <select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
-</div>
-<br clear="all"/>';
+</div>';
 }
 ?>
 
-<div>
+<div class="pure-control-group">
 <label for="comments">Comments:</label>
-<br clear="all"/>
 <textarea name ="comments"
-row="10" coms= "30">
+rows="5" cols= "30">
 </textarea>
 </div>
 <br clear="all"/>
-<input class="submitbutton" type="button" value="Submit"  onclick="show_confirm();">
+</fieldset>
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input class="submitbutton pure-button wide" type="button" value="Submit"  onclick="show_confirm();">
 </form>
-<br clear="all"/>
+</div>
+<div class="pure-u-1-2">
 <?php
-echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:transplant:transplant_report"><input type="submit" class="submitbutton" value = "View Table"></form>';
+echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:transplant:transplant_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
 ?>
+</div>
+</div>
 
 
 <script>

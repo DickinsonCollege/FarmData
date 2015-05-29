@@ -5,25 +5,32 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3> Insect Scouting Report </h3>
-<form name='form' id='test'  method='GET' action="pestTable.php">
+<center>
+<h2> Insect Scouting Report </h2>
+</center>
+<form name='form' class='pure-form pure-form-aligned' id='test'  method='GET' action="pestTable.php">
 <input type="hidden" name="tab" value="soil:soil_scout:soil_pest:pest_report">
-<br clear="all"/>
-<label for='date'> From:&nbsp; </label>
+
+<div class="pure-control-group">
+<label for='date'> From: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
-<label for='date2'> To: &nbsp;</label>
+</div>
+
+<div class="pure-control-group">
+<label for='date2'> To: </label>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 ?>
-<br clear="all"/>
+</div>
+
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 ?>
-<label for="crop"> Crop:&nbsp; </label>
- <div class="styled-select" id="field">
+
+<div class="pure-control-group">
+<label for="crop"> Crop: </label>
  <select name ="crop" id="crop" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -34,10 +41,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  echo '</select>';
  echo '</div>';
  ?>
-<br clear="all"/>
 
-<label for="pest"> Insect:&nbsp; </label>
- <div class="styled-select" id="Pest">
+<div class="pure-control-group">
+<label for="pest"> Insect: </label>
  <select name ="pest" id="pest" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
@@ -51,5 +57,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 <br clear="all"/>
 <br clear="all"/>
 
-<input type="submit" class="submitbutton" name="submit" value="Submit">
+<input type="submit" class="submitbutton pure-button wide" name="submit" value="Submit">
+</form>
 

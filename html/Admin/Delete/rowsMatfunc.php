@@ -3,8 +3,8 @@
 	function addRowMat(){
 		document.getElementById('numRowsMat').value = parseInt(numRowsMat) + 1;
       numRowsMat++;
-      var table = document.getElementById("materialTable");
-      var row = table.insertRow(numRowsMat);
+      var table = document.getElementById("materialTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(-1);
       var materialSprayed = "<?php
          $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
          $resultM=mysql_query($sqlM);
@@ -14,18 +14,18 @@
          }?>";
 
       var cell0 = row.insertCell(0);
-      cell0.innerHTML =  "<center><div id =\"material"+numRowsMat+"\" class='styled-select2'><select id=\"material2"+numRowsMat+"\" name=\"material2"+numRowsMat+"\"  onChange=\"addInputRates("+numRowsMat+"); calculateSuggested("+numRowsMat+"); addUnit("+numRowsMat+");  \"\n>"+ "<option value=0> MaterialList</option>\n"+materialSprayed+"</select></div></center>";
+      cell0.innerHTML =  "<center><div id =\"material"+numRowsMat+"\" class='styled-select2'><select class='wide' id=\"material2"+numRowsMat+"\" name=\"material2"+numRowsMat+"\"  onChange=\"addInputRates("+numRowsMat+"); calculateSuggested("+numRowsMat+"); addUnit("+numRowsMat+");  \"\n>"+ "<option value=0> MaterialList</option>\n"+materialSprayed+"</select></div></center>";
       var cell1 = row.insertCell(1);
       cell1.innerHTML =  "<center><div id =\"rate"+numRowsMat+
-            "\" class='styled-select2'><select id='rate2"+numRowsMat+
+            "\" class='styled-select2'><select class='wide' id='rate2"+numRowsMat+
             "' name='rate2"+numRowsMat+"'  onChange=\"calculateSuggested("+
             numRowsMat+");\">"+"<option value=0 selected> Rates </option> </select></div></center>";
       var cell2 = row.insertCell(2);
-      cell2.innerHTML = "<div id=\"unitDiv"+numRowsMat+"\"><label style=\"font-size:12pt\" id='unit"+ numRowsMat+"'> Unit </label></div>";
+      cell2.innerHTML = "<div id=\"unitDiv"+numRowsMat+"\"><label id='unit"+ numRowsMat+"'> Unit </label></div>";
       var cell3 = row.insertCell(3);
-      cell3.innerHTML = "<center><div id=\"calculatedTotalDiv"+numRowsMat+"\"><input type=\"text\" id=\"calculatedTotal"+numRowsMat+"\" class='textbox4' value=0 readonly></div></center>";
+      cell3.innerHTML = "<center><div id=\"calculatedTotalDiv"+numRowsMat+"\"><input type=\"text\" id=\"calculatedTotal"+numRowsMat+"\" class='wide' value=0 readonly></div></center>";
       var cell4 = row.insertCell(4);
-      cell4.innerHTML = "<center><div id=\"actualTotalDiv"+numRowsMat+"\"><input class='textbox4' type=\"text\" id=\"actuarialTotal"+numRowsMat+"\" name=\"actuarialTotal"+numRowsMat+"\" value=0></div></center>";
+      cell4.innerHTML = "<center><div id=\"actualTotalDiv"+numRowsMat+"\"><input class='wide' type=\"text\" id=\"actuarialTotal"+numRowsMat+"\" name=\"actuarialTotal"+numRowsMat+"\" value=0></div></center>";
    }
    //addRowMat();
    function removeRowMat(){
@@ -66,7 +66,7 @@
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tRateUpdate.php?material="+mat, false);
       xmlhttp.send();
-      newdivM.innerHTML="<div class=styled-select2 id='rate"+numM+"'> <select onchange=\"calculateSuggested("+numM+");\" id='rate2"+numM+"' name= 'rate2"+numM+"'>"+xmlhttp.responseText+"</select></div>";
+      newdivM.innerHTML="<div class=styled-select2 id='rate"+numM+"'> <select onchange=\"calculateSuggested("+numM+");\" class='wide' id='rate2"+numM+"' name= 'rate2"+numM+"'>"+xmlhttp.responseText+"</select></div>";
    }  
    
 	function calculateSuggested(numS) { 

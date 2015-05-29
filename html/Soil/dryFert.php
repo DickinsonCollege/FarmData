@@ -5,17 +5,18 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
-<h3> Dry Fertilizer Input </h3>
-<br clear="all"/>
-<form name='form' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_input">
+<center>
+<h2> Dry Fertilizer Input </h2>
+</center>
+<form name='form' class="pure-form pure-form-aligned" id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_input">
+<div class="pure-control-group">
 <label for='date'> Fertilizer Application Date: </label>
-<br clear="all"/>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
-<br clear="all"/>
+</div>
+<div class="pure-control-group">
 <label for="fieldID"> Field ID: </label>
-<div class="styled-select" id="field">
 <select name ="fieldID" id="fieldID" onchange="addInput();addInput3();" class="mobile-select">
 <option value = 0 selected disabled> FieldID</option>
 <?php
@@ -26,28 +27,12 @@ echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 ?>
 </select>
 </div>
-<!--
-<br clear="all">
-<label for="crop"> Crop Group:&nbsp; </label>
-<div class="styled-select" id="crop2">
-<select name ="crop" id="crop" class="mobile-select">
-<option value = 0 selected disabled> Crop Group</option>
-<?php
-$result=mysql_query("Select cropGroup from cropGroupReference");
-while ($row1 =  mysql_fetch_array($result)){
-   echo "\n<option value= \"$row1[cropGroup]\">$row1[cropGroup]</option>";
-}
-?>
-</select>
-</div>
-<br clear="all"/>
--->
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
 
-<label for="crop"> Material: &nbsp; </label>
-<div class="styled-select" id="mat2">
+<div class="pure-control-group">
+<label for="crop"> Material:  </label>
 <select name ="mat" id="mat" class="mobile-select">
 <option value = 0 selected disabled> Material </option>
 <?php
@@ -58,26 +43,12 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all"/>
 
-<label for"rate"> Rate of Application:&nbsp; </label>
+<div class="pure-control-group">
+<label for"rate"> Rate of Application: </label>
 <input type="text" class = "textbox2 mobile-input single_table" name = "rate" id = "rate" onkeyup="addInput3();">
-<!--
-<div class="styled-select" id="rate2">
-<select name ="rate" id="rate" onchange="addInput3();" >
-<option disabled value = 0 selected>Rate</option>
-<?php
-$result= 5;
-while ($result <= 100){
-echo "\n<option value= \"$result\">$result</option>";
-$result = $result + 5;
-}
-echo "</select>";
-echo "</div>";
-?>
--->
-<label>&nbsp; Pounds/Acre</label>
-<br clear="all">
+&nbsp; Pounds/Acre
+</div>
 <script>
 var length = 0;
 function addInput() {
@@ -86,7 +57,10 @@ function addInput() {
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "update_beds.php?fieldID="+fieldID, false);
    xmlhttp.send();
-   newdiv.innerHTML = "<div class='styled-select' id='bed2'><select onchange='addInput3();' name ='beds' id='beds' class='mobile-select'>"+xmlhttp.responseText+"</select></div>";
+   newdiv.innerHTML = '<div class="pure-control-group" id="bed2">' +
+     '<label for ="beds"> Number of Beds: </label> ' + 
+     '<select onchange="addInput3();" name ="beds" id="beds" class="mobile-select">' +
+     xmlhttp.responseText + '</select></div>';
 
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET", "update_pounds.php?fieldID="+fieldID, false);
@@ -100,21 +74,26 @@ console.log("length: " + length);
    var newdiv = document.getElementById("pounds2");
    var rate = document.getElementById("rate").value;
    var width = document.getElementById("width").value;
-//   var beds = document.getElementById("beds").value;
-//   var fieldID = document.getElementById("fieldID").value;
-   newdiv.innerHTML = "<div id='pounds2'><input class='textbox25 mobile-input' type='text' readonly name='pounds' id='pounds' value="+((length*width*rate)/43560).toFixed(2)+"></div>";
+   newdiv.innerHTML = '<div class="pure-control-group" id="pounds2">' +
+     '<label for="total"> Pounds per Bed to Apply: </label> ' + 
+     '<input type="text" readonly name="pounds" id="pounds" value=' +
+     ((length*width*rate)/43560).toFixed(2)+"></div>";
+
+/*
+"<div id='pounds2'><input class='textbox25 mobile-input' type='text' readonly name='pounds' id='pounds' value="+((length*width*rate)/43560).toFixed(2)+"></div>";
+*/
 }
 </script>
 
+<div class="pure-control-group" id="bed2">
 <label for ="beds"> Number of Beds: </label>
-<div class="styled-select" id="bed2">
 <select onchange='addInput3();' name ="beds" id="beds" class="mobile-select">
 <option value = 0 selected disabled> Number of Beds </option>
 </select>
 </div>
-<br clear="all">
-<label style="float:left;" for="width"> Width of Planted Area: &nbsp; </label>
-<div class="styled-select" id="rows2">
+
+<div class="pure-control-group">
+<label for="width"> Width of Planted Area: </label>
 <select name="width" id="width" onchange="addInput3();" class="mobile-select">
 <option value=0 selected disabled> Width (feet)</option>
 <?php
@@ -126,13 +105,11 @@ while ($result < 5){
 echo "</select>";
 echo "</div>";
 ?>
-<br clear="all"/>
 
-<label for="total"> Pounds per Bed to Apply:&nbsp; </label>
-<div id="pounds2">
+<div class="pure-control-group" id="pounds2">
+<label for="total"> Pounds per Bed to Apply: </label>
 <input class="textbox25 mobile-input single_table" type="text" readonly name="pounds" id="pounds" value=0>
 </div>
-<br clear="all">
 
 <script> 
 function show_confirm() {
@@ -196,16 +173,24 @@ function show_confirm() {
    return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
+<div class="pure-control-group">
 <label for="comments"> Comments: </label>
-<br clear="all">
 <textarea name="comments" id="comments"
-cols=30 rows=10>
+cols=30 rows=5>
 </textarea>
+</div>
 <br clear="all"><br>
-<input type="submit" class="submitbutton" value="Submit" name="submit" onclick="return show_confirm();">
+<div class="pure-g">
+<div class="pure-u-1-2">
+<input type="submit" class="submitbutton pure-button wide" value="Submit" name="submit" onclick="return show_confirm();">
 </form>
-<form method="POST" action = "fertReport.php?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report"><input type="submit" class="submitbutton" value = "View Table">
+</div>
+<div class="pure-u-1-2">
+<form method="POST" action = "fertReport.php?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report"><input type="submit" 
+ class="submitbutton pure-button wide" value = "View Table">
 </form>
+</div>
+</div>
 <?php
 if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);

@@ -1,6 +1,6 @@
 <?php session_start();?>
 
-<form name='form' method='GET' action='distributionTable.php'>
+<form name='form' class = "pure-form pure-form-aligned" method='GET' action='distributionTable.php'>
 <input type="hidden" name="tab" 
    value='admin:admin_sales:distribution:distribution_report'>
 
@@ -10,24 +10,26 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
-<h3>Distribution Report</h3>
-<br clear='all'>
+<center><h2>Distribution Report</h2></center>
 
 <?php
-echo "<label for='from'>From:&nbsp;</label>";
+echo "<div class = 'pure-control-group'>";
+echo "<label for='from'>From:</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
-echo "<br clear='all'>";
-echo "<label for='to'>To:&nbsp;</label>";
+echo "</div>";
+
+echo "<div class = 'pure-control-group'>";
+echo "<label for='to'>To:</label>";
 include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
+echo "</div>";
 ?>
 
-<br clear='all'>
-<label>Crop/Product:&nbsp;</label>
-<div class='styled-select'>
+<div class = 'pure-control-group'>
+<label>Crop/Product:</label>
 <select name='crop_product' id='crop_product' class='mobile-select'>
 <option value='%'>All</option>
 <?php
-$sql = "SELECT crop FROM plant WHERE active=1 union SELECT product FROM product";
+$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union SELECT product as crop FROM product where active=1) tmp order by crop";
 $result = mysql_query($sql);
 while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
@@ -35,9 +37,8 @@ while ($row = mysql_fetch_array($result)) {
 ?>
 </select></div>
 
-<br clear='all'>
-<label>Target:&nbsp;</label>
-<div class='styled-select'>
+<div class = 'pure-control-group'>
+<label>Target:</label>
 <select name='target' id='target' class='mobile-select'>
 <option value='%'>All</option>
 <?php
@@ -47,11 +48,10 @@ while ($row = mysql_fetch_array($result)) {
 	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
 }
 ?>
-</select><div>
+</select></div>
 
-<br clear='all'>
-<label>Grade:&nbsp;</label>
-<div class='styled-select'>
+<div class = 'pure-control-group'>
+<label>Grade:</label>
 <select name='grade' id='grade' class='mobile-select'>
 <option value='%'>All</option>
 <option value='1'>1</option>
@@ -61,6 +61,5 @@ while ($row = mysql_fetch_array($result)) {
 </select></div>
 
 <br clear='all'>
-<br clear='all'>
-<input class='submitbutton' type='submit' name='submit' value='Submit'>
+<input class='submitbutton pure-button wide' type='submit' name='submit' value='Submit'>
 </form>

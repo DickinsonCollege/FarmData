@@ -21,7 +21,10 @@ if (isset($_GET['crop']) && isset($_GET['unit'])) {
 }
 $result=mysql_query("Select crop,default_unit,unit,conversion from units");
 
-echo "<table>";
+echo "<center>";
+echo "<h2> Units Table </h2>";
+echo "</center>";
+echo "<table class='pure-table pure-table-bordered'>";
 
 /*
 echo "<colgroup>";
@@ -33,13 +36,12 @@ echo "<col id='col5'/>";
 echo "</colgroup>";
 */
 
-echo "<caption> Units Table </caption>";
-echo "<tr>
+echo "<thead><tr>
 	<th>Crop</th>
 	<th>Default Unit</th>
 	<th>Unit</th>
 	<th>Conversion</th>
-        <th>Update</th><th>Delete</th></tr>";
+        <th>Update</th><th>Delete</th></tr></thead>";
 $rowNum = 0;
 while($row = mysql_fetch_array($result)) {
    $rowNum++;
@@ -54,17 +56,17 @@ while($row = mysql_fetch_array($result)) {
       echo $row['conversion']."</td>";
       echo "<td>No</td><td>No";
    } else {
-      echo "<form method=\"POST\" action=\"viewUnits.php?&crop=".encodeURIComponent($row['crop']).
+      echo "<form method=\"POST\" class='pure-form' action=\"viewUnits.php?&crop=".encodeURIComponent($row['crop']).
         "&edit=1&unit=".encodeURIComponent($row['unit'])."&rowNum=".$rowNum.
         "&tab=admin:admin_delete:deletecrop:deleteunit\">";
       echo '<input onkeypress= "stopSubmitOnEnter(event);" name="conv'.$rowNum.'" id="conv'.$rowNum.
-         '" value="'.$row['conversion'].'" class="textbox2 mobile-input" type="text" style="width:100%">';
+         '" value="'.$row['conversion'].'" class="wide" size="6" type="text" >';
       echo "</td><td>";
-      echo "<input type=\"submit\" class=\"submitbutton\" value=\"Update\"></form> </td><td>";
+      echo "<input type=\"submit\" class=\"submitbutton pure-button wide\" value=\"Update\"></form> </td><td>";
       echo "<form method=\"POST\" action=\"viewUnits.php?&crop=".encodeURIComponent($row['crop']).
         "&delete=1&unit=".encodeURIComponent($row['unit']).
         "&tab=admin:admin_delete:deletecrop:deleteunit\">";
-      echo '<input type="submit" class="deletebutton" value="Delete" style="width:100%"></form>';
+      echo '<input type="submit" class="deletebutton pure-button wide" value="Delete" ></form>';
    }
    echo "</td></tr>";
    echo "\n";

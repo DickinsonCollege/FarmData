@@ -6,17 +6,17 @@
 	include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 	$file = $_GET['file'];
 ?>
-<h3 class="hi"> Select Harvest Records: </h3>
-<br>
+<center><h2 class="hi"> Select Harvest Records: </h2></center>
 
-<form method="GET" action="<?php echo $file;?>">
+<form class = "pure-form pure-form-aligned" method="GET" action="<?php echo $file;?>">
 	<?PHP
 		$tab="yieldprf";
 		if ($file=='totalYield.php'){$tab="sumyield";}
 	echo '<input type="hidden" name = "tab" value = "admin:admin_view:view_graphs:'.$tab.'">';
    ?>
-	<label for="year">Year to Graph:&nbsp;</label>
-   <div class="styled-select"><select name="year" id="year" onChange="addFieldID()">
+<div class = "pure-control-group">
+<label for="year">Year to Graph:</label>
+   <select name="year" id="year" onChange="addFieldID()">
    <?php
    if (!$dYear) {
       $curYear = strftime("%Y");
@@ -29,10 +29,9 @@
    }
    ?>
    </select></div>
-	<br clear="all">
-	<br clear="all">
-   <label for="crop"> Crop:&nbsp;</label>
-   <div class ="styled-select">
+
+   <div class = "pure-control-group">
+   <label for="crop"> Crop:</label>
    <select id = "crop" name="crop" class='mobile-select'>
    <?php
    $result = mysql_query("SELECT distinct crop from harvested");
@@ -42,8 +41,7 @@
    ?>
    </select>
    </div>
-	<br clear="all">
-	<br clear="all">
-   <input class="submitbutton" type="submit" name="submit" value="Submit" />
+   <br clear="all">
+   <input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit" />
 </form>
 

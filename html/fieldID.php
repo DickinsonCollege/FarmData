@@ -1,8 +1,5 @@
-<?php
-if ($_SESSION['mobile']) echo "<br clear='all'/>";
-?>
-<label for="fieldID"> Field ID:&nbsp; </label>
-<div id="fieldID23" class="styled-select">
+<div class="pure-control-group" id="fieldID23">
+<label for="fieldID">Name of Field:</label>
 <select id= "fieldID" name="fieldID" class='mobile-select'>
 <option value="%" selected> All </option>
 <?php
@@ -14,5 +11,4 @@ while ($row1 =  mysql_fetch_array($result)){
 ?>
 </select>
 </div>
-<br clear="all">
 
