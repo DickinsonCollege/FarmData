@@ -133,7 +133,7 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
          $ind++;
       }
 
-      echo  '<tr><td><center><div class="styled-select" id="fieldDiv'.$numRows.'"> <select name ="field'.$numRows.'" class="wide" id="field'.$numRows.'" onChange="addInput('.$numRows.'); addAcre('.$numRows.'); calculateTotalUpdate(); calculateWater();"><option value='.$row[fieldID].'>'.$row[fieldID].'</option>'.$option.'</select></div></center></td>';
+      echo  '<tr><td><center><div class="styled-select" id="fieldDiv'.$numRows.'"> <select name ="field'.$numRows.'" class="wide" id="field'.$numRows.'" onChange="addInput('.$numRows.'); addAcre('.$numRows.'); calculateTotalUpdate(); calculateWater();"><option value="'.$row[fieldID].'">'.$row[fieldID].'</option>'.$option.'</select></div></center></td>';
 
       echo "<td><center><div id=\"maxBed".$numRows."\" class='styled-select2'> <select id=\"maxBed2".$numRows."\" name=\"maxBed2".$numRows."\"  onChange=\"addAcre(".$numRows."); calculateTotalUpdate(); calculateWater(); \" class='wide'><option value=\"".$row[numOfBed]."\">".$row[numOfBed]."</option>".$numBedOptions."</select></div></center></td>";
 
@@ -176,20 +176,23 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
          $materialSprayed = $materialSprayed."<option value='".$rowM[sprayMaterial]."'>".$rowM[sprayMaterial]."</option>";
       };
       
-      $sql="SELECT TRateMin, TRateMax, TRateDefault,(TRateMax-TRateMin)/10 AS dif FROM tSprayMaterials  where sprayMaterial='".$row['material']."'";
+    $sql="SELECT TRateMin, TRateMax, TRateDefault,(TRateMax-TRateMin)/10 AS dif FROM tSprayMaterials  where sprayMaterial='".$row['material']."'";
       $result=mysql_query($sql);
       $rateOptions = "";
       while ($rowM=mysql_fetch_array($result)) {
 
          $ind = $rowM['TRateMin'];
          $rateOptions = $rateOptions."<option value=".$rowM['TRateDefault'].">".$rowM['TRateDefault']."</option> \n";
+         $formatDif=number_format($rowM['dif'],2,'.','');
+         if ($formatDif < 0.1) {
+            $formatDif = 0.1;
+         }
          while($ind<=$rowM['TRateMax']){
             $rateOptions = $rateOptions."<option value=\"".$ind."\">".$ind."</option> \n";
-            $formatDif=number_format($rowM['dif'],2,'.','');
             $ind=$ind + $formatDif;
          }
       }
-      echo  "<tr><td><center><div id =\"material".$numRowsMat."\" class='styled-select2'><select class='wide' id=\"material2".$numRowsMat."\" name=\"material2".$numRowsMat."\"  onChange=\"addInputRates(".$numRowsMat."); calculateSuggested(".$numRowsMat."); addUnit(".$numRowsMat.");  \"\n>"."<option value=".$row[material].">".$row[material]."</option>\n".$materialSprayed."</select></div></center></td>";
+      echo  "<tr><td><center><div id =\"material".$numRowsMat."\" class='styled-select2'><select class='wide' id=\"material2".$numRowsMat."\" name=\"material2".$numRowsMat."\"  onChange=\"addInputRates(".$numRowsMat."); calculateSuggested(".$numRowsMat."); addUnit(".$numRowsMat.");  \"\n>"."<option value='".$row['material']."'>".$row['material']."</option>\n".$materialSprayed."</select></div></center></td>";
       echo  "<td><center><div id =\"rate".$numRowsMat.
             "\" class='wide'><select class='wide' id='rate2".$numRowsMat.
             "' name='rate2".$numRowsMat."'  onChange=\"calculateSuggested(".
@@ -230,21 +233,6 @@ echo "<tr><td><center><input class='wide' type='text' name='waterPerAcre' id='wa
 <td><center><input type="text" class='wide' name="totalWater" id="totalWater" value=0 ></center></td></tr>
 </table>
 <br clear="all"/>
-
-<!--
-<tr><td><center><div id="cropGroup" class='styled-select2'><select class='styled-select' name="cropGroup2" id="cropGroup2"  >
-<option value='<?php echo $crop;?>' ><?php echo $crop;?></option>
-<?php 
-$sqlG="SELECT * FROM cropGroupReference";
-$resultG=mysql_query($sqlG);
-while($rowG=mysql_fetch_array($resultG)){
-
-echo "<option value=\"".$rowG['cropGroup']."\">".$rowG['cropGroup']."</option>\n";
-}
-?>
-</select></div></center></td></tr>
--->
-
 <br clear="all"/>
 <div class="pure-control-group">
 <label>Reason For Spray & Comments:</label>
