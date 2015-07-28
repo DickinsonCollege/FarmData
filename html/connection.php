@@ -8,6 +8,9 @@ $dbName = $_SESSION['db'];
 $dbcon = mysql_connect($host, $user, $pass);
 if ($dbcon) {
    mysql_select_db($dbName);
+   $sql = "set session sql_mode = 'TRADITIONAL'";
+   mysql_query($sql);
+   echo mysql_error();
 // or die ("Connect Failed !! : ".mysql_error());
 } else {
   // $host = gethostname();

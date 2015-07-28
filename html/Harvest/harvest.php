@@ -22,7 +22,9 @@ if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
 ?>
 
 <script type="text/javascript">
+var farm = "<?php echo $farm;?>";
 function show_confirm() {
+   var undef;
    var cb = document.getElementById("cropButton");
    var crp = cb.value;
    if(checkEmpty(crp) || crp == "Crop") {
@@ -50,7 +52,10 @@ function show_confirm() {
       }
       con=con+"Name of Field: "+ fld+ "<br>";
       var yld = document.getElementById("yield"+j).value;
-      if (checkEmpty(yld) || yld<=0 || !isFinite(yld) ) {
+      if (yld == undef || yld == "" || yld<<?php
+         if ($farm != 'wahlst_spiralpath') {
+            echo "=";
+         }?>0 || !isFinite(yld) ) {
         showError("Please enter a valid yield in row " + j);
         return false;
       }
@@ -247,8 +252,13 @@ function addRow() {
       genStr += "class='wide'>"+xmlhttp.responseText+"</select> </div>";
       cell0.innerHTML = genStr;
       var cell1 = row.insertCell(1);
+      var yld = "";
+      if (farm == 'wahlst_spiralpath' && numRows > 1) {
+         yld = "0";
+      }
       cell1.innerHTML="<input onkeypress= 'stopSubmitOnEnter(event);' type = 'text' name='yield"+numRows+
-         "' id='yield"+numRows+"' class='textbox mobile-input inside_table wide' size='5'>";
+         "' id='yield"+numRows+"' class='textbox mobile-input inside_table wide' size='5' value = '" +
+         yld + "'>";
       <?php
       if ($farm == 'wahlst_spiralpath') {
         echo 'xmlhttp.open("GET", "hupdatesp.php?crop="+crop, false);';
@@ -440,8 +450,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    # $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,comments, unit) VALUES('".$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."',$yield*(Select conversion from (Select 1 as conversion from units where crop= '".$_POST['crop']."' and default_unit ='".$_POST['unit']."' union select conversion from  units where crop= '".$_POST['crop']."' and unit= '".$_POST['unit']."') as conver) ,$hours,'$comments', '$unit')";
    # START - put conversion back in when available
 #   $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours, comments, unit) VALUES('".$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."',$yield,$hours,'$comments','$unit')";
-      $value = mysql_query($sql) or die(mysql_error());
-      echo mysql_error();
+      $value = mysql_query($sql);
+// or die(mysql_error());
+//      echo mysql_error();
+  if(!$value){
+       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
+   }else {
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   }
+
       if($value){
          echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
       } else {

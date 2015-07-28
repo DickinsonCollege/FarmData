@@ -8,6 +8,7 @@ $values=array();
 while ($row=mysql_fetch_array($result)) {
    $values[str_replace(" ", "_",$row['target'])]=$row['amt'];
    $values['fieldID'] = $row['fieldID'];
+   $values[str_replace(" ", "_",$row['target']).'_unit']=$row['units'];
 }
 echo json_encode($values);
 ?>

@@ -1,0 +1,78 @@
+body {
+  background-color: Ivory;
+  color: #34495E;
+}
+
+/*
+#menu {
+  background-color: peru;
+}
+
+#menu a {
+  background-color: peru;
+  color: white;
+}
+*/
+
+/*
+.pure-button {
+  border: solid thin black !important;
+  background-color: peru !important;
+}
+*/
+
+.submitbutton {
+  border: solid thin black !important;
+  background-color: peru !important;
+}
+
+.genericbutton {
+  border: solid thin black !important;
+  background-color: peru !important;
+}
+
+.editbutton {
+  color: white !important;
+  background-color: blue !important;
+  border: solid thin black !important;
+}
+
+.deletebutton {
+  color: white !important;
+  background-color:  rgb(202, 60, 60) !important;
+  border: solid thin black !important;
+}
+
+.addbutton {
+  color: white !important;
+  background-color: rgb(28, 184, 65) !important;
+  border: solid thin black !important;
+}
+
+table {
+  width: 100%;
+}
+
+.wide {
+  width: 100%;
+}
+
+thead {
+  background-color: wheat !important;
+}
+
+.label_comments {
+  display:block;
+  border:2px solid;
+  border-color:black;
+  font-size=30px;
+  background:white;
+}
+
+.comments_box {
+  display:block;
+  border:2px solid;
+  border-color:black;
+  font-size:30px;
+  background:white;
+}

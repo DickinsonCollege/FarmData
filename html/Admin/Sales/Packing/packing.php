@@ -244,6 +244,7 @@ function populateEntries() {
    xmlhttp.open("GET", "populate_entries.php?id="+id, false);
    xmlhttp.send();
    // var harvest_list_array = eval(xmlhttp.responseText);
+console.log(xmlhttp.responseText);
    var harvest_list_array = JSON.parse(xmlhttp.responseText);
    alreadyPopulated = true;
    for (var crp in harvest_list_array) {
@@ -363,12 +364,9 @@ for ($i = 0; $i < count($targs); $i++) {
 window.onload=function() {
    var wid = window.innerWidth || document.body.clientWidth;
    var min = 1500;
-   console.log(wid);
-   console.log(min);
    if (wid < min) {
       document.getElementById("packTable").style.width=min;
    }
-   console.log(document.getElementById("packTable").style.width);
 }
 </script>
 
@@ -396,9 +394,14 @@ if (isset($_POST['insertRows'])) {
             $targr = encodeURIComponent($targ);
             $val = $_POST[$targr.$i];
             if ($val > 0) {
+/*
                $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
                   " Target) values('".$date."', '".$crop."', ".$grade.", ".$val.", '".$unit."', '".
                   $comments."', ".$bring.", '".$targ."')";
+*/
+               $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
+                  " Target) values('".$date."', '".$crop."', ".$grade.", ".$val / $conversion[$crop][$unit].
+                  ", '".$default_unit[$crop]."', '".$comments."', ".$bring.", '".$targ."')";
                $result = $result && mysql_query($sql);
             }
          }

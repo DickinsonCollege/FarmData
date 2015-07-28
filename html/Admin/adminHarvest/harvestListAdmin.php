@@ -11,16 +11,11 @@ $day=$_GET['day'];
 $detail=$_GET['detail'];
 $date=$year."-".$month."-".$day;
 $deleteCrop=escapehtml($_GET['crop']);
-$sql = "select * from targets where active = 1 order by targetName";
-$targs = array();
-$result = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($result)) {
-   // $targs[] = str_replace(" ", "_", $row['targetName']);
-   $targ = $row['targetName'];
-   if ($targ != 'Loss') {
-     $targs[] = $targ;
-   }
+include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
+
+if ($ind = array_search('Loss', $targs)) {
+  unset($targs[$ind]);
+  $targs = array_values($targs);
 }
 ?>
 
@@ -36,7 +31,6 @@ while ($row = mysql_fetch_array($result)) {
 	function checkIfOnList(){
 	var crop=encodeURIComponent(document.getElementById('crop').value);
 	var id=<?php echo $currentID; ?>;
-//	console.log(id);
 	xmlhttp= new XMLHttpRequest();
         xmlhttp.open("GET", "checkInList.php?crop="+crop+"&id="+id, false);
 	xmlhttp.send();
@@ -50,7 +44,7 @@ while ($row = mysql_fetch_array($result)) {
           var items = JSON.parse(responseVar);    
            for (var targ in items) {
               document.getElementById(targ).value = items[targ];
-           }
+	   }
            addall();
         }
 }
@@ -59,7 +53,6 @@ while ($row = mysql_fetch_array($result)) {
 <table class="pure-table pure-table-bordered">
 <thead>
 <tr>	<th>Crop</th>
-	<th>Units</th>
 	<th>Field</th>
 <?php
 for ($i = 0; $i < count($targs); $i++) {
@@ -85,50 +78,49 @@ while ($row1 =  mysql_fetch_array($result)){
 </div>
 </td>
 
-<td>
-<div class="styled-select">
-<select name="units" id="units" class="mobile-select">
-<option value=0 selected> Units </option>
-</select> 
-</div>
-</td>
-
 <td><center><input class="textbox4 mobile-input inside_table" type= "text" name="fieldID" id="fieldID" size="10"></center></td>
-
+ 
 <script type="text/javascript">
-	 function addInput(){
+   function addInput(){
         var crop = encodeURIComponent(document.getElementById('crop').value);
-        var newdiv=document.getElementById("units");
+        var collection = document.getElementsByClassName("target-unit");
 	xmlhttp= new XMLHttpRequest();
 	xmlhttp.open("GET", "/Harvest/hupdate.php?crop="+crop, false);
 	xmlhttp.send();
 
-	newdiv.innerHTML="<select name= 'units' id= 'units'>"+xmlhttp.responseText+"</select>";
+	for (i = 0; i < collection.length; i++) {
+	   collection[i].innerHTML=xmlhttp.responseText;
 	}
+}  
 
 	function addall(){
           sum = 0;
         <?php
           for ($i = 0; $i < count($targs); $i++) {
-              echo 'sum += parseFloat(document.getElementById("'.str_replace(" ", "_",$targs[$i]).
-                   '").value);';
-              echo "\n";
+	     echo 'var unit = document.getElementsByName("unit'.$i.'")[0].value;';
+	     echo 'var number = document.getElementById("'.str_replace(' ', '_', $targs[$i]).'").value;'; 
+	     echo 'var crop = document.getElementById("crop").value;';
+	     echo 'sum += number / conversion[crop][unit];';  
+             echo "\n";
           }
         ?>
 	document.getElementById('total').value = sum;
-	
-	}	
+	document.getElementById('default_unit').innerHTML = '&nbsp;&nbsp;' + default_unit[crop];
+   }	
 	
 </script>
 <?php
 for ($i = 0; $i < count($targs); $i++) {
-   echo '<td><input size="3" class="wide" type= "text"';
+   echo '<td><input size="3" type= "text"';
    echo ' name="'.str_replace(" ", "_",$targs[$i]).'" id="'.str_replace(" ", "_",$targs[$i]).
-       '" value=0 oninput="addall();"></td>';
+       '" value=0 oninput="addall();">';
+   echo '&nbsp;&nbsp;<select name="unit'.$i.'" id="'.str_replace(" ", "_",$targs[$i]).'_unit" class="target-unit" onchange = "addall();">';
+   echo '<option value=0 selected> Units </option>';
+   echo '</select></td>';
 
 }
 ?>
-<td><input class=" textbox4 mobile-input inside_table" type="text" name="total" id="total" size="3" readonly></td>
+<td><input class=" textbox4 mobile-input inside_table" type="text" name="total" id="total" size="3" readonly><span id = 'default_unit'></span></td>
 </tr>
 </tbody>
 </table>
@@ -138,19 +130,19 @@ for ($i = 0; $i < count($targs); $i++) {
 <br clear="all"/>
 
 <?php
-if(isset($_POST['form'])&& isset($_POST['crop'])&& isset($_POST['fieldID']) &&
-     isset($_POST['units'])){
+if(isset($_POST['form'])&& isset($_POST['crop'])&& isset($_POST['fieldID'])){
    $crop= escapehtml($_POST['crop']);
    $fieldID=escapehtml($_POST['fieldID']);
-   $units=escapehtml($_POST['units']);
    mysql_query("delete from harvestListItem where crop='".$crop."' and id =".$currentID);
 echo mysql_error();
   for ($i = 0; $i < count($targs); $i++) {
 echo "<script>console.log(\"".$targs[$i]."\");</script>";
 echo "<script>console.log(\"".$_POST[$targs[$i]]."\");</script>";
-     if (isset($_POST[str_replace(" ", "_",$targs[$i])]) && $_POST[str_replace(" ", "_",$targs[$i])] > 0) {
+     
+   if (isset($_POST[str_replace(" ", "_",$targs[$i])]) && $_POST[str_replace(" ", "_",$targs[$i])] > 0) {
+	$unit = escapehtml($_POST['unit'.$i]);
        $sql = "insert into harvestListItem VALUES(".$currentID.", '".$crop.
-          "', ".$_POST[str_replace(" ", "_",$targs[$i])].", '".$units."', '".$fieldID."', '".
+          "', ".$_POST[str_replace(" ", "_",$targs[$i])].", '".$unit."', '".$fieldID."', '".
           $targs[$i]."')"; 
 echo "<script>console.log(\"".$sql."\");</script>";
        $res = mysql_query($sql);
@@ -181,7 +173,7 @@ if($deleteCrop&&$deleteCrop!=$crop){
 <tr>
         <th>Crop </th>
         <th>Field</th>
-        <th>Units </th>
+       <!-- <th>Units </th>-->
         <?php
         for ($i = 0; $i < count($targs); $i++) {
             echo '<th>'.$targs[$i].'</th>';
@@ -202,24 +194,33 @@ $tabArr = array();
 while($row=mysql_fetch_array($result)){ 
    $tabArr[$row['crop']][$row['target']]=$row['amt'];
    $tabArr[$row['crop']]['fieldID']=$row['fieldID'];
-   $tabArr[$row['crop']]['units']=$row['units'];
+   $tabArr[$row['crop']][$row['target'].'_units']=$row['units'];
 }
 foreach ($tabArr as $crp=>$arr) {
-   echo "<tr><td>".$crp."</td><td>".$tabArr[$crp]['fieldID']."</td><td>";
-   echo $tabArr[$crp]['units']."</td>";
+   echo "<tr><td>".$crp."</td><td>".$tabArr[$crp]['fieldID']."</td>";
+   //echo $tabArr[$crp]['units']."</td>";
    $tot = 0;
+   $reqs = array();
+   $reqs_unit = array();
    for ($i = 0; $i < count($targs); $i++) {
       echo "<td>";
       if (isset($tabArr[$crp][$targs[$i]])) {
          $val = $tabArr[$crp][$targs[$i]];
+	 $val_unit = $tabArr[$crp][$targs[$i].'_units'];
       } else {
          $val = 0;
       }
-      echo $val;
-      $tot += $val;
+
+      if ($val == 0) {
+	echo $val.'&nbsp;'.$default_unit[$crp];
+      }
+      else {
+	echo $val.'&nbsp;'.$val_unit.'(S)';
+      }
+      $tot += $val / $conversion[$crp][$val_unit];;
       echo "</td>";
    }
-   echo "<td>".$tot."</td>";
+   echo "<td>".number_format((float) $tot,2,'.','')."&nbsp&nbsp".$default_unit[$crp]."(S)"."</td>";
    echo "<td><form method=\"POST\" action=\"harvestListAdmin.php?tab=admin:admin_add:admin_harvestlist&crop=".
       $crp."&date=".$date."&year=".$year."&month=".$month."&day=".$day.
       "&currentID=".$currentID."\">";

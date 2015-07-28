@@ -397,7 +397,7 @@ echo '<li id="li_invoice_graph">
 </div>
 
 <div id="view_tables" style="display:none;">
-<div class="tabs tabs4">
+<div class="tabs tabs5">
 <ul>
 <li id="li_viewfield">  
    <a href="/Admin/View/fieldReport.php?tab=admin:admin_view:view_tables:viewfield" id = "viewfield_a" class="inactivetab">Field</a> </li>
@@ -407,6 +407,8 @@ echo '<li id="li_invoice_graph">
    <a href="/Admin/View/viewCrops.php?tab=admin:admin_view:view_tables:viewcrops" id="viewcrops_a" class="inactivetab">Crops</a></li>
 <li id="li_viewfieldrecord">  
    <a href="/Admin/View/fieldRecordReport.php?tab=admin:admin_view:view_tables:viewfieldrecord" id = "viewfieldrecord_a" class="inactivetab">Field Record</a> </li>
+<li id="li_view_history">  
+   <a href="/Admin/View/cropHistory.php?tab=admin:admin_view:view_tables:view_history" id = "view_history_a" class="inactivetab">Crop History</a> </li>
 </ul>
 <?php createBR(); ?>
 </div>

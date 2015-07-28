@@ -101,7 +101,7 @@ echo "<input disabled class='textbox2 mobile-input' type ='text' value=".number_
 echo "</div>";
 $totalByCrop = mysql_query("select crop, sum(num_pounds) as total from coverSeed natural join coverSeed_master where seedDate BETWEEN '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-      $tcurDay."' group by crop") or die(mysql_error());
+      $tcurDay."' and fieldID like '".$fieldID."' group by crop") or die(mysql_error());
 while($rowCrop = mysql_fetch_array($totalByCrop)){
 echo "<div class='pure-control-group'>";
    echo "<label for='crop'>Total amount of ".$rowCrop[crop]." seeded (lbs):</label>";

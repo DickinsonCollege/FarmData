@@ -10,7 +10,8 @@ if (!$_SESSION['mobile']) {
 }
 ?>
 -->
-<head><meta name="google-translate-customization" content="8bca6d16755ec7ea-88689800f992b82a-g914b132bacc77839-20"></meta>
+<head>
+<meta name="google-translate-customization" content="8bca6d16755ec7ea-88689800f992b82a-g914b132bacc77839-20"></meta>
  <meta charset="UTF-8"> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
