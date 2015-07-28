@@ -283,7 +283,7 @@ while ($row1 =  mysql_fetch_array($result)){
 </div>
 </form>
 <div class = "pure-u-1-2">
-<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+<form method="POST" action = "/Labor/laborReport.php?tab=labor:labor_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>
 <br clear = "all"/>
 </div>
 </div>

@@ -329,7 +329,7 @@ rows="5" cols="30">
 <div class="pure-u-1-2">
 <form method="GET" action = "plantReport.php">
 <input type="hidden" name="tab" value="seeding:direct:direct_report">
-<input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+<input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>
 </div>
 </div>
 <?php

@@ -222,7 +222,7 @@ rows="5" cols="30">
 </form>
 </div>
 <div class="pure-u-1-2">
-<form method="POST" action = "tillageReport.php?tab=soil:soil_fert:soil_till:till_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>
+<form method="POST" action = "tillageReport.php?tab=soil:soil_fert:soil_till:till_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>
 </div>
 </div>
 <?php

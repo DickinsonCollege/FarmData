@@ -138,7 +138,7 @@ rows="5" cols= "30">
 </div>
 <div class="pure-u-1-2">
 <?php
-echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:transplant:transplant_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
+echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:transplant:transplant_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>';
 ?>
 </div>
 </div>

@@ -205,7 +205,7 @@ function show_confirm() {
 echo "</form>";
 echo "</div>";
 echo '<div class="pure-u-1-2">';
-echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
+echo '<form method="POST" action = "diseaseReport.php?tab=soil:soil_scout:soil_disease:disease_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>';
 echo "</div>";
 echo "</div>";
 $var=$_POST['hid'];

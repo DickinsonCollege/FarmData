@@ -107,7 +107,7 @@ echo '<input type="hidden" name = "numMaterial" id="numMaterial" >';
 echo "</form>";
 echo '</div>';
 echo '<div class="pure-u-1-2">';
-echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table"></form>';
+echo '<form method="POST" action = "reportChooseDate.php?tab=soil:soil_spray:bspray:bspray_report"><input type="submit" class="submitbutton pure-button wide" value = "View Table" onclick="return confirmLeave();"></form>';
 echo '</div>';
 echo '</div>';
 ?>

@@ -200,4 +200,9 @@ function escapeescapeHtml(str) {
    }
    return str;
  }
+
+ function confirmLeave() {
+     return confirm("Leaving this form will clear any data that you have entered.\n" +
+                    "Do you want to leave this form?");
+ }
 </script>
