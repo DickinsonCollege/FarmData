@@ -11,7 +11,7 @@ if ($_SESSION['mobile']) {
    echo '<P>';
 }
 ?>
-<h1> Welcome to FARMDATA Version 1.3! <br> Click one of the tabs to begin. </h1>
+<h1> Welcome to FARMDATA Version 1.5! <br> Click one of the tabs to begin. </h1>
 <br clear="all"/>
 <img src='farmdata.png'>
 </center>

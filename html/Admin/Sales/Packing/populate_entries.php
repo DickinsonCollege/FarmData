@@ -4,26 +4,31 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $lastHarvest = $_GET['id'];
 
 do {
-   $sql = "SELECT distinct crop, units FROM harvestListItem WHERE id=".$lastHarvest;
-   $result = mysql_query($sql);
-   echo mysql_error();
-   if (mysql_num_rows($result) == 0) {
+   $sql = "SELECT count(*) as num FROM harvestListItem WHERE id=".$lastHarvest;
+   $result = $dbcon->query($sql);
+   $row = $result->fetch(PDO::FETCH_ASSOC);
+   $num = $row['num'];
+   if ($num == 0) {
       $lastHarvest--;
    }
-} while (mysql_num_rows($result) == 0);
+} while ($num == 0);
+
 
 $dateSQL = "SELECT harDate FROM harvestList WHERE id=".$lastHarvest;
-$dateResult = mysql_query($dateSQL);
-$dateRow = mysql_fetch_array($dateResult);
+$dateResult = $dbcon->query($dateSQL);
+$dateRow = $dateResult->fetch(PDO::FETCH_ASSOC);
 $date = $dateRow['harDate'];
 
 $harvestListArray = array();
 //$i = 0;
 
-while ($row = mysql_fetch_array($result)) {
-   $totalSQL = "SELECT sum(yield) as yield, unit FROM harvested WHERE crop='".$row['crop']."' AND hardate='".$date."' group by unit";
-   $totalResult = mysql_query($totalSQL);
-   $totalRow = mysql_fetch_array($totalResult);
+$sql = "SELECT distinct crop, units FROM harvestListItem WHERE id=".$lastHarvest;
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   $totalSQL = "SELECT sum(yield) as yield, unit FROM harvested WHERE crop='".$row['crop'].
+      "' AND hardate='".$date."' group by unit";
+   $totalResult = $dbcon->query($totalSQL);
+   $totalRow = $totalResult->fetch(PDO::FETCH_ASSOC);
    $yield = $totalRow['yield'];
    $unit = $totalRow['unit'];
    $convert = false;
@@ -33,10 +38,9 @@ while ($row = mysql_fetch_array($result)) {
       $unit = $row['units'];
    }
    $convsql = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='POUND'";
-   $convresult = mysql_query($convsql);
-   if (mysql_num_rows($convresult) > 0) {
+   $convresult = $dbcon->query($convsql);
+   if ($convrow = $convresult->fetch(PDO::FETCH_NUM)) {
       $convert = true;
-      $convrow = mysql_fetch_array($convresult);
       $conversion = $convrow[0];
       $yield = $yield * $conversion;
       $unit='POUND';
@@ -44,41 +48,40 @@ while ($row = mysql_fetch_array($result)) {
    
    $rowArray = array();
    $sql = "select * from harvestListItem where crop='".$row['crop']."' AND id=".$lastHarvest;
-   $resultc = mysql_query($sql);
-   echo mysql_error();
+   $resultc = $dbcon->query($sql);
    $tot = 0;
-   while ($rowc = mysql_fetch_array($resultc)) {
+   while ($rowc = $resultc->fetch(PDO::FETCH_ASSOC)) {
       $targ = $rowc['target'];
       $rowArray[$targ] = $rowc['amt'];
       $hunit = $rowc['units'];
       if ($unit != $hunit) {
         $conversion = 1;
         $defsql = "select units from plant where crop = '".$row['crop']."'";
-        $defres = mysql_query($defsql);
-        $defrow = mysql_fetch_array($defres);
+        $defres = $dbcon->query($defsql);
+        $defrow = $defres->fetch(PDO::FETCH_ASSOC);
         $defunit = $defrow['units']; 
         if ($unit == $defunit) {
            // convert to default unit
            $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$hunit."'";
-           $convres1 = mysql_query($convsql1);
-           $convrow1 = mysql_fetch_array($convres1);
+           $convres1 = $dbcon->query($convsql1);
+           $convrow1 = $convres1->fetch(PDO::FETCH_ASSOC);
            $conversion = 1 / $convrow1['conversion'];
         } else if ($hunit == $defunit) {
            // convert from default unit
            $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$unit."'";
-           $convres1 = mysql_query($convsql1);
-           $convrow1 = mysql_fetch_array($convres1);
+           $convres1 = $dbcon->query($convsql1);
+           $convrow1 = $convres1->fetch(PDO::FETCH_ASSOC);
            $conversion = $convrow1['conversion'];
         } else {
            // convert to default unit
            $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$hunit."'";
-           $convres1 = mysql_query($convsql1);
-           $convrow1 = mysql_fetch_array($convres1);
+           $convres1 = $dbcon->query($convsql1);
+           $convrow1 = $convres1->fetch(PDO::FETCH_ASSOC);
            $conversion1 = 1 / $convrow1['conversion'];
            // convert from default unit
            $convsql1 = "SELECT conversion FROM units WHERE crop='".$row['crop']."' AND unit='".$unit."'";
-           $convres1 = mysql_query($convsql1);
-           $convrow1 = mysql_fetch_array($convres1);
+           $convres1 = $dbcon->query($convsql1);
+           $convrow1 = $convres1->fetch(PDO::FETCH_ASSOC);
            $conversion2 = $convrow1['conversion'];
            $conversion = $conversion1 * $conversion2;
         }
@@ -98,5 +101,4 @@ while ($row = mysql_fetch_array($result)) {
 
 echo json_encode($harvestListArray);
 
-mysql_close();
 ?>

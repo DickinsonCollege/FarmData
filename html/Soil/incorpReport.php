@@ -29,8 +29,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
-$result = mysql_query("SELECT distinct fieldID from coverSeed_master");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct fieldID from coverSeed_master");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 ?>

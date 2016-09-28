@@ -16,10 +16,15 @@ if (isset($_GET['crop']) && isset($_GET['unit'])) {
       $sql = "update units set conversion=".$_POST['conv'.$_GET['rowNum']]." where crop='".$crop.
         "' and unit='".$unit."'";
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not update units".$p->getMessage()."\");</script>";
+      die();
+   }
 }
-$result=mysql_query("Select crop,default_unit,unit,conversion from units");
+$result=$dbcon->query("Select crop,default_unit,unit,conversion from units");
 
 echo "<center>";
 echo "<h2> Units Table </h2>";
@@ -43,7 +48,7 @@ echo "<thead><tr>
 	<th>Conversion</th>
         <th>Update</th><th>Delete</th></tr></thead>";
 $rowNum = 0;
-while($row = mysql_fetch_array($result)) {
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $rowNum++;
    echo "<tr><td>";
    echo $row['crop'];

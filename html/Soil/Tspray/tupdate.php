@@ -7,8 +7,8 @@ if ($farm == 'wahlst_spiralpath') {
 } else {
    $sql="SELECT numberOfBeds as numberOfBeds FROM field_GH where fieldID='".
       escapehtml($_GET['field'])."'";
-   $result=mysql_query($sql);
-   while ($row=mysql_fetch_array($result)) {
+   $result=$dbcon->query($sql);
+   while ($row=$result->fetch(PDO::FETCH_ASSOC)) {
       $ind=1;	
       $max = $row['numberOfBeds'];
       if ($max <1) {

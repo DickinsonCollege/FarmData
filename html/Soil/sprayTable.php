@@ -8,8 +8,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM bspray WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
 
    $year = $_GET['year'];
@@ -21,91 +26,85 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $sprayMaterial = escapehtml($_GET['sprayMaterial']);
    $fieldID = escapehtml($_GET['fieldID']);
    $crop = escapehtml($_GET['crop']);
-   $sql = "Select id, sprayDate, fieldID, water, materialSprayed, rate, BRateUnits, totalMaterial, mixedWith, crops, comments from bspray, tSprayMaterials where sprayDate between '".
+   $sql = "Select id, sprayDate, fieldID, water, materialSprayed, rate, BRateUnits, totalMaterial, ".
+        "mixedWith, crops, comments from bspray, tSprayMaterials where sprayDate between '".
         $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and fieldID like '".
         $fieldID."'and materialSprayed like '".$sprayMaterial."' and crops like '%".$crop.
         "%' and materialSprayed = sprayMaterial order by sprayDate";
-      $sqldata = mysql_query($sql) or die(mysql_error());
-/*
-      echo "<colgroup><col width='10px' id='col1'/>";
-      echo "<col id='col2'/>";
-      echo "<col id='col3'/>";
-      echo "<col id='col4'/>";
-      echo "<col id='col5'/>";
-      echo "</colgroup>";
-*/
-      if ($fieldID == "%") {
-        $fld = "All Fields";
-      } else {
-        $fld = "Field ".$fieldID;
-      }
-      if ($sprayMaterial == "%") {
-         $mat = "All Materials";
-      } else {
-         $mat = $sprayMaterial;
-      }
-      echo "<center>";
-      echo "<h2>Backpack Spray Report for ".$mat." on ".$fld."</h2>";
-      echo "</center>";
-      echo "<table class='pure-table pure-table-bordered'>";
-      echo "<thead><tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th>";
-      if ($_SESSION['admin']) {
-         echo "<th>Edit</th><th>Delete</th>";
-      }
-      echo "</tr></thead>";
-      while($row = mysql_fetch_array($sqldata)) {
-   echo "<tr><td>";
-   //echo str_replace("-","/",$row['sprayDate']);
-   echo $row['sprayDate'];
-   echo "</td><td>";
-   echo $row['fieldID'];
-   echo "</td><td>";
-   echo $row['water'];       
-    echo "</td><td>";
-   echo $row['materialSprayed'];
-   echo "</td><td>";
-   echo $row['rate']." ".$row['BRateUnits']."/gallon";
-        echo "</td><td>";
-   echo $row['totalMaterial'];
-   echo "</td><td>";
-   echo $row['mixedWith'];
-   echo "</td><td>";
-   echo $row['crops'];
-   echo "</td><td>";
-   echo $row['comments'];
-   echo "</td>";
+   $sqldata = $dbcon->query($sql);
+   if ($fieldID == "%") {
+     $fld = "All Fields";
+   } else {
+     $fld = "Field ".$fieldID;
+   }
+   if ($sprayMaterial == "%") {
+      $mat = "All Materials";
+   } else {
+      $mat = $sprayMaterial;
+   }
+   echo "<center>";
+   echo "<h2>Backpack Spray Report for ".$mat." on ".$fld."</h2>";
+   echo "</center>";
+   echo "<table class='pure-table pure-table-bordered'>";
+   echo "<thead><tr><th>Spray Date</th><th>Field ID</th><th>Water (Gallons)</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th><th>Mixed With</th><th>Crops</th><th> Comments </th>";
    if ($_SESSION['admin']) {
-      echo "<td><form method='POST' action=\"bsprayEdit.php?month=".$month.
-         "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
-         "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
-         "&fieldID=".encodeURIComponent($_GET['fieldID']).
-         "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
-         "&tab=soil:soil_spray:bspray:bspray_report\">";
-      echo "<input type='submit' class='editbutton pure-button wide' value='Edit' /></form>";
+      echo "<th>Edit</th><th>Delete</th>";
+   }
+   echo "</tr></thead>";
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
+      echo "<tr><td>";
+      echo $row['sprayDate'];
       echo "</td><td>";
-      echo "<form method='POST' action=\"sprayTable.php?month=".$month.
-         "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
-         "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
-         "&fieldID=".encodeURIComponent($_GET['fieldID']).
-         "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
-         "&tab=soil:soil_spray:bspray:bspray_report\">";
-     echo "<input type='submit' class='deletebutton pure-button wide' value='Delete'";
-     echo "onclick='return warn_delete();'/></form>";
-     echo "</td>";
-  }
-  echo "</tr>";
-  echo "\n";
+      echo $row['fieldID'];
+      echo "</td><td>";
+      echo $row['water'];       
+      echo "</td><td>";
+      echo $row['materialSprayed'];
+      echo "</td><td>";
+      echo $row['rate']." ".$row['BRateUnits']."/gallon";
+      echo "</td><td>";
+      echo $row['totalMaterial'];
+      echo "</td><td>";
+      echo $row['mixedWith'];
+      echo "</td><td>";
+      echo $row['crops'];
+      echo "</td><td>";
+      echo $row['comments'];
+      echo "</td>";
+      if ($_SESSION['admin']) {
+         echo "<td><form method='POST' action=\"bsprayEdit.php?month=".$month.
+            "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
+            "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+            "&fieldID=".encodeURIComponent($_GET['fieldID']).
+            "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
+            "&tab=soil:soil_spray:bspray:bspray_report\">";
+         echo "<input type='submit' class='editbutton pure-button wide' value='Edit' /></form>";
+         echo "</td><td>";
+         echo "<form method='POST' action=\"sprayTable.php?month=".$month.
+            "&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
+            "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+            "&fieldID=".encodeURIComponent($_GET['fieldID']).
+            "&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
+            "&tab=soil:soil_spray:bspray:bspray_report\">";
+         echo "<input type='submit' class='deletebutton pure-button wide' value='Delete'";
+         echo "onclick='return warn_delete();'/></form>";
+         echo "</td>";
+     }
+     echo "</tr>";
+     echo "\n";
 }
       echo "</table>";
       echo '<br clear="all"/>';
       echo '<div class="pure-form pure-form-aligned">';
-      $total="Select sum(water) as water, sum(totalMaterial) as total from bspray where sprayDate between '".$year."-".$month."-".$day.
-         "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and materialSprayed like '".$sprayMaterial."' and fieldID like '".$fieldID."'";
-      $result=mysql_query($total) or die(mysql_error());
+      $total="Select sum(water) as water, sum(totalMaterial) as total from bspray where sprayDate between '".
+         $year."-".$month."-".$day.
+         "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and materialSprayed like '".$sprayMaterial.
+         "' and fieldID like '".$fieldID."' and crops like '%".$crop."%'";
+      $result=$dbcon->query($total);
       $other = "Select BRateUnits from tSprayMaterials where sprayMaterial like '".$sprayMaterial."'";
-      $result2 = mysql_query($other) or die(mysql_error());
-      $row2 = mysql_fetch_array($result2);
-      while ($row1 = mysql_fetch_array($result) ) {
+      $result2 = $dbcon->query($other);
+      $row2 = $result2->fetch(PDO::FETCH_ASSOC);
+      while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<div class="pure-control-group">';
         echo "<label for='total'>Total Gallons of Water Used:</label> ";
    echo "<input readonly class='textbox2 mobile-input' type ='text' value=".$row1['water'].">";

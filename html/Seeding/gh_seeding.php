@@ -56,12 +56,9 @@ function addRow() {
    if (cb.value=="0") {
       showError("Error: choose crop first!");
    } else {
-      cb.disabled=true;
       numRows++;
       var nr = document.getElementById("numRows");
       nr.value = numRows;
-      //var table = document.getElementById("ghTable");
-      //var row = table.insertRow(numRows);
       var table = document.getElementById("ghTable").getElementsByTagName('tbody')[0];
       var row = table.insertRow(numRows - 1);
       row.id = "row"+numRows;
@@ -92,12 +89,20 @@ function removeRow() {
       numRows--;
       update_seeds();
    }
+/*
    if (numRows == 0) {
       var cb = document.getElementById("cropButton");
       cb.disabled=false;
    }
+*/
    var nr = document.getElementById("numRows");
    nr.value=numRows;
+}
+
+function clearTable() {
+   while (numRows > 0) {
+      removeRow();
+   }
 }
 </script>
 
@@ -110,8 +115,8 @@ function removeRow() {
 <select name ="flatSize" id="flatSize" class="mobile-select">
 <?php
 $sql = "select cells from flat";
-$result = mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)) {
    echo "\n<option value=".$row1['cells'].">".$row1['cells']."</option>";
 }
 ?>
@@ -235,16 +240,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $seedInfo = true;
    if ($_SESSION['seed_order']) {
       $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
-      $res = mysql_query($sql);
-      if ($row = mysql_fetch_array($res)) {
+      $res = $dbcon->query($sql);
+      if ($row = $res->fetch(PDO::FETCH_ASSOC)) {
          $seedsGram = $row['seedsGram'];
          $seedsRowFt = $row['seedsRowFt'];
       } else {
          $seedInfo = false;
-         //echo "<script>showError(\"No seeding information found!\");</script>\n";
       }
       $varsSanitized="";
       $numRows = $_POST['numRows'];
+      $dec = "update seedInventory set inInventory = inInventory - :grams where crop = :crop and ".
+             "code = :code";
+      try {
+      $stmt = $dbcon->prepare($dec);
       for ($i = 1; $i <= $numRows; $i++) {
          if (isset($_POST['code'.$i])) {
              $code = escapehtml($_POST['code'.$i]);
@@ -253,9 +261,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $varsSanitized .= "<br>";
              }
              $var = "select variety from seedInventory where code ='".$code."' and crop = '".$crop."'";
-             $vr = mysql_query($var);
-             echo mysql_error();
-             if ($vrow = mysql_fetch_array($vr)) {
+             $vr = $dbcon->query($var);
+             if ($vrow = $vr->fetch(PDO::FETCH_ASSOC)) {
                 $variety = $vrow['variety'];
              } else {
                 $variety = "No Variety";
@@ -263,12 +270,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              $varsSanitized .="Seed Code: ".$code." (".$variety.") - ".$sds." seeds";
              if ($seedInfo && $code != "N/A") {
                 $grams = $sds / $seedsGram;
-                $dec = "update seedInventory set inInventory = inInventory - ".$grams.
-               " where crop = '".$crop."' and code = '".$code."'";
-                $decres = mysql_query($dec);
-                echo mysql_error();
+                   $stmt->bindParam(':grams', $grams, PDO::PARAM_STR);
+                   $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+                   $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+                   $stmt->execute();
              }
          }
+      }
+      } catch (PDOException $p) {
+         phpAlert('Error updating seed inventory', $p);
+         die();
       }
    } else {
       $varsSanitized=escapehtml($_POST['vars']);
@@ -278,15 +289,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $numFlats = escapehtml($_POST['numFlats']);
    $flatSize = escapehtml($_POST['flatSize']);
    $user = escapehtml($_SESSION['username']);
-   $sql="INSERT INTO gh_seeding(username,crop,seedDate,numseeds_planted,flats,cellsFlat,varieties,gen, comments) VALUES ('".
+   $sql="INSERT INTO gh_seeding(username,crop,seedDate,numseeds_planted,flats,cellsFlat,varieties,gen,".
+      " comments) VALUES ('".
       $user."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
       $_POST['day']."',".$seeds.",".$numFlats.", ".$flatSize.", '".
       $varsSanitized."', ".$gen.", '".$comSanitized."')";
-   $result = mysql_query($sql);
-   if(!$result){ 
-       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\\nIf this is a duplicate entry error, ask your FARMDATA administrator to correct the record.\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+  try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not enter seeding data.  If this is a duplicate entry error, ask your FARMDATA '.
+        'administrator to correct the record', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+//   }
+   $stmt = null;
 }
 ?>

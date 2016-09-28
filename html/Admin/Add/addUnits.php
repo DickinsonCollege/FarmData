@@ -14,10 +14,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <div class="pure-control-group">
 <label for="crop">Crop:</label>
 <select name="crop" id="crop" onChange="addInput(); addInput2();" class="mobile-select"> 
-<option value=0 selected disabled>Crop&nbsp; </option>
 <?php
-$result=mysql_query("Select crop from plant where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select crop from plant where active=1");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
 }
 ?>
@@ -42,9 +41,6 @@ function addInput2(){
       '<select name="unit" id="unit" onchange="updateNew();">' +
       xmlhttp.responseText + '</select></div>';
 
-/*
-"<div id= \"units\"> <select class='mobile-select' name= \"unit\" id = \"unit\" onchange=\"updateNew();\"> "+ xmlhttp.responseText+"</div>";
-*/
    var newUnit = document.getElementById("unit").value;
    var inp = document.getElementById('newunit');
    inp.value = newUnit;
@@ -74,9 +70,6 @@ function addInput(){
       '<input size="12" type="textbox" readonly name="newunit" id="newunit">' +
       '(S) </div>';
 
-/*
-"<div id= \"default2\"> <input class=\"textbox3 mobile-input\" type=\"text\" name= \"defaultunit\" id = \"defaultunit\" value = \""+ xmlhttp.responseText+"\"> </div>";
-*/
 }
 </script>
 
@@ -105,27 +98,33 @@ One&nbsp;
 </div>
 <br clear="all"/>
 <script>
-        function show_confirm() {
-/**        var i = document.getElementById("name").value;
-        var con="Crop: "+ i+ "\n";
-	var i = document.getElementById("defunit");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+"Default Unit: "+ strUser3+ "\n";
-	var i = document.getElementById("unit");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+"Unit: "+ strUser3+ "\n";
-	var i = document.getElementById("conversion").value;
-        var con=con+"Conversion Factor: "+ i+ "\n";
+function show_confirm() {
+   var cp = document.getElementById("crop").value;
+   if (checkEmpty(cp)) {
+      alert("Choose a crop!");
+      return false;
+   }
+   var con="Crop: "+ cp + "\n";
+   var nu = document.getElementById("unit").value;
+   if (checkEmpty(nu)) {
+      alert("Choose a new unit!");
+      return false;
+   }
+   con += "New Unit: "+ nu + "\n";
+   var conv = document.getElementById("conversion").value;
+   if (checkEmpty(conv) || !isFinite(conv)) {
+      alert("Enter a conversion factor!");
+      return false;
+   }
+   con += "Conversion Factor: "+ conv + "\n";
 
-	return confirm("Confirm Entry:"+"\n"+con);
-**/
-
+   return confirm("Confirm Entry:"+"\n"+con);
 }
-
-	</script>
+</script>
 <div class="pure-g">
 <div class="pure-u-1-2">
-<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add">
+<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add"
+  onclick = "return show_confirm();">
 </form>
 </div>
 <div class="pure-u-1-2">
@@ -139,15 +138,18 @@ if (isset($_POST['add'])) {
    $crop = escapehtml($_POST['crop']);
    $default_unit = escapehtml($_POST['default_unit']);
    if ($conversion > 0 && !empty($unit) && !empty($conversion)) {
-      $sql="Insert into units(crop,default_unit,unit,conversion) values ('".$crop."','".$default_unit."','".$unit."','".$conversion."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      }else {
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+      $sql="Insert into units(crop,default_unit,unit,conversion) values ('".$crop."','".$default_unit.
+         "','".$unit."','".$conversion."')";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
       }
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    } else {
-      echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo    "<script>alert(\"Enter all data!\\n\");</script> \n";
    }
 }
 ?>

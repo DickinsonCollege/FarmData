@@ -6,8 +6,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 if (isset($_GET['id'])) {
     $sqlDel = "DELETE FROM comments WHERE id = ".$_GET['id'];
-    mysql_query($sqlDel);
-    echo mysql_error();
+    try {
+       $stmt = $dbcon->prepare($sqlDel);
+       $stmt->execute();
+    } catch (PDOException $p) {
+       die($p->getMessage());
+    }
 }
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -18,7 +22,7 @@ $tcurDay = $_GET['tday'];
 
 if (isset($_GET['submit'])) {   
    $sql= "Select id,username,comDate,comments from comments where comDate between '".$_GET['year']."-".$_GET['month']."-".$_GET['day']."'and '".$_GET['tyear']."-".$_GET['tmonth']."-".$_GET['tday']."'";
-   $result=mysql_query($sql);
+   $result=$dbcon->query($sql);
    echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<colgroup> <col id='col1'/>";
    echo "<col id='col2' />";
@@ -26,7 +30,7 @@ if (isset($_GET['submit'])) {
    echo "</colgroup>";
    echo "<center><h2> Comments Report </h2></center>";
    echo "<thead><tr><th>UserName</th><th> Date </th><th>Comments</th><th>Edit</th><th>Delete</th></tr></thead>";
-   while($row = mysql_fetch_array($result)) {
+   while($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['username'];
         echo "</td><td>";
@@ -39,7 +43,8 @@ if (isset($_GET['submit'])) {
 	    echo "<td><form method =\"POST\" action = \"notesEdit.php?id=".$row['id']."&day=".$day."&month=".$month."&year=".$year."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&tab=notes:notes_report&submit=Submit\">";
 	    echo "<input type = \"submit\" class = \"editbutton pure-button\" value = \"Edit\"></form></td>"; 
 	    echo "<td><form method =\"POST\" action = \"notesTable.php?id=".$row['id']."&day=".$day."&month=".$month."&year=".$year."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&tab=notes:notes_report&submit=Submit\">";
-	    echo "<input type = \"submit\" class = \"deletebutton pure-button\" value = \"Delete\"></form></td>";
+	    echo "<input type = \"submit\" class = \"deletebutton pure-button\" value = \"Delete\"".
+               " onclick='return warn_delete();'></form></td>";
         }
 	else {
 		echo "<td>&nbsp;</td><td>&nbsp;</td></tr>";

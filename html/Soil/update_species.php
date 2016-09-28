@@ -8,16 +8,15 @@ $sql = "SELECT crop
 	FROM coverSeed natural join coverSeed_master
 	WHERE fieldID='".$fieldID."' AND seedDate ='".$seedDate."'";
 
-$result = mysql_query($sql) or die(mysql_error());
+$result = $dbcon->query($sql);
 
 $CropNames = array();
 $count = 0;
-while ($row = mysql_fetch_array($result)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 	$cropNames[$count] = $row['crop'];
 	$count++;
 }
 
 echo json_encode($cropNames);
 
-mysql_close();
 ?>

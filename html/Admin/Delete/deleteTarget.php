@@ -15,7 +15,8 @@ function addInput() {
    xmlhttp.open("GET", "update_target.php?target="+target, false);
    xmlhttp.send();
    if (xmlhttp.responseText == "\n") {
-      
+       phpAlert("Error fetching target information", $p);
+       die();     
    }
    var js_array = eval(xmlhttp.responseText);
    var thediv = document.getElementById('renamediv');
@@ -56,10 +57,9 @@ function addInput() {
 <div class="pure-control-group" id="target2">
 <label for="target">Sales Target:</label>
 <select name='target' id='target' onChange='addInput();' class='mobile-select'>
-<option disabled selected></option>
 <?php
-$result = mysql_query("SELECT targetName from targets");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT targetName from targets");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
    echo '\n<option value= "'.$row1['targetName'].'">'.
       $row1['targetName'].'</option>';
    }
@@ -85,7 +85,9 @@ echo "</select></div>";
    </select>
 </div>
 <br clear="all"> 
-
+<script type="text/javascript">
+addInput();
+</script>
 <input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 
 <?php
@@ -96,8 +98,8 @@ if(!empty($_POST['submit'])) {
    $active = escapehtml($_POST['active']);
 
    $sql = "select * from targets where targetName='".$target."'";
-   $result = mysql_query($sql);
-   $row = mysql_fetch_assoc($result);
+   $result = $dbcon->query($sql);
+   $row = $result->fetch(PDO::FETCH_ASSOC);
 
    if (trim($rename) == "") {
       $rename = $target;
@@ -110,14 +112,15 @@ if(!empty($_POST['submit'])) {
    $sql = "UPDATE targets SET targetName='".$rename."', 
       prefix='".$prefix."', active=".$active."
       WHERE targetName='".$target."'";
-
-   $query = mysql_query($sql) or die(mysql_error());
-
-   if (!$query) {
-      echo '<script> alert("Could not sales target, please try again"); </script>';
-   } else {
-      echo '<script> alert("Changed sales target successfully!"); </script>';
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not update sales target".$p->getMessage()."\");</script>";
+      die();
    }
+
+   echo '<script> alert("Changed sales target successfully!"); </script>';
 }
 ?>
 </form>

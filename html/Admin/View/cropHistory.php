@@ -34,8 +34,8 @@ echo '</select></div>';
 <select id = "fieldID" name = "fieldID">
 <option value = "%">All</option>
 <?php 
-$result = mysql_query("SELECT distinct fieldID from field_GH");
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query("SELECT distinct fieldID from field_GH");
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "\n<option value = \"$row[fieldID]\">$row[fieldID]</option>";
 }
 echo "</select></div>";

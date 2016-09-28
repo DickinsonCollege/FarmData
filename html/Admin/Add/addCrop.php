@@ -20,8 +20,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <option value=0 selected>Unit </option>
 <?php
 $sql = "select distinct unit from extUnits";
-$result=mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)){  echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
+$result=$dbcon->query($sql);
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
+   echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
 }
 ?>
 </select>
@@ -33,8 +34,8 @@ if ($_SESSION['sales_invoice']) {
    echo '<label for="dh_unit">Invoice Unit:</label> ';
    echo '<select name="dh_unit" id="dh_unit" class="mobile-select">';
    echo '<option value=0 selected>Unit </option>';
-   $result=mysql_query("Select distinct unit from extUnits");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result=$dbcon->query("Select distinct unit from extUnits");
+   while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
       echo "\n<option value= \"$row1[unit]\">$row1[unit]</option>";
    }
    echo '</select>';
@@ -42,13 +43,49 @@ if ($_SESSION['sales_invoice']) {
 
    echo '<div class="pure-control-group">';
    echo '<label for="dh_case">Units per Case:</label> ';
-   echo '<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox3 mobile-input" type="text" name="dh_case" id="dh_case">';
+   echo '<input onkeypress= "stopSubmitOnEnter(event)"; class="textbox3 mobile-input" type="text"'.
+      ' name="dh_case" id="dh_case">';
    echo '</div>';
 }
 ?>
 <br clear="all"/>
-<input class="submitbutton pure-button wide" type="submit" name="done" value="Add">
 
+<script>
+function show_confirm() {
+   var nm = document.getElementById("name").value;
+   if (checkEmpty(nm)) {
+      alert("Enter a crop name!");
+      return false;
+   }
+   var con="Crop: "+ nm + "\n";
+   var du = document.getElementById("default_unit").value;
+   if (checkEmpty(du)) {
+      alert("Choose a default unit!");
+      return false;
+   }
+   con += "Default unit: "+ du + "\n";
+<?php
+if ($_SESSION['sales_invoice']) {
+   echo 'var dh = document.getElementById("dh_unit").value;';
+   echo 'if (checkEmpty(dh)) {';
+   echo '   alert("Choose an invoice unit!");';
+   echo '   return false;';
+   echo '}';
+   echo 'con += "Invoice unit: "+ dh + "\n";';
+   echo 'var uc = document.getElementById("dh_case").value;';
+   echo 'if (checkEmpty(uc) || !isFinite(uc)) {';
+   echo '   alert("Enter units per case!");';
+   echo '   return false;';
+   echo '}';
+   echo 'con += "Units per case: "+ uc + "\n";';
+}
+?>
+   return confirm("Confirm Entry:"+"\n"+con);
+}
+</script>
+
+<input class="submitbutton pure-button wide" type="submit" name="done" value="Add"
+    onclick = "return show_confirm();">
 
 <?php
 if (isset($_POST['done'])) {
@@ -64,20 +101,25 @@ if (isset($_POST['done'])) {
    if (!empty($name) && !empty($default_unit) && !empty($dh_unit) && !empty($dh_case) && $dh_case > 0) {
       $sql="Insert into plant values ('".$name."','".$default_unit.
          "',".$dh_case.",'".  $dh_unit."', 1)";
-      $result=mysql_query($sql);
-      if ($result) {
-         $sql2="Insert into units(crop,default_unit,unit,conversion) values ('".$name."','".
-            $default_unit."','".$default_unit."','1')";
-         $result2=mysql_query($sql2);
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
       }
-      if (!$result || !$result2) {
-	echo "<script>alert(\"Could not add crop: Please try again!\\n".mysql_error()."\");</script> \n";
-      } else {
-         echo "<script>showAlert(\"Added Crop Successfully!\");</script> \n";
-      
+      $sql2="Insert into units(crop,default_unit,unit,conversion) values ('".$name."','".
+         $default_unit."','".$default_unit."','1')";
+      try {
+         $stmt = $dbcon->prepare($sql2);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
       }
-   }else {
-      echo  "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>showAlert(\"Added Crop Successfully!\");</script> \n";
+   } else {
+      echo  "<script>alert(\"Enter all data!\\n\");</script> \n";
    }
 }
 ?>

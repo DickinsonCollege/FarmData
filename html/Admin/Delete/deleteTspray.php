@@ -6,19 +6,23 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
 <?php
-   // delete from tSprayMaster, tSprayWater, tSprayField.
    if(isset($_GET['id'])){
-      $sqlDel="Delete from tSprayWater where id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $sqlDel="Delete from tSprayWater where id=".$_GET['id'];
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
    
-      $sqlDel="Delete from tSprayField where id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+         $sqlDel="Delete from tSprayField where id=".$_GET['id'];
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
 
-      $sqlDel="Delete from tSprayMaster where id=".$_GET['id'];
-      mysql_query($sqlDel) or die (mysql_error());
-      echo mysql_error();
+         $sqlDel="Delete from tSprayMaster where id=".$_GET['id'];
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
 ?>
 <center>
@@ -46,10 +50,9 @@ $sql="select id,user, sprayDate, noField, noMaterial, comment, complete, initial
 echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
 $count=0;
 $totalMaterial=0;
-$resultM=mysql_query($sql);
-echo mysql_error();
+$resultM=$dbcon->query($sql);
 // echo table rows
-   while($rowM=mysql_fetch_array($resultM)){
+   while($rowM=$resultM->fetch(PDO::FETCH_ASSOC)){
       echo "<tr><td>".$rowM['sprayDate']."</td>";
       echo "<td>".$rowM['noField']."</td>";
       echo "<td>".$rowM['noMaterial']."</td>";

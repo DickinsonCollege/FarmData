@@ -38,9 +38,9 @@ if (!empty($_POST['done'])) {
   if ($err == 0) {
       echo "<script>alert(\"Database Backup Successful!\");</script>\n";
   } else {
-      $msg=file_get_contents($file);
+      $msg=str_replace("\n", "", file_get_contents($file));
       echo "<script>alert(\"Error in Database Backup!\\n".
-        mysql_escape_string($msg)."\");</script>\n";
+        $msg."\");</script>\n";
       exec("rm ".$file);
   }
 }

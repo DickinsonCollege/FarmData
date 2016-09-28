@@ -15,8 +15,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    }
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM labor WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
    $year = $_GET['year'];
    $month = $_GET['month'];
@@ -30,13 +35,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $origCrop = escapehtml($_GET['crop']);
    $origFieldID = escapehtml($_GET['fieldID']);
    $origTask = escapehtml($_GET['task']);
-/*
-   $sql = "SELECT id, username, ldate,crop,fieldID,task,hours,comments FROM laborview where ldate BETWEEN '".
-       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth.
-       "-".$tcurDay."' and crop like '" .$crop."' and fieldID like '".
-       $fieldID."' and task like '".$task.
-       "' and hours > 0 order by crop, ldate";
-*/
    $sql = "SELECT id, username, ldate,crop,fieldID,task,hours,comments FROM (".
       "select id, username, ldate, crop, fieldId, task, hours, comments ".
       "from labor union ".
@@ -51,8 +49,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        "-".$tcurDay."' and crop like '" .$crop."' and fieldID like '".
        $fieldID."' and task like '".$task.
        "' and hours > 0 order by crop, ldate";
-   $sqldata = mysql_query($sql);
-   echo mysql_error();
+   $sqldata = $dbcon->query($sql);
    echo "<table class = 'pure-table pure-table-bordered'>";
    if($fieldID == "%") {
       $fld = "All Fields";
@@ -74,7 +71,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while($row = mysql_fetch_array($sqldata)) {
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['ldate'];
       echo "</td><td>";
@@ -121,8 +118,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
        $tcurDay."' and crop like '" .$crop."' and fieldID like '".$fieldID.
        "' and task like '".$task."'";
-   $result=mysql_query($sql2);
-   while ($row1 = mysql_fetch_array($result)  ) {
+   $result=$dbcon->query($sql2);
+   while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<div class = 'pure-form pure-form-aligned'><div class = 'pure-control-group'><label for='total'>Total Hours:&nbsp</label>";
       echo "<input class='textbox2 mobile-input' type ='text' readonly value=".
          number_format((float) $row1['total'], 1, '.', '')."></div></div>";

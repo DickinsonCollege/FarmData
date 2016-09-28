@@ -84,8 +84,8 @@ function show_confirm() {
 <select name ="tractor" id="tractor" class="mobile-select">
 <option value = 0 selected disabled> Tractor</option>
 <?php 
-$result=mysql_query("Select tractorName from tractor where active = 1");
-while ($row1 =  mysql_fetch_array($result)){  
+$result = $dbcon->query("Select tractorName from tractor where active = 1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){  
 echo "\n<option value= \"$row1[tractorName]\">$row1[tractorName]</option>";
 }
 echo '</select>';
@@ -98,8 +98,8 @@ echo '</div>';
 <option value = 0 selected disabled> Implement </option>
 
 <?php 
-$result=mysql_query("Select tool_name from tools");
-while ($row1 =  mysql_fetch_array($result)){  
+$result = $dbcon->query("Select tool_name from tools");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){  
 echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
 }
 echo '</select>';
@@ -116,10 +116,6 @@ echo '</div>';
 var numRows = 0;
 function addRow() {
    numRows++;
-/*
-   var table = document.getElementById("fieldTable");
-   var row = table.insertRow(numRows);
-*/
     var table = document.getElementById("fieldTable").getElementsByTagName('tbody')[0];
     var row = table.insertRow(-1);
 
@@ -130,8 +126,8 @@ function addRow() {
      '" id="fieldID' + numRows + '" class="wide">' +
      '<option value = 0 selected disabled> FieldID</option>' +
      '<?php 
-     $result=mysql_query("Select fieldID from field_GH where active=1");
-     while ($row1 =  mysql_fetch_array($result)){  
+     $result = $dbcon->query("Select fieldID from field_GH where active=1");
+     while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){  
      echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
      }
      ?>'
@@ -231,28 +227,38 @@ if(!empty($_POST['submit'])) {
    $comSanitized=escapehtml($_POST['comments']);
    $tractor=escapehtml($_POST['tractor']);
    $implement=escapehtml($_POST['implement']);
-   $success = true;
-   for ($i = 1; $i <= $numRows; $i++) {
-      $com = $comSanitized;
-      if (empty($_POST['com'.$i])) {
-         $com = '';
+   $sql = "Insert into tillage(tractorName, fieldID,tilldate, tool,num_passes,comment,minutes,".
+      " percent_filled) values('".
+      $tractor."', :fieldID, '".$_POST['year']."-".$_POST['month']."-".
+      $_POST['day']."','".$implement."', :passes, :com, :minutes, :percent);";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      for ($i = 1; $i <= $numRows; $i++) {
+         $com = $comSanitized;
+         if (empty($_POST['com'.$i])) {
+            $com = '';
+         }
+         $fieldID=escapehtml($_POST['fieldID'.$i]);
+         $passes=escapehtml($_POST['passes'.$i]);
+         $minutes=escapehtml($_POST['minutes'.$i]);
+         $percent=escapehtml($_POST['perc'.$i]);
+         $stmt->bindParam(':fieldID', $fieldID, PDO::PARAM_STR);
+         $stmt->bindParam(':passes', $passes, PDO::PARAM_INT);
+         $stmt->bindParam(':minutes', $minutes, PDO::PARAM_INT);
+         $stmt->bindParam(':percent', $percent, PDO::PARAM_INT);
+         $stmt->bindParam(':com', $com, PDO::PARAM_STR);
+         $stmt->execute();
+      /*
+            $sql = "Insert into tillage(tractorName, fieldID,tilldate, tool,num_passes,comment,minutes,percent_filled) values('".
+            $tractor."','".$fieldID."','".$_POST['year']."-".$_POST['month']."-".
+         $_POST['day']."','".$implement."',".$passes.",'".$com."',".
+         $minutes.",".$percent.");";
+*/
       }
-      $fieldID=escapehtml($_POST['fieldID'.$i]);
-      $passes=escapehtml($_POST['passes'.$i]);
-      $minutes=escapehtml($_POST['minutes'.$i]);
-      $percent=escapehtml($_POST['perc'.$i]);
-      $sql = "Insert into tillage(tractorName, fieldID,tilldate, tool,num_passes,comment,minutes,percent_filled) values('".
-      $tractor."','".$fieldID."','".$_POST['year']."-".$_POST['month']."-".
-      $_POST['day']."','".$implement."',".$passes.",'".$com."',".
-      $minutes.",".$percent.");";
-      $result = mysql_query($sql);
-      if (!$result) {
-         $success = false;
-         echo "<script>alert(\"Error: ".mysql_error()."\");</script> \n";
-      }
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
-   if($success){
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-   }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>

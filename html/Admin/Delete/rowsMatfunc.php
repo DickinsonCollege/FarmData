@@ -1,15 +1,14 @@
 <script type='text/javascript'>
-	var numRowsMat = document.getElementById('numRowsMat').value;
-	function addRowMat(){
-		document.getElementById('numRowsMat').value = parseInt(numRowsMat) + 1;
+   var numRowsMat = document.getElementById('numRowsMat').value;
+   function addRowMat(){
+      document.getElementById('numRowsMat').value = parseInt(numRowsMat) + 1;
       numRowsMat++;
       var table = document.getElementById("materialTable").getElementsByTagName('tbody')[0];
       var row = table.insertRow(-1);
       var materialSprayed = "<?php
          $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
-         $resultM=mysql_query($sqlM);
-         //echo mysql_error();
-         while($rowM=mysql_fetch_array($resultM)){
+         $resultM=$dbcon->query($sqlM);
+         while($rowM=$resultM->fetch(PDO::FETCH_ASSOC)){
             echo "<option value='".$rowM[sprayMaterial]."'>".$rowM[sprayMaterial]."</option>";
          }?>";
 
@@ -42,11 +41,11 @@
          actualTotal.parentNode.removeChild(actualTotal);
          var table = document.getElementById("materialTable");
          table.deleteRow(numRowsMat);
-			document.getElementById('numRowsMat').value = parseInt(numRowsMat) - 1; 
+         document.getElementById('numRowsMat').value = parseInt(numRowsMat) - 1; 
          numRowsMat--;  
       }
    }
-	function addUnit(numU){
+   function addUnit(numU){
       console.log("addUnit");
       console.log(numU);
       var mU = encodeURIComponent(document.getElementById('material2'+numU).value);
@@ -54,9 +53,6 @@
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "tUnitUpdate.php?material="+mU, false);
       xmlhttp.send();
-      console.log('the response starts');
-      console.log(xmlhttp.responseText);
-      console.log('the response ends');
         
       newdivU.innerHTML="<label style=\"font-size:12pt\"  id='unit"+numU+"'>"+ xmlhttp.responseText +" </label>  ";
    }
@@ -69,7 +65,7 @@
       newdivM.innerHTML="<div class=styled-select2 id='rate"+numM+"'> <select onchange=\"calculateSuggested("+numM+");\" class='wide' id='rate2"+numM+"' name= 'rate2"+numM+"'>"+xmlhttp.responseText+"</select></div>";
    }  
    
-	function calculateSuggested(numS) { 
+   function calculateSuggested(numS) { 
       var mC = document.getElementById('rate2'+numS);
       var strUser = mC.options[mC.selectedIndex].value;
       var newdivC=document.getElementById('calculatedTotal'+numS);
@@ -81,7 +77,7 @@
    
       newdivC.value= (calculateTotal() * strUser).toFixed(2);
    }
-	function calculateTotalUpdate() {
+   function calculateTotalUpdate() {
       var num = 1;
       while(num <= numRowsMat){
          calculateSuggested(num);

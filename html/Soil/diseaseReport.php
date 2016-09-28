@@ -35,8 +35,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  <select name ="disease" id="disease" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
- $result=mysql_query("Select diseaseName from disease");
- while ($row1 =  mysql_fetch_array($result)){
+ $result=$dbcon->query("Select diseaseName from disease");
+ while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
  echo "\n<option value= \"$row1[diseaseName]\">$row1[diseaseName]</option>";
  }
  echo '</select>';
@@ -48,8 +48,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  <select name ="crop" id="crop" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
- $result=mysql_query("select crop from plant");
- while ($row1 =  mysql_fetch_array($result)){
+ $result=$dbcon->query("select crop from plant");
+ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
     echo "\n<option value= '".$row1['crop']."'>".$row1['crop']."</option>";
  }
  echo '</select>';
@@ -61,8 +61,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  <select name ="stage" id="stage" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
- $result=mysql_query("Select stage from stage");
- while ($row1 =  mysql_fetch_array($result)){
+ $result=$dbcon->query("Select stage from stage");
+ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
  echo "\n<option value= \"$row1[stage]\">$row1[stage]</option>";
  }
  echo '</select>';

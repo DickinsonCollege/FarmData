@@ -34,8 +34,8 @@
    <label for="crop"> Crop:</label>
    <select id = "crop" name="crop" class='mobile-select'>
    <?php
-   $result = mysql_query("SELECT distinct crop from harvested");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result = $dbcon->query("SELECT distinct crop from harvested");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
       echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
    }
    ?>

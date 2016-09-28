@@ -11,12 +11,11 @@ if ($typ == "harvesting") {
 } else {
    $sql = "SELECT distinct crop from plant where active = 1 order by crop";
 }
-$result = mysql_query($sql);
+$result = $dbcon->query($sql);
 if ($typ == "labor") {
    echo "\n<option value= \"N/A\">N/A</option>";
 }
-while($row = mysql_fetch_array($result)) {
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "\n<option value= \"$row[crop]\">$row[crop]</option>";
 }
-mysql_close();
 ?>

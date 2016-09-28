@@ -11,11 +11,10 @@ SELECT gen from transferred_to
 where crop = '".$crop."' and year(transdate) = '".$_GET['plantyear']."' and fieldID = '".$fld."' ) as tmp
 order by gen";
 
-$result = mysql_query($sql);
-while($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 echo "<option value=\"".$row['gen']."\">".$row['gen']."</option>";
 }
 
-mysql_close();
 ?>
 

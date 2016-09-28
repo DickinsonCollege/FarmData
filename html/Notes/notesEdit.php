@@ -1,20 +1,21 @@
 <?php session_start();?>
 <?php
-/*
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+         array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $e) {
+      die ("Connect Failed! :".$e->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   $result = $dbcon->query($sql);
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
-*/
 
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
@@ -31,8 +32,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id, year(comDate) as yr, month(comDate) as mth, day(comDate) as dy, username,".
    "comments FROM comments where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $user = $row['username'];
 $comments = $row['comments'];
 $curMonth = $row['mth'];
@@ -55,27 +56,33 @@ echo '<label>Date:</label>';
 
 echo '<select name="month" id="month">';
 echo '<option value='.$curMonth.' selected>'.date("F", mktime(0,0,0, $curMonth,10)).' </option>';
+for($mth = 1; $mth <= 12; $mth++) {echo "\n<option value =\"$mth\">".date("F", mktime(0, 0, 0, $mth, 10))."</o
+ption>";}
 echo '</select>';
 
 echo '<select name="day" id="day">';
 echo '<option value='.$curDay.' selected>'.$curDay.' </option>';
+for($day = $curDay - $curDay+1; $day <= 31; $day++) {echo "\n<option value =\"$day\">$day</option>";}
 echo '</select>';
 
 echo '<select name="year" id="year">';
 echo '<option value='.$curYear.' selected>'.$curYear.'</option>';
+for($yr = $curYear - 4; $yr < $curYear+5; $yr++) {echo "\n<option value =\"$yr\">$yr</option>";}
 echo '</select></div>';
 
 echo '<div class="pure-control-group">';
 echo '<label>User:</label>';
 echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
-/*
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
+   $res = $dbcon->query($sql);
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
+      echo '<option value="'.$row['username'].'">'.$row['username'].' </option>';
+   }
 } else {
    echo $useropts;
 }
-*/
 echo '</select></div>';
 
 echo '<div class="pure-control-group">';
@@ -93,17 +100,23 @@ echo '<fieldset>';
 echo "</form>";
 if ($_POST['submit']) {
    $comSanitized = escapehtml($_POST['comments']);
-   $sql = "update comments set comments='".$comSanitized;
-   $sql .= "' where id=".$id;
-   $result = mysql_query($sql);
-   
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo "<meta http-equiv=\"refresh\" content=\"0;URL=notesTable.php?year=".$origYear.'&month='
-        .$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&tab=notes:notes_report&submit=Submit\">";
+   $user = escapehtml($_POST['user']);
+   $year = escapehtml($_POST['year']);
+   $month = escapehtml($_POST['month']);
+   $day = escapehtml($_POST['day']);
+
+   $sql = "update comments set comments='".$comSanitized."', username='".$user;
+   $sql .= "', comDate='".$year."-".$month."-".$day."' where id=".$id;
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo "<meta http-equiv=\"refresh\" content=\"0;URL=notesTable.php?year=".$origYear.'&month='
+     .$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     "&tab=notes:notes_report&submit=Submit\">";
 }
 ?>

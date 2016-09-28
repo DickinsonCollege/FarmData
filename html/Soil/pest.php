@@ -21,8 +21,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="fieldID" id="fieldID" class="mobile-select">
 <option value = 0 selected disabled> Field Name</option>
 <?php
-$result=mysql_query("Select fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active=1");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 echo '</select>';
@@ -34,9 +34,9 @@ echo '</div>';
 <select name="pest" id="pest" class="mobile-select">
 <option  value = 0 selected disabled > Insect </option>
 <?php
-$result=mysql_query("Select pestName from pest");
-while ($row1 =  mysql_fetch_array($result)){  
-echo "\n<option value= \"$row1[pestName]\">$row1[pestName]</option>";
+$result=$dbcon->query("Select pestName from pest");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){  
+   echo "\n<option value= \"$row1[pestName]\">$row1[pestName]</option>";
 }
 ?>
 </select>
@@ -207,12 +207,14 @@ if (isset($_POST['submit'])) {
    $sql="Insert into pestScout(sDate,fieldID,crops,pest,avgCount,comments) values ('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID.
       "','".$crops."','".$pest."','".$average."','".$comments."')";
-   $result=mysql_query($sql);
-   if (!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

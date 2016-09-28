@@ -24,16 +24,19 @@ if (!empty($_POST['submit'])) {
    if(!empty($_POST['comments'])) {
       $comSanitized=escapehtml($_POST['comments']);
       $user=escapehtml($_SESSION['username']);
-      $result=mysql_query("Insert into comments(username,comDate,comments) values ('".
+      $sql = "insert into comments(username,comDate,comments) values ('".
          $user."','".$_POST['year']."-".$_POST['month']."-".$_POST['day'].
-         "','".$comSanitized."')");
-      if(!$result){
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      }   
+         "','".$comSanitized."')";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    }else {
-       echo  "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+       echo  "<script>alert(\"Enter all data!\");</script> \n";
    }   
 }
 ?>

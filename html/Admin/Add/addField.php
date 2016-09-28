@@ -33,8 +33,14 @@ function show_confirm() {
   var len = document.getElementById('length').value;
   var beds = document.getElementById('beds').value;
   var bspace = document.getElementById('bspace').value;
+  var size = parseFloat(document.getElementById('size').value);
+  var con = "Field Name: " + fld + "\n";
+  con += "Length: " + len + " feet\n";
+  con += "Number of beds: " + beds + "\n";
+  con += "Bed spacing: " + bspace + " inches\n";
+  con += "Size: " + size + " acres\n";
   if (checkEmpty(fld)) {
-     alert("Enter a field identifier!");
+     alert("Enter a field name!");
      return false;
   } else if (checkEmpty(len) || !isFinite(len) || len <= 0) {
      alert("Enter a valid length!");
@@ -46,7 +52,7 @@ function show_confirm() {
      alert("Enter a valid bed spacing!");
      return false;
   }
-  return true;
+  return confirm("Confirm Entry:\n" + con);
 }
 </script>
 
@@ -102,11 +108,13 @@ if (isset($_POST['add'])) {
    $length = escapehtml($_POST['length']);
    $sql="insert into field_GH(fieldID,size,numberOfBeds, length, active) values ('".$fieldID."', ".
       $size.", ".$beds.", ".$length.",1)";
-   $result=mysql_query($sql);
-   if (!$result) {
-      echo "<script>alert(\"Could not add field: Please try again!\\n".mysql_error()."\");</script> \n";
-   } else {
-      echo "<script>showAlert(\"Added field successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not add field".$p->getMessage()."\");</script>";
+      die();
    }
+   echo "<script>showAlert(\"Added field successfully!\");</script> \n";
 }
 

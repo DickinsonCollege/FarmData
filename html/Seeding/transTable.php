@@ -8,8 +8,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
 if(isset($_GET['id'])){
    $sqlDel="DELETE FROM transferred_to WHERE id=".$_GET['id'];
-   mysql_query($sqlDel);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sqlDel);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
 }
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -31,24 +35,52 @@ if ($crop != "%") {
       "diffdate from transferred_to where crop = '".$crop."' and fieldID ".
       "like '".$fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".
       $day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."') as temp";
-   $avg=mysql_query($sql2);
-   echo mysql_error();
+   try {
+      $avg=$dbcon->query($sql2);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
    $total = "select sum(bedft*rowsBed) as totalSum from transferred_to where ".
       "transdate between '".$year."-".$month."-".$day."' AND '".
       $tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop = '".$crop."'".
       " and fieldID like '".$fieldID."' and gen like '".$genSel."'";
-   $totalResult = mysql_query($total);
-   echo mysql_error();
+   try {
+      $totalResult = $dbcon->query($total);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
    $btotal = "select sum(bedft) as totalSum from transferred_to where ".
       "transdate between '".$year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-".$tcurDay."' AND crop = '".$crop."'".
       " and fieldID like '".$fieldID."' and gen like '".$genSel."'";
-   $btotalResult = mysql_query($btotal);
-   echo mysql_error();
+   try {
+      $btotalResult = $dbcon->query($btotal);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   $acretotal = "select sum(bedft * size / (length * numberOfBeds)) as acreft ".
+     " from transferred_to, field_GH ".
+     " where transferred_to.fieldID = field_GH.fieldID and transdate ".
+     "between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".
+     $tcurMonth."-".$tcurDay."' AND crop ='".$crop."' and field_GH.fieldID like '".
+     $fieldID."' and gen like '".$genSel."'";
+   try {
+      $acreTotal = $dbcon->query($acretotal);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
 }
 
-$result=mysql_query($sql);
-echo mysql_error();
+try {
+   $result=$dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
 echo "<center>";
 echo "<h2>Transplant Report for ";
 if ($crop == "%") {
@@ -90,7 +122,7 @@ if ($_SESSION['admin']) {
    echo "<th>User</th><th>Edit</th><th>Delete</th>";
 }
 echo "</tr></thead>";
-   while ($row= mysql_fetch_array($result)) {
+   while ($row= $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['crop'];
         echo "</td><td>";
@@ -152,28 +184,35 @@ echo "</tr></thead>";
    echo '<br clear="all"/>';
    if ($crop != "%") {
    echo '<div class="pure-form pure-form-aligned">';
-   while ($row2 = mysql_fetch_array($avg)) {
+   while ($row2 = $avg->fetch(PDO::FETCH_ASSOC)) {
         $formatNum=number_format($row2['avg(diffdate)'],2,'.','');
    echo "<div class='pure-control-group'>";
    echo "<label for='average'>Average Days in Tray:</label> <input class='textbox2' type ='text' name='avgDays' disabled value=".$formatNum.">";
    echo "</div>";
    }
-   while($row3 = mysql_fetch_array($btotalResult)) {
+   while($row3 = $btotalResult->fetch(PDO::FETCH_ASSOC)) {
       echo "<div class='pure-control-group'>";
-        echo "<label for='sum'>Total Number of Bed Feet Planted: </label> <input class='textbox3' type ='text' name='sum' disabled value=".$row3['totalSum'].">";
+        echo "<label for='sum'>Total Bed Feet Planted: </label> <input class='textbox3' type ='text' name='sum' disabled value=".
+      number_format((float) $row3['totalSum'], 1, '.', '').">";
       echo "</div>";
    }
-   while($row3 = mysql_fetch_array($totalResult)) {
+   while($row3 = $totalResult->fetch(PDO::FETCH_ASSOC)) {
       echo "<div class='pure-control-group'>";
-        echo "<label for='sum'>Total Number of Row Feet Planted: </label> <input class='textbox3' type ='text' name='sum' disabled value=".$row3['totalSum'].">";
+        echo "<label for='sum'>Total Row Feet Planted: </label> <input class='textbox3' type ='text' name='sum' disabled value=".
+        number_format((float) $row3['totalSum'], 1, '.', '').">";
       echo "</div>";
    }
+      while($row6 = $acreTotal->fetch(PDO::FETCH_ASSOC)){
+      echo '<div class="pure-control-group">';
+      echo '<label for="total"> Total Acres Planted:</label>'.
+             ' <input disabled type="textbox" name="total" id="total" class="textbox2" value='.
+             number_format((float) $row6['acreft'], 3, '.', '').'>';
+      echo "</div>";
+   }
+
    echo "</div>";
    echo '<br clear="all"/>';
    echo '<br clear="all"/>';
-}
-if (!$result||(!$avg && $crop != "%")) {
-        echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
 }
 echo "<div class='pure-g'>";
 echo "<div class='pure-u-1-2'>";

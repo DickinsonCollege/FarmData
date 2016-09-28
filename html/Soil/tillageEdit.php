@@ -16,9 +16,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id,year(tilldate) as yr, month(tilldate) as mth, day(tilldate) as dy, tractorName,".
    "tilldate,fieldID, tool, num_passes, minutes, comment, percent_filled FROM tillage where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
-//$user = $row['username'];
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $field = $row['fieldID'];
 $tractor = $row['tractorName'];
 $implement = $row['tool'];
@@ -62,8 +61,8 @@ echo '<label>Implement:</label> ';
 echo '<select name="tool" id="tool">';
 echo '<option value="'.$implement.'" selected>'.$implement.' </option>';
 $sql = 'select tool_name as tool from tools';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['tool'].'">'.$row['tool'].' </option>';
 }
 echo '</select></div>';
@@ -73,8 +72,8 @@ echo '<label>Tractor:</label> ';
 echo '<select name="tractor" id="tractor">';
 echo '<option value="'.$tractor.'" selected>'.$tractor.' </option>';
 $sql = 'select tractorName from tractor';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['tractorName'].'">'.$row['tractorName'].' </option>';
 }
 echo '</select></div>';
@@ -84,8 +83,8 @@ echo '<label>Name of Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -130,19 +129,20 @@ if ($_POST['submit']) {
    $day = escapehtml($_POST['day']);
    $percent_filled = escapehtml($_POST['percent_filled']);
    $sql = "update tillage set tool='".$implement."', fieldID='".$fld."', tilldate='".$year."-".
-     $month."-".$day."', tractorName='".$tractor."',num_passes=".$num_passes.",minutes=".$minutes.",comment='".
-     $comSanitized."',percent_filled='".$percent_filled."' where id=".$id;
-   $result = mysql_query($sql);
-// START - check if old crop can be deleted first!!!
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content=0;URL="tillageTable.php?year='.
-        $origYear.'&month='.$origMonth.'&day='.$origDay.
-        '&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        '&fieldID='.$_GET['fieldID'].
-        '&tab=soil:soil_fert:soil_till:till_report>';
+     $month."-".$day."', tractorName='".$tractor."',num_passes=".$num_passes.",minutes=".$minutes.
+     ",comment='".  $comSanitized."',percent_filled='".$percent_filled."' where id=".$id;
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content=0;URL="tillageTable.php?year='.
+     $origYear.'&month='.$origMonth.'&day='.$origDay.
+     '&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     '&fieldID='.$_GET['fieldID'].
+     '&tab=soil:soil_fert:soil_till:till_report>';
 }
 ?>

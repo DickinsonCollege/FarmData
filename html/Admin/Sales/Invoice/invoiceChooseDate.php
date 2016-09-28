@@ -28,11 +28,11 @@ if($_GET['exist']==1 || $_POST['hidden']==1){
 if ($exist) {
    echo '<option value="%">All</option>';
 } else {
-   echo '<option value=0 selected disabled>Sales Target</option>';
+//   echo '<option value=0 selected disabled>Sales Target</option>';
 }
 $sql = "select targetName from targets where active = 1";
-$result=mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query($sql);
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
   $targ = $row1['targetName'];
   if ($targ != 'Loss') {
      echo '<option value= "'.escapeHTML($targ).'">'.$targ.'</option>';
@@ -78,23 +78,22 @@ if(isset($_POST['submit']) && isset($_POST['target'])){
    echo '<br clear="all"/>';
    $listDate=$year."-".$month."-".$day;
    echo '<br clear="all"/>';
-	
+   
    if($exist=="1"){
       $tcurYear = $_POST['tyear'];
       $tcurMonth = $_POST['tmonth'];
       $tcurDay = $_POST['tday'];
 
-      $sql="SELECT invoice_id,invoice_no, salesDate,target FROM ".
-         "invoice_master WHERE".
+      $sql="SELECT invoice_id,invoice_no, salesDate,target FROM invoice_master WHERE".
          " salesDate between '".$listDate."' and '".$tcurYear."-".$tcurMonth."-".$tcurDay.
          "' and target like '".$target."'";
-      $sql_result=mysql_query($sql);
-//        echo mysql_error();
-      if(is_resource($sql_result) &&  mysql_num_rows($sql_result) > 0 ){
-	 echo "<table border class = 'pure-table pure-table-bordered'>";
-	 echo "<thead><tr><th>Sales Date</th><th><center>Invoice No.</center></th>".
-            "<th>Customer</th><th>Edit</th><th>Delete</th></tr></thead>";
-        while ($row=mysql_fetch_array($sql_result)) {
+      $sql_result = $dbcon->query($sql);
+      $row = $sql_result->fetch(PDO::FETCH_ASSOC);
+      if ($row) {
+        echo "<table border class = 'pure-table pure-table-bordered'>";
+        echo "<thead><tr><th>Sales Date</th><th><center>Invoice No.</center></th>".
+             "<th>Customer</th><th>Edit</th><th>Delete</th></tr></thead>";
+        do {
            echo "<tr><td>";
            echo $row['salesDate'];
            echo "</td><td>";
@@ -102,7 +101,7 @@ if(isset($_POST['submit']) && isset($_POST['target'])){
            echo "</td><td>";
            echo $row['target'];
            echo "</td><td>";
-            echo '<form method="POST" action="invoiceEntry.php?currentID='.
+           echo '<form method="POST" action="invoiceEntry.php?currentID='.
                $row['invoice_no'].
               '&month='.$month.'&day='.$day.'&year='.$year.
               '&target='.encodeURIComponent($row['target']).
@@ -110,44 +109,47 @@ if(isset($_POST['submit']) && isset($_POST['target'])){
               '&tab=admin:admin_sales:invoice:editinvoice">';
            echo "<input type='submit' class='editbutton pure-button wide' value='Edit'></form>";
            echo "</td><td>";
-           echo '<form method="POST" action="invoiceDelete.php?invoice='.
-              $row['invoice_no'].
+           echo '<form method="POST" action="invoiceDelete.php?invoice='.$row['invoice_no'].
               '&tab=admin:admin_sales:invoice:editinvoice">';
-           echo "<input type='submit' class='deletebutton pure-button wide' onclick='return show_confirm();' value='Delete'></form>";
-	   echo "</td></tr>";
-	}	
-	echo "</table>";
+           echo "<input type='submit' class='deletebutton pure-button wide' ".
+                "onclick='return show_confirm();' value='Delete'></form>";
+          echo "</td></tr>";
+        } while ($row = $sql_result->fetch(PDO::FETCH_ASSOC));
+        echo "</table>";
 
-      //  $currentID= $sql_result["invoice_no"];
-      //  echo "<script>alert(\"Found an existing invoice\");</script> \n";
-       // echo ' <meta http-equiv="refresh" content=0;URL="invoiceEntry.php?year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.' ">';
-        }else{
+     }else{
         echo "<script>alert(\"Did not find an existing invoice, please create a new invoice\");</script> \n";
-       	
-	echo "<a href=\"invoiceChooseDate.php?exist=0&tab=admin:admin_sales:invoice:createinvoice\"> Create a new invoice </a> ";
-	 }
+        echo "<a href=\"invoiceChooseDate.php?exist=0&tab=admin:admin_sales:invoice:createinvoice\"> ".
+             "Create a new invoice </a> ";
+     }
    } else {
       // creating new invoice
       $sql="select nextNum, prefix from targets where targetName='".$target."'";
-      $res = mysql_query($sql);
-      echo mysql_error();
-      if (mysql_num_rows($res) != 1) {
-         die("Sales Targets Table Corrupted");
+      $res = $dbcon->query($sql);
+      $row = $res->fetch(PDO::FETCH_ASSOC);
+      if (!$row) {
+         die("No such sales target: ".$target);
       }
-      $row = mysql_fetch_array($res);
       $num = $row['nextNum'];
       $prefix = $row['prefix'];
-      $sql = "update targets set nextNum = nextNum + 1 where targetName='".
-         $target."'";
-      mysql_query($sql);
-      echo mysql_error();
+      $sql = "update targets set nextNum = nextNum + 1 where targetName='".$target."'";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert("Could not update invoice number", $p);
+         die();
+      }
       $sql="INSERT INTO invoice_master(invoice_id, salesDate, target, comments)".
         " VALUES('".$prefix.$num."', '".$listDate."', '".$target."', '')";
-      mysql_query($sql);
-      $currentIDTable=mysql_query("SELECT LAST_INSERT_ID()");
-      $currentIDRow=mysql_fetch_array($currentIDTable);
-      $currentID= $currentIDRow['LAST_INSERT_ID()'];
-//        echo "<script>alert(\"Creating New Invoice\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert("Could not create invoice", $p);
+         die();
+      }
+      $currentID = $dbcon->lastInsertId();
       echo ' <meta http-equiv="refresh" content=0;URL="invoiceEntry.php?year='.
         $year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.
         '&target='.encodeURIComponent($target).'&invoiceID='.$prefix.$num.

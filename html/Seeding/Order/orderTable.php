@@ -16,9 +16,11 @@ if ($_POST['submitCrop']) {
   $itemTable = "orderItem";
   $infoTable = "seedInfo";
   $isCover = false;
+  $filt = $crop;
 } else {
   $itemTable = "coverOrderItem";
   $infoTable = "coverSeedInfo";
+  $filt = $covercrop;
   $isCover = true;
 }
 
@@ -30,7 +32,7 @@ if (!$isCover) {
 $sql .= "unitsPerCatUnit, catUnitsOrdered, unitsPerCatUnit * catUnitsOrdered as defUnitsOrdered, ".
    "catUnitsOrdered * price as totalPrice, status, source1, sdate1, source2, sdate2, source3, sdate3 ".
    " from ".$itemTable.", ".$infoTable." where ".$itemTable.".crop = ".$infoTable.
-   ".crop and year like '".$year.  "' and ".$itemTable.".crop like '".$crop."' and source like '".
+   ".crop and year like '".$year.  "' and ".$itemTable.".crop like '".$filt."' and source like '".
    $source."' and status like '".$status."'";
 if ($order == 'crop') {
    $sql .= " order by ".$itemTable.".crop, year, variety, source";
@@ -38,16 +40,18 @@ if ($order == 'crop') {
    $sql .= " order by organic, ".$itemTable.".crop, year, variety, source";
 }
 echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
-$result=mysql_query($sql);
-if (!$result) {
-        echo "<script>alert(\"Could not retrieve report: Please try again!\\n".mysql_error()."\");</script>\n";
+try {
+  $result = $dbcon->query($sql);
+} catch (PDOException $p) {
+    phpAlert("Could not retrieve order report.", $p);
+    die();
 }
 echo "<center>";
 echo "<h2>Seed Order Report for ";
-if ($crop == "%") {
+if ($filt == "%") {
   echo "All Crops in ";
 } else {
-  echo $crop." in ";
+  echo $filt." in ";
 }
 if ($year == "%") {
   echo "All Years";
@@ -100,7 +104,7 @@ $totUnits = 0;
 $org = 0;
 $ut = 0;
 $defUnit = "";
-while ($row= mysql_fetch_array($result)) {
+while ($row= $result->fetch(PDO::FETCH_ASSOC)) {
      $count++;
      echo "<tr><td>";
      echo $row['crop'];

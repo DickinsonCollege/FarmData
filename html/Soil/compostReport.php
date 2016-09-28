@@ -27,8 +27,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <select class='mobile-select' id='pileID' name='pileID'>
 <option value='%'>All</option>
 <?php
-$result = mysql_query("Select pileID from compost_pile");
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query("Select pileID from compost_pile");
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 	echo "<option value='".$row['pileID']."'>".$row['pileID']."</option>";
 }
 ?>

@@ -21,10 +21,12 @@
       $array = array();
       $array[0] = array("Product", "Amount($)");
       echo '<center><h2>Total income from invoices between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h2></center>'; 
-      $sql = "select product, sum(cases* price_case) as income from invoice_master natural join invoice_entry where salesDate between '".$year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' group by product";
-      $sqldata = mysql_query($sql);
+      $sql = "select product, sum(cases* price_case) as income from invoice_master natural join ".
+         "invoice_entry where salesDate between '".$year."-".$month."-".$day."' and '".$tyear.
+         "-".$tmonth."-".$tday."' group by product";
+      $sqldata = $dbcon->query($sql);
       $count=0;
-      while($row = mysql_fetch_array($sqldata)){
+      while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
          $array[$count+1] = array(escapeescapehtml($row['product']), floatval($row['income']));
          $count++;
       }

@@ -7,24 +7,37 @@
    $rain = $_POST[rain];
    $date = $_GET[curDate];
    if ($rain != '' && is_numeric($rain)){
+      $sqlfindCount = "select count(*) as num from pump_master where pumpDate='".$date."'";
+      $res = $dbcon->query($sqlfindCount);
+      $row = $res->fetch(PDO::FETCH_ASSOC);
+      $numRows = $row['num'];
       $sqlfindDate = "select * from pump_master where pumpDate='".$date."'";
-      $data = mysql_query($sqlfindDate) or die(mysql_error());
-      echo mysql_error();
-      echo 'number of Rows: '.mysql_num_rows($data);
+      $data = $dbcon->query($sqlfindDate);
+      //echo 'number of Rows: '.$numRows;
       $comment = "";
       if ($rain >= 0.5) {
           $comment = "No irrigation due to rain.";
       }
-      if (mysql_num_rows($data) == 0){
+      if ($numRows == 0){
          $sqlInsert = "insert into pump_master (pumpDate, valve_open, driveHZ, outlet_psi, pump_kwh, solar_kwh, comment, rain) values ('".
            $date."',0,0,0,0,0, '".$comment."', ".$rain.")";
-         mysql_query($sqlInsert) or die(mysql_error());
-         echo "Rain Updated Successfully!";
+         try {
+            $stmt = $dbcon->prepare($sqlInsert);
+            $stmt->execute();
+         } catch (PDOException $p) {
+            die($p->getMessage());
+         }
+         //echo "Rain Updated Successfully!";
       } else{
          $sqlUpdate = "update pump_master set rain=".$rain.", comment='".
             $comment."' where pumpDate='".$date."'";
-         mysql_query($sqlUpdate) or die(mysql_error());
-         echo "Rain Updated Successfully!";
+         try {
+            $stmt = $dbcon->prepare($sqlUpdate);
+            $stmt->execute();
+         } catch (PDOException $p) {
+            die($p->getMessage());
+         }
+         //echo "Rain Updated Successfully!";
       }   
    } else {
       echo "<script type='text/javascript'>alert('Please enter a numeric value');</script>";

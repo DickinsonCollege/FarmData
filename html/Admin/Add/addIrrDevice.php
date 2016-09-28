@@ -33,13 +33,14 @@ function show_confirm() {
 if (!empty($_POST['done'])) {
     $sql="Insert into irrigation_device(irrigation_device) values ('".
        escapehtml(strtoupper($_POST['name']))."')";
-    $result=mysql_query($sql);
-    if (!$result) {
-       echo "<script>alert(\"Could not enter data: Please try again!\\n".
-          mysql_error()."\");</script>\n";
-    } else {
-       echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+    try {
+       $stmt = $dbcon->prepare($sql);
+       $stmt->execute();
+    } catch (PDOException $p) {
+       phpAlert('', $p);
+       die();
     }
+    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

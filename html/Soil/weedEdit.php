@@ -16,9 +16,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id,year(sDate) as yr, month(sDate) as mth, day(sDate) as dy, weed,".
    "sDate,fieldID, infestLevel, goneToSeed, comments FROM weedScout where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
-//$user = $row['username'];
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $field = $row['fieldID'];
 $weed = $row['weed'];
 $infestLevel = $row['infestLevel'];
@@ -68,8 +67,8 @@ echo '<label>Weed:</label> ';
 echo '<select name="weed" id="weed">';
 echo '<option value="'.$weed.'" selected>'.$weed.' </option>';
 $sql = 'select weedName from weed';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['weedName'].'">'.$row['weedName'].' </option>';
 }
 echo '</select></div>';
@@ -79,8 +78,8 @@ echo '<label>Name of Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -113,20 +112,19 @@ if ($_POST['submit']) {
    $sql = "update weedScout set infestLevel='".$infestLevel."', fieldID='".$fld."', sDate='".$year."-".
      $month."-".$day."', weed='".$weed."',goneToSeed=".$goneToSeed.",comments='".
      $comSanitized."' where id=".$id;
-	//echo $sql;
-   $result = mysql_query($sql);
-// START - check if old crop can be deleted first!!!
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      //echo "field ID is ". $origFieldID;
-      echo '<meta http-equiv="refresh" content="0;URL=weedTable.php?year='.$origYear.
-        '&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
-        '&tmonth='.$tcurMonth.'&tday='.$tcurDay."&fieldID=".
-        encodeURIComponent($_GET['fieldID']).
-        "&weed=".encodeURIComponent($_GET['weed']).
-        "&tab=soil:soil_scout:soil_weed:weed_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=weedTable.php?year='.$origYear.
+     '&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
+     '&tmonth='.$tcurMonth.'&tday='.$tcurDay."&fieldID=".
+     encodeURIComponent($_GET['fieldID']).
+     "&weed=".encodeURIComponent($_GET['weed']).
+     "&tab=soil:soil_scout:soil_weed:weed_report\">";
 }
 ?>

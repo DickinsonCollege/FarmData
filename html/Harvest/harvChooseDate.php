@@ -23,28 +23,27 @@ echo "</div>";
 
 <?php
 if(isset($_POST['date'])){
-	$day=$_POST['day'];
-	$month=$_POST['month'];
-	$year=$_POST['year'];
-	echo "<br>";
-	$listDate=$year."-".$month."-".$day;
-	echo "<br>";
+    $day=$_POST['day'];
+    $month=$_POST['month'];
+    $year=$_POST['year'];
+    echo "<br>";
+    $listDate=$year."-".$month."-".$day;
+    echo "<br>";
 
-	$sql_result=mysql_query("SELECT id FROM harvestList WHERE harDate='$listDate'");
+    $sql_result=$dbcon->query("SELECT id FROM harvestList WHERE harDate='$listDate'");
 
-	if(is_resource($sql_result) &&  mysql_num_rows($sql_result) > 0 ){
-   	 $sql_result = mysql_fetch_array($sql_result);
-    	 $currentID= $sql_result["id"];
-	}else{
-	 $sql="INSERT INTO harvestList(harDate, comment) VALUES('".$listDate."','')";
-	echo "<br>";
-	mysql_query($sql);
-	$currentIDTable=mysql_query("SELECT LAST_INSERT_ID()");
-	$currentIDRow=mysql_fetch_array($currentIDTable);
-	"The currentID ". $currentID= $currentIDRow['LAST_INSERT_ID()'];
-	}	
+    if($res=$sql_result->fetch(PDO::FETCH_ASSOC)) {
+           $currentID= $res["id"];
+    }else{
+       $sql="INSERT INTO harvestList(harDate, comment) VALUES('".$listDate."','')";
+       echo "<br>";
+       $result = $dbcon->prepare($sql);
+           $result->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+           $success = $result->execute();
+           $currentID = $dbcon->lastInsertId();
+    }    
 
-	echo ' <meta http-equiv="refresh" content=0;URL="harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
+    echo ' <meta http-equiv="refresh" content=0;URL="harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
 
 }
 ?>

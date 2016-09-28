@@ -17,7 +17,6 @@ if(isset($_GET['ticket'])) {
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	$dcdata = curl_exec($ch);
 	curl_close($ch);
-
 	if(strpos($dcdata, "<cas:authenticationSuccess>") > 0) {
 		preg_match_all("/<cas:user>(.*)<\/cas:user>/", $dcdata, $dcuser);
 		$_SESSION['username'] = $dcuser[1][0];
@@ -40,15 +39,15 @@ if(!isset($_SESSION['username'])) {
 include 'connection.php';
 if (isset($_SESSION['username'])) {
 $sql= "Select exists(select username from users where username='".$_SESSION['username']."' and active = 1) as isUser";
-                $check=mysql_query($sql);
-        while ($users=mysql_fetch_array($check)) {
+                $check=$dbcon->query($sql);
+        while ($users=$check->fetch(PDO::FETCH_ASSOC)) {
                 if ($users['isUser']==0) {
 		session_destroy();
 		die("Access Denied.You are not authorized to use farmdata!");
 	}else {
         $sql= "Select exists(select username from users where username='".$_SESSION['username']."' and admin='1') as isAdmin";
-                $check=mysql_query($sql);
-        while ($admin=mysql_fetch_array($check)) {
+                $check=$dbcon->query($sql);
+        while ($admin=$check->fetch(PDO::FETCH_ASSOC)) {
                 if ($admin['isAdmin']==0) {
  	       $_SESSION['admin']=0;
 		}else {

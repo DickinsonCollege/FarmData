@@ -13,12 +13,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <div class="pure-control-group" id="useriddiv">
 <label for="user">Username:</label>
 <select name="userid" id="userid" onchange='update();'>
-<option value=0 selected disabled>Username</option>
 <?php
 $sql="select username from users";
-$result = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo '\n<option value="'.$row['username'].'">'.$row['username'].'</option>';
 }
 ?>
@@ -51,6 +49,8 @@ function update() {
    document.getElementById("active").selectedIndex = info['active'];
    document.getElementById("adminS").selectedIndex = info['admin'];
 }
+
+update();
 </script>
 
 <br clear="all">
@@ -62,12 +62,13 @@ if (!empty($_POST['submit'])){
    $userid=escapehtml($_POST['userid']);
    if (!empty($userid)) {
       $update = "update users set admin = ".$admin.  ", active = ".$active." where username = '".$userid."'";
-      $result = mysql_query($update);
-      if (!$result) {
-         echo "<script>alert(\"Could not update user: Please try again!\\n".mysql_error()."\");</script> \n";
-      } else {
-         echo "<script>showAlert(\"Updated User successfully!\");</script> \n";
+      try {$stmt = $dbcon->prepare($update);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not update user".$p->getMessage()."\");</script>";
+         die();
       }
+      echo "<script>showAlert(\"Updated User successfully!\");</script> \n";
    } else {
       echo "<script>alert(\"Please Select a User!\\n\");</script> \n";
    }

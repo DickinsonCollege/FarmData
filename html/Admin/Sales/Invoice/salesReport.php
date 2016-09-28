@@ -25,8 +25,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <option value="%" selected>All</option>
 <?php
 $sql = "select targetName from targets";
-$result=mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query($sql);
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   $targ = $row1['targetName'];
   if ($targ != 'Loss') {
      echo '<option value= "'.$targ.'">'.$targ.'</option>';
@@ -52,13 +52,12 @@ if(isset($_POST['submit'])) {
       $sql="Select date(salesDate),invoice_master.invoice_no, ".
          "invoice_master.invoice_id,target, sum(price_case*cases) as total,".
          " comments from invoice_entry,invoice_master where date(salesDate)".
-         " between '".  $year."-".$month."-".$day."' AND '".$tcurYear."-".
-         $tcurMonth."-".$tcurDay.
+         " between '".  $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
          "' and invoice_master.invoice_no=invoice_entry.invoice_no ".
          "and target like '".escapeHTML($target).
          "' group by date(salesDate), invoice_master.invoice_no, comments".
          " order by salesDate,invoice_no";
-      $result=mysql_query($sql);
+      $result=$dbcon->query($sql);
 
       echo '<br clear="all"/>';
       echo '<br clear="all"/>';
@@ -68,7 +67,7 @@ if(isset($_POST['submit'])) {
       echo "<thead><tr><th>Sales Date</th><th><center>Invoice #</center></th>".
         "<th>Target</th><th>View Invoice</th><th>Send Email</th>".
         "<th><center>Total</center></th><th><center>Notes</center></th></tr></thead>";
-      while ($row= mysql_fetch_array($result)) {
+      while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['date(salesDate)'];
         echo "</td><td>";
@@ -105,7 +104,12 @@ if(isset($_POST['submit'])) {
       echo "</table>";
       echo '<br clear="all"/>';
       echo "<form name='downloadform' method='POST' action='/down.php'>";
-      $sql="Select salesDate,invoice_master.invoice_id,target,product, cases, price_case as price_per_case, price_case*cases as total, approved_by, comments from invoice_entry,invoice_master where date(salesDate) between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and invoice_master.invoice_no=invoice_entry.invoice_no  order by salesDate,invoice_master.invoice_no";
+      $sql="Select salesDate,invoice_master.invoice_id,target,product, cases, ".
+         "price_case as price_per_case, price_case*cases as total, approved_by, comments ".
+         "from invoice_entry, invoice_master where date(salesDate) between '".$year."-".$month."-".$day.
+         "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' ".
+         "and invoice_master.invoice_no=invoice_entry.invoice_no ".
+         "order by salesDate,invoice_master.invoice_no";
       
       echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
       echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Full Report">';

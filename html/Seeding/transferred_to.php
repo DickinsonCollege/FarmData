@@ -39,8 +39,8 @@ if (!isset($field)) {
    echo 'selected';
 }
 echo '> Field Name</option>';
-$result=mysql_query("Select fieldID from field_GH where active = 1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active = 1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   $fieldID = $row1['fieldID'];
   echo "\n<option value= \"".$fieldID."\"";
   if (isset($field) && $field == $fieldID) {
@@ -94,9 +94,12 @@ if ($_SESSION['gens']) {
    echo '<label for="gen">Succession #:</label> ';
    echo '<select id= "gen" name="gen" class="mobile-select">';
    $sql = "select distinct gen from gh_seeding order by gen";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
      $i = $row['gen'];
      echo "\n<option value='".$i."'>".$i."</option>";
    }
@@ -252,8 +255,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $user = escapehtml($_SESSION['username']);
    if (!$_SESSION['bedft']) {
       $sql = "select length from field_GH where fieldID = '".$fld."'";
-      $result = mysql_query($sql);
-      $row= mysql_fetch_array($result);
+      $result = $dbcon->query($sql);
+      $row= $result->fetch(PDO::FETCH_ASSOC);
       $len = $row['length'];
       $bedftv = $bedftv * $len;
    }
@@ -278,16 +281,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    }
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
-   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,hours,comments) VALUES ('".
+   $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
+   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,hours,comments) VALUESs ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
       ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."')";
-   $result = mysql_query($sql);
-   if(!$result){ 
-       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-   }   
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $stmt->execute();
+   } catch (PDOException $p) {
+       phpAlert('Could not enter transplant data', $p);
+       die();
+   }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 
 }   
 ?>

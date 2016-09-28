@@ -10,18 +10,14 @@ $id = escapehtml($_GET["fieldID"]);
 if ($id =="%") {
    $flds = array();
    echo '<center><h2>Crop History for All Fields</h2></center>';
-   $result = mysql_query("Select distinct fieldID from field_GH");
-   while ($row = mysql_fetch_array($result)) {
+   $result = $dbcon->query("Select distinct fieldID from field_GH");
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         array_push($flds, $row['fieldID']);
-//	echo "Field ".$row[fieldID];
-//	echo "<br clear = 'all'>";
-//	createRecord($row[fieldID], $this_year, $this_tyear);
    } 
 }
 else {
    echo '<center><h2>Crop History for Field '.$id.'</h2></center>';
    $flds = array($id);
-//   createRecord($id, $this_year, $this_tyear);
 }
 
 $bedft = array();
@@ -30,56 +26,51 @@ for ($year = $this_year; $year <= $this_tyear; $year++) {
    foreach ($flds as $fieldID) {
       $direct_query = "Select plantdate, bedft, crop from dir_planted where fieldID = '".$fieldID.
          "' and plantdate between '".$year."-01-01' and '".$year."-12-31';";
-      //echo $direct_query;
-      $direct_data = mysql_query($direct_query) or die(mysql_error());
+      $direct_data = $dbcon->query($direct_query);
 
       $trans_query = "Select transdate, bedft, crop from transferred_to where fieldID = '".$fieldID.
          "' and transdate between '".$year."-01-01' and '".$year."-12-31';";
-      //echo $trans_query;
-      $trans_data = mysql_query($trans_query) or die(mysql_error());
+      $trans_data = $dbcon->query($trans_query);
 
-      $cover_query = "Select id, ((Select size from field_GH where fieldID = coverSeed_master.fieldID)/100)*area_seeded as areaSeeded, seedDate from coverSeed_master where fieldID = '".
+      $cover_query = "Select id, ((Select size from field_GH where fieldID = coverSeed_master.fieldID)".
+         "/100)*area_seeded as areaSeeded, seedDate from coverSeed_master where fieldID = '".
          $fieldID."' and seedDate between '".$year."-01-01' and '".$year."-12-31';";
-      //echo $cover_query;
-      $cover_data = mysql_query($cover_query) or die(mysql_error());
+      $cover_data = $dbcon->query($cover_query);
 
       //gather data from directly planted crop
-      while ($res = mysql_fetch_array($direct_data)) {
+      while ($res = $direct_data->fetch(PDO::FETCH_ASSOC)) {
          $curYear = date('Y', strtotime($res['plantdate'])); 
          $curCrop = $res['crop'];
          if (!$bedft[$curYear][$fieldID][$curCrop]) {
-	      $bedft[$curYear][$fieldID][$curCrop] = $res['bedft'];
+            $bedft[$curYear][$fieldID][$curCrop] = $res['bedft'];
          } else {
-	      $bedft[$curYear][$fieldID][$curCrop] += $res['bedft'];
+            $bedft[$curYear][$fieldID][$curCrop] += $res['bedft'];
          }
       }
 
       //gather data from transplanted crop
-      while ($res = mysql_fetch_array($trans_data)) {
+      while ($res = $trans_data->fetch(PDO::FETCH_ASSOC)) {
          $curYear = date('Y', strtotime($res['transdate'])); 
          $curCrop = $res['crop'];
          if (!$bedft[$curYear][$fieldID][$curCrop]) {
-	      $bedft[$curYear][$fieldID][$curCrop] = $res['bedft'];
+            $bedft[$curYear][$fieldID][$curCrop] = $res['bedft'];
          } else {
-	      $bedft[$curYear][$fieldID][$curCrop] += $res['bedft'];
+            $bedft[$curYear][$fieldID][$curCrop] += $res['bedft'];
          }
       }
 
       // gather cover crop data
-      while ($res = mysql_fetch_array($cover_data)) {
-      //print_r($res);
+      while ($res = $cover_data->fetch(PDO::FETCH_ASSOC)) {
          $curYear = date('Y', strtotime($res['seedDate']));
-        // $curID = $res['id'];
-        // $c_record[$curYear][$curID] =  array();
-        // $c_record[$curYear][$curID]['areaSeeded'] = $res['areaSeeded'];
       
          $cropQuery = "Select id, crop from coverSeed where id = ".$res['id']." order by crop;";
-         $crop_data = mysql_query($cropQuery) or die(mysql_error());
+         $crop_data = $dbcon->query($cropQuery);
          $curCrops = "";
-         while ($crop_res = mysql_fetch_array($crop_data)) {
-	      $temp = $crop_res['crop'];
-	      $curCrops .= $temp." "; 
+         while ($crop_res = $crop_data->fetch(PDO::FETCH_ASSOC)) {
+            $temp = $crop_res['crop'];
+            $curCrops .= $temp."; "; 
          }
+         $curCrops = trim($curCrops, " ;");
          $curCrops.= ": ".number_format((float) $res['areaSeeded'], 2, '.', '');
          if ($acres[$curYear][$fieldID]) {
             $acres[$curYear][$fieldID] .= "<br>".$curCrops;
@@ -161,14 +152,3 @@ echo "<input type='hidden' name='tyear' value='".$this_tyear."'>";
 </form>
 </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-

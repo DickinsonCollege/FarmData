@@ -14,7 +14,8 @@ function addInput() {
    xmlhttp.open("GET", "update_spray_material.php?spraymaterial="+sprayMaterial, false);
    xmlhttp.send();
    if (xmlhttp.responseText == "\n") {
-      
+      phpAlert("Error fetching spray material information.",$p);
+      die();
    }
    var js_array = eval(xmlhttp.responseText);
    var thediv = document.getElementById('renamediv');
@@ -102,28 +103,6 @@ function addInput() {
    }
    str += '</select></div>';
    thediv.innerHTML = str;
-/*
-      <option value="1" selected>Active</option>
-      <option value="0">Inactive</option>
-   </select>
-</div>
-*/
-
-/*
-   if (js_array[11] == 1) {
-      thediv.innerHTML = '<div id="activediv" class="styled-select">'+
-         '<select name="active" id="active" class="mobile-select">'+
-            '<option value="1" selected>Active</option>'+
-            '<option value="0">Inactive</option>'+
-         '</select></div>';
-   } else {
-      thediv.innerHTML = '<div id="activediv" class="styled-select">'+
-         '<select name="active" id="active" class="mobile-select">'+
-            '<option value="1">Active</option>'+
-            '<option value="0" selected>Inactive</option>'+
-         '</select></div>';
-   }
-*/
 }
 </script>
 
@@ -136,13 +115,12 @@ function addInput() {
 <div class="pure-control-group">
 <label for="spraymaterial">Spray Material:</label>
 <select name='spraymaterial' id='spraymaterial' onChange='addInput();' class='mobile-select'>
-<option disabled selected></option>
 <?php
-$result = mysql_query("SELECT sprayMaterial from tSprayMaterials");
-        while ($row1 =  mysql_fetch_array($result)){
-                echo "\n<option value= \"$row1[sprayMaterial]\">$row1[sprayMaterial]</option>";
-        }
-        echo "</select></div>";
+$result = $dbcon->query("SELECT sprayMaterial from tSprayMaterials");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+   echo "\n<option value= \"$row1[sprayMaterial]\">$row1[sprayMaterial]</option>";
+}
+echo "</select></div>";
 ?>
 
 <div class="pure-control-group" id="renamediv">
@@ -211,6 +189,10 @@ $result = mysql_query("SELECT sprayMaterial from tSprayMaterials");
 
 <br clear="all"> 
 
+<script type="text/javascript">
+addInput();
+</script>
+
 
 <input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 
@@ -231,8 +213,8 @@ if(!empty($_POST['submit'])) {
    $active = escapehtml($_POST['active']);
 
    $sql = "select * from tSprayMaterials where sprayMaterial='".$spraymaterial."'";
-   $result = mysql_query($sql);
-   $row = mysql_fetch_assoc($result);
+   $result = $dbcon->query($sql);
+   $row = $result->fetch(PDO::FETCH_ASSOC);
 
    if (trim($trateunits) == "") {
       $trateunits = $row['TRateUnits']; 
@@ -284,13 +266,14 @@ if(!empty($_POST['submit'])) {
       REI_HRS='".$restrictedentryinterval."', PPE='".$protectionequipment."', active=".$active."
       WHERE sprayMaterial='".$spraymaterial."'";
 
-   $query = mysql_query($sql) or die(mysql_error());
-
-   if (!$query) {
-      echo '<script> alert("Could not edit Spray Material, please try again"); </script>';
-   } else {
-      echo '<script> alert("Changed Spray Material successfully!"); </script>';
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not update spray material".$p->getMessage()."\");</script>";
+      die();
    }
+   echo '<script> alert("Changed Spray Material successfully!"); </script>';
 }
 ?>
 </form>

@@ -3,14 +3,20 @@
 
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass');
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $d) {
+      die($d->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -31,10 +37,10 @@ $tcurDay = $_GET['tday'];
 $genSel = $_GET['genSel'];
 
 $sqlget = "SELECT id, gen, year(seedDate) as yr, month(seedDate) as mth, day(seedDate) as dy, crop, username, 
-	seedDate, numseeds_planted, comments, varieties, flats, cellsFlat FROM gh_seeding where id = ".$id;
+    seedDate, numseeds_planted, comments, varieties, flats, cellsFlat FROM gh_seeding where id = ".$id;
 
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $id = $row['id'];
 $egen = $row['gen'];
@@ -83,13 +89,13 @@ echo '<label>Username:</label>';
 echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.'</option>';
 if ($farm == 'dfarm') {
-	$sql = 'select username from users where active = 1';
-	$sqldata = mysql_query($sql) or die("ERROR3");
-	while ($row = mysql_fetch_array($sqldata)) {
-		echo '<option value="'.$row['username'].'">'.$row['username'].'</option>';
-	}
+    $sql = 'select username from users where active = 1';
+    $sqldata = $dbcon->query($sql);
+    while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
+        echo '<option value="'.$row['username'].'">'.$row['username'].'</option>';
+    }
 } else {
-	echo $useropts;
+    echo $useropts;
 }
 echo '</select></div>';
 
@@ -98,8 +104,8 @@ echo '<label>Crop:</label>';
 echo '<select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select></div>';
@@ -111,7 +117,6 @@ echo '</div>';
 
 echo '<div class="pure-control-group">';
 echo "<label>Varieties:</label>";
-//echo "<input type='text' class='textbox3' name='varieties' id='varieties' value='".$varieties."'>";
 echo "<textarea rows=\"5\" cols=\"30\" name = \"varieties\" id = \"varieties\">";
 echo $varieties;
 echo "</textarea>";
@@ -127,12 +132,11 @@ echo "<label>Tray size:</label>";
 echo '<select name ="cellsFlat" id="cellsFlat" class="mobile-select">';
 echo "\n<option value=".$cellsFlat.">".$cellsFlat."</option>";
 $sql = "select cells from flat";
-$result = mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)) {
    echo "\n<option value=".$row1['cells'].">".$row1['cells']."</option>";
 }
 echo '</select>';
-//echo "<input type='text' class='textbox2' name='cellsFlat' id='cellsFlat' value='".$cellsFlat."'>";
 echo '</div>';
 
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
@@ -150,32 +154,34 @@ echo "<input type='submit' name='submit' value='Update Record' class = 'submitbu
 echo "<fieldset>";
 echo "</form>";
 if ($_POST['submit']) {
-	$comSanitized = escapehtml($_POST['comments']);
-	$crop = escapehtml($_POST['crop']);
-	$numseeds_planted = escapehtml($_POST['numseeds_planted']);
-	$varieties = escapehtml($_POST['varieties']);
-	$flats = escapehtml($_POST['flats']);
-	$cellsFlat = escapehtml($_POST['cellsFlat']);
-	$year = escapehtml($_POST['year']);
-	$month = escapehtml($_POST['month']);
-	$day = escapehtml($_POST['day']);
-	$user = escapehtml($_POST['user']);
-        include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
+    $comSanitized = escapehtml($_POST['comments']);
+    $crop = escapehtml($_POST['crop']);
+    $numseeds_planted = escapehtml($_POST['numseeds_planted']);
+    $varieties = escapehtml($_POST['varieties']);
+    $flats = escapehtml($_POST['flats']);
+    $cellsFlat = escapehtml($_POST['cellsFlat']);
+    $year = escapehtml($_POST['year']);
+    $month = escapehtml($_POST['month']);
+    $day = escapehtml($_POST['day']);
+    $user = escapehtml($_POST['user']);
+    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    
-	$sql = "update gh_seeding set username='".$user."',crop='".$crop."', seedDate='".$year."-".
-		$month."-".$day."', numseeds_planted=".$numseeds_planted.", comments='".$comSanitized."', 
-		varieties='".$varieties."', flats=".$flats.", cellsFlat=".$cellsFlat.
+    $sql = "update gh_seeding set username='".$user."',crop='".$crop."', seedDate='".$year."-".
+        $month."-".$day."', numseeds_planted=".$numseeds_planted.", comments='".$comSanitized."', 
+        varieties='".$varieties."', flats=".$flats.", cellsFlat=".$cellsFlat.
                 ",gen=".$gen." WHERE id=".$id;
-   $result = mysql_query($sql);
+    try {
+       $stmt = $dbcon->prepare($sql);
+       $stmt->execute();
+    } catch (PDOException $p) {
+       phpAlert('Could not update tray seeding record', $p);
+       die();
+    }
    
-	if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo "<meta http-equiv=\"refresh\" content=\"0;URL=gh_table.php?year=".$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&crop=".encodeURIComponent($origCrop)."&genSel=".$genSel.
-        "&tab=seeding:flats:flats_report&submit=Submit\">";
-   }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo "<meta http-equiv=\"refresh\" content=\"0;URL=gh_table.php?year=".$origYear.'&month='.$origMonth.
+     '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     "&crop=".encodeURIComponent($origCrop)."&genSel=".$genSel.
+     "&tab=seeding:flats:flats_report&submit=Submit\">";
 }
 ?>

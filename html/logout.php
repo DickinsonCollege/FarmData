@@ -31,7 +31,12 @@ if ($farm == 'dfarm') {
 #   $url = "extlogin.php";
    echo 'Thank You for Using FARMDATA!';
 }
-$url = "https://".$_SERVER['HTTP_HOST']."/";
+$method = "http";
+// HTTPSON
+$method = "https";
+// HTTPSOFF
+
+$url = $method."://".$_SERVER['HTTP_HOST']."/";
 echo '<br clear="all"/><br clear="all"/>';
 echo '<form method="POST" action="'.$url.'">';
 echo '<input type ="submit" class="submitbutton" value = "Log In Again">';

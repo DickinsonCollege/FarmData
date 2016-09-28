@@ -8,20 +8,18 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
 
 $sql = "select * from distribution order by distDate";
-$result = mysql_query($sql);
-echo mysql_error();
+$result = $dbcon->query($sql);
 $prices = array();
-while ($row = mysql_fetch_array($result)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $crop = $row['crop_product'];
    $grade = $row['grade'];
    $unit = $row['unit'];
    $target = $row['target'];
    $price = $row['pricePerUnit'];
    $convsql = "SELECT conversion FROM units WHERE crop='".$crop."' AND unit='POUND'";
-   $convresult = mysql_query($convsql);
-   if (mysql_num_rows($convresult) > 0) {
-      $convrow = mysql_fetch_array($convresult);
-      $conversion = $convrow[0];
+   $convresult = $dbcon->query($convsql);
+   if ($convrow = $convresult->fetch(PDO::FETCH_ASSOC)) {
+      $conversion = $convrow['conversion'];
       $unit = 'POUND';
       $price = $price / $conversion;
    }
@@ -29,20 +27,18 @@ while ($row = mysql_fetch_array($result)) {
 }
 
 $sql = "select * from inventory";
-$result = mysql_query($sql);
-echo mysql_error();
+$result = $dbcon->query($sql);
 $inventory = array();
 $inventory_unit = array();
-while ($row = mysql_fetch_array($result)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $crop = $row['crop_product'];
    $amount = $row['amount'];
    $grade = $row['grade'];
    $unit = $row['unit'];
    $convsql = "SELECT conversion FROM units WHERE crop='".$crop."' AND unit='POUND'";
-   $convresult = mysql_query($convsql);
-   if (mysql_num_rows($convresult) > 0) {
-      $convrow = mysql_fetch_array($convresult);
-      $conversion = $convrow[0];
+   $convresult = $dbcon->query($convsql);
+   if ($convrow = $convresult->fetch(PDO::FETCH_ASSOC)) {
+      $conversion = $convrow['conversion'];
       $unit = 'POUND';
       $amount = $amount * $conversion;
    }
@@ -92,36 +88,10 @@ function getInventoryUnit(cropProd, grade) {
 
 <?php
 $sql = "SELECT distinct packDate from pack where packDate > SUBDATE(CURDATE(), 10) order by packDate desc";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['packDate']."'>".$row['packDate']."</option>";
 }
-/*
-$sql = "SELECT AUTO_INCREMENT 
-   FROM INFORMATION_SCHEMA.TABLES 
-   WHERE TABLE_SCHEMA=DATABASE() 
-   AND TABLE_NAME='pack'";
-$result = mysql_query($sql);
-$row = mysql_fetch_assoc($result);
-$lastPack = $row['AUTO_INCREMENT'];
-
-$count = 0;
-$lastDate = 0;
-
-do {
-   $sql = "SELECT packDate FROM pack WHERE id=".$lastPack;
-   $result = mysql_query($sql);
-   $row = mysql_fetch_array($result);
-   if ($row != null) {
-      if ($row['packDate'] != $lastDate) {
-         echo "<option value='".$row['packDate']."'>".$row['packDate']."</option>";
-         $count++;
-         $lastDate = $row['packDate'];
-      }
-   }
-   $lastPack--;
-} while ($count < 3 && $lastPack > 0);
-*/
 ?>
          
 </select>
@@ -145,10 +115,11 @@ do {
 <div id="selectCropProdDiv" class="styled-select">
 <select id="selectCropProd" name="selectCropProd" class="mobile-select" style="width:100%;" onchange="getGrades();">
 <?php
-$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union SELECT product as crop FROM product as crop) tmp ORDER BY crop";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
-   echo "<option value='".$row[0]."'>".$row[0]."</option>";
+$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union ".
+       "SELECT product as crop FROM product as crop) tmp ORDER BY crop";
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
 </select>
@@ -223,7 +194,7 @@ function createNewTable() {
       header.style.display = "inline";
    }
    
-   xmlhttp = new XMLHttpRequest();
+//   xmlhttp = new XMLHttpRequest();
 
    var cropProd = document.getElementById("selectCropProd").value;
    var eCropProd = escapeHtml(cropProd);
@@ -232,14 +203,6 @@ function createNewTable() {
 
    // Check if Table already exists
    if (!checkIfTableExists(eCropProd, grade)) return;
-
-/*
-   xmlhttp.open("GET", "get_crop_product_amounts.php?cropProd=" + 
-           encodeURIComponent(cropProd) + "&grade=" + grade, false);
-   xmlhttp.send();
-   var crop_product_amounts_array = eval(xmlhttp.responseText);
-*/
-
 
    var crop_product_amounts_array = [getInventoryAmount(eCropProd, grade), getInventoryUnit(eCropProd, grade)]; 
 
@@ -676,13 +639,6 @@ function getGrades() {
    var cropProd = a.options[a.selectedIndex].value;
 
 
-/*
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("GET", "get_grades.php?cropProd=" + encodeURIComponent(cropProd), false);
-   xmlhttp.send();
-
-   var grades_array = eval(xmlhttp.responseText);
-*/
    var grades_array = [1, 2, 3, 4];
    var gradeDiv = document.getElementById("selectGradeDiv");
    var HTMLString = "";
@@ -756,7 +712,10 @@ function updatePrice(tableNum) {
          var amount = document.getElementById("amountTable" + tableNum + "Row" + i).value;
          var price = document.getElementById("pricePerUnitTable" + tableNum + "Row" + i).value;
          var linePrice = amount * price;
-         document.getElementById("totalTable" + tableNum + "Row" + i).value = linePrice.toFixed(2);
+         var row = document.getElementById("totalTable" + tableNum + "Row" + i);
+         if (row != null) {
+            row.value = linePrice.toFixed(2);
+         }
          tot += linePrice;
       }
    }

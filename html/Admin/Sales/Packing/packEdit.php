@@ -35,10 +35,10 @@ $tcurYear    = $_GET['tyear'];
 $tcurMonth    = $_GET['tmonth'];
 $tcurDay    = $_GET['tday'];
 
-$sqlget = "SELECT id,year(packDate) as yr, month(packDate) as mth, day(packDate) as dy, crop_product, grade, amount,".
-          "unit, comments, bringBack, Target FROM pack where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqlget = "SELECT id,year(packDate) as yr, month(packDate) as mth, day(packDate) as dy, crop_product, ".
+              "grade, amount,".  "unit, comments, bringBack, Target FROM pack where id = ".$id;
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $unit = $row['unit'];
 $grade = $row['grade'];
 $amount = $row['amount'];
@@ -73,9 +73,10 @@ echo '<div class="pure-control-group">';
 echo '<label>Crop/Product:</label> ';
 echo '<select name="crop" id="crop" onchange="getUnit();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
-$sql = 'select crop from (select crop from plant where active=1 union select product as crop from product where active=1) tmp order by crop';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sql = 'select crop from (select crop from plant where active=1 union '.
+         'select product as crop from product where active=1) tmp order by crop';
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select></div>';
@@ -96,18 +97,7 @@ echo '<input type="text" class="textbox2" name="amount" id="amount" value="'.$am
 
 echo '<div class="pure-control-group" id="unitDiv">';
 echo '<label>Unit:</label> ';
-echo '<input type="text" readonly name="unit" id="unit" value="'.
-  $unit.'"></div>';
-/*
-echo '<div class="styled-select"><select name="unit" id="unit">';
-echo '<option value="'.$unit.'" selected>'.$unit.' </option>';
-$sql = 'select distinct unit from units where crop =\''.$curCrop.'\'';
-$sqldata = mysql_query($sql) or die("ERROR4");
-while ($row = mysql_fetch_array($sqldata)) {
-   echo '<option value="'.$row['unit'].'">'.$row['unit'].' </option>';
-}
-echo '</select></div></div>';
-*/
+echo '<input type="text" readonly name="unit" id="unit" value="'.$unit.'"></div>';
 
 echo '<div class="pure-control-group">';
 echo '<label>Bring Back:</label> ';
@@ -128,8 +118,8 @@ echo '<label>Target:</label> ';
 echo '<select name="target" id="target">';
 echo '<option value="'.$target.'" selected>'.$target.' </option>';
 $sql = "select distinct targetName from targets where targetName <> '".$target."'";
-$sqldata = mysql_query($sql) or die("ERROR4");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['targetName'].'">'.$row['targetName'].' </option>';
 }
 echo '</select></div>';
@@ -158,21 +148,21 @@ if ($_POST['submit']) {
    $sql = "update pack set unit='".$unit."', grade=".$updateGrade.", packDate='".$year."-".
      $month."-".$day."', amount=".$amount.",bringBack=".$bringback.",target='".$target."', comments='".
      $comSanitized."',crop_product='".$crop."' where id=".$id;
- //  echo $sql;
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo "<meta http-equiv=\"refresh\" content=\"0;URL=packingTable.php?year=".$origYear.
-        "&month=".$origMonth."&day=".$origDay."&tyear=".$tcurYear.
-        "&tmonth=".$tcurMonth."&tday=".$tcurDay.
-        "&target=".encodeURIComponent($origTarget).
-        "&bringback=".encodeURIComponent($origBack).
-        "&grade=".encodeURIComponent($origGrade).
-        "&tab=admin:admin_sales:packing:packing_report".
-        "&crop_product=".encodeURIComponent($origCrop)."\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not update packing record".$p->getMessage()."\");</script>";
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo "<meta http-equiv=\"refresh\" content=\"0;URL=packingTable.php?year=".$origYear.
+     "&month=".$origMonth."&day=".$origDay."&tyear=".$tcurYear.
+     "&tmonth=".$tcurMonth."&tday=".$tcurDay.
+     "&target=".encodeURIComponent($origTarget).
+     "&bringback=".encodeURIComponent($origBack).
+     "&grade=".encodeURIComponent($origGrade).
+     "&tab=admin:admin_sales:packing:packing_report".
+     "&crop_product=".encodeURIComponent($origCrop)."\">";
 }
 ?>

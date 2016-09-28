@@ -2,15 +2,18 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
-// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
 <?php
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM harvested WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+        $res=$dbcon->prepare($sqlDel);
+        $res->execute();
+      } catch (PDOException $p) {
+         phpAlert('Error deleting record', $p);
+      }
    }
    $year = $_GET['year'];
    $month = $_GET['month'];
@@ -25,7 +28,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and harvested.crop like '" .$crop."' and fieldID like '".
       $fieldID."' and gen like '".$genSel."' order by hardate";
-   $sqldata = mysql_query($sql) or die("ERROR");
+   try {
+      $sqldata = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
    echo "<table class='pure-table pure-table-bordered'>";
    $crp = $crop;
    if ($fieldID == "%") {
@@ -64,7 +71,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Delete</th>";
    }
    echo "</tr></thead>";
-   while($row = mysql_fetch_array($sqldata)) {
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['hardate'];
       echo "</td><td>";
@@ -113,8 +120,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
          "' and harvested.crop like '" .$crop.  "' and harvested.fieldID like '".
          $fieldID."' and gen like '".$genSel."' group by unit order by unit";
-      $res=mysql_query($total);
-      echo mysql_error();
+      try {
+         $res=$dbcon->query($total);
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+      }
       $yield="Select unit, sum(yield)/(Select sum(tft) from 
          ((Select bedft as tft from dir_planted where fieldID like '".$fieldID.
          "' and year(plantdate) between '".$year."' and '".$tcurYear."' and 
@@ -125,8 +135,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
             $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
             "' and harvested.crop = '" .$crop."' and harvested.fieldID like '".
             $fieldID."' and gen like '".$genSel."' group by unit order by unit";
-      $res2=mysql_query($yield);
-      echo mysql_error();
+      try {
+         $res2=$dbcon->query($yield);
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+      }
       $yieldr="Select unit, sum(yield)/(Select sum(tft) from 
          ((Select bedft * rowsBed as tft from dir_planted where fieldID like '".$fieldID.
          "' and year(plantdate) between '".$year."' and '".$tcurYear."' and 
@@ -137,23 +150,54 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
             $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
             "' and harvested.crop = '" .$crop."' and harvested.fieldID like '".
             $fieldID."' and gen like '".$genSel."' group by unit order by unit";
-      $res3=mysql_query($yieldr);
-      echo mysql_error();
+      try {
+         $res3=$dbcon->query($yieldr);
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+      }
+      $yielda="Select unit, sum(yield)/(Select sum(tft) from 
+         ((Select bedft * size / (length * numberOfBeds) as tft from ".
+         "dir_planted, field_GH where dir_planted.fieldID = field_GH.fieldID ".
+         " and dir_planted.fieldID like '".$fieldID.
+         "' and year(plantdate) between '".$year."' and '".$tcurYear."' and 
+         dir_planted.crop= '".$crop."' and gen like '".$genSel."') union all 
+         (Select bedft * size / (length * numberOfBeds) as tft from ".
+            "transferred_to, field_GH where transferred_to.fieldID = field_GH.fieldID ".
+            " and year(transdate) between '".$year."' and '".
+            $tcurYear."' and transferred_to.crop= '".$crop.
+            "' and transferred_to.fieldID like '".$fieldID."' and gen like '".$genSel."')) as temp1) as yperft from harvested where hardate between '".
+            $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
+            "' and harvested.crop = '" .$crop."' and harvested.fieldID like '".
+            $fieldID."' and gen like '".$genSel."' group by unit order by unit";
+      try {
+         $resa=$dbcon->query($yielda);
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+      }
       echo "<table class='pure-table pure-table-border'>";
       echo "<thead><tr><th>Total Yield</th>";
       echo "<th>Average Yield (bed feet)</th>";
-      echo "<th>Average Yield (row feet)</th><th>Hours</th><th>Hours/Unit</th></tr></thead>";
-      while ($row1 = mysql_fetch_array($res)) {
-          $row2 = mysql_fetch_array($res2);
-          $row3 = mysql_fetch_array($res3);
+      echo "<th>Average Yield (row feet)</th><th>Average Yield (acres)</t>";
+      echo "<th>Hours</th><th>Hours/Unit</th></tr></thead>";
+      while ($row1 = $res->fetch(PDO::FETCH_ASSOC)) {
+          $row2 = $res2->fetch(PDO::FETCH_ASSOC);
+          $row3 = $res3->fetch(PDO::FETCH_ASSOC);
+          $rowa = $resa->fetch(PDO::FETCH_ASSOC);
           echo "<tr><td>".number_format((float) $row1['total'], 2, '.', '')
              ." ".$row1['unit']."(S)</td>";
           $row2Deci3=number_format((float)$row2['yperft'], 3, '.', '');
           echo "<td>".$row2Deci3." ".$row2['unit']."(S)/Bed Foot</td>";
           $row2Deci3=number_format((float)$row3['yperft'], 3, '.', '');
           echo "<td>".$row2Deci3." ".$row3['unit']."(S)/Row Foot</td>";
+          $rowaDeci=number_format((float)$rowa['yperft'], 3, '.', '');
+          echo "<td>".$rowaDeci." ".$row3['unit']."(S)/Acre</td>";
           echo "<td>".number_format((float) $row1['hours'], 2, '.', '')."</td>";
-          echo "<td>".number_format((float) $row1['hours'] / $row1['total'], 2, '.', '')."</td></tr>";
+          if ($row1['total'] > 0) {
+             echo "<td>".number_format((float) $row1['hours'] / $row1['total'],                  2, '.', '')."</td>";
+          } else {
+             echo "<td>N/A</td>";
+          }
+          echo "</tr>";
       }
       echo "</table>";
       echo "<br clear = 'all'>";

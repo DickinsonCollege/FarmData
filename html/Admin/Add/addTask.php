@@ -13,21 +13,35 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 </div>
 
 <br clear="all"/>
-<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add">
+<script type="text/javascript">
+function show_confirm() {
+   var i = document.getElementById("task").value;
+   if (checkEmpty(i)) {
+      alert("Enter Labor Task");
+      return false;
+   }
+   var con="Task: "+ i + "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
+}
+</script>
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add"
+  onclick = "return show_confirm();">
 </form>
 <?php
 if (isset($_POST['add'])) {
    $task = escapehtml(strtoupper($_POST['task']));
    if (!empty($task)) {
       $sql="insert into task(task) values ('".$task."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add task: Please try again!\\n".mysql_error()."\");</script>";
-      } else {
-         echo "<script>showAlert('Added task successfully!');</script> ";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not add task".$p->getMessage()."\");</script>";
+         die();
       }
+      echo "<script>showAlert('Added task successfully!');</script> ";
    } else {
-      echo  "<script>alert('Enter all data! ".mysql_error()."');</script>";
+      echo  "<script>alert('Enter all data!');</script>";
    }
 }
 ?>

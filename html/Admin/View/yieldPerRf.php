@@ -16,32 +16,39 @@
       $crop = escapehtml($_GET['crop']);
       echo '<center>';
       echo '<h2>Average yield per row foot for each field of '.$crop.' in '.$year.'</h2>';   
-      $sql = "select sum(yield)/((select coalesce(sum(bedft*rowsBed), 0) from dir_planted where dir_planted.crop='"
-    .   $crop."' and year(plantdate) = '".$year."')+ (select coalesce(sum(bedft*rowsBed), 0) from transferred_to where year(transdate)='".
-        $year."' and transferred_to.crop='".$crop."')) as overalAvg from harvested where crop='".$crop."' and year(hardate)=".$year;
+      $sql = "select sum(yield)/((select coalesce(sum(bedft*rowsBed), 0) from dir_planted where ".
+        "dir_planted.crop='".$crop."' and year(plantdate) = '".$year.
+         "')+ (select coalesce(sum(bedft*rowsBed), 0) from transferred_to where year(transdate)='".
+        $year."' and transferred_to.crop='".$crop."')) as overalAvg from harvested where crop='".$crop.
+        "' and year(hardate)=".$year;
       
-      $row = mysql_fetch_array(mysql_query($sql));
+      $res = $dbcon->query($sql);
+      $row = $res->fetch(PDO::FETCH_ASSOC);;
       echo "<input type='hidden' id='overallAvg' value='".number_format($row[overalAvg],2,'.','')."'>";
 
-      $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year." group by fieldID";
-      $sqldata = mysql_query($sql);
+      $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year.
+         " group by fieldID";
+      $sqldata = $dbcon->query($sql);
       $count=0;
-      while($row = mysql_fetch_array($sqldata)){
-         $sql ="Select unit, sum(yield)/(Select sum(tft) from 
-            ((Select bedft * rowsBed as tft from dir_planted where fieldID like '".$row['fieldID'].
-            "' and year(plantdate)=".$year." and 
-            dir_planted.crop= '".$crop."') union all          
-            (Select bedft * rowsBed as tft from transferred_to where year(transdate)=".$year." and transferred_to.crop= '".$crop.
+      while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
+         $sql ="Select unit, sum(yield)/(Select sum(tft) from ((Select bedft * rowsBed as tft ".
+            "from dir_planted where fieldID like '".$row['fieldID'].
+            "' and year(plantdate)=".$year." and dir_planted.crop= '".$crop."') union all ".
+            "(Select bedft * rowsBed as tft from transferred_to where year(transdate)=".$year.
+            " and transferred_to.crop= '".$crop.
             "' and fieldID like '".$fieldID."')) as temp1) as yperft from harvested where year(hardate)=".
             $year." and harvested.crop = '" .$crop."' and harvested.fieldID like '".
             $row['fieldID']."' group by unit order by unit";
-         $yieldPerRowft = mysql_fetch_array(mysql_query($sql));
-         echo"<input type='hidden' id='fieldID".$count."' value='".$row['fieldID']."'/> <input type='hidden' id='yield".$count."' value='".number_format($yieldPerRowft['yperft'], 2,'.','')."'/>";
+         $res2 = $dbcon->query($sql);
+         $yieldPerRowft = $res2->fetch(PDO::FETCH_ASSOC);
+         echo"<input type='hidden' id='fieldID".$count."' value='".$row['fieldID'].
+            "'/> <input type='hidden' id='yield".$count."' value='".
+            number_format($yieldPerRowft['yperft'], 2,'.','')."'/>";
          $count++;
       }
       echo "<input type='hidden' id='numfield' value='".$count."'/>";
-      $sql = mysql_query("select distinct unit from harvested where crop='".$crop."'");
-      $row = mysql_fetch_array($sql);
+      $sql = $dbcon->query("select distinct unit from harvested where crop='".$crop."'");
+      $row = $sql->fetch(PDO::FETCH_ASSOC);
       echo"<input type='hidden' id='unit' value='".$row['unit']."'/>";
       
    ?>

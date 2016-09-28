@@ -15,13 +15,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 <script type="text/javascript">
 function show_confirm() {
-        var em = document.getElementById("email").value;
-        if (checkEmpty(em)) {
-           alert("Enter email address!");
-           return false;
-        }
-        var con = "Email: "+ em + "\n";
-        return confirm("Confirm Entry: " +"\n"+con);
+   var em = document.getElementById("email").value;
+   if (checkEmpty(em)) {
+      alert("Enter Email Address!");
+      return false;
+   }
+   var con = "Email: "+ em + "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 <br clear="all"/>
@@ -30,11 +30,13 @@ function show_confirm() {
 <?php
 if (isset($_POST['done'])) {
    $sql="insert into email values ('".escapehtml($_POST['email'])."')";
-   $result=mysql_query($sql);
-   if ($result) {
-      echo "<script>showAlert(\"Added Email Successfully!\");</script> \n";
-   } else {
-      echo "<script>alert(\"Could Not Add Email: Please try again!\\n".mysql_error()."\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert("Could not add farm email", $p);
+      die();
    }
+   echo "<script>showAlert(\"Added Email Successfully!\");</script> \n";
 }
 ?>

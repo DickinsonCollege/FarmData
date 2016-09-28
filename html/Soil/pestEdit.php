@@ -17,8 +17,8 @@ $origField = $_GET['fieldID'];
 $origPest = $_GET['pest'];
 $sqlget = "SELECT id,year(sDate) as yr, month(sDate) as mth, day(sDate) as dy, crops, pest,".
    "sDate,fieldID,avgCount, comments FROM pestScout where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $pest = $row['pest'];
 $field = $row['fieldID'];
 $avgCount = $row['avgCount'];
@@ -68,8 +68,8 @@ echo '<label>Name of Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -79,8 +79,8 @@ echo '<label>Insect:</label> ';
 echo '<select name="pest" id="pest">';
 echo '<option value="'.$pest.'" selected>'.$pest.' </option>';
 $sql = 'select pestName from pest';
-$sqldata = mysql_query($sql) or die("ERROR4");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
 	echo '<option value="'.$row['pestName'].'">'.$row['pestName'].' </option>';
 }
 echo '</select></div>';
@@ -112,16 +112,18 @@ if ($_POST['submit']) {
    $sql = "update pestScout set pest='".$pest."', fieldID='".$fld."', sDate='".$year."-".
      $month."-".$day."', avgCount=".$avgCount.",comments='".
      $comSanitized."',crops='".$crops."' where id=".$id;
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=pestTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&crop='.
-        encodeURIComponent($origCrop).'&fieldID='.encodeURIComponent($origField).'&pest='.
-        encodeURIComponent($origPest).
-        "&tab=soil:soil_scout:soil_pest:pest_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=pestTable.php?year='.$origYear.'&month='.$origMonth.
+     '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&crop='.
+     encodeURIComponent($origCrop).'&fieldID='.encodeURIComponent($origField).'&pest='.
+     encodeURIComponent($origPest).
+     "&tab=soil:soil_scout:soil_pest:pest_report\">";
 }
 ?>

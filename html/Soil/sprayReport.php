@@ -48,8 +48,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <select name="sprayMaterial" id="sprayMaterial"  onChange="addFieldID();" class="mobile-select">
 <option value = "%" selected> All </option>
 <?php
-$result = mysql_query("SELECT distinct sprayMaterial from tSprayMaterials where active=1 ");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct sprayMaterial from tSprayMaterials where active=1 ");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[sprayMaterial]\">$row[sprayMaterial]</option>";
 }
 ?>
@@ -68,8 +68,8 @@ while ($row =  mysql_fetch_array($result)){
 <select id= "crop" name="crop" class="mobile-select">
 <option value="%" selected> All </option>
 <?php
-$result = mysql_query("SELECT crop from plant");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT crop from plant");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= '".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>

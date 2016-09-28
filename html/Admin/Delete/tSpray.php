@@ -5,14 +5,21 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+         array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $e) {
+      die("Connect Failed! :".$e->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -66,8 +73,8 @@ echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
-   $sqldata = mysql_query($sql) or die("ERROR4");
-   while ($row = mysql_fetch_array($sqldata)) {
+   $sqldata = $dbcon->query($sql);
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['username'].'">'.$row['username'].' </option>';
    }
 } else {
@@ -112,21 +119,21 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
 </tr></thead>
 <?php
    $sql = "select * from tSprayField where id=".$id;
-   $sqldata = mysql_query($sql);
+   $sqldata = $dbcon->query($sql);
    $numRows = 0;
-   while($row=mysql_fetch_array($sqldata)){
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
       $numRows++;
-      $result=mysql_query("Select fieldID from field_GH where active=1");
+      $result = $dbcon->query("Select fieldID from field_GH where active=1");
       $option='';
-      while ($rowM =  mysql_fetch_array($result)){
+      while ($rowM = $result->fetch(PDO::FETCH_ASSOC)){
          $option = $option. "<option value = \"".$rowM[fieldID]."\">".$rowM[fieldID]."</option>";
       }
       $numBedOptions ="";
       $sqlnumBeds="SELECT numberOfBeds as numberOfBeds FROM field_GH where fieldID='".
           $row['fieldID']."'";
       $crops = $row['crops'];
-      $result=mysql_query($sqlnumBeds);
-      $rowBeds=mysql_fetch_array($result); 
+      $result=$dbcon->query($sqlnumBeds);
+      $rowBeds=$result->fetch(PDO::FETCH_ASSOC); 
       $ind=1;
       while($ind<=$rowBeds['numberOfBeds']){
          $numBedOptions = $numBedOptions."<option value=\"".$ind."\">".$ind."</option> \n";
@@ -165,21 +172,21 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
 </tr></thead>
 <?php
    $sql = "select * from tSprayWater where id=".$id;
-   $sqldata = mysql_query($sql);
+   $sqldata = $dbcon->query($sql);
    $numRowsMat = 0;
-   while($row=mysql_fetch_array($sqldata)){
+   while($row=$sqldata->fetch(PDO::FETCH_ASSOC)){
       $numRowsMat++;
       $materialSprayed = "";
       $sqlM="SELECT sprayMaterial FROM tSprayMaterials";
-      $resultM=mysql_query($sqlM);
-      while($rowM=mysql_fetch_array($resultM)){
+      $resultM=$dbcon->query($sqlM);
+      while($rowM=$resultM->fetch(PDO::FETCH_ASSOC)){
          $materialSprayed = $materialSprayed."<option value='".$rowM[sprayMaterial]."'>".$rowM[sprayMaterial]."</option>";
       };
       
     $sql="SELECT TRateMin, TRateMax, TRateDefault,(TRateMax-TRateMin)/10 AS dif FROM tSprayMaterials  where sprayMaterial='".$row['material']."'";
-      $result=mysql_query($sql);
+      $result=$dbcon->query($sql);
       $rateOptions = "";
-      while ($rowM=mysql_fetch_array($result)) {
+      while ($rowM=$result->fetch(PDO::FETCH_ASSOC)) {
 
          $ind = $rowM['TRateMin'];
          $rateOptions = $rateOptions."<option value=".$rowM['TRateDefault'].">".$rowM['TRateDefault']."</option> \n";
@@ -223,8 +230,8 @@ echo "<input class='textbox mobile-input ' type='text' id='initials' name='initi
 </tr></thead>
 <?php
 $sql = "select * from tSprayMaster where id=".$id;
-$sqldata = mysql_query($sql) or die (mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sql);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $water = $row['waterPerAcre'];
 $crops = $row['crops'];
 $comment = $row['comment'];
@@ -280,39 +287,72 @@ $sqlM="update tSprayMaster SET sprayDate='".$_POST['year']."-".$_POST['month'].
    ",waterPerAcre=".$waterPerAcre.", comment= '".
    $comSanitized."', user='".$username. "', complete = ".$complete.
    ", initials = '".$initials."' where id=".$id;
-$rusultM=mysql_query($sqlM);
-echo mysql_error();
+try {
+   $stmt = $dbcon->prepare($sqlM);
+   $stmt->execute();
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
 
 $fieldInd=1;
 // delete current rows in tSprayField;
 $sqlDelete = "Delete from tSprayField where id=".$id;
-mysql_query($sqlDelete) or die(mysql_error());
+try {
+   $stmt = $dbcon->prepare($sqlDelete);
+   $stmt->execute();
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
 // add new Rows
-while($fieldInd<= $_POST['numRows']){
-   $field = escapehtml($_POST['field'.$fieldInd]);
-   $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
-   $crops = escapehtml($_POST['crop'.$fieldInd]);
-   $sqlF="INSERT INTO tSprayField VALUES(".$id." , '". $field."' , ".$bed.", '".$crops."');";
-   mysql_query($sqlF) or die (mysql_error());
-   $sqlF;
-   echo mysql_error();
-   $fieldInd++;
+$sqlF="INSERT INTO tSprayField VALUES(".$id." , :field, :bed, :crops);";
+try {
+   $stmt = $dbcon->prepare($sqlF);
+   while($fieldInd<= $_POST['numRows']){
+      $field = escapehtml($_POST['field'.$fieldInd]);
+      $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
+      $crops = escapehtml($_POST['crop'.$fieldInd]);
+   //   $sqlF="INSERT INTO tSprayField VALUES(".$id." , '". $field."' , ".$bed.", '".$crops."');";
+      $stmt->bindParam(':field', $field, PDO::PARAM_STR);
+      $stmt->bindParam(':bed', $bed, PDO::PARAM_STR);
+      $stmt->bindParam(':crops', $crops, PDO::PARAM_STR);
+      $stmt->execute();
+      $fieldInd++;
+   }
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
 }
 
 
 $materialInd=1;
 $sqlDelete = "Delete from tSprayWater where id=".$id;
-mysql_query($sqlDelete) or die (mysql_error());
-while($materialInd<= $_POST['numRowsMat']){
-   $material = escapehtml($_POST['material2'.$materialInd]);
-   $rate = escapehtml($_POST['rate2'.$materialInd]);
-   $total = escapehtml($_POST['actuarialTotal'.$materialInd]);
-   $sqlW="INSERT INTO tSprayWater VALUES(".$id." , '". $material."', ".
-      $rate." , ".$total."  );";
-   mysql_query($sqlW) or die(mysql_error());
-   $sqlW;
-   echo mysql_error();
-   $materialInd++;
+try {
+   $stmt = $dbcon->prepare($sqlDelete);
+   $stmt->execute();
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
+$sqlW="INSERT INTO tSprayWater VALUES(".$id." , :material, :rate, :total);";
+try {
+   $stmt = $dbcon->prepare($sqlW);
+   while($materialInd<= $_POST['numRowsMat']){
+      $material = escapehtml($_POST['material2'.$materialInd]);
+      $rate = escapehtml($_POST['rate2'.$materialInd]);
+      $total = escapehtml($_POST['actuarialTotal'.$materialInd]);
+//      $sqlW="INSERT INTO tSprayWater VALUES(".$id." , '". $material."', ".
+//         $rate." , ".$total."  );";
+      $stmt->bindParam(':material', $material, PDO::PARAM_STR);
+      $stmt->bindParam(':rate', $rate, PDO::PARAM_STR);
+      $stmt->bindParam(':total', $total, PDO::PARAM_STR);
+      $stmt->execute();
+      $materialInd++;
+   }
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
 }
 }
 if(!empty($_POST['submit'])) {

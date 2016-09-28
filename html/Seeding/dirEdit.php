@@ -2,14 +2,20 @@
 <?php
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass');
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $d) {
+      die($d->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -32,8 +38,12 @@ $origGen = $_GET['genSel'];
 
 $sqlget = "SELECT gen,id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, username,".
    "plantdate,fieldID,bedft,rowsBed,hours, comments FROM dir_planted where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+try {
+   $sqldata = $dbcon->query($sqlget);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+}
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $user = $row['username'];
 $egen = $row['gen'];
 $field = $row['fieldID'];
@@ -48,7 +58,7 @@ $comments = $row['comments'];
 $hours = $row['hours'];
 
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
-   "?tab=admin:admin_delete:deleteseed:deletedirplant&year=".$origYear."&month=".$origMonth."&day=".$origDay.
+   "?tab=seeding:direct:direct_report&year=".$origYear."&month=".$origMonth."&day=".$origDay.
     "&fieldID=".$origField."&genSel=".$origGen.
    "&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&crop=".
     encodeURIComponent($origCrop)."&id=".$id."\">";
@@ -78,8 +88,12 @@ echo '<label>Crop:</label>';
 echo '<select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+try {
+   $sqldata = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+}
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select></div>';
@@ -89,8 +103,12 @@ echo '<label>Name of Field:</label>';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+try {
+   $sqldata = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+}
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -101,8 +119,12 @@ echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
-   $sqldata = mysql_query($sql) or die("ERROR4");
-   while ($row = mysql_fetch_array($sqldata)) {
+   try {
+      $sqldata = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['username'].'">'.$row['username'].' </option>';
    }
 } else {
@@ -119,7 +141,7 @@ echo '<div class="pure-control-group">';
 echo '<label>Rows/Bed:</label>';
 echo '<select name="rowsbed" id="rowsbed">';
 echo '<option value='.$rowsBed.' selected>'.$rowsBed.' </option>';
-for ($row = 1; $row <= 7; $row++) {
+for ($row = 1; $row <= 9; $row++) {
    echo '<option value='.$row.'>'.$row.'</option>';
 }
 echo '</select></div>';
@@ -159,19 +181,21 @@ if ($_POST['submit']) {
    $day = escapehtml($_POST['day']);
    $user = escapehtml($_POST['user']);
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
-   echo $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
+   $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
      $month."-".$day."', bedft=".$bedftv.",rowsBed=".$numrows.",hours=".$hours.",comments='".
      $comSanitized."',crop='".$crop."',gen=".$gen." where id=".$id;
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo "<meta http-equiv=\"refresh\" content=\"0;URL=dir_table.php?year=".$origYear."&month=".$origMonth.
-        "&day=".$origDay."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
-        "&fieldID=".$origField."&genSel=".$origGen.
-        "&tab=seeding:direct:direct_report"
-        ."&crop=".encodeURIComponent($origCrop)."\">";
+   try {
+      $result = $dbcon->prepare($sql);
+      $result->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not update data', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo "<meta http-equiv=\"refresh\" content=\"0;URL=dir_table.php?year=".$origYear."&month=".$origMonth.
+     "&day=".$origDay."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay.
+     "&fieldID=".$origField."&genSel=".$origGen.
+     "&tab=seeding:direct:direct_report"
+     ."&crop=".encodeURIComponent($origCrop)."\">";
 }
 ?>

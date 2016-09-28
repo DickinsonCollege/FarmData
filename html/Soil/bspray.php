@@ -83,8 +83,8 @@ function show_confirm() {
 <select name ="fieldID" id="fieldID" class="mobile-select">
 <option value = 0 selected disabled> Field Name</option>
 <?php 
-$result=mysql_query("Select fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){  
+$result=$dbcon->query("Select fieldID from field_GH where active=1");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){  
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 echo '</select>';
@@ -110,8 +110,8 @@ echo '</div>';
 <select onchange=" addInput2(); addInput();" name ="material" id="material" class="mobile-select">
 <option value = 0 selected disabled> Material </option>
 <?php 
-$result=mysql_query("Select sprayMaterial from tSprayMaterials where active = 1");
-while ($row1 =  mysql_fetch_array($result)){  
+$result=$dbcon->query("Select sprayMaterial from tSprayMaterials where active = 1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){  
 echo "\n<option value= \"$row1[sprayMaterial]\">$row1[sprayMaterial]</option>";
 }
 echo '</select>';
@@ -216,15 +216,18 @@ if(!empty($_POST['submit'])) {
       $crops .= escapehtml($_POST['crop'.$i]);
     }
    $rate=escapehtml($_POST['rate']);
-   $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, crops, comments) values('".
+   $sql = "Insert into bspray(sprayDate,fieldID, water,materialSprayed, rate, totalMaterial, mixedWith, ".
+      "crops, comments) values('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','" .
       $fieldID."',".$water.",'".$material."',".$rate.",".$tot.",'".$mix.
       "','".$crops."','".  $comSanitized."');";
-   $result = mysql_query($sql);
-   if(!$result){
-      echo "<script>alert(\"Could not input Backpack Spray Record: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Backpack Spray Record Entered Successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Backpack Spray Record Entered Successfully!\");</script> \n";
 }
 ?>

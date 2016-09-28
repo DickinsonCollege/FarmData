@@ -98,8 +98,8 @@ function show_confirm() {
 <select name ="fieldID" id="fieldID" onChange="callAll();" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
-$result=mysql_query("Select fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 echo '</select>';
@@ -122,8 +122,8 @@ echo '</div>';
 <select name ="seed_method" id="seed_method" onChange="callAll();" class='mobile-select'> 
 <option value= 0 selected disabled> Seeding Method </option>
 <?php
-$result=mysql_query("select seed_method from seedingMethod");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("select seed_method from seedingMethod");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[seed_method]\">$row1[seed_method]</option>";
 }
 
@@ -135,8 +135,8 @@ echo '</div>';
 <select name ="incorp_tool" id="incorp_tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool </option>
 <?php
-$result=mysql_query("Select tool_name from tools");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select tool_name from tools");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
 }
 echo '</select>';
@@ -148,8 +148,8 @@ echo '</div>';
    <select name="tractor" id="tractor" class='mobile-select'>
       <option value=0 selected disabled> Tractor </option>
       <?php
-      $result = mysql_query("Select tractorName from tractor where active = 1");
-      while ($row = mysql_fetch_array($result)) {
+      $result = $dbcon->query("Select tractorName from tractor where active = 1");
+      while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
          echo "\n<option value=\"$row[tractorName]\">$row[tractorName]</option>";
       }
       echo '</select>';
@@ -216,10 +216,6 @@ function get_code(row) {
 
    function addRow(){
       numRows++;
-/*
-      var table    = document.getElementById('covercrop');
-      var row      = table.insertRow(numRows);
-*/
       var table = document.getElementById("covercrop").getElementsByTagName('tbody')[0];
       var row = table.insertRow(numRows - 1);
       row.id      = "row" + numRows;
@@ -231,8 +227,8 @@ function get_code(row) {
          '\');get_code(' + numRows + ');" class="wide">'+
          '<option value = 0 selected disabled>Species</option>'+
          '<?php
-            $result=mysql_query("Select crop from coverCrop where active = 1");
-            while ($row1 =  mysql_fetch_array($result)){
+            $result=$dbcon->query("Select crop from coverCrop where active = 1");
+            while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                echo "<option value= \"$row1[crop]\">$row1[crop]</option>";
             }
          ?>'+'</select></div>';
@@ -290,25 +286,20 @@ function addPounds(id,num) {
    console.log('start function');   
    var newdiv = document.getElementById(id);
    var e = document.getElementById("crop"+num);
-   //var g = document.getElementById("fieldID");
    var f = document.getElementById("seed_method");
    
    if(e.value!=0){
    var crop= encodeURIComponent(e.value);
-   //var fieldID= g.options[g.selectedIndex].text;
    var method= encodeURIComponent(f.value);
-   //var percent=document.getElementById("percent").value;
    xmlhttp= new XMLHttpRequest();
    xmlhttp.open("GET","update_pounds1.php?crop="+crop+"&method="+method,false);
    xmlhttp.send();
-      //console.log(xmlhttp.responseText);
    newdiv.innerHTML="<select name='numpounds"+num+"' id='numpounds"+num+"'  onChange='addTotalPound(\"id"+num+"\",\""+num+"\");' class='mobile-select'>"+xmlhttp.responseText+"</select>";
    }
 
 }
 
    function addTotalPound(id,num){
-   //console.log("I AM HEREi1111");
    var newdiv = document.getElementById(id);
    var rate=document.getElementById("numpounds"+num).value;
    
@@ -357,64 +348,88 @@ if(!empty($_POST['submit'])) {
    $seed_method = escapehtml($_POST['seed_method']);
    if ($_SESSION['seed_order']) {
       $count = 1;
-      while ($count <= $numRows){
-         $crop = escapehtml($_POST['crop'.$count]);
-         $code = escapehtml($_POST['code'.$count]);
-         $pound = escapehtml($_POST['pound'.$count]);
-         $var = "select variety from coverSeedInventory where code ='".$code."' and crop = '".$crop."'";
-         $vr = mysql_query($var);
-         echo mysql_error();
-         if ($vrow = mysql_fetch_array($vr)) {
-            $variety = $vrow['variety'];
-         } else {
-            $variety = "No Variety";
+      $dec = "update coverSeedInventory set inInventory = inInventory - :pound".
+         " where crop = :crop and code = :code";
+      try {
+         $stmt = $dbcon->prepare($dec);
+         while ($count <= $numRows){
+            $crop = escapehtml($_POST['crop'.$count]);
+            $code = escapehtml($_POST['code'.$count]);
+            $pound = escapehtml($_POST['pound'.$count]);
+            $var = "select variety from coverSeedInventory where code ='".$code."' and crop = '".$crop."'";
+            $vr = $dbcon->query($var);
+            $error = $dbcon->errorInfo();
+            echo $error[2];
+            if ($vrow = $vr->fetch(PDO::FETCH_ASSOC)) {
+               $variety = $vrow['variety'];
+            } else {
+               $variety = "No Variety";
+            }
+            if ($comments != "") {
+               $comments .= "<br>";
+            }
+            $comments .= "Seed Code for ".$crop.": ".$code." (".escapehtml($variety).")";
+            if ($code != "N/A") {
+               $stmt->bindParam(':pound', $pound, PDO::PARAM_STR);
+               $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+               $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+               $success = $stmt->execute();
+            }
+            $count++;
          }
-         if ($comments != "") {
-            $comments .= "<br>";
-         }
-         $comments .= "Seed Code for ".$crop.": ".$code." (".escapehtml($variety).")";
-         if ($code != "N/A") {
-            $dec = "update coverSeedInventory set inInventory = inInventory - ".
-               $pound." where crop = '".$crop."' and code = '".$code."'";
-            $decres = mysql_query($dec);
-            echo mysql_error();
-         }
-         $count++;
-      }
+       } catch (PDOException $e) {
+          phpAlert('', $e);
+          die();
+       }
    }
    $sqlcoverSeedMaster = "Insert into coverSeed_master (seed_method,incorp_tool,".
       "comments,seedDate,fieldID,area_seeded) values('".$seed_method."', '".
       $incorp_tool."','".$comments."','".$_POST['year']."-".$_POST['month'].
       "-".$_POST['day']."','".$fieldID."', $percent)";
-   $result = mysql_query($sqlcoverSeedMaster);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sqlcoverSeedMaster);
+      $stmt->execute();
+   } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
+   }
    $count = 1;
-   $id = mysql_insert_id();
-   while ($count <= $numRows){
-      $crop = escapehtml($_POST['crop'.$count]);
-      $numpounds = escapehtml($_POST['numpounds'.$count]);
-      $pound = escapehtml($_POST['pound'.$count]);
-      $sql = "Insert into coverSeed(crop,seedRate,num_pounds,id)".
-               "values('".$crop."',".$numpounds.",".$pound.",".$id.");";
-      $result1 = mysql_query($sql) or die(mysql_error());
-      echo mysql_error();
-      $count++;
+   $id = $dbcon->lastInsertId();
+   $sql = "Insert into coverSeed(crop,seedRate,num_pounds,id) values(:crop, :numpounds, :pound, :id);";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      while ($count <= $numRows){
+         $crop = escapehtml($_POST['crop'.$count]);
+         $numpounds = escapehtml($_POST['numpounds'.$count]);
+         $pound = escapehtml($_POST['pound'.$count]);
+         $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+         $stmt->bindParam(':numpounds', $numpounds, PDO::PARAM_STR);
+         $stmt->bindParam(':pound', $pound, PDO::PARAM_STR);
+         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+         $stmt->execute();
+         $count++;
+      }
+   } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
    }
    // Insert into tillage
    $tractor = escapehtml($_POST['tractor']);
    $numPasses = escapehtml($_POST['numPasses']);
    $minutes = escapehtml($_POST['minutes']);
-   $sql = "INSERT into tillage(tractorName, fieldID, tilldate, tool, num_passes, comment, minutes, percent_filled)
-   values
-   ('".$tractor."', '".$fieldID."', '".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',
-   '".$incorp_tool."', ".$numPasses.", '".$comments."', ".$minutes.", ".$percent.");";
-   $result2=mysql_query($sql);
-   echo mysql_error();
+   try {
+      $sql = "INSERT into tillage(tractorName, fieldID, tilldate, tool, num_passes, comment, minutes, percent_filled)
+      values
+      ('".$tractor."', '".$fieldID."', '".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',
+      '".$incorp_tool."', ".$numPasses.", '".$comments."', ".$minutes.", ".$percent.");";
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
+   }
 
-   if ($result && $result2) {
-      echo '<script> showAlert("Cover Crop Seeding Record Entered Successfully") </script>';
-   } else {
-      echo '<script> alert("Could not enter data! Check input and try again.\n '.mysql_error().'") </script>';
-   } 
+   echo '<script> showAlert("Cover Crop Seeding Record Entered Successfully") </script>';
+ 
 } 
 ?>

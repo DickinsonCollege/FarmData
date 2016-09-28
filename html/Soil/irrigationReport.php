@@ -21,20 +21,20 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
    }
    // find all the fields that were irrigated by Drip
    $sql = 'select distinct fieldID from pump_field natural join pump_master where irr_device <> \'Drip\' and pumpDate between \''.$starttime.'\' and \''.$endtime.'\' order by fieldID';
-   $data= mysql_query($sql);
+   $data= $dbcon->query($sql);
    $arrayOverHead = array();
    $count = 0;
-   while ($row = mysql_fetch_array($data)){
+   while ($row = $data->fetch(PDO::FETCH_ASSOC)){
       $arrayOverHead[$count] = $row['fieldID'];
       $count++;
    }
    $numOvh = count($arrayOverHead);   
    // find all the fields that were irrigated by OverHead
    $sql = 'select distinct fieldID from pump_field natural join pump_master where irr_device = \'Drip\' and pumpDate between \''.$starttime.'\' and \''.$endtime.'\' order by fieldID';
-   $data= mysql_query($sql);
+   $data= $dbcon->query($sql);
    $arrayDrip = array();
    $count = 0;
-   while ($row = mysql_fetch_array($data)){
+   while ($row = $data->fetch(PDO::FETCH_ASSOC)){
       $arrayDrip[$count] = $row['fieldID'];
       $count++;
    }
@@ -46,15 +46,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
    // find all the comments
    $commentArray = array();
    $commentQuery = 'select pumpDate, group_concat(comment) from pump_master where pumpDate between SUBDATE(\''.$starttime.'\', 7) and \''.$endtime.'\'  group by pumpDate;';
-   $data    = mysql_query($commentQuery);
-   while($row = mysql_fetch_array($data)){
+   $data    = $dbcon->query($commentQuery);
+   while($row = $data->fetch(PDO::FETCH_ASSOC)){
       $commentArray[$row['pumpDate']] = $row['group_concat(comment)'];
    }
    // find all the rain values
    $rainArray = array();
    $rainQuery = "select pumpDate, rain from pump_master where pumpDate between SUBDATE('".$starttime."', 7) and '".$endtime."' group by pumpDate";
-   $data        = mysql_query($rainQuery);
-   while($row = mysql_fetch_array($data)){
+   $data        = $dbcon->query($rainQuery);
+   while($row = $data->fetch(PDO::FETCH_ASSOC)){
       $rainArray[$row[pumpDate]] = $row[rain];
    }
    // Return color value of a field if it is not irrigated and has no rain
@@ -86,8 +86,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
       $starttime.'\', 7) and \''.$endtime.'\' group by fieldID, pumpDate, '.
       'case when irr_device ='. 
       '\'DRIP\' then 1 else 0 end'; 
-   $data    = mysql_query($sql);
-   while($row = mysql_fetch_array($data)){
+   $data    = $dbcon->query($sql);
+   while($row = $data->fetch(PDO::FETCH_ASSOC)){
       $dataArray[$row['pumpDate']][$row['fieldID']][$row['drip']] = number_format((float) $row['eth'], 2, '.', '');
    }
 ?>

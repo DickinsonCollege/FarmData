@@ -8,11 +8,10 @@ $sql = "SELECT distinct seedDate
 		WHERE fieldID='".$fieldID."' 
 		ORDER BY seedDate";
 
-$result = mysql_query($sql);
-while($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value=\"".$row['seedDate']."\">".$row['seedDate']."</option>";
 }
 
-mysql_close();
 ?>
 

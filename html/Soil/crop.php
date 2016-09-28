@@ -44,10 +44,10 @@ value="Remove Crop">
       row.id="cropRow" + numCropRows;
       var cell0 = row.insertCell(-1);
       var cropID = '<?php
-         $result=mysql_query("Select crop from plant where active=1");
-         while ($row1 =  mysql_fetch_array($result)){
-             echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
-         }
+      $result=$dbcon->query("Select crop from plant where active=1");
+      while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
+          echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
+      }
        ?>';
       cell0.innerHTML = '<div class="styled-select<?php 
   if (!$_SESSION['mobile']) { echo "2"; }?>" id="cropDiv'+numCropRows+

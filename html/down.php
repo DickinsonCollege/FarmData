@@ -2,21 +2,24 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 header("Content-type: application/octet-stream");
 header("Content-disposition: attachment;filename=\"report.csv\"");
-$result=mysql_query($_POST['query']) or die(mysql_error());
-
+try {
+  $result=$dbcon->query($_POST['query']);
+} catch (PDOException $p) {
+   die($p->getMessage());
+}
 $first=true;
-while ($row1 =  mysql_fetch_array($result)){
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
    if ($first) {
       $first=false;
       $head=array_keys($row1);
-      for ($i=1;$i<count($head);$i=$i+2) {
+      for ($i=0;$i<count($head);$i=$i + 1) {
            echo "\"".$head[$i]."\"".",";
       }
 
       echo "\n";
    }
-   for ($i=0;$i<count($row1)/2;$i=$i+1) {
-      echo "\"".htmlspecialchars_decode($row1[$i], ENT_QUOTES)."\"".",";
+   for ($i=0;$i<count($head);$i=$i+1) {
+      echo "\"".htmlspecialchars_decode($row1[$head[$i]], ENT_QUOTES)."\"".",";
    }
    
    echo "\n";

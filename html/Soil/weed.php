@@ -44,8 +44,8 @@ function addRow(){
                      '" id="fieldID'+numRows+'" class="wide">'+
                      '<option value= 0 selected disabled> Field Name </option>'+
                      '<?php
-                         $result=mysql_query("select fieldID from field_GH where active=1");
-                        while($row1 = mysql_fetch_array($result)){
+                         $result=$dbcon->query("select fieldID from field_GH where active=1");
+                        while($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                            echo '<option value="'.$row1[fieldID].'">'.$row1[fieldID].'</option>';
                         }
                       ?>' + '</select></div>';
@@ -54,9 +54,8 @@ function addRow(){
                      '<option value = 0 selected disabled>weed species</option>'+
                      '<?php
                         $sql = 'Select weedName from weed';
-                        $result = mysql_query($sql);
-                        while ($row1 =  mysql_fetch_array($result)){
-                           //echo $row1[weedName];
+                        $result = $dbcon->query($sql);
+                        while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                            echo '<option value="'.$row1['weedName'].'">'.$row1['weedName'].'</option>';
                         }      
                       ?>' + '</select></div>';
@@ -185,19 +184,28 @@ echo "</div>";
 if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);
    $var= $_POST['hid'];
-   while ($var>0) {
-      $fieldID = escapehtml($_POST['fieldID'.$var]);  
-      $infest = escapehtml($_POST['infest'.$var]);
-      $g2seed = escapehtml($_POST['g2seed'.$var]);
-      $species = escapehtml($_POST['species'.$var]);
-      $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed, comments) values ('".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$species."', ".$infest.", ".$g2seed.",'".$comments."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Data Entered Successfully!\\n\");</script>\n";
+   $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed, comments) values ('".
+      $_POST['year']."-".$_POST['month']."-".$_POST['day']."', :fieldID, :species, :infest, :g2seed,'".
+      $comments."')";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      while ($var>0) {
+         $fieldID = escapehtml($_POST['fieldID'.$var]);  
+         $infest = escapehtml($_POST['infest'.$var]);
+         $g2seed = escapehtml($_POST['g2seed'.$var]);
+         $species = escapehtml($_POST['species'.$var]);
+   //      $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed, comments) values ('".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$species."', ".$infest.", ".$g2seed.",'".$comments."')";
+         $stmt->bindParam(':fieldID', $fieldID, PDO::PARAM_STR);
+         $stmt->bindParam(':species', $species, PDO::PARAM_STR);
+         $stmt->bindParam(':infest', $infest, PDO::PARAM_INT);
+         $stmt->bindParam(':g2seed', $g2seed, PDO::PARAM_INT);
+         $stmt->execute();
+         $var--;
       }
-      $var--;
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Data Entered Successfully!\\n\");</script>\n";
 }
 ?>

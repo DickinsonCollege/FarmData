@@ -2,8 +2,8 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $crop = escapehtml($_GET['crop']);
 $sql = "select * from coverCrop where crop='".$crop."'";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = $dbcon->query($sql);
+$row = $result->fetch(PDO::FETCH_ASSOC);
 
 $plantarray = array();
 $plantarray[0] = $row['drillRateMin'];

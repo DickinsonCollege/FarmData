@@ -20,20 +20,40 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
        $ctype = $_GET['ctype'];
        if ($ctype == 'accum') {
           $sqlDel="DELETE FROM compost_accumulation WHERE id=".$_GET['id'];
-          mysql_query($sqlDel);
-          echo mysql_error();
+          try {
+             $stmt=$dbcon->prepare($sqlDel);
+             $stmt->execute();
+          } catch (PDOException $p) {
+             phpAlert('', $p);
+             die();
+          }
        } else if ($ctype == 'act') {
           $sqlDel="DELETE FROM compost_activity WHERE id=".$_GET['id'];
-          mysql_query($sqlDel);
-          echo mysql_error();
+          try {
+             $stmt=$dbcon->prepare($sqlDel);
+             $stmt->execute();
+          } catch (PDOException $p) {
+             phpAlert('', $p);
+             die();
+          }
        } else if ($ctype == 'temp') {
           $sqlDel="DELETE FROM compost_temperature WHERE id=".$_GET['id'];
-          mysql_query($sqlDel);
-          echo mysql_error();
+          try {
+             $stmt=$dbcon->prepare($sqlDel);
+             $stmt->execute();
+          } catch (PDOException $p) {
+             phpAlert('', $p);
+             die();
+          }
        } else if ($ctype == 'app') {
           $sqlDel="DELETE FROM utilized_on WHERE id=".$_GET['id'];
-          mysql_query($sqlDel);
-          echo mysql_error();
+          try {
+             $stmt=$dbcon->prepare($sqlDel);
+             $stmt->execute();
+          } catch (PDOException $p) {
+             phpAlert('', $p);
+             die();
+          }
        } else {
           die("unknown compost record type");
        }
@@ -63,10 +83,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       FROM compost_accumulation 
       WHERE accDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
       AND pileID LIKE '".$pileID."' ORDER BY accDate";
-   $result = mysql_query($accumulationSQL);
-
-   if (!$result) {
-      echo "<script>alert(\"Could not Generate Compost Reports: Please try again!\\n".$mysql_error()."\");</script>\n";
+   try {
+      $result = $dbcon->query($accumulationSQL);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
 
    echo "<h4>Compost Accumulation Records</h4>";
@@ -76,7 +97,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['accDate'];
       echo "</td><td>";
@@ -117,14 +138,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
 <?php
    // Activity Records
-   $activitySQL = "SELECT id, actDate, pileID, activity, comments 
-      FROM compost_activity 
-      WHERE actDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
-      AND pileID LIKE '".$pileID."' ORDER BY actDate";
-   $result = mysql_query($activitySQL);
-
-   if (!$result) {
-      echo "<script>alert(\"Could not Generate Compost Reports: Please try again!\\n".$mysql_error()."\");</script>\n";
+   $activitySQL = "SELECT id, actDate, pileID, activity, comments FROM compost_activity ".
+      "WHERE actDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
+      "' AND pileID LIKE '".$pileID."' ORDER BY actDate";
+   try {
+      $result = $dbcon->query($activitySQL);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
 
    echo "<h4>Compost Activity Records</h4>";
@@ -134,7 +155,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['actDate'];
       echo "</td><td>";
@@ -172,14 +193,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
 <?php
    // Temperature Records
-   $temperatureSQL = "SELECT tmpDate, pileID, temperature, numReadings, comments, id
-      FROM compost_temperature 
-      WHERE tmpDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
-      AND pileID LIKE '".$pileID."' ORDER BY tmpDate";
-   $result = mysql_query($temperatureSQL);
-
-   if (!$result) {
-      echo "<script>alert(\"Could not Generate Compost Reports: Please try again!\\n".mysql_error()."\");</script>\n";
+   $temperatureSQL = "SELECT tmpDate, pileID, temperature, numReadings, comments, id ".
+      "FROM compost_temperature ".
+      "WHERE tmpDate between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
+      "' AND pileID LIKE '".$pileID."' ORDER BY tmpDate";
+   try {
+      $result = $dbcon->query($temperatureSQL);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
 
    echo "<h4>Compost Temperature Reading Records</h4>";
@@ -189,7 +211,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['tmpDate'];
       echo "</td><td>";
@@ -232,10 +254,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       " comments, id FROM utilized_on ".
       "WHERE util_date between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
       "' AND fieldID LIKE '".$fieldID."' AND pileID LIKE '".$pileID."' ORDER BY util_date";
-   $result = mysql_query($applicationSQL);
-
-   if (!$result) {
-    echo "<script>alert(\"Could not Generate Compost Reports: Please try again!\\n".mysql_error()."\");</script>\n";
+   try {
+      $result = $dbcon->query($applicationSQL);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
 
    echo "<h4>Compost Application Records</h4>";
@@ -245,7 +268,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ( $row = mysql_fetch_array($result)) {
+   while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['util_date'];
         echo "</td><td>";
@@ -292,12 +315,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
    echo '<div class="pure-form pure-form-aligned">';
    if ($fieldID != "%") {
-      $sqlget = "Select sum(tperacre) as total, avg(tperacre) as average from utilized_on where util_date between '".
-         $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
-         $tcurDay."' and  fieldID like '".$fieldID."' and pileID like '".
-           $pileID."'";
-      $result = mysql_query($sqlget);
-      while ($row1 = mysql_fetch_array($result)) {
+      $sqlget = "Select sum(tperacre) as total, avg(tperacre) as average from utilized_on ".
+         "where util_date between '".  $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
+         $tcurDay."' and  fieldID like '".$fieldID."' and pileID like '".  $pileID."'";
+      $result = $dbcon->query($sqlget);
+      while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
            $row3Deci3=number_format((float)$row1['total'], 2, '.', '');
       echo '<div class="pure-control-group">';
       echo "<label for='total'>Total Tons Per Acre:</label> ";
@@ -316,9 +338,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          " where util_date between '".
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
          $tcurDay."' and  fieldID like '".$fieldID."' and pileID like '".$pileID."'";
-     $result = mysql_query($sql);
-     echo mysql_error();
-     while ($row1 = mysql_fetch_array($result)) {
+     $result = $dbcon->query($sql);
+     while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<div class="pure-control-group">';
         echo "<label for='tons'>Total Tons Applied from Pile ".
            $_POST['pileID'].":</label> ";

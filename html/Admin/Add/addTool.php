@@ -27,6 +27,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <script>
 function show_confirm() {
    var i = document.getElementById("name").value;
+   if (checkEmpty(i)) {
+      alert("Enter tool name!");
+      return false;
+   }
    var con="Tool/Implement Name: "+ i+ "\n";
    var t = document.getElementById("type").value;
    var n = "OTHER";
@@ -49,15 +53,16 @@ if (!empty($_POST['done'])) {
       }
       $sql="Insert into tools(tool_name, type) values ('".
          escapehtml(strtoupper($_POST['name']))."', '".$type."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".
-            mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
       }
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\\n\");</script> \n";
    }
 }
 ?>

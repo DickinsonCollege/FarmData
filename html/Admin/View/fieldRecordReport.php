@@ -24,8 +24,8 @@ echo '</div>';
 <label for="fieldID">FieldID:</label>
 <select id = "fieldID" name="fieldID" class='mobile-select'>
 <?php
-$result = mysql_query("SELECT distinct fieldID from field_GH");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct fieldID from field_GH");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 ?>

@@ -2,13 +2,12 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $spraymaterial = escapehtml($_GET['spraymaterial']);
 
-$sql = "SELECT * from tSprayMaterials
-		WHERE sprayMaterial='".$spraymaterial."'";
+$sql = "SELECT * from tSprayMaterials WHERE sprayMaterial='".$spraymaterial."'";
 
 $array = array(12);
 
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result =$dbcon->query($sql);
+$row = $result->fetch(PDO::FETCH_ASSOC);
 
 $array[0] = $row['sprayMaterial'];
 $array[1] = $row['TRateUnits'];
@@ -25,5 +24,4 @@ $array[11] = $row['active'];
 
 echo json_encode($array);
 
-mysql_close();
 ?>

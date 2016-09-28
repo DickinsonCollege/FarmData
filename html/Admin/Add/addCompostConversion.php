@@ -14,8 +14,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <select name="mat" id="mat" onChange="addInput2();" class="mobile-select"> 
 <option value=0 selected disabled>Material </option>
 <?php
-$result=mysql_query("Select materialName from compost_materials");
-while ($row1 =  mysql_fetch_array($result)){  
+$result=$dbcon->query("Select materialName from compost_materials");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){  
   echo "\n<option value= \"$row1[materialName]\">$row1[materialName]</option>";
 }
 ?>
@@ -40,7 +40,6 @@ function addInput2(){
    var str = '<label for="unit">New Unit:</label> ' +
       '<select name="unit" id="unit" onchange="updateNew();"> ' + 
       xmlhttp.responseText + '</select>';
-   console.log(str);
    newdiv.innerHTML = str;
 
    var newUnit = document.getElementById("unit").value;
@@ -50,6 +49,33 @@ function addInput2(){
    inp2.value = newUnit;
 }
 
+function show_confirm() {
+   var i = document.getElementById("mat").value;
+   if (checkEmpty(i)) {
+      alert("Select Compost Material");
+      return false;
+   }
+   var con="Compost Material: "+ i + "\n";
+   var i = document.getElementById("newunit").value;
+   if (checkEmpty(i)) {
+      alert("Select New Unit");
+      return false;
+   }
+   con += "New Unit: "+ i + "\n";
+   var i = document.getElementById("conversion").value;
+   if (checkEmpty(i) || !isFinite(i) || i < 0) {
+      alert("Enter Valid Conversion to Pounds");
+      return false;
+   }
+   con += "Conversion to Pounds: "+ i + "\n";
+   var i = document.getElementById("conversion2").value;
+   if (checkEmpty(i) || !isFinite(i) || i < 0) {
+      alert("Enter Valid Conversion to Cubic Yards");
+      return false;
+   }
+   con += "Conversion to Cubic Yards: "+ i + "\n";
+   return confirm("Confirm Entry: " + "\n" + con);
+}
 </script>
 <div class = "pure-control-group" id="units">
 <label for="unit">New Unit:</label> 
@@ -78,7 +104,8 @@ One&nbsp;
 <br clear="all"/>
 <div class = "pure-g">
 <div class = "pure-u-1-2">
-<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add">
+<input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Add"
+  onClick="return show_confirm();">
 </form>
 </div>
 <div class = "pure-u-1-2">
@@ -98,14 +125,16 @@ if (isset($_POST['add'])) {
       && $conversion2 > 0 && !empty($conversion2) && !empty($mat)) {
       $sql="Insert into compost_units(material,unit,pounds,cubicyards) values ('".
          $mat."','".$unit."',".$conversion.", ".$conversion2.")";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      }else {
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert("Could not add conversion", $p);
+         die();
       }
+      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    } else {
-      echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo    "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

@@ -12,10 +12,33 @@ $calc_SEEDS = $_GET['calc_SEEDS'];
 if (!isset($calc_SEEDS) || $calc_SEEDS == "") {
   $calc_SEEDS = 1000;
 }
+
+if ($cover) {
+  $sql = "select variety from coverVariety where crop='".$crop."'";
+} else {
+  $sql = "select variety from variety where crop='".$crop."'";
+}
+$result = $dbcon->query($sql);
+$variety = array();
+while ($row=$result->fetch(PDO::FETCH_ASSOC)) {
+   array_push($variety, $row['variety']);
+}
+$sql = "select source from source";
+$result = $dbcon->query($sql);
+$source = array();
+while ($row=$result->fetch(PDO::FETCH_ASSOC)) {
+   array_push($source, $row['source']);
+}
+
 echo "<center>";
 echo "<h2> Seed Order and Inventory for ".$crop." in ".$year."</h2>";
 echo "</center>";
 ?>
+
+<script type="text/javascript">
+var varieties = eval(<?php echo json_encode($variety);?>);
+var sources = eval(<?php echo json_encode($source);?>);
+</script>
 
 
 <form name='form' class='pure-form pure-form-aligned' id = 'seedform' method='POST' action='handleOrder.php'>
@@ -30,33 +53,49 @@ if (!$isCover) {
    echo '<input type="hidden" name="isCover" value="false">';
    echo '<input type="hidden" name="crop" value="'.$crop.'">';
    $sql = "select * from seedInfo where crop='".$crop."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $seeds = $row['seedsGram'];
       $rowft = $row['seedsRowFt'];
       $defUnit = $row['defUnit'];
       echo '<input type="hidden" name="defUnit" value="'.$defUnit.'">';
    }
    $sql = "select rowFt from toOrder where crop='".$crop."' and year = ".$year;
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $rowftToPlant = $row['rowFt'];
    }
 } else {
    echo '<input type="hidden" name="isCover" value="true">';
    echo '<input type="hidden" name="crop" value="'.$cover.'">';
    $sql = "select * from coverSeedInfo where crop='".$cover."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $rate = $row['rate'];
    }
    $sql = "select * from coverToOrder where crop='".$cover."' and year=".$year;
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $acres = $row['acres'];
    }
 }
@@ -363,6 +402,9 @@ function show_var_confirm() {
    if (variety == "") {
       alert("Enter new variety.");
       return false;
+   } else if (varieties.includes(variety.toUpperCase())) {
+      alert("Variety already exists.");
+      return false;
    } else {
       return confirm("Confirm Entry:\nNew Variety: " + variety);
    }
@@ -372,6 +414,9 @@ function show_source_confirm() {
    var source = document.getElementById("newSource").value;
    if (source == "") {
       alert("Enter new source.");
+      return false;
+   } else if (sources.includes(source.toUpperCase())) {
+      alert("Source already exists.");
       return false;
    } else {
       return confirm("Confirm Entry:\nNew Source: " + source);
@@ -457,9 +502,13 @@ function addSource(cell, cellDate, row, num, source, sdate) {
    htm += ">Source</option>";
 <?php
 $sql = "select source from source";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo "htm += \"<option value='".$row['source']."'\";";
    echo "if ('".$row['source']."' == source) {";
    echo "   htm += ' selected';";
@@ -559,6 +608,7 @@ function load_order(row) {
    xmlhttp.send();
    if (xmlhttp.responseText != "") {
       var resp = JSON.parse(xmlhttp.responseText);
+console.log(resp);
       document.getElementById("catalogOrder" + row).value = 
          resp['catalogOrder'];
       document.getElementById("catalogUnit" + row).value = 
@@ -616,9 +666,13 @@ if ($isCover) {
 } else {
    $sql = "select variety from variety where crop = '".$crop."'";
 }
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo "htm += \"<option value='".$row['variety']."'\";";
    echo "if ('".$row['variety']."' == variety) {";
    echo "   htm += ' selected';";
@@ -638,9 +692,13 @@ while ($row = mysql_fetch_array($res)) {
    htm += ">Source</option>";
 <?php
 $sql = "select source from source";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo "htm += \"<option value='".$row['source']."'\";";
    echo "if ('".$row['source']."' == source) {";
    echo "   htm += ' selected';";
@@ -913,9 +971,13 @@ if ($isCover) {
 } else {
    $sql = "select sum(inInventory) as tot from seedInventory where crop = '".$crop."'";
 }
-$res = mysql_query($sql);
-echo mysql_error();
-if ($row = mysql_fetch_array($res)) {
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
+if ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    $inInven = $row['tot'];
 }
 if ($isCover) {
@@ -961,10 +1023,14 @@ echo '<h3>Seed Inventory</h3>';
    } else {
       $sql = "select * from seedInventory where crop = '".$crop."'";
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
    $colorArray = array('FFE5CC','FFCC99', 'FFB266', 'FF9933', 'FF8000', 'CC6600', '994C00');
-   while ($row = mysql_fetch_array($res)) {
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       if ($isCover) {
          echo "addRowInven('".$row['code']."', '".$row['variety']."', ".$row['acres'].", '',".
            number_format((float) ($row['acres'] * $rate), 3, '.', '').
@@ -999,10 +1065,14 @@ echo '<h3>Seed Inventory</h3>';
    } else {
       $sql = "select variety from variety where crop = '".$crop."' order by variety";
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
    echo "<option value='0' disabled>Variety</option>";
-   while ($row = mysql_fetch_array($res)) {
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       echo "<option value='".$row['variety']."'>".$row['variety']."</option>";
    }
    echo "</select></div></td><td>";
@@ -1074,9 +1144,13 @@ echo '<h3>Seed Inventory</h3>';
       $sql = "select * from orderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
           $year;
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       echo "addRowOrder('".$row['variety']."', '".$row['source']."', '".$row['catalogOrder']."', ".
         $row['organic'].", '".$row['catalogUnit']."', ".$row['price'].", ".$row['unitsPerCatUnit'].
         ", ".$row['catUnitsOrdered'].", '".$row['status']."', '".$defUnit."', '".

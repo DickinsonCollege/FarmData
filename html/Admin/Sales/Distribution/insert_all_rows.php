@@ -24,14 +24,14 @@ for ($j = 0; $j < count($values_array_all); $j++) {
       }
    }
 
-   $sql = "INSERT INTO distribution 
-      (".$columns.") 
-      VALUES (".$values.")";
-
-   $result = mysql_query($sql);
-
-   echo mysql_error();
+   $sql = "INSERT INTO distribution (".$columns.") VALUES (".$values.")";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not insert distribution record".$p->getMessage()."\");</script>";
+      die();
+   }
 }
 
-mysql_close();
 ?>

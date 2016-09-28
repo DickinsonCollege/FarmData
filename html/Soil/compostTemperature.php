@@ -96,8 +96,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled>Pile ID</option>
 <?php
-$result=mysql_query("Select pileID from compost_pile where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select pileID from compost_pile where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[pileID]\">$row1[pileID]</option>";
 }
 echo '</select>';
@@ -169,14 +169,16 @@ if (isset($_POST['submit'])) {
    $averageTemperature = escapehtml($_POST['averageTemperature']);
    $numReadings = $_POST['numReadings'];
 
-   $sql = "INSERT INTO compost_temperature (tmpDate, pileID, temperature, numReadings, comments) 
-      VALUES ('".$date."', '".$pileID."', '".$averageTemperature."', '".$numReadings."', '".$comments."')";
-   $result = mysql_query($sql);
-
-   if(!$result) { 
-      echo "<script> alert(\"Could not enter Compost Temperature Data! Try again.\\n ".mysql_error()."\"); </script>";
-   }else {
-      echo "<script> showAlert(\"Compost Temperature Record Entered Successfully\"); </script>";
+   $sql = "INSERT INTO compost_temperature (tmpDate, pileID, temperature, numReadings, comments) ".
+      "VALUES ('".$date."', '".$pileID."', '".$averageTemperature."', '".$numReadings."', '".$comments."')";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+
+   echo "<script> showAlert(\"Compost Temperature Record Entered Successfully\"); </script>";
 }
 ?>

@@ -16,8 +16,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <option value=0 selected disabled>Sales Target</option>
 <?php
 $sql = "select targetName from targets where active = 1";
-$result=mysql_query($sql);
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query($sql);
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
   echo '<option value= "'.$row1['targetName'].'">'.$row1['targetName'].'</option>';
 }
 ?>
@@ -31,19 +31,19 @@ while ($row1 =  mysql_fetch_array($result)){
 
 <script type="text/javascript">
 function show_confirm() {
-	var targ = document.getElementById("target").value;
-        if (checkEmpty(targ)) {
-           alert("Select a Sales Target Name!");
-           return false;
-        }
-        var con="Sales Target: "+ targ + "\n";
-        var em = document.getElementById("email").value;
-        if (checkEmpty(em)) {
-           alert("Enter email address!");
-           return false;
-        }
-        con+="Email: "+ em + "\n";
-        return confirm("Confirm Entry: " +"\n"+con);
+   var targ = document.getElementById("target").value;
+   if (checkEmpty(targ)) {
+      alert("Select a Sales Target Name!");
+      return false;
+   }
+   var con="Sales Target: "+ targ + "\n";
+   var em = document.getElementById("email").value;
+   if (checkEmpty(em)) {
+      alert("Enter Email Address!");
+      return false;
+   }
+   con+="Email: "+ em + "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 <br clear="all"/>
@@ -53,11 +53,13 @@ function show_confirm() {
 if (isset($_POST['done'])) {
    $sql="insert into targetEmail values ('".escapehtml($_POST['email'])."','".
      escapehtml($_POST['target'])."')";
-   $result=mysql_query($sql);
-   if ($result) {
-      echo "<script>showAlert(\"Added Email Successfully!\");</script> \n";
-   } else {
-      echo "<script>alert(\"Could Not Add Email: Please try again!\\n".mysql_error()."\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert("Could not add target email", $p);
+      die();
    }
+   echo "<script>showAlert(\"Added Email Successfully!\");</script> \n";
 }
 ?>

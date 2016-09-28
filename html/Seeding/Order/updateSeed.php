@@ -36,30 +36,46 @@ $acres = "";
 $rate = "";
 if (!$isCover) {
    $sql = "select * from seedInfo where crop='".$crop."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $seeds = $row['seedsGram'];
       $rowft = $row['seedsRowFt'];
       $defUnit = $row['defUnit'];
    }
    $sql = "select rowFt from toOrder where crop='".$crop."' and year = ".$year;
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $rowftToPlant = $row['rowFt'];
    }
 } else {
    $sql = "select * from coverSeedInfo where crop='".$crop."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $rate = $row['rate'];
    }
    $sql = "select * from coverToOrder where crop='".$crop."' and year=".$year;
-   $res = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($res)) {
+   try {
+   $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       $acres = $row['acres'];
    }
 }

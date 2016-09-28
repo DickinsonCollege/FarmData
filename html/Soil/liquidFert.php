@@ -89,8 +89,8 @@ function show_confirm() {
 <select name ="mat" id="mat" class='mobile-select'>
 <option value = 0 selected disabled> Material </option>
 <?php
-   $result=mysql_query("Select fertilizerName from liquidFertilizerReference");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result=$dbcon->query("Select fertilizerName from liquidFertilizerReference");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
       echo "\n<option value= \"$row1[fertilizerName]\">$row1[fertilizerName]</option>";
    }
 ?>
@@ -127,8 +127,8 @@ function show_confirm() {
            '" id="fieldID' + numRows + '" class="wide">' +
            '<option value = 0 selected disabled> FieldID</option>' +
            '<?php
-           $result=mysql_query("Select fieldID from field_GH where active=1");
-           while ($row1 =  mysql_fetch_array($result)){
+           $result=$dbcon->query("Select fieldID from field_GH where active=1");
+           while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
               echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
          }
            ?>'
@@ -195,49 +195,48 @@ if (isset($_POST['submit'])) {
    for ($i=1; $i <= $numRows; $i++){
       $fieldID = escapehtml($_POST['fieldID'.$i]);
       $num_drip_rows = escapehtml($_POST['num_drip_rows'.$i]);
-      $result = mysql_query("select length from field_GH where fieldID='".$fieldID."'");
-                echo mysql_error();
-      $row1 =  mysql_fetch_array($result);
-                $length=$row1['length'];
+      $result = $dbcon->query("select length from field_GH where fieldID='".$fieldID."'");
+      $row1 =  $result->fetch(PDO::FETCH_ASSOC);
+      $length=$row1['length'];
       $sum = $sum + $length * $num_drip_rows;
    }
    
    $comments = escapehtml($_POST['comments']);
    $username = escapehtml($_SESSION['username']);
-   //$fieldID = escapehtml($_POST['fieldID']);
    $mat = escapehtml($_POST['mat']);
    $totalQuantity = escapehtml($_POST['quantity']);
    $unit     = escapehtml($_POST['unit']);
-   //$crop = escapehtml($_POST['crop']);
-   //echo "<script>addInput3();</script>";
-   $success = true;
-   for ( $i=1; $i <= $numRows; $i++) {
-      $fieldID = escapehtml($_POST['fieldID'.$i]);
-      $num_drip_rows = escapehtml($_POST['num_drip_rows'.$i]);
-      $result = mysql_query("select length from field_GH where fieldID='".$fieldID."'");      
-                echo mysql_error();
-      $row1 =  mysql_fetch_array($result);
-                $length=$row1['length'];
-      $quantity = ($length*$num_drip_rows/$sum)*$totalQuantity;
+   $sql="Insert into liquid_fertilizer(username,inputDate,fieldID, fertilizer, quantity, dripRows, ".
+      "unit, comments) values ('".
+      $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."', :fieldID,'".$mat.
+      "', :quantity, :num_drip_rows, '".$unit."', '".$comments."')";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      for ( $i=1; $i <= $numRows; $i++) {
+         $fieldID = escapehtml($_POST['fieldID'.$i]);
+         $num_drip_rows = escapehtml($_POST['num_drip_rows'.$i]);
+         $result = $dbcon->query("select length from field_GH where fieldID='".$fieldID."'");      
+         $row1 =  $result->fetch(PDO::FETCH_ASSOC);
+         $length=$row1['length'];
+         $quantity = ($length*$num_drip_rows/$sum)*$totalQuantity;
+         $stmt->bindParam(':fieldID', $fieldID, PDO::PARAM_STR);
+         $stmt->bindParam(':quantity', $quantity, PDO::PARAM_STR);
+         $stmt->bindParam(':num_drip_rows', $num_drip_rows, PDO::PARAM_INT);
+         $stmt->execute();
+/*
       $sql="Insert into liquid_fertilizer(username,inputDate,fieldID, fertilizer, quantity, dripRows, unit, comments
 ) values ('".
       $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$mat.
       "', ".$quantity.",".$num_drip_rows.",'".$unit."', '".$comments."')";
-      $result = mysql_query($sql) or die(mysql_error());
-      if (!$result) {
-      $success = false;
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
+*/
       }
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
-   //$sql="Insert into liquid_fertilizer(username,inputDate,fieldID, fertilizer, quantity, num_drip_rows, numBeds, totalApply, comments) values ('".
-     // $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$mat.
-     // "', '".$crop."',".$_POST['rate'].",".$_POST['beds'].",".$_POST['pounds'] * $_POST['beds'].
-      //",'".$comments."')";
    
-   //$result = mysql_query($sql) or die(mysql_error());
-   if ($success) {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-   }
+
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

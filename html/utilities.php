@@ -24,33 +24,6 @@ function ae_detect_ie()
         return false;
         }
 }
-/*
-function space($num)
-{
-  $num2 = 0;
-  while($num2 < $num) {
-        echo '<br>';
-        $num2++;
-  }
-}
-*/
-/*
-function download($tableName, $result, $result2) 
-{
- mysql_query($result.' into outfile "/var/www/html/'.$tableName.'.txt" fields terminated by ";" lines terminated by "\n" '.$result2);
-header("Content-type: application/octet-stream");
- header("Content-disposition: attachment;filename=$tableName.txt");
-  unlink("/var/www/html/".$tableName.".txt");
-
-}
-*/
-function download($tableName, $result, $result2)
-{
-readfile(mysql_query($result.' into outfile "/var/www/html/'.$tableName.'.txt" fields terminated by ";" lines terminated by "\n" '.$result2));
-header("Content-type: application/octet-stream");
- header("Content-disposition: attachment;filename=$tableName.txt");
-
-}
 
 function space2($num)
 {
@@ -74,8 +47,19 @@ function createBR() {
 		echo "<br clear='all'>";
 	}
 }
-?>
 
+function phpAlert($msg, $err) {
+   echo '<script type="text/javascript">';
+   if ($msg != '') {
+      $msg .= ": ";
+   }
+   // echo '   str = "'.str_replace("'", "\'", $msg.$err->getMessage()).'";';
+   echo '   str = "'.$msg.$err->getMessage().'";';
+   echo "alert(str);";
+   echo '</script>';
+
+}
+?>
 
 <script type="text/javascript">
 function checkEmpty(aNum) {
@@ -205,4 +189,5 @@ function escapeescapeHtml(str) {
      return confirm("Leaving this form will clear any data that you have entered.\n" +
                     "Do you want to leave this form?");
  }
+
 </script>

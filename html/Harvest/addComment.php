@@ -29,8 +29,12 @@ if(isset($_POST['submit'])){
    $user=escapehtml($_SESSION['username']);
    $sql="UPDATE harvestList SET comment = concat(comment,'\n".$user.
       " posted: ".$comSanitized."') where id=".$_GET['currentID'];
-   mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->prepare($sql);
+      $result->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
 
    $url = "Location: harvestList.php?tab=harvest:harvestList&year=".$_GET['year']."&month=".$_GET['month'].
       "&day=".$_GET['day']."&currentID=".$_GET['currentID']."&detail=0'";

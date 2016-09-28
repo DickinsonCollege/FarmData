@@ -16,28 +16,30 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <input onkeypress= 'stopSubmitOnEnter(event)'; class="textbox3" type="text" name="unit" id="unit">
 </div>
 <script>
-        function show_confirm() {
-        var i = document.getElementById("unit").value;
-        if (checkEmpty(i)) {
-            alert("Enter a unit name!");
-            return false;
-        }
-        var con="Unit: "+ i+ "\n";
-	return confirm("Confirm Entry:"+"\n"+con);
+function show_confirm() {
+   var i = document.getElementById("unit").value;
+   if (checkEmpty(i)) {
+       alert("Enter a unit name!");
+       return false;
+   }
+   var con="Unit: "+ i+ "\n";
+   return confirm("Confirm Entry:"+"\n"+con);
 }
-	</script>
+</script>
 <br clear="all"/>
 <input class="submitbutton pure-button wide" type="submit" name="add" value="Add" onclick = "return show_confirm();">
 
 <?php
 if (isset($_POST['add'])) {
    $sql="insert into extUnits(unit) values ('".escapehtml(strtoupper($_POST['unit']))."')";
-   $result=mysql_query($sql);
-   if (!$result) {
-      echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

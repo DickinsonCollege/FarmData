@@ -2,14 +2,20 @@
 <?php
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+         array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $e) {
+      die ("Connect Failed! :".$e->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
-   $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -32,8 +38,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT gen, id, year(hardate) as yr, month(hardate) as mth, day(hardate) as dy, crop, username,".
    "hardate, fieldID, yield, unit, hours, comments FROM harvested where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $user = $row['username'];
 $egen = $row['gen'];
 $field = $row['fieldID'];
@@ -118,8 +124,8 @@ echo '<label>Crop:</label>';
 echo '<select name="crop" id="crop" onchange="addInput2();addInput();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select></div>';
@@ -129,8 +135,8 @@ echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
-   $sqldata = mysql_query($sql) or die("ERROR3");
-   while ($row = mysql_fetch_array($sqldata)) {
+   $sqldata = $dbcon->query($sql);
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['username'].'">'.$row['username'].' </option>';
    }
 } else {
@@ -155,13 +161,6 @@ echo '<div class="pure-control-group" id="unitInput">';
 echo '<label>Unit:</label>';
 echo '<select name="unit" id="unit">';
 echo '<option value='.$unit.' selected>'.$unit.' </option>';
-/*
-$sql = 'select distinct units as unit from plant';
-$sqldata = mysql_query($sql) or die("ERROR5");
-while ($row = mysql_fetch_array($sqldata)) {
-   echo '<option value="'.$row['unit'].'">'.$row['unit'].' </option>';
-}
-*/
 //TODO: Add different unit conversions
 echo '</select></div>';
 
@@ -210,12 +209,6 @@ if ($_POST['submit']) {
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $user = escapehtml($_POST['user']);
-/*
-   $unitSQL = "select units from plant where crop = '".$crop."'";
-   $unitdata = mysql_query($unitSQL) or die(mysql_error());
-   $row = mysql_fetch_array($unitdata);
-   $insertUnit = $row['units'];
-*/
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
    $sql = "update harvested set username='".$user."', fieldID='".$fld."', hardate='".$year."-".
@@ -232,17 +225,18 @@ if ($_POST['submit']) {
      $sql .= "(select units from".  " plant where crop='".$crop."')";
    }
    $sql .= " where id=".$id;
-echo $sql;
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo "<meta http-equiv=\"refresh\" content=\"0;URL=harvestTable.php?year=".$origYear.'&month='
-        .$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&crop=".encodeURIComponent($origCrop).
-        "&genSel=".$genSel."&fieldID=".encodeURIComponent($origField).
-        "&tab=harvest:harvestReport\">";
+   try {
+     $prep = $dbcon->prepare($sql);
+     $prep->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die('fatal error');
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo "<meta http-equiv=\"refresh\" content=\"0;URL=harvestTable.php?year=".$origYear.'&month='
+     .$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     "&crop=".encodeURIComponent($origCrop).
+     "&genSel=".$genSel."&fieldID=".encodeURIComponent($origField).
+     "&tab=harvest:harvestReport\">";
 }
 ?>

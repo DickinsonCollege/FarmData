@@ -1,7 +1,6 @@
 <?php session_start(); ?>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
-//include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/utilities.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';

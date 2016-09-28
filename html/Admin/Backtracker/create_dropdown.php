@@ -40,10 +40,10 @@ if ($fieldName === "rowsBed") {
 	($fieldName === "fieldID" && $tableName === "harvested")) {
 		$array = array();
 } else {
-	$result = mysql_query($sql);
-	$array = array(mysql_num_rows($result));
+	$result = $dbcon->query($sql);
+	$array = array();
 	$i = 0;
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = $result->fetch(PDO::FETCH_NUM)) {
 		$array[$i] = $row[0];
 		$i++;
 	}
@@ -51,5 +51,4 @@ if ($fieldName === "rowsBed") {
 
 echo json_encode($array);
 
-mysql_close();
 ?>

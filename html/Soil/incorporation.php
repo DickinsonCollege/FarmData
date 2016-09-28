@@ -22,8 +22,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <option value = 0 selected disabled> FieldID</option>
 <?php
 $sqlget = "select distinct fieldID from coverSeed_master";
-$result=mysql_query($sqlget);
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query($sqlget);
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 echo '</select>';
@@ -39,33 +39,33 @@ echo '</div>';
 
 <script type='text/javascript'>
 function selectDates() {
-	var xmlhttp = new XMLHttpRequest();
-	var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
+    var xmlhttp = new XMLHttpRequest();
+    var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
 
-	xmlhttp.open("GET", "update_date.php?fieldID=" + fieldID, false);
-	xmlhttp.send();
+    xmlhttp.open("GET", "update_date.php?fieldID=" + fieldID, false);
+    xmlhttp.send();
 
-	var seeddateDiv = document.getElementById('seeddateDiv');
-	seeddateDiv.innerHTML = '<div class="pure-control-group" id="seeddateDiv">' +
+    var seeddateDiv = document.getElementById('seeddateDiv');
+    seeddateDiv.innerHTML = '<div class="pure-control-group" id="seeddateDiv">' +
            "<label for='sdate'> Seed Date: </label> " + 
            "<select name='seeddate' id='seeddate' onchange='selectSpecies();calculate2();' >" +
            xmlhttp.responseText + "</select></div>";
 }
 
 function selectSpecies() {
-	var xmlhttp = new XMLHttpRequest();
-	var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
-	var b = document.getElementById('seeddate');
-	var seedDate = b.options[b.selectedIndex].text;
+    var xmlhttp = new XMLHttpRequest();
+    var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
+    var b = document.getElementById('seeddate');
+    var seedDate = b.options[b.selectedIndex].text;
 
-	xmlhttp.open("GET", "update_species.php?fieldID=" + fieldID + "&seedDate=" + seedDate, false);
-	xmlhttp.send();
-	var speciesNames = eval(xmlhttp.responseText);
+    xmlhttp.open("GET", "update_species.php?fieldID=" + fieldID + "&seedDate=" + seedDate, false);
+    xmlhttp.send();
+    var speciesNames = eval(xmlhttp.responseText);
 
         var sDiv = document.getElementById("speciesList");
         var content = '<div class="pure-control-group" id="speciesList"><label>Species:</label> ' +
            '<textarea readonly id="listArea" name="listArea">';
-	for (i = 0; i < speciesNames.length; i++) {
+    for (i = 0; i < speciesNames.length; i++) {
            content += speciesNames[i];
            if (i < speciesNames.length - 1) {
               content += "\n";
@@ -74,8 +74,8 @@ function selectSpecies() {
         content += '</textarea> </div>';
         sDiv.innerHTML = content;
 
-	var hi = document.getElementById('numCrops');
-	hi.value = speciesNames.length;
+    var hi = document.getElementById('numCrops');
+    hi.value = speciesNames.length;
 }
 </script>
 
@@ -86,11 +86,6 @@ function selectSpecies() {
 
 <br clear='all'>
 
-<!--
-<br clear="all"/>
-<label for="pounds">&nbsp;Lbs Per 4 Sq. Ft. </label>
-<br clear="all"/>
--->
 <div id="container"></div>
 <br clear="all"/>
 <div class="pure-g">
@@ -102,11 +97,6 @@ function selectSpecies() {
 <input type="button" id="remove" class = "genericbutton pure-button wide"
   value="Remove Biomass Calculation" onClick="remov();"/>
 </div>
-<!--
-<div class="pure-u-1">
-<input type="button" id="Avg" value="Calculate" class="genericbutton pure-button wide" onClick="calculate(); calculate2();"/>
-</div>
--->
 </div>
 <br clear="all"/>
 <br clear="all"/>
@@ -114,11 +104,9 @@ function selectSpecies() {
 var num=0;
 function remov() {
    var elem = document.getElementById("container");
-   console.log(elem);
    var elem2 = document.getElementById("div"+num);
    elem.removeChild(elem2);
    num--;
-//   calculate();
    calculate2();
 }
 </script>
@@ -137,8 +125,8 @@ function remov() {
 <select id="tool" name="tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool</option>
 <?php
-$result=mysql_query("Select tool_name from tools where type='INCORPORATION'"); 
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select tool_name from tools where type='INCORPORATION'"); 
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
  echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
  }
 ?>
@@ -150,8 +138,8 @@ while ($row1 =  mysql_fetch_array($result)){
    <select name="tractor" id="tractor" class='mobile-select'>
       <option value=0 selected disabled> Tractor </option>
       <?php
-      $result = mysql_query("Select tractorName from tractor where active = 1");
-      while ($row = mysql_fetch_array($result)) {
+      $result = $dbcon->query("Select tractorName from tractor where active = 1");
+      while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
          echo "\n<option value=\"$row[tractorName]\">$row[tractorName]</option>";
       }
       echo '</select>';
@@ -207,16 +195,6 @@ while ($row1 =  mysql_fetch_array($result)){
 var container = document.getElementById('container');
 function addMeasurement() {
    num++;
-/*
-   var input = document.createElement('input'),
-   div = document.createElement('div');
-   input.type = "text";
-   input.className="textbox4 mobile-input-half";
-   input.value=0;
-   input.id="avg"+num;
-   div.id="div"+num;
-   div.appendChild(input);
-*/
    div = document.createElement('div');
    div.innerHTML = "<div class='pure-control-group'><label>Pounds per 4 square feet:</label>" +
       "<input type='text' id='avg" + num + "' value=0 onkeyup='calculate2();'></div>";
@@ -224,125 +202,104 @@ function addMeasurement() {
 };
 
 function calculate() {
-var  total=0;
-count=num;
-        while (count>0) {
-                var t=parseFloat(document.getElementById("avg"+count).value,10);
-console.log(t);
-                total=total+t;  
-        console.log(total);
-                count--;
-        }
-        var avg;
-        if (num > 0) {
-           avg = ((total/num)*10890).toFixed(2);
-        } else {
-           avg = 0;
-        }
-document.getElementById('average').value = avg;
-return document.getElementById('average').value;
+   var  total=0;
+   count=num;
+   while (count>0) {
+       var t=parseFloat(document.getElementById("avg"+count).value,10);
+       total=total+t;  
+       count--;
+   }
+   var avg;
+   if (num > 0) {
+      avg = ((total/num)*10890).toFixed(2);
+   } else {
+      avg = 0;
+   }
+   document.getElementById('average').value = avg;
+   return document.getElementById('average').value;
 }
 
 function calculate2() {     
-        var newdiv = document.getElementById('total89');
-	var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
-        var sdate = document.getElementById("seeddate").value;
-	xmlhttp= new XMLHttpRequest();
-        xmlhttp.open("GET", "update_total.php?fieldID="+fieldID+"&seeddate="+
-          sdate, false);
-        xmlhttp.send();
-// console.log(xmlhttp.responseText+"responsetext");
-        var total = parseFloat(xmlhttp.responseText,10)*calculate();
-document.getElementById('total89').value= total.toFixed(2);;
+   var newdiv = document.getElementById('total89');
+   var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
+   var sdate = document.getElementById("seeddate").value;
+   xmlhttp= new XMLHttpRequest();
+   xmlhttp.open("GET", "update_total.php?fieldID="+fieldID+"&seeddate="+
+        sdate, false);
+   xmlhttp.send();
+   var total = parseFloat(xmlhttp.responseText,10)*calculate();
+   document.getElementById('total89').value= total.toFixed(2);;
 }
 
 function show_confirm() {
-	
-	var fld = document.getElementById("fieldID").value;
-	if(checkEmpty(fld)) {
-	   alert("Please Enter Field");
-	   return false;
-	}
+    
+    var fld = document.getElementById("fieldID").value;
+    if(checkEmpty(fld)) {
+       alert("Please Enter Field");
+       return false;
+    }
         var con="Field ID: "+ fld+ "\n";
-	var i = document.getElementById("month");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+"Kill Date: "+strUser3+"-";
-        var i = document.getElementById("day");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"-";
-        var i = document.getElementById("year");
-        var strUser3 = i.options[i.selectedIndex].text;
-        con=con+strUser3+"\nCrop(s):\n";
-	var num = document.getElementById('numCrops').value;
-        if (num < 1) {
-           alert("No crops seeded!");
-           return false;
-        }
-/*
-        for (i = 1; i <= num; i++) {
-          con+= document.getElementById("crop"+i).value + "\n";
-        }
-*/
-        con += document.getElementById("listArea").value + "\n";
-        
-/*
-	var strUser3 = i.options[i.selectedIndex].text;
-        con=con+"Crop Species: "+strUser3+"\n";
-	var i = document.getElementById("seeddate");
-	var strUser3 = i.options[i.selectedIndex].text;
-        con=con+"Seed Date: "+strUser3+"\n";
-        var i = document.getElementById("both2");
-        if (!checkEmpty(i.value)) {
-           con=con+"Second Crop Species: "+i.value+"\n";
-	   var i = document.getElementById("seeddate2").value;
-           con=con+"Second Species Seed Date: "+i+"\n";
-        }
-*/
-	var i = document.getElementById("average").value;
-	if(checkEmpty(i)) {
-	   alert("Please Calculate Biomass Pounds Per Acre by Clicking Calculate");
-	   return false;
-	}
-        con=con+"Biomass Pounds Per Acre: "+ i+ "\n";
-	var i = document.getElementById("total89").value;
-	if(checkEmpty(i)) {
-	   alert("Please Calculate Total Biomass Pounds by Clicking Calculate");
-	   return false;
-	}
-        con=con+"Total Biomass Pounds: "+ i+ "\n";
-	var i = document.getElementById("tractor").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select a Tractor");
-	   return false;
-	}
-        con=con+"Tractor: "+ i+ "\n";
-	var i = document.getElementById("tool").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select a Tool");
-	   return false;
-	}
-        con=con+"Incorporation Tool: "+ i+ "\n";
-	var i = document.getElementById("numPasses").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select Number of Passes");
-	   return false;
-	}
-        con=con+"Number of Passes: "+ i+ "\n";
-	var i = document.getElementById("percTilled").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select Percent of Field Tilled");
-	   return false;
-	}
-        con=con+"Percent of Field Tilled: "+ i+ "\n";
-	var i = document.getElementById("minutes").value;
-	if(checkEmpty(i)) {
-	   alert("Please Select Minutes in Field");
-	   return false;
-	}
-        con=con+"Minutes in Field: "+ i+ "\n";
-	var i = document.getElementById("comments").value;
-        con=con+"Comments: "+ i+ "\n";
-	return confirm("Confirm Entry:"+"\n"+con);
+    var i = document.getElementById("month");
+    var strUser3 = i.options[i.selectedIndex].text;
+    con=con+"Kill Date: "+strUser3+"-";
+    var i = document.getElementById("day");
+    var strUser3 = i.options[i.selectedIndex].text;
+    con=con+strUser3+"-";
+    var i = document.getElementById("year");
+    var strUser3 = i.options[i.selectedIndex].text;
+    con=con+strUser3+"\nCrop(s):\n";
+    num = document.getElementById('numCrops').value;
+    if (num < 1) {
+       alert("No crops seeded!");
+       return false;
+    }
+    con += document.getElementById("listArea").value + "\n";
+
+    var i = document.getElementById("average").value;
+    if(checkEmpty(i)) {
+       alert("Please Calculate Biomass Pounds Per Acre by Clicking Calculate");
+       return false;
+    }
+    con=con+"Biomass Pounds Per Acre: "+ i+ "\n";
+    var i = document.getElementById("total89").value;
+    if(checkEmpty(i)) {
+       alert("Please Calculate Total Biomass Pounds by Clicking Calculate");
+       return false;
+    }
+    con=con+"Total Biomass Pounds: "+ i+ "\n";
+    var i = document.getElementById("tractor").value;
+    if(checkEmpty(i)) {
+       alert("Please Select a Tractor");
+       return false;
+    }
+    con=con+"Tractor: "+ i+ "\n";
+    var i = document.getElementById("tool").value;
+    if(checkEmpty(i)) {
+       alert("Please Select a Tool");
+       return false;
+    }
+    con=con+"Incorporation Tool: "+ i+ "\n";
+    var i = document.getElementById("numPasses").value;
+    if(checkEmpty(i)) {
+       alert("Please Select Number of Passes");
+       return false;
+    }
+    con=con+"Number of Passes: "+ i+ "\n";
+    var i = document.getElementById("percTilled").value;
+    if(checkEmpty(i)) {
+       alert("Please Select Percent of Field Tilled");
+       return false;
+    }
+    con=con+"Percent of Field Tilled: "+ i+ "\n";
+    var i = document.getElementById("minutes").value;
+    if(checkEmpty(i)) {
+       alert("Please Select Minutes in Field");
+       return false;
+    }
+    con=con+"Minutes in Field: "+ i+ "\n";
+    var i = document.getElementById("comments").value;
+    con=con+"Comments: "+ i+ "\n";
+    return confirm("Confirm Entry:"+"\n"+con);
 
 }
 </script>
@@ -377,55 +334,55 @@ if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);
    echo "<script>calculate2();</script>";
 
-	// Insert into coverKill_master
-	$sql = "INSERT INTO coverKill_master(killDate, incorpTool, totalBiomass, comments, fieldID, seedDate) 
-		VALUES('".$_POST['year']."-".$_POST['month']."-".$_POST['day']."', '".$incorpTool."', 
-			(".$aver.")*(SELECT area_seeded FROM coverSeed_master 
-			WHERE fieldID='".$fieldID."' AND seedDate='".$seedDate."')
-			/100*(SELECT size FROM field_GH WHERE fieldID='".$fieldID."'), 
-		'".$comments."', '".$fieldID."', '".$seedDate."')";
-	$result1 = mysql_query($sql);
-	echo mysql_error();
-
-	// Inert into coverKill
-	$count = 1;
-	$id = mysql_insert_id();
-        $crops = explode("\n", $_POST['listArea']);
-        foreach ($crops as $crp) {
-	 	$sql = "INSERT INTO coverKill(coverCrop, id) 
-			VALUES ('".trim($crp)."', ".$id.");";
-		$result = mysql_query($sql);
-		echo mysql_error();
-                $result1 = $result1 && $result;
-        }
-/*
-	$numCrops = $_POST['numCrops'];
-	while ($count <= $numCrops) {
-		$crop = escapehtml($_POST['crop'.$count]);
-		$sql = "INSERT INTO coverKill(coverCrop, id) 
-			VALUES ('".$crop."', ".$id.");";
-		$result = mysql_query($sql);
-		echo mysql_error();
-		$count++;
-	}
-*/
+    // Insert into coverKill_master
+   $sql = "INSERT INTO coverKill_master(killDate, incorpTool, totalBiomass, comments, fieldID, seedDate) 
+        VALUES('".$_POST['year']."-".$_POST['month']."-".$_POST['day']."', '".$incorpTool."', 
+            (".$aver.")*(SELECT area_seeded FROM coverSeed_master 
+            WHERE fieldID='".$fieldID."' AND seedDate='".$seedDate."')
+            /100*(SELECT size FROM field_GH WHERE fieldID='".$fieldID."'), 
+        '".$comments."', '".$fieldID."', '".$seedDate."')";
+    try {
+       $stmt = $dbcon->prepare($sql);
+       $stmt->execute();
+    } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
+    }
+    // Insert into coverKill
+    $count = 1;
+    $id = $dbcon->lastInsertId();
+    $crops = explode("\n", $_POST['listArea']);
+    $sql = "INSERT INTO coverKill(coverCrop, id) VALUES (:crp, :id)";
+    try {
+       $stmt = $dbcon->prepare($sql);
+       foreach ($crops as $crp) {
+          $crp = trim($crp);
+          $stmt->bindParam(':crp', $crp, PDO::PARAM_STR);
+          $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+          $stmt->execute();
+       }
+    } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
+    }
 
    // Insert into tillage
    $tractor = escapehtml($_POST['tractor']);
    $numPasses = escapehtml($_POST['numPasses']);
    $percTilled = escapehtml($_POST['percTilled']);
    $minutes = escapehtml($_POST['minutes']);
-   $sql = "INSERT into tillage(tractorName, fieldID, tilldate, tool, num_passes, comment, minutes, percent_filled)
-	values
-	('".$tractor."', '".$fieldID."', '".$_POST['year']."-".$_POST['month']."-".$_POST['day']."',
-	'".$incorpTool."', ".$numPasses.", '".$comments."', ".$minutes.", ".$percTilled.");";
-   $result2=mysql_query($sql);
-   echo mysql_error();
+   $sql = "INSERT into tillage(tractorName, fieldID, tilldate, tool, num_passes, comment, minutes, ".
+     "percent_filled) values ('".$tractor."', '".$fieldID."', '".$_POST['year']."-".$_POST['month'].
+     "-".$_POST['day']."', '".$incorpTool."', ".$numPasses.", '".$comments."', ".$minutes.
+     ", ".$percTilled.");";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+    } catch (PDOException $e) {
+       phpAlert('', $e);
+       die();
+    }
 
-   if ($result1 && $result2) {
-      echo '<script> showAlert("Cover Crop Incorporation Record Entered Successfully") </script>';
-   } else {
-      echo '<script> alert("Could not enter data! Check input and try again.\n '.mysql_error().'") </script>';
-   } 
+    echo '<script> showAlert("Cover Crop Incorporation Record Entered Successfully") </script>';
 }
 ?>

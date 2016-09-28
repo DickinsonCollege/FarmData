@@ -8,8 +8,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM liquid_fertilizer WHERE id=".$_GET['id'];
-      mysql_query($sqlDel) or die(mysql_error());
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
 
    $year = $_GET['year'];
@@ -23,7 +28,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $sql = "select id, username, inputDate, fieldID, fertilizer, dripRows, unit, username, quantity, comments ".
       "from liquid_fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and fertilizer like '".$material."' order by inputDate";
-   $sqldata = mysql_query($sql) or die(mysql_error());
+   $sqldata = $dbcon->query($sql);
    if( $fieldID == "%") {
       $fld = "All Fields";
    } else {
@@ -45,7 +50,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ($row = mysql_fetch_array($sqldata)) {
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['inputDate'];
       echo "</td><td>";
@@ -85,16 +90,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo '<br clear="all"/>';
    if ($material != "%") {
       $total = "select ".
- "sum(case when unit='QUARTS' then quantity / 4 else quantity end) as total ".
-      "from liquid_fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
-      "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and fertilizer like '".$material."'";
+         "sum(case when unit='QUARTS' then quantity / 4 else quantity end) as total ".
+         "from liquid_fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
+         "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and fertilizer like '".$material."'";
 
-      $result=mysql_query($total) or die(mysql_error());
+      $result = $dbcon->query($total);
       echo "<div class='pure-form pure-form-aligned'>";
-      while ($row1 = mysql_fetch_array($result)  ) {
+      while ($row1 = $result->fetch(PDO::FETCH_ASSOC)  ) {
          echo "<div class='pure-control-group'>";
         echo "<label for='total'>Total ".$material." Applied:</label> ";
-	echo "<input readonly class='textbox2'  type ='text' value=".
+        echo "<input readonly class='textbox2'  type ='text' value=".
           number_format((float)$row1['total'], 2, '.', '').">";
         echo "&nbsp; GALLONS";
         echo '</div>';

@@ -2,14 +2,17 @@
 <?php
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+         array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $e) {
+      die ("Connect Failed! :".$e->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   $result = $dbcon->query($sql);
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -30,8 +33,8 @@ $origField = $_GET['fieldID'];
 $origTask = $_GET['task'];
 $sqlget = "SELECT id,year(ldate) as yr, month(ldate) as mth, day(ldate) as dy, crop, username,".
    "ldate,fieldID,task,hours, comments FROM labor where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $user = $row['username'];
 $field = $row['fieldID'];
 $task = $row['task'];
@@ -75,8 +78,8 @@ echo '<label>Crop:</label>';
 echo '<select name="crop" id="crop">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select crop from plant where active=1';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select></div>';
@@ -86,8 +89,8 @@ echo '<label>Field:</label>';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -98,8 +101,8 @@ echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.' </option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
-   $sqldata = mysql_query($sql) or die("ERROR4");
-   while ($row = mysql_fetch_array($sqldata)) {
+   $sqldata = $dbcon->query($sql);
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['username'].'">'.$row['username'].' </option>';
    }
 } else {
@@ -111,8 +114,8 @@ echo '<div class = "pure-control-group">';
 echo '<label>Task:</label>';
 echo '<select name="task" id="task">';
 echo '<option value="'.$task.'" selected>'.$task.' </option>';
-$sqldata = mysql_query("select task from task") or die(mysql_error());
-while ($row = mysql_fetch_array($sqldata)){
+$sqldata = $dbcon->query("select task from task");
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
 	echo '<option value="'.$row[task].'">'.$row[task].'</option>';
 }
 echo '</select></div>';
@@ -136,7 +139,7 @@ echo '<br clear = "all">';
 
 if ($_POST['submit']) {
    $comSanitized=escapehtml($_POST['comments']);
-   $task = escapehtml($_POST['task']); echo $task;
+   $task = escapehtml($_POST['task']); 
    $fld = escapehtml($_POST['fieldID']);
    $crop = escapehtml($_POST['crop']);
    $hours = escapehtml($_POST['hours']);
@@ -150,18 +153,19 @@ if ($_POST['submit']) {
    $sql = "update labor set username='".$user."', fieldID='".$fld."', ldate='".$year."-".
      $month."-".$day."',task='".$task."',hours=".$hours.",comments='".
      $comSanitized."',crop='".$crop."' where id=".$id;
-   $result = mysql_query($sql);
-// START - check if old crop can be deleted first!!!
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error().$sql."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=laborTable.php?year='.
-         $origYear.'&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
-         '&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-         "&crop=".encodeURIComponent($origCrop).
-         "&fieldID=".encodeURIComponent($origField)."&task=".
-         encodeURIComponent($origTask)."&tab=labor:labor_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=laborTable.php?year='.
+      $origYear.'&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
+      '&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+      "&crop=".encodeURIComponent($origCrop).
+      "&fieldID=".encodeURIComponent($origField)."&task=".
+      encodeURIComponent($origTask)."&tab=labor:labor_report\">";
 }
 ?>

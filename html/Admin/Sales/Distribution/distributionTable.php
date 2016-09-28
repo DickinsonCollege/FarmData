@@ -9,8 +9,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM distribution WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not delete distribution record".$p->getMessage()."\");</script>";
+         die();
+      }
    }
    $year = $_GET['year'];
    $month = $_GET['month'];
@@ -22,11 +27,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $target = $_GET['target'];
    $grade = $_GET['grade'];
 
-   $sql = "SELECT id, pricePerUnit, distDate, crop_product, grade, amount, unit, comments, target FROM distribution 
-      WHERE distDate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
-      AND crop_product like '".$crop_product."' AND target like '".$target."' AND grade like '".$grade."' 
-      ORDER by distDate, crop_product, target, grade";
-   $result = mysql_query($sql);
+   $sql = "SELECT id, pricePerUnit, distDate, crop_product, grade, amount, unit, comments, target ".
+      "FROM distribution WHERE distDate BETWEEN '".$year."-".$month."-".$day."' AND '". 
+      $tcurYear."-".$tcurMonth."-".$tcurDay."' AND crop_product like '".$crop_product."' AND target like '".
+      $target."' AND grade like '".$grade."' ORDER by distDate, crop_product, target, grade";
+   $result = $dbcon->query($sql);
    
    echo "<table class = 'pure-table pure-table-bordered'>";
    $crpProd = $_GET['crop_product'];
@@ -64,7 +69,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       <th>Total Price</th>
       <th style='width:20%'>Comments</th><th>Edit</th><th>Delete</th></tr></thead>";
    $total = 0;
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr>";
       echo "<td>";
       echo $row['distDate'];
@@ -77,13 +82,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "</td><td>";
       $amount = $row['amount'];
       $unit = $row['unit'];
-      $convsql = "SELECT conversion FROM units WHERE crop='".$row['crop_product'].
-      "' AND unit='POUND'";
+      $convsql = "SELECT conversion FROM units WHERE crop='".$row['crop_product']."' AND unit='POUND'";
       $converted = false;
-      $convresult = mysql_query($convsql);
-      if (mysql_num_rows($convresult) > 0) {
+      $convresult = $dbcon->query($convsql);
+      if ($convrow = $convresult->fetch(PDO::FETCH_NUM)) {
          $converted = true;
-         $convrow = mysql_fetch_array($convresult);
          $conversion = $convrow[0];
          $amount = $amount * $conversion;
          $unit = 'POUND';

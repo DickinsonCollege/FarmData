@@ -1,6 +1,5 @@
 <?php session_start(); ?>
 <?php
-// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';

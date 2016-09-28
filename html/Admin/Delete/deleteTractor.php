@@ -11,15 +11,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 <div class="pure-control-group">
 <label>Tractor Name:</label>
 <select name='tractor' id='tractor' class='mobile-select'>
-<option disabled selected>Tractor</option>
 </div>
 
 <?php
-$result = mysql_query("SELECT tractorName from tractor where active=1");
-        while ($row1 =  mysql_fetch_array($result)){
-                echo "\n<option value= \"$row1[tractorName]\">$row1[tractorName]</option>";
-        }
-        echo "</select></div>";
+$result = $dbcon->query("SELECT tractorName from tractor where active=1");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+    echo "\n<option value= \"$row1[tractorName]\">$row1[tractorName]</option>";
+}
+echo "</select></div>";
 ?>
 
 <br clear="all"/>
@@ -29,12 +28,14 @@ if(!empty($_POST['submit'])) {
    $tractor = escapehtml($_POST['tractor']);
    if(!empty($tractor)) {
       $sql5 = "update tractor set active=0 where tractorName='".$tractor."'";
-      $totalResult = mysql_query($sql5);
-      if(!$totalResult) {
-          echo '<script> alert("Could not process command, please try again"); </script>';
-      } else {
-          echo '<script> alert("Removed Tractor Successfully"); </script>';
+      try {
+         $stmt = $dbcon->prepare($sql5);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not delete tractor".$p->getMessage()."\");</script>";
+         die();
       }
+      echo '<script> alert("Removed Tractor Successfully"); </script>';
    }
 }
 ?>

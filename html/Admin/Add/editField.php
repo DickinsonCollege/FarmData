@@ -91,10 +91,9 @@ function updateBeds() {
 <div class="pure-control-group">
 <label for="fieldID">Name of Field: </label>
 <select id= "fieldID" name="fieldID" class='mobile-select' onChange='getFieldInfo();'>
-<option value="0" selected disabled> Field </option>
 <?php
-$result = mysql_query("SELECT distinct fieldID from field_GH");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct fieldID from field_GH");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"".$row1[fieldID]."\">".
    $row1[fieldID]."</option>";
 }
@@ -136,6 +135,9 @@ while ($row1 =  mysql_fetch_array($result)){
 </select>
 </div>
 <br clear="all"/>
+<script type="text/javascript">
+getFieldInfo();
+</script>
 
 <input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Update">
 </fieldset>
@@ -148,30 +150,42 @@ $id = escapehtml($_POST['fieldID']);
 $active = escapehtml($_POST['active']);
 if (isset($_POST['add'])) {
    if ($size > 0 && !empty($id) && $beds > 0 && $length > 0) {
-      	//$deleteSql = "Delete from field_GH where fieldID ='".$_POST['fieldID']."'";
         $updateSQL = "update field_GH set size = ".$size." where fieldID = '".$id."'";
-	$ures = mysql_query($updateSQL);
-        echo mysql_error();
+        try {
+           $stmt = $dbcon->prepare($updateSQL);
+           $stmt->execute();
+        } catch (PDOException $p) {
+           echo "<script>alert(\"Could not update field size".$p->getMessage()."\");</script>";
+           die();
+        }
         $updateSQL = "update field_GH set length = ".$length." where fieldID = '".$id."'";
-	$ures = $ures && mysql_query($updateSQL);
-        echo mysql_error();
+        try {
+           $stmt = $dbcon->prepare($updateSQL);
+           $stmt->execute();
+        } catch (PDOException $p) {
+           echo "<script>alert(\"Could not update field length".$p->getMessage()."\");</script>";
+           die();
+        }
         $updateSQL = "update field_GH set numberOfBeds = ".$beds." where fieldID = '".$id."'";
-	$ures = $ures && mysql_query($updateSQL);
-        echo mysql_error();
+        try {
+           $stmt = $dbcon->prepare($updateSQL);
+           $stmt->execute();
+        } catch (PDOException $p) {
+           echo "<script>alert(\"Could not update number of beds".$p->getMessage()."\");</script>";
+           die();
+        }
         $updateSQL = "update field_GH set active = ".$active.
                 " where fieldID = '".$id."'";
-	$ures = $ures && mysql_query($updateSQL);
-        echo mysql_error();
-	//$sql="Insert into field_GH(fieldID,size,numberOfBeds,length) values (upper('".$_POST['fieldID']."'), '".$size."', '".$beds."','".$length."')";
-// echo '<br>';
-      // $result=mysql_query($sql);
-      if (!$ures) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      }else {
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      }
+        try {
+           $stmt = $dbcon->prepare($updateSQL);
+           $stmt->execute();
+        } catch (PDOException $p) {
+           echo "<script>alert(\"Could not update active status".$p->getMessage()."\");</script>";
+           die();
+        }
+        echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    } else {
-      echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo    "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

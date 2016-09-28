@@ -7,15 +7,15 @@ $harvestDate = escapehtml($_GET['harvestDate']);
 
 $sql = "SELECT sum(yield) as yield, unit FROM harvested WHERE crop='".$crop."' AND hardate='".
    $harvestDate."' group by unit";
-$result = mysql_query($sql);
-if ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+if ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $yield = $row['yield'];
    $unit = $row['unit'];
 } else {
    $yield = 0;
    $sql = "select units from plant where crop='".$crop."'";
-   $result = mysql_query($sql);
-   if (mysql_num_rows($result) == 0) {
+   $result = $dbcon->query($sql);
+   if (!$result->fetch(PDO::FETCH_ASSOC)) {
       $yield = -1;
       $defunit = null;
    } else {
@@ -32,12 +32,11 @@ if ($yield == -1) {
    $yieldUnitArray[1] = $inunit;
 } else {
    $sql = "SELECT conversion FROM units WHERE crop='".$crop."' AND unit='".$inunit."'";
-   $result = mysql_query($sql);
-   if (mysql_num_rows($result) == 0) {
+   $result = $dbcon->query($sql);
+   if (!$row = $result->fetch(PDO::FETCH_NUM)) {
       $yieldUnitArray[0] = $yield;
       $yieldUnitArray[1] = $unit;
    } else {
-      $row = mysql_fetch_array($result);
       $conversion = $row[0];
       $yieldUnitArray[0] = $yield * $conversion;
       $yieldUnitArray[1] = $inunit;
@@ -46,5 +45,4 @@ if ($yield == -1) {
 
 echo json_encode($yieldUnitArray);
 
-mysql_close();
 ?>

@@ -6,18 +6,22 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
    if(isset($_GET['email']) && isset($_GET['target'])){
       $sqlDel="DELETE FROM targetEmail WHERE email = '".$_GET['email'].
         "' and target = '".$_GET['target']."'";
-      mysql_query($sqlDel);
-      echo mysql_error();
-      // echo $sqlDel;
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not delete target email".$p->getMessage()."\");</script>";
+         die();
+      }
    }
 
    $sqlget = "SELECT * from targetEmail";
-   $sqldata = mysql_query($sqlget) or die("ERROR");
+   $sqldata = $dbcon->query($sqlget);
    echo "<center><h2> Delete Sales Target Email </h2></center>";
    echo "<table class='pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Email</th><th>Target</th>".
    "<th>Delete</th></tr></thead>";
-   while($row = mysql_fetch_array($sqldata)) {
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['email'];
       echo "</td><td>";

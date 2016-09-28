@@ -14,10 +14,9 @@ $tabsize = array("num_top"=>7, "num_harvest"=>3, "num_soil"=>4, "num_fertility"=
  "num_edit_other"=>5, "num_view_graphs"=>4, "num_sales"=>4, "num_add_sales"=>4, "num_edit_sales"=>3);
 //print_r($tabsize);
 $sql = "select * from config";
-$res = mysql_query($sql);
-echo mysql_error();
+$res = $dbcon->query($sql);
 $vals = array();
-$row = mysql_fetch_array($res);
+$row = $res->fetch(PDO::FETCH_ASSOC);
 for ($i = 0; $i < count($ids); $i++) {
    $vals[$ids[$i]] = $row[$ids[$i]];
 }
@@ -354,17 +353,14 @@ if (!empty($_POST['done'])) {
    }
  
 // echo $sqlUpdate;
-   mysql_query($sqlUpdate);
-   echo mysql_error();
-
-/*
-   for ($i = 0; $i < count($ids); $i++) {
-      $idv = $ids[$i];
- echo $idv;
-         echo $_SESSION[$idv];
-echo "<br>";
+   try {
+      $stmt = $dbcon->prepare($sqlUpdate);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Error updating configuration', $p);
+      die();
    }
-*/
+
    echo "<script>alert(\"FARMDATA configuration updated!\");</script>\n";
    if ($farm == 'dfarm') {
       echo "<meta http-equiv='refresh' content=0;URL='/home.php'>";

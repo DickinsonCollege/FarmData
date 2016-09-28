@@ -34,9 +34,9 @@ function populate() {
    '<option value="'+dhunit+'">' + dhunit + '</option>' +
 '<?php
     $sql = "select distinct unit from extUnits";
-    $result = mysql_query($sql);
+    $result = $dbcon->query($sql);
 
-        while ($row1 =  mysql_fetch_array($result)){
+        while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
                 echo "<option value= \"".$row1['unit']."\">".$row1['unit']."</option>";
         }
 ?>' + "</select></div>";
@@ -76,10 +76,9 @@ console.log(active);
 <div class="pure-control-group">
 <label for="crop">Crop:</label>
 <select name='crop' id='crop' class='mobile-select' onchange='populate();'>
-<option disabled selected>Crop</option>
 <?php
-$result = mysql_query("SELECT crop from plant");
-        while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT crop from plant");
+        while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                 echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
         }
         echo "</select></div>";
@@ -126,22 +125,17 @@ if(!empty($_POST['submit'])) {
       $units_per_case = escapehtml($_POST['units_per_case']);
       $query = "UPDATE plant SET crop='".$rename."', dh_units='".$dh_units."', units_per_case=".
        $units_per_case.", active= ".$active." WHERE crop='".$crop."'";
-      $sql = mysql_query($query) or die(mysql_error());
-      if (!$sql) {
-         echo '<script> alert("Could not edit plant, please try again"); </script>';
-      } else {
-         echo '<script> alert("Changed plant successfully"); </script>';
-      }
    } else {
       $query = "UPDATE plant SET crop=upper('".$rename."'), active = ".$active." WHERE crop='".$crop."'";
-      $sql = mysql_query($query) or die(mysql_error());        
-      if (!$sql) {
-         echo '<script> alert("Could not edit plant, please try again"); </script>';
-      } else {
-         echo '<script> alert("Changed plant successfully"); </script>';
-      }
-
    }
+   try {
+      $stmt = $dbcon->prepare($query);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not edit plant".$p->getMessage()."\");</script>";
+      die();
+   }
+   echo '<script> alert("Changed plant successfully"); </script>';
 }
 
 ?>

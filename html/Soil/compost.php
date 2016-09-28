@@ -80,8 +80,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="fieldID" id="fieldID" class='mobile-select'>
 <option value = 0 selected disabled> FieldID</option>
 <?php
-$result=mysql_query("Select fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= '".$row1[fieldID]."'>".$row1[fieldID]."</option>";
 }
 echo '</select>';
@@ -105,8 +105,8 @@ echo '</div>'
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled> Pile ID</option>
 <?php
-$result=mysql_query("Select pileID from compost_pile where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select pileID from compost_pile where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= '".$row1['pileID']."'>".$row1['pileID']."</option>";
 }
 echo '</select>';
@@ -128,8 +128,8 @@ echo '</div>';
 <select name ="incorp_tool" id="incorp_tool" class='mobile-select'>
 <option value = 0 selected disabled> Incorporation Tool </option>
 <?php
-$result=mysql_query("Select tool_name from tools");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select tool_name from tools");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
 }
 echo '</select>';
@@ -172,18 +172,20 @@ if (isset($_POST['submit'])) {
    $incorpTiming = escapehtml($_POST['incorpTiming']);
    $incorp_tool = escapehtml($_POST['incorp_tool']);
    $percent = escapehtml($_POST['percent']);
-   $sql="Insert into utilized_on(util_date,fieldID,incorpTool,pileID,tperacre,incorpTiming,fieldSpread,comments) values ('".
-     $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
+   $sql="Insert into utilized_on(util_date,fieldID,incorpTool,pileID,tperacre,incorpTiming,fieldSpread, ".
+     "comments) values ('".  $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
      $fieldID."','".$incorp_tool."','".$pileID.  "',((".$tperload.
      "*".$numloads.")/((".$percent."/100) * (Select size from field_GH where fieldID='".$fieldID.
         "'))),'".$incorpTiming."', ((".$percent.
         "/100)*(Select size from field_GH where fieldID='".
         $fieldID."')), '".$comments."')";
-   $result= mysql_query($sql);
-   if(!$result) { 
-      echo "<script> alert(\"Could not enter Compost Data! Try again.\\n ".mysql_error()."\"); </script>";
-   }else {
-      echo "<script> showAlert(\"Compost Record Entered Successfully\"); </script>";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script> showAlert(\"Compost Record Entered Successfully\"); </script>";
 }
 ?>

@@ -6,19 +6,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 ?>
 
 <?php
-if (isset($_GET['editto'])){
-/*
-   // echo $_POST[edit];
-   $sqlInsert = "Insert into correct (correctDate, crop_product, grade, amount, unit) values('".date('Y-m-d')."', '".$_GET[crop]."', ".$_GET[gradeupdate].", ".$_GET[amount].", '".$_GET[unit]."')";
-   echo $sqlInsert;
-   mysql_query($sqlInsert) or die(mysql_error());
-*/
-}
 
    $crop_product = escapehtml($_GET['crop_product']);
    $grade = $_GET['grade'];
-   $sql = "Select * from inventory where crop_product like '".$crop_product."'and grade like '".$grade."' group by crop_product, grade, unit";
-   $result = mysql_query($sql);
+   $sql = "Select * from inventory where crop_product like '".$crop_product."'and grade like '".$grade.
+             "' group by crop_product, grade, unit";
+   $result = $dbcon->query($sql);
    
    echo "<div class='pure-form pure-form-aligned'>";
    echo "<table class = 'pure-table pure-table-bordered'>";
@@ -41,7 +34,7 @@ if (isset($_GET['editto'])){
       <th>Update To</th>
       <th>Update</th>
       </tr></thead>";
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr>";
       echo "<td>";
       echo $row['crop_product'];
@@ -51,10 +44,9 @@ if (isset($_GET['editto'])){
       $unit = $row['unit'];
       $amount = $row['amount'];
       $convsql = "SELECT conversion FROM units WHERE crop='".$row['crop_product']."' AND unit='POUND'";
-      $convresult = mysql_query($convsql);
-      if (mysql_num_rows($convresult) > 0) {
-         $convrow = mysql_fetch_array($convresult);
-         $conversion = $convrow[0];
+      $convresult = $dbcon->query($convsql);
+      if ($convrow = $convresult->fetch(PDO::FETCH_ASSOC)) {
+         $conversion = $convrow['conversion'];
          $amount = $amount * $conversion;
          $unit = 'POUND';
       }

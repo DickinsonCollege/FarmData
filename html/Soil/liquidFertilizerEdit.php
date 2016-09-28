@@ -3,14 +3,21 @@
 
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+         array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $e) {
+      die ("Connect Failed! :".$e->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -31,8 +38,8 @@ $material = encodeURIComponent($_GET['material']);
 //echo $origFieldID. 'material '.$material.' group '.$group;
 $sqlget = "SELECT id, year(inputdate) as yr, month(inputdate) as mth, day(inputdate) as dy, username,".
    "fertilizer ,fieldID, dripRows, unit, quantity, comments FROM liquid_fertilizer where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 //$user = $row['username'];
 $field = $row['fieldID'];
 $fertilizer = $row['fertilizer'];
@@ -76,8 +83,8 @@ echo '<label>Fertilizer:</label> ';
 echo '<select name="fertilizer" id="fertilizer">';
 echo '<option value="'.$fertilizer.'" selected>'.$fertilizer.' </option>';
 $sql = 'select fertilizerName from liquidFertilizerReference';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fertilizerName'].'">'.$row['fertilizerName'].' </option>';
 }
 echo '</select></div>';
@@ -87,8 +94,8 @@ echo '<label>Name of Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -99,9 +106,9 @@ echo '<select name="username" id="username">';
 echo '<option value="'.$username.'" select>'.$username.'</option>';
 if ($farm == 'dfarm') {
     $sql = 'select username from users where active = 1';
-    $sqldata = mysql_query($sql) or die(mysql_error());
-   while($row = mysql_fetch_array($sqldata)){
-	echo '<option value="'.$row['username'].'">'.$row['username'].'</option>';
+    $sqldata = $dbcon->query($sql);
+    while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
+   echo '<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 } else {
    echo $useropts;
@@ -140,27 +147,29 @@ if (isset($_POST['submit'])) {
    $year = escapehtml($_POST['year']);
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
-	$dripRows = escapehtml($_POST['dripRows']);
-	$unit = escapehtml($_POST['unit']);
-	$quantity = escapehtml($_POST['quantity']);
+   $dripRows = escapehtml($_POST['dripRows']);
+   $unit = escapehtml($_POST['unit']);
+   $quantity = escapehtml($_POST['quantity']);
 
    $sql = "update liquid_fertilizer set fieldID='".$fld."', inputdate='".$year."-".
-     $month."-".$day."', fertilizer='".$fertilizer."',username='".$username."', dripRows=".$dripRows.",comments='".
-     $comSanitized."', unit='".$unit."', quantity=".$quantity." where id=".$id;
+     $month."-".$day."', fertilizer='".$fertilizer."',username='".$username."', dripRows=".$dripRows.
+     ",comments='".  $comSanitized."', unit='".$unit."', quantity=".$quantity." where id=".$id;
 //   echo $sql;
 //   echo '<BR>';
 //   echo $totalApply;
 //echo $origFieldID. 'material '.$material.' group '.$group;
 
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content=0;URL="liquidFertTable.php?year='.$origYear.
-        '&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        '&fieldID='.$origFieldID.'&material='.$material.
-        '&tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report>';
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content=0;URL="liquidFertTable.php?year='.$origYear.
+     '&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     '&fieldID='.$origFieldID.'&material='.$material.
+     '&tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report>';
 }
 ?>

@@ -5,17 +5,21 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
    if(isset($_GET['email'])){
       $sqlDel="DELETE FROM email WHERE username = '".$_GET['email']."'";
-      mysql_query($sqlDel);
-      echo mysql_error();
-      // echo $sqlDel;
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not delete farm email".$p->getMessage()."\");</script>";
+         die();
+      }
    }
 
    $sqlget = "SELECT * from email";
-   $sqldata = mysql_query($sqlget) or die("ERROR");
+   $sqldata = $dbcon->query($sqlget);
    echo "<center><h2> Delete Farm Email </h2><center>";
    echo "<table class='pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Email</th><th>Delete</th></tr></thead>";
-   while($row = mysql_fetch_array($sqldata)) {
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['username'];
       echo "</td><td>";

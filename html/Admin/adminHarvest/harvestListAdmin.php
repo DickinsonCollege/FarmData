@@ -4,13 +4,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $farm = $_SESSION['db'];
-$currentID=$_GET['currentID'];
 $year=$_GET['year'];
 $month=$_GET['month'];
 $day=$_GET['day'];
 $detail=$_GET['detail'];
 $date=$year."-".$month."-".$day;
 $deleteCrop=escapehtml($_GET['crop']);
+$currentID = $_GET['currentID'];
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
 
 if ($ind = array_search('Loss', $targs)) {
@@ -67,11 +67,12 @@ for ($i = 0; $i < count($targs); $i++) {
 	<td> 
 <div class="styled-select">
 <select name= "crop" id="crop" class="mobile-select" onChange="addInput();checkIfOnList();" >
+<!--
 <option value=0 selected  > Crop </option>
-
+-->
 <?php
-$result = mysql_query("SELECT  crop from plant");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT  crop from plant");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
  echo "\n<option value= \"".$row1[crop]."\">".$row1[crop]."</option>";}
 ?>
 </select>
@@ -133,24 +134,34 @@ for ($i = 0; $i < count($targs); $i++) {
 if(isset($_POST['form'])&& isset($_POST['crop'])&& isset($_POST['fieldID'])){
    $crop= escapehtml($_POST['crop']);
    $fieldID=escapehtml($_POST['fieldID']);
-   mysql_query("delete from harvestListItem where crop='".$crop."' and id =".$currentID);
-echo mysql_error();
-  for ($i = 0; $i < count($targs); $i++) {
+   $sql = "delete from harvestListItem where crop='".$crop."' and id =".$currentID;
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+   for ($i = 0; $i < count($targs); $i++) {
+/*
 echo "<script>console.log(\"".$targs[$i]."\");</script>";
 echo "<script>console.log(\"".$_POST[$targs[$i]]."\");</script>";
+*/
      
    if (isset($_POST[str_replace(" ", "_",$targs[$i])]) && $_POST[str_replace(" ", "_",$targs[$i])] > 0) {
 	$unit = escapehtml($_POST['unit'.$i]);
-       $sql = "insert into harvestListItem VALUES(".$currentID.", '".$crop.
+      $sql = "insert into harvestListItem VALUES(".$currentID.", '".$crop.
           "', ".$_POST[str_replace(" ", "_",$targs[$i])].", '".$unit."', '".$fieldID."', '".
           $targs[$i]."')"; 
-echo "<script>console.log(\"".$sql."\");</script>";
-       $res = mysql_query($sql);
-       if (!$res){
-         echo "<script type=\"text/javascript\"> alert('Could not enter data: please try again!\n"+
-          mysql_error()+"');</script>";
-       }
-     } 
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('Could not enter data', $p);
+         die();
+      }
+   //echo "<script>console.log(\"".$sql."\");</script>";
+   } 
   }   
 }
 ?>
@@ -160,8 +171,13 @@ echo "<script>console.log(\"".$sql."\");</script>";
 if($deleteCrop&&$deleteCrop!=$crop){
    $sql="DELETE FROM harvestListItem where id=$currentID and crop='".
       $deleteCrop."'";
-   mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not enter data', $p);
+      die();
+   }
 }
 ?>
 
@@ -188,10 +204,9 @@ if($deleteCrop&&$deleteCrop!=$crop){
 
 <?php
 $sql = "select * from harvestListItem where id=".$currentID;
-$result = mysql_query($sql);
-echo mysql_error();
+$result = $dbcon->query($sql);
 $tabArr = array();
-while($row=mysql_fetch_array($result)){ 
+while($row=$result->fetch(PDO::FETCH_ASSOC)){ 
    $tabArr[$row['crop']][$row['target']]=$row['amt'];
    $tabArr[$row['crop']]['fieldID']=$row['fieldID'];
    $tabArr[$row['crop']][$row['target'].'_units']=$row['units'];
@@ -216,8 +231,8 @@ foreach ($tabArr as $crp=>$arr) {
       }
       else {
 	echo $val.'&nbsp;'.$val_unit.'(S)';
+        $tot += $val / $conversion[$crp][$val_unit];
       }
-      $tot += $val / $conversion[$crp][$val_unit];;
       echo "</td>";
    }
    echo "<td>".number_format((float) $tot,2,'.','')."&nbsp&nbsp".$default_unit[$crp]."(S)"."</td>";
@@ -243,10 +258,16 @@ $sqlGetValue="SELECT comment from harvestList where id=".$currentID;
 if(isset($_POST['submit'])){
    $comSanitized=escapehtml($_POST['comments']);
    $sql="UPDATE harvestList SET comment='".$comSanitized."' where id=".$currentID;
-   mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not enter data', $p);
+      die();
+   }
 }
-$row2=mysql_fetch_array( mysql_query($sqlGetValue));
+$res = $dbcon->query($sqlGetValue);
+$row2=$res->fetch(PDO::FETCH_ASSOC);
 echo $row2['comment'];
 ?>
 </textarea>

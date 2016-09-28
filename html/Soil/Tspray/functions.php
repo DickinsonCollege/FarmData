@@ -8,8 +8,8 @@
    var numRowsInner = [];
 
    var crop = '<?php 
-	$res = mysql_query("Select crop from plant where active = 1");
-	while ($row2 = mysql_fetch_array($res)) {
+	$res = $dbcon->query("Select crop from plant where active = 1");
+	while ($row2 = $res->fetch(PDO::FETCH_ASSOC)) {
 	   echo "<option value = \"".$row2[crop]."\">".$row2[crop]."</option>";
 	}
 	?>';
@@ -21,12 +21,13 @@
 
       var cell0 = row.insertCell(0);
       var fieldID = '<?php
-         $result=mysql_query("Select fieldID from field_GH where active=1");
-         while ($row1 =  mysql_fetch_array($result)){
+         $result=$dbcon->query("Select fieldID from field_GH where active=1");
+         while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
              echo "<option value = \"".$row1[fieldID]."\">".$row1[fieldID]."</option>";
          }
        ?>';
       cell0.innerHTML = '<center><div class="styled-select" id="fieldDiv'+numRows+'"> <select class="wide" name ="field' + numRows +'" id="field' + numRows + '" onChange="addInput('+numRows+'); addAcre('+numRows+'); calculateTotalUpdate(); calculateWater();">' +'<option value = 0 selected disabled> FieldID</option>' +   fieldID + '</select></div></center>';
+      cell0.style.minWidth="100px";
       var cell1 = row.insertCell(1);
       cell1.innerHTML = "<center><div id=\"maxBed"+numRows+"\" class='styled-select2'> <select class=\"mobile-select wide\"  id=\"maxBed2"+numRows+"\" name=\"maxBed2"+numRows+"\"  onChange=\"addAcre("+numRows+"); calculateTotalUpdate(); calculateWater(); \">"+
                         "<option> Beds </option> </select></div></center>";
@@ -87,8 +88,8 @@
         var row = table.insertRow(-1);
       var materialSprayed = "<?php
          $sqlM="SELECT sprayMaterial FROM tSprayMaterials where active=1";
-         $resultM=mysql_query($sqlM);
-         while($rowM=mysql_fetch_array($resultM)){
+         $resultM=$dbcon->query($sqlM);
+         while($rowM=$resultM->fetch(PDO::FETCH_ASSOC)){
             $active = $rowM['active'];
             if ($active == '' || $active > 0) {
                echo "<option value='".$rowM[sprayMaterial]."'>".
@@ -100,6 +101,7 @@
       cell0.innerHTML =  "<center><div id =\"material"+numRowsMat+"\" class='styled-select2'><select class=\"wide\" id=\"material2"+numRowsMat+"\" name=\"material2"+numRowsMat+"\"  onChange=\"addInputRates("+numRowsMat+"); calculateSuggested("+numRowsMat+"); addUnit("+numRowsMat+");  addPPE("+numRowsMat+"); addREI("+numRowsMat+"); \">"+ 
   "<option value=0> Material</option>\n"+
         materialSprayed+"</select></div></center>";
+      cell0.style.minWidth="100px";
       var cell1 = row.insertCell(1);
       cell1.innerHTML =  "<center><div id =\"rate"+numRowsMat+
             "\" class='wide'><select class=\"wide\" id='rate2"+numRowsMat+

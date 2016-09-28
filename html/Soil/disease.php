@@ -24,8 +24,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="fieldID" id="fieldID" class="mobile-select">
 <option value = 0 selected disabled> Field Name</option>
 <?php
-$result=mysql_query("Select fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 echo '</select>';
@@ -60,8 +60,8 @@ function addRow(){
                      '<option value = 0 selected disabled>Disease</option>'+
                      '<?php
                         $sql = 'Select diseaseName from disease';
-                        $result = mysql_query($sql);            
-                        while ($row1 =  mysql_fetch_array($result)){              
+                        $result = $dbcon->query($sql);            
+                        while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){              
                            echo '<option value="'.$row1['diseaseName'].'">'.$row1['diseaseName'].'</option>';
                         }
                       ?>' + '</select></div>';
@@ -71,8 +71,8 @@ function addRow(){
    cell2.innerHTML = '<div class="styled-select" id="stageDiv'+numRows+'"><select class="wide" name="stage'+numRows+'" id="stage'+numRows+'">'+
                      '<option value = 0 selected disabled>Stage</option>'+
                '<?php
-                  $result = mysql_query("select stage from stage");
-                  while($row1 = mysql_fetch_array($result)){
+                  $result = $dbcon->query("select stage from stage");
+                  while($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                      echo '<option value="'.$row1['stage'].'">'.$row1['stage'].'</option>';
                   }   
                ?>'+'</select></div>';
@@ -210,7 +210,6 @@ echo "</div>";
 echo "</div>";
 $var=$_POST['hid'];
 if (isset($_POST['submit'])) {
-   $success = true;
    $comments = escapehtml( $_POST['comments']);
    $fieldID = escapehtml( $_POST['fieldID']);
    $numCrops = $_POST['numCropRows'];
@@ -222,25 +221,32 @@ if (isset($_POST['submit'])) {
       }
       $crops .= $crp;
    }
-   while ($var>0) {
-      $species = escapehtml( $_POST['species'.$var]);
-      $infest = escapehtml( $_POST['infest'.$var]);
-      $stage = escapehtml( $_POST['stage'.$var]);
+   try {
       $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
          $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
-         $fieldID."','".$crops."','".$species."','".$infest."','".$stage.
-         "','".$comments."')";
-      $result=mysql_query($sql);
-
-      if(!$result) {
-         echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-         $success = false;
+         $fieldID."','".$crops."', :species, :infest, :stage,'".$comments."')";
+      $stmt = $dbcon->prepare($sql);
+      while ($var>0) {
+         $species = escapehtml( $_POST['species'.$var]);
+         $infest = escapehtml( $_POST['infest'.$var]);
+         $stage = escapehtml( $_POST['stage'.$var]);
+/*
+         $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
+            $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
+            $fieldID."','".$crops."','".$species."','".$infest."','".$stage.
+            "','".$comments."')";
+*/
+         $stmt->bindParam(':species', $species, PDO::PARAM_STR);
+         $stmt->bindParam(':infest', $infest, PDO::PARAM_INT);
+         $stmt->bindParam(':stage', $stage, PDO::PARAM_STR);
+         $stmt->execute();
+         $var--;
       }
-      $var--;
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
-   if ($success) {
-      echo "<script>showAlert('Entered Data Successfully!');</script>";
-   }
+   echo "<script>showAlert('Entered Data Successfully!');</script>";
 }
 
 ?>

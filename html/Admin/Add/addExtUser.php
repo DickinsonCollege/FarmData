@@ -24,15 +24,48 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 
 <div class = 'pure-control-group'>
 <label for="admin">Admin:</label> 
-<select name="admin" id="admin">
+<select name="admin" id="adminB">
 <option selected value="0">No</option>
 <option value="1">Yes</option>
 </select>
 </div>
 
 </div>
+<script type="text/javascript">
+function show_confirm() {
+   var i = document.getElementById("userid").value;
+   if (checkEmpty(i)) {
+      alert("Enter New Username");
+      return false;
+   }
+   var con="User ID: "+ i + "\n";
+   var i = document.getElementById("pass").value;
+   if (checkEmpty(i)) {
+      alert("Enter Password");
+      return false;
+   }
+   var p = document.getElementById("pass2").value;
+   if (checkEmpty(p)) {
+      alert("Enter Password Twice (Retype Password)");
+      return false;
+   }
+   if (i != p) {
+      alert("Passwords Do Not Match");
+      return false;
+   }
+   var i = document.getElementById("adminB").value;
+   var adm = "no";
+   if (i == 1) {
+      adm = "yes";
+   }
+   con += "Admin: "+ adm + "\n";
+   return confirm("Confirm Entry: " + "\n" + con);
+}
+</script> 
+
 <br clear="all">
-<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
+<input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit"
+  onclick = "return show_confirm();">
 <?php
 if (!empty($_POST['submit'])){
    $admin=$_POST['admin'];
@@ -41,35 +74,44 @@ if (!empty($_POST['submit'])){
    $pass2=$_POST['pass2'];
    if (!empty($userid) && !empty($pass)) {
       if ($pass == $pass2) {
-         $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or die ("Connect Failed! :".mysql_error());
-         mysql_select_db('wahlst_users');
+         try {
+            $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass',
+               array(PDO::MYSQL_ATTR_INIT_COMMAND => 'set sql_mode="TRADITIONAL"'));
+            $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+         } catch (PDOException $e) {
+            phpAlert("Could not connect to user database", $p);
+            die();
+         }
          $sql = "select * from users where username = '".$userid."'";
-         $result = mysql_query($sql);
+         $result = $dbcon->query($sql);
          if ($result) {
             $ct = 0;
-            while ($row = mysql_fetch_array($result)) {
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                $ct = $ct + 1;
             }
             if ($ct == 0) {
                $pass = escapehtml(crypt($pass, '123salt'));
-               $sql = "insert into users values ('".$userid."', '".$pass."', '".$_SESSION['db']."', ".$admin.", 1)";
-               $result = mysql_query($sql);
-               if (!$result) {
-                  echo "<script>alert(\"Could not add user: Please try again!\\n".mysql_error()."\");</script> \n";
-               }else {
-                  echo "<script>showAlert(\"Added User successfully!\");</script> \n";
+               $sql = "insert into users values ('".$userid."', '".$pass."', '".$_SESSION['db']."', ".
+                  $admin.", 1)";
+               try {
+                  $stmt = $dbcon->prepare($sql);
+                  $stmt->execute();
+               } catch (PDOException $p) {
+                  echo "<script>alert(\"Could not add user".$p->getMessage()."\");</script>";
+                  die();
                }
+               echo "<script>showAlert(\"Added User successfully!\");</script> \n";
             } else {
                echo "<script>alert(\"Username already exists: choose another!\");</script>";
             }
          } else {
-            echo "<script>alert(\"Could not connect to user database!\\n".mysql_error()."\");</script>";
+            echo "<script>alert(\"Could not connect to user database!\");</script>";
          }
       } else {
          echo "<script>alert(\"Passwords do not match!\");</script> \n";
       }
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

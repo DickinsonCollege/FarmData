@@ -42,9 +42,8 @@ for ($i = 0; $i < $tableSize; $i++) {
         if ($i == $bedsInd && !$_SESSION['bedft']) {
            $fieldID = escapehtml($values_array[$fieldInd]);
            $sql = "select length from field_GH where fieldID = '".$fieldID."'";
-           $result = mysql_query($sql);
-           echo mysql_error();
-           $row = mysql_fetch_array($result);
+           $result = $dbcon->query($sql);
+           $row = $result->fetch(PDO::FETCH_ASSOC);
            $length = $row['length'];
            $beds = escapehtml($values_array[$i]);
 	   $values .= "'".($length * $beds)."'";
@@ -56,13 +55,12 @@ for ($i = 0; $i < $tableSize; $i++) {
 	}
 }
 
-$sql = "INSERT INTO ".$tableName."
-	(".$columns.")
-	VALUES (".$values.")";
-
-$result = mysql_query($sql);
-
-echo mysql_error();
-
-mysql_close();
+$sql = "INSERT INTO ".$tableName." (".$columns.") VALUES (".$values.")";
+try {
+   $stmt = $dbcon->prepare($sql);
+   $stmt->execute();
+} catch (PDOException $p) {
+   echo "<script>alert(\"Could not insert data".$p->getMessage()."\");</script>";
+   die();
+}
 ?>

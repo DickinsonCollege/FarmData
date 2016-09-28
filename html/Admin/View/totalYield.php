@@ -17,16 +17,18 @@
       $array = array();
       $array[0] = array("fieldID", "Yield");
       echo '<center><h2>Total Yield for each field of '.$crop.' in '.$year.'</h2></center>';   
-      $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year." group by fieldID";
-      $sqldata = mysql_query($sql);
+      $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year.
+         " group by fieldID";
+      $sqldata = $dbcon->query($sql);
       $count=0;
-      while($row = mysql_fetch_array($sqldata)){
+      while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
          $array[$count+1] = array(escapeescapehtml($row['fieldID']), 
              intval($row['sum(yield)']));
          $count++;
       }
-      $sql = mysql_query("select distinct unit, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year);
-      $row = mysql_fetch_array($sql);
+      $sql = $dbcon->query("select distinct unit, sum(yield) from harvested where crop='".$crop.
+         "' and year(hardate)=".$year);
+      $row = $sql->fetch(PDO::FETCH_ASSOC);
       echo"<input type='hidden' id='unit' value='".$row['unit']."'/>";
       echo"<input type='hidden' id='total' value='".$row['sum(yield)']."'/>";
       $json = json_encode($array);

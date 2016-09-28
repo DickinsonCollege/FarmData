@@ -11,20 +11,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <label for="disease"> Disease Name:&nbsp;</label>
 <input class="textbox3 mobile-input" onkeypress= 'stopSubmitOnEnter(event)'; type="text" name="name" id="name">
 </div>
-<!--
-<br clear="all"/>
-<label for="admin">Active:&nbsp;</label>
-<input style="margin-top: 10px;" type="checkbox"name="active" id="active" class="imgClass2 regular-checkbox big-checkbox"  /><label for="checkboxFiveInput"></label>
--->
 <br clear="all"/>
 
 <script>
 function show_confirm() {
-        var i = document.getElementById("name").value;
-        var con="Disease Name : "+ i+ "\n";
-
-
-return confirm("Confirm Entry: " +"\n"+con);
+   var i = document.getElementById("name").value;
+   if (checkEmpty(i)) {
+      alert("Enter Disease Name");
+      return false;
+   }
+   var con="Disease Name: "+ i+ "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 
@@ -35,14 +32,16 @@ if (!empty($_POST['done'])) {
    if(!empty($_POST['name'])) {
       $name = escapehtml(strtoupper($_POST['name']));
       $sql="Insert into disease(diseaseName) values ('".$name."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add disease: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Added Disease Successfully!\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert("Could not add disease", $p);
+         die();
       }
+      echo "<script>showAlert(\"Added Disease Successfully!\");</script> \n";
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

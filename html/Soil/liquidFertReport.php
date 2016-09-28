@@ -30,8 +30,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 <select name="material" id="material" class="mobile-select">
 <option value = "%" selected> All </option>
 <?php
-$result = mysql_query("SELECT fertilizerName from liquidFertilizerReference");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT fertilizerName from liquidFertilizerReference");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[fertilizerName]\">$row[fertilizerName]</option>";
 }
 ?>

@@ -3,7 +3,6 @@
    if ($numRows <= 0) {
       echo "<script>alert(\"Enter at least one row!\");</script> \n";
    } else {
-      $success = true;
       for ($i = 1; $i <= $numRows; $i++) {
          if (isset($_POST['cell'.$i.'at0'])) {
             $sql="insert into ".$table."(".$cols.") values(";
@@ -29,34 +28,38 @@
                 $sql .= "'".$val."',";
             }
             $sql= substr($sql, 0, strlen($sql) - 1).")";
-            $result=mysql_query($sql);
-            if (!$result) {
-               $success = false;
-               echo "<script>alert(\"Could not insert data: Please try again!\\n".mysql_error().
+            try {
+               $stmt = $dbcon->prepare($sql);
+               $stmt->execute();
+            } catch (PDOException $p) {
+               echo "<script>alert(\"Could not insert data: Please try again!\\n".$p->getMessage().
                    "\");</script> \n";
+               die();
             }
             if ($table == "plant") {
               $sql="insert into units(crop, default_unit, unit, conversion) values('".$vals[0]."','".
                   $vals[1]."','".$vals[1]."', 1)";
-              $result=mysql_query($sql);
-              if (!$result) {
-                 $success = false;
-                 echo "<script>alert(\"Could not insert data: Please try again!\\n".mysql_error().
-                     "\");</script> \n";
+              try {
+                  $stmt = $dbcon->prepare($sql);
+                  $stmt->execute();
+              } catch (PDOException $p) {
+                  echo "<script>alert(\"Could not insert data: Please try again!\\n".$p->getMessage().
+                      "\");</script> \n";
+                  die();
               }
            } else if ($table == "coverCrop") {
               $sql = "insert into coverVariety values('".$vals[0]."', '".$vals[0]."')";
-              $result=mysql_query($sql);
-              if (!$result) {
-                 $success = false;
-                 echo "<script>alert(\"Could not insert data: Please try again!\\n".mysql_error().
-                     "\");</script> \n";
+              try {
+                  $stmt = $dbcon->prepare($sql);
+                  $stmt->execute();
+              } catch (PDOException $p) {
+                  echo "<script>alert(\"Could not insert data: Please try again!\\n".$p->getMessage().
+                      "\");</script> \n";
+                  die();
               }
            }
          }
       }
-      if ($success) {
-         echo "<script>alert(\"Added Data Successfully!\");</script> \n";
-      }
+      echo "<script>alert(\"Added Data Successfully!\");</script> \n";
    }
 ?>

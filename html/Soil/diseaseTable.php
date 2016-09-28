@@ -9,8 +9,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM diseaseScout WHERE id=".$_GET['id'];
-      mysql_query($sqlDel) or die(mysql_error());
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
 
    $year = $_GET['year'];
@@ -27,10 +32,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and fieldID like '".$fieldID."' and stage like '".$stage."' and disease like '"
       .$disease."' and crops like '%".$crop."%'";
-   $result=mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not Generate Disease Scouting Report: Please try again!\\n".mysql_error()."\");</script>\n";
-   }
+   $result=$dbcon->query($sql);
    if ($disease=="%"){
       $var="All";
    }else {
@@ -59,9 +61,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ( $row = mysql_fetch_array($result)) {
+   while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
-        //echo str_replace("-","/",$row['sDate']);
 	echo $row['sDate'];
         echo "</td><td>";
         echo $row['fieldID'];

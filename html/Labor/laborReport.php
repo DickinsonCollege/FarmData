@@ -17,11 +17,14 @@ echo '</div>';
 ?>
 <div class = "pure-control-group">
 <label for="crop"> Crop:</label>
+<!--
 <select name="crop" id="crop" onChange="addFieldID();" class="mobile-select">
+-->
+<select name="crop" id="crop" class="mobile-select">
 <option value = "%"> All </option>
 <?php
-$result = mysql_query("SELECT distinct crop from laborview order by crop");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct crop from laborview order by crop");
+while ($row = $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[crop]\">$row[crop]</option>";
 }
 ?>
@@ -32,8 +35,16 @@ while ($row =  mysql_fetch_array($result)){
 <select id= "fieldID" name="fieldID" class="mobile-select">
 <option value="%"> All </option>
 <option value="N/A"> N/A </option>
+<?php
+$sql = "select fieldID from field_GH where active = 1";
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)){
+  echo "\n<option value= \"$row[fieldID]\">$row[fieldID]</option>";
+}
+?>
 </select>
 </div>
+<!--
 <script type="text/javascript">
  function addFieldID() {
 	
@@ -55,17 +66,18 @@ while ($row =  mysql_fetch_array($result)){
 
 addFieldID();
 </script>
+-->
 
 <div class = "pure-control-group">
 <label for="taskDiv"> Task:</label>
 <select name="task" id="task" class="mobile-select">
 <option value = "%"> All </option>
 <?php
-$result = mysql_query("SELECT distinct task from task");
+$result = $dbcon->query("SELECT distinct task from task");
 echo "\n<option value= \"TRANSPLANTING\">TRANSPLANTING</option>";
 echo "\n<option value= \"DIRECT PLANTING\">DIRECT PLANTING</option>";
 echo "\n<option value= \"HARVESTING\">HARVESTING</option>";
-while ($row =  mysql_fetch_array($result)){
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[task]\">$row[task]</option>";
 }
 ?>

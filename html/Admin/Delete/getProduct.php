@@ -2,8 +2,8 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $product = escapehtml($_GET['product']);
 $sql = "select unit, units_per_case, dh_units, active from product where product='".$product."'";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = $dbcon->query($sql);
+$row = $result->fetch(PDO::FETCH_ASSOC);
 
 $plantarray = array();
 $plantarray[0] = $row['unit'];

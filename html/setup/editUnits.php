@@ -1,9 +1,8 @@
 <?php
 $units=array();
 $sql = "select unit from extUnits";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    $units[] = $row['unit'];
 }
 ?>
@@ -87,9 +86,8 @@ for ($i = 1; $i < count($arr); $i++) {
   $convs[$row[0]][$row[2]] = $row[3];
 }
 $sql = "select crop, units from plant";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    $croprow=array($row['crop'], $row['units']); 
    for ($j = 0; $j < count($units); $j++) {
       if ($row['units'] == $units[$j]) {

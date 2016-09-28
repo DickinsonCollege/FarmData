@@ -37,8 +37,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <select name="crop" id="crop" class="mobile-select" onChange="addFieldID()">
 <option value = "%"> All </option>
 <?php
-$result = mysql_query("SELECT distinct crop from harvested");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct crop from harvested");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[crop]\">$row[crop]</option>";
 }
 ?>
@@ -58,7 +58,6 @@ while ($row =  mysql_fetch_array($result)){
 	var tyear = document.getElementById("tyear").value;
 	var year = document.getElementById("year").value;
 	xmlhttp= new XMLHttpRequest();
-	console.log(crop+tyear+year);
 	xmlhttp.open("GET", "update_fieldID.php?crop="+crop+"&year="+year+"&tyear="+tyear, false);
 	xmlhttp.send();
 	// console.log(xmlhttp.responseText);
@@ -74,8 +73,8 @@ if ($_SESSION['gens']) {
    echo '<label for="genSel">Succession #:</label> ';
    echo '<select name="genSel" class="mobile-select">';
    echo '<option value = "%" selected="selected"> All </option>';
-   $result = mysql_query("SELECT distinct gen from harvested order by gen");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result = $dbcon->query("SELECT distinct gen from harvested order by gen");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
       echo "\n<option value= \"$row1[gen]\">$row1[gen]</option>";
    }
    echo '</select>';
@@ -91,6 +90,3 @@ if ($_SESSION['gens']) {
  type="submit" name="submit" value="Submit">
 <fieldset>
 </form>
-<!--
-</div></div>
--->

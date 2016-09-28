@@ -22,28 +22,32 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 
 <?php
 if(isset($_POST['date'])){
-	$day=$_POST['day'];
-	$month=$_POST['month'];
-	$year=$_POST['year'];
-	echo "<br>";
-	$listDate=$year."-".$month."-".$day;
-	echo "<br>";
+   $day=$_POST['day'];
+   $month=$_POST['month'];
+   $year=$_POST['year'];
+   echo "<br>";
+   $listDate=$year."-".$month."-".$day;
+   echo "<br>";
 
-	$sql_result=mysql_query("SELECT id FROM harvestList WHERE harDate='$listDate'");
+   $sql_result=$dbcon->query("SELECT id FROM harvestList WHERE harDate='$listDate'");
+   $row = $sql_result->fetch(PDO::FETCH_ASSOC);
 
-	if(is_resource($sql_result) &&  mysql_num_rows($sql_result) > 0 ){
-   	 $sql_result = mysql_fetch_array($sql_result);
-    	 $currentID= $sql_result["id"];
-	}else{
-	 $sql="INSERT INTO harvestList(harDate, comment) VALUES('$listDate','')";
-	echo "<br>";
-	mysql_query($sql);
-	$currentIDTable=mysql_query("SELECT LAST_INSERT_ID()");
-	$currentIDRow=mysql_fetch_array($currentIDTable);
-	"The currentID ". $currentID= $currentIDRow['LAST_INSERT_ID()'];
-	}	
+   if ($row) {
+      $currentID= $row["id"];
+   }else{
+      $sql="INSERT INTO harvestList(harDate, comment) VALUES('$listDate','')";
+      echo "<br>";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
+      $currentID = $dbcon->lastInsertId();
+   }   
 
-	echo ' <meta http-equiv="refresh" content=0;URL="harvestListAdmin.php?tab=admin:admin_add:admin_harvestlist&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
+   echo ' <meta http-equiv="refresh" content=0;URL="harvestListAdmin.php?tab=admin:admin_add:admin_harvestlist&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
 
 }
 ?>

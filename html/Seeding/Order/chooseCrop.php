@@ -22,11 +22,15 @@ if ($_SESSION['cover']) {
 <select name='crop' id='crop' class='mobile-select'>
 <?php
 $sql = "select crop from plant where active=1";
-$res = mysql_query($sql);
-echo mysql_error();
+try {
+  $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
 echo "<option value='Crop' disabled";
 echo ">Crop</option>";
-while ($row = mysql_fetch_array($res)) {
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['crop']."'";
    echo ">".$row['crop']."</option>";
 }
@@ -70,11 +74,15 @@ if ($_SESSION['cover']) {
    // echo "<div id='covercropdiv' class='styled-select'>";
    echo "<select name='cover' id='cover' class='mobile-select'>";
    $sql = "select crop from coverCrop where active = 1";
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
    echo "<option value='Cover Crop' disabled";
    echo ">Crop</option>";
-   while ($row = mysql_fetch_array($res)) {
+   while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
       echo "<option value='".$row['crop']."'";
       echo ">".$row['crop']."</option>";
    }

@@ -115,17 +115,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 </div>
 <div class='pure-control-group'>
 <label class='input_label' for='cropButton'>Crop:</label>
-<select name='cropButton' id='cropButton' class='mobile-select' 
-<option value=0 selected>Crop</option>
+<select name='cropButton' id='cropButton' class='mobile-select' onchange="clearTable();"> 
 <?php
 $sql = "SELECT crop FROM plant WHERE active=1";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+   // echo "<option value=0 disabled>Crop</option>";
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
 </select></div>
-
 
 <?php
 if($_SESSION['mobile']){
@@ -227,21 +226,21 @@ function addRow() {
    if (cb.value=="0") {
       showError("Error: choose crop first!");
    } else {
-      cb.disabled=true;
-      numRows++;
-      var table = document.getElementById("harvestTable").getElementsByTagName('tbody')[0];
-      var row = table.insertRow(numRows - 1);
-      row.id = "row"+numRows;
-      row.name = "row"+numRows;
-      var cell0 = row.insertCell(0);
       var year = document.getElementById("year").value;
       var crop = encodeURIComponent(cb.value);
       xmlhttp= new XMLHttpRequest();
       xmlhttp.open("GET", "update_field.php?crop="+crop+"&plantyear="+year, false);
       xmlhttp.send();
       if(xmlhttp.responseText=="\n") {
-        cb.value="";
+          showError("Error: no " + cb.value + " planted in " + year + "!");
+          return;
       }
+      numRows++;
+      var table = document.getElementById("harvestTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(numRows - 1);
+      row.id = "row"+numRows;
+      row.name = "row"+numRows;
+      var cell0 = row.insertCell(0);
       var genStr = "<div class='styled-select' id ='fieldID2" + numRows + "''>  <select name= 'fieldID" +
         numRows + "' id= 'fieldID" + numRows + "' ";
       <?php
@@ -273,12 +272,6 @@ function addRow() {
       var col = 3;
 <?php
 if ($_SESSION['gens']) {
-/*
-   echo 'xmlhttp = new XMLHttpRequest();';
-   echo 'var year = document.getElementById("year").value;';
-   echo 'xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year, false);';
-   echo 'xmlhttp.send();';
-*/
    echo "   var cell25 = row.insertCell(3);";
    echo "   cell25.id = 'genCell' + numRows;";
    echo "   col++;";
@@ -328,12 +321,20 @@ if ($_SESSION['labor']) {
       table.deleteRow(numRows);
       numRows--;
    }
+/*
    if (numRows == 0) {
       var cb = document.getElementById("cropButton");
       cb.disabled=false;
    }
+*/
    var nr = document.getElementById("numRows");
    nr.value=numRows;
+}
+
+function clearTable() {
+   while (numRows > 0) {
+      removeRow();
+   }
 }
 </script>
 
@@ -403,8 +404,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $numRows = $_POST['numRows'];
    $comments =escapehtml( $_POST['comments']);
    $unitSQL = "select units from plant where crop = '".$crop."'";
-   $unitdata = mysql_query($unitSQL) or die(mysql_error());
-   $row = mysql_fetch_array($unitdata);
+   try {
+      $unitdata = $dbcon->query($unitSQL);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
+   $row = $unitdata->fetch(PDO::FETCH_ASSOC);
    $insertUnit = $row['units'];
    for ($j = 1; $j <= $numRows; $j++) {
       $fieldID = escapehtml($_POST['fieldID'.$j]);
@@ -447,23 +452,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             "',$yield/(Select conversion from units where crop= '".$crop."' and unit= '".$unit.
             "'),".$totalHours.", ".$gen.",'".$comments."', '".$insertUnit."')";
       }
-   # $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours,comments, unit) VALUES('".$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."',$yield*(Select conversion from (Select 1 as conversion from units where crop= '".$_POST['crop']."' and default_unit ='".$_POST['unit']."' union select conversion from  units where crop= '".$_POST['crop']."' and unit= '".$_POST['unit']."') as conver) ,$hours,'$comments', '$unit')";
-   # START - put conversion back in when available
-#   $sql = "INSERT INTO harvested(username,hardate,crop,fieldID,yield,hours, comments, unit) VALUES('".$_SESSION['username']."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."',$yield,$hours,'$comments','$unit')";
-      $value = mysql_query($sql);
-// or die(mysql_error());
-//      echo mysql_error();
-  if(!$value){
-       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   try {
+      $value = $dbcon->prepare($sql);
+      $value->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not enter data', $p);
+      die('fatal error');
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 
-      if($value){
-         echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      } else {
-          echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-      }
   }
 }
 ?>

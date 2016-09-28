@@ -13,10 +13,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 <select name='crop_product' id='crop_product' class='mobile-select'>
 <option value='%'>All</option>
 <?php
-$sql = "SELECT crop FROM plant WHERE active=1 union SELECT product as crop FROM product where active = 1 ORDER BY crop";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
-   echo "<option value='".$row[0]."'>".$row[0]."</option>";
+$sql = "SELECT crop FROM plant WHERE active=1 union ".
+       "SELECT product as crop FROM product where active = 1 ORDER BY crop";
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
 </select></div>

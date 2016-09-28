@@ -6,24 +6,22 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Sales/convert.php';
 // $sql = "select crop from plant where active = 1 union select product as crop from product";
-$sql = "select crop from (select crop from plant where active = 1 union select product as crop from product where active = 1) as tmp order by crop";
-$res = mysql_query($sql);
-echo mysql_error();
+$sql = "select crop from (select crop from plant where active = 1 union ".
+       "select product as crop from product where active = 1) as tmp order by crop";
+$res = $dbcon->query($sql);
 $crops = array();
-while ($row = mysql_fetch_array($res)) {
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    array_push($crops, $row['crop']);
 }
 $units = array();
 $sql = "select crop from plant where active=1";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
   $sql2 = "select unit from units where crop='".$row['crop']."'";
-  $ures = mysql_query($sql2);
-  echo mysql_error();
+  $ures = $dbcon->query($sql2);
   $unit = array();
   $i = 0;
-  while ($urow = mysql_fetch_array($ures)) {
+  while ($urow = $ures->fetch(PDO::FETCH_ASSOC)) {
      $unit[$i] = $urow['unit'];
      if ($unit[$i] == 'POUND' && $i > 0) {
         $tem = $unit[0];
@@ -35,9 +33,8 @@ while ($row = mysql_fetch_array($res)) {
   $units[$row['crop']] = $unit;
 }
 $sql = "select product, unit from product";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    $units[$row['product']] = array($row['unit']);
 }
 ?>
@@ -92,6 +89,7 @@ function getAmt(row) {
    xmlhttp.open("GET", "get_crop_amounts.php?crop=" +
        encodeURIComponent(crop) + "&harvestDate=" + theDate + "&unit="+encodeURIComponent(unit.value), false);
    xmlhttp.send();
+console.log(xmlhttp.responseText);
    var crop_amts = eval(xmlhttp.responseText);
    var avail = document.getElementById("avail" + row);
    if (crop_amts[0] >= 0) {
@@ -244,7 +242,6 @@ function populateEntries() {
    xmlhttp.open("GET", "populate_entries.php?id="+id, false);
    xmlhttp.send();
    // var harvest_list_array = eval(xmlhttp.responseText);
-console.log(xmlhttp.responseText);
    var harvest_list_array = JSON.parse(xmlhttp.responseText);
    alreadyPopulated = true;
    for (var crp in harvest_list_array) {
@@ -318,8 +315,8 @@ function show_confirm() {
 <select id="selectList" name="selectList" class="mobile-select" >
 <?php
 $sql = "SELECT id, harDate FROM harvestList WHERE harDate > SUBDATE(CURDATE(), 30) order by harDate desc";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['id']."'>".$row['harDate']."</option>";
 }
 ?>
@@ -378,41 +375,54 @@ if (isset($_POST['insertRows'])) {
    $day = $_POST['day'];
    $date = $year.'-'.$month.'-'.$day;
    $result = 1;
-   for ($i = 1; $i <= $rowNum; $i++) {
-      if (isset($_POST['crop'.$i])) {
-         $crop = escapehtml($_POST['crop'.$i]);
-         $unit = escapehtml($_POST['unit'.$i]);
-         $comments = escapehtml($_POST['comments'.$i]);
-         $grade = $_POST['grade'.$i];
-         $bring = 0;
-         if (!empty($_POST['bringBack'])) {
-            $bring = 1; 
-         }
-         for ($j = 0; $j < count($targs); $j++) {
-            $targ = $targs[$j];
-            // $targr = str_replace(" ", "_", $targ);
-            $targr = encodeURIComponent($targ);
-            $val = $_POST[$targr.$i];
-            if ($val > 0) {
+   try {
+      $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
+                 " Target) values('".$date."', :crop, :grade, :amt, :def_unit, :comments, :bring, :targ)";
+      $stmt = $dbcon->prepare($sql);
+      for ($i = 1; $i <= $rowNum; $i++) {
+         if (isset($_POST['crop'.$i])) {
+            $crop = escapehtml($_POST['crop'.$i]);
+            $unit = escapehtml($_POST['unit'.$i]);
+            $comments = escapehtml($_POST['comments'.$i]);
+            $grade = $_POST['grade'.$i];
+            $bring = 0;
+            if (!empty($_POST['bringBack'])) {
+               $bring = 1; 
+            }
+            for ($j = 0; $j < count($targs); $j++) {
+               $targ = $targs[$j];
+               // $targr = str_replace(" ", "_", $targ);
+               $targr = encodeURIComponent($targ);
+               $val = $_POST[$targr.$i];
+               if ($val > 0) {
+   /*
+                  $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
+                     " Target) values('".$date."', '".$crop."', ".$grade.", ".$val.", '".$unit."', '".
+                     $comments."', ".$bring.", '".$targ."')";
+   */
 /*
-               $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
-                  " Target) values('".$date."', '".$crop."', ".$grade.", ".$val.", '".$unit."', '".
-                  $comments."', ".$bring.", '".$targ."')";
-*/
-               $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
+                  $sql = "insert into pack(packDate, crop_product, grade, amount, unit, comments, bringBack,".
                   " Target) values('".$date."', '".$crop."', ".$grade.", ".$val / $conversion[$crop][$unit].
-                  ", '".$default_unit[$crop]."', '".$comments."', ".$bring.", '".$targ."')";
-               $result = $result && mysql_query($sql);
+                     ", '".$default_unit[$crop]."', '".$comments."', ".$bring.", '".$targ."')";
+*/
+                  $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+                  $stmt->bindParam(':grade', $grade, PDO::PARAM_INT);
+                  $amt = $val / $conversion[$crop][$unit];
+                  $stmt->bindParam(':amt', $amt, PDO::PARAM_STR);
+                  $stmt->bindParam(':def_unit', $default_unit[$crop], PDO::PARAM_STR);
+                  $stmt->bindParam(':comments', $comments, PDO::PARAM_STR);
+                  $stmt->bindParam(':bring', $bring, PDO::PARAM_INT);
+                  $stmt->bindParam(':targ', $targ, PDO::PARAM_STR);
+                  $stmt->execute();
+               }
             }
          }
       }
+   } catch (PDOException $p) {
+      phpAlert("Could not enter packing record", $p);
+      die();
    }
-   if($result){
-      echo "<script>alert(\"Entered data successfully!\");</script> \n";
-   } else {
-     echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error().
-        "\");</script>\n";
-   }
+   echo "<script>alert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

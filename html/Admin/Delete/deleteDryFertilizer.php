@@ -22,13 +22,14 @@ if(!empty($_POST['submit'])) {
       } else {
          $sql = "update fertilizerReference set active=".$active." where fertilizerName='".$name."'";
       }
-      $result = mysql_query($sql);
-
-      if(!$result) {
-          echo '<script> alert("Could not process command, please try again!'.mysql_error().'"); </script>';
-      } else {
-          echo '<script> showAlert("Edited Fertilizer Successfully"); </script>';
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not update dry fertilizer".$p->getMessage()."\");</script>";
+         die();
       }
+      echo '<script> showAlert("Edited Fertilizer Successfully"); </script>';
    }
 }
 ?>
@@ -37,13 +38,12 @@ if(!empty($_POST['submit'])) {
 <div class="pure-control-group">
 <label for="name">Fertilizer Name:</label>
 <select name='name' id='name' class='mobile-select'>
-<option disabled selected>Fertilizer</option>
 <?php
-$result = mysql_query("SELECT fertilizerName from fertilizerReference");
-        while ($row1 =  mysql_fetch_array($result)){
-                echo "\n<option value= \"$row1[fertilizerName]\">$row1[fertilizerName]</option>";
-        }
-        echo "</select></div>";
+$result = $dbcon->query("SELECT fertilizerName from fertilizerReference");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+    echo "\n<option value= \"$row1[fertilizerName]\">$row1[fertilizerName]</option>";
+}
+echo "</select></div>";
 ?>
 
 <div class="pure-control-group">

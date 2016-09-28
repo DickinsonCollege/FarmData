@@ -1,6 +1,5 @@
 <?php
      session_start();
-// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';    
     include $_SERVER['DOCUMENT_ROOT'].'/design.php';
      include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
      include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
@@ -23,18 +22,16 @@ $pump                = '';
 $solar          = '';
 $sql = 'select valve_open from pump_master where id = (select max(id) from '.
    'pump_master)';
-$data= mysql_query($sql);
-echo mysql_error();
-$row = mysql_fetch_array($data);
+$data= $dbcon->query($sql);
+$row = $data->fetch(PDO::FETCH_ASSOC);
 if ($row['valve_open']) {
    $valvefill=trim($row['valve_open']);
 }
 $sql = 'select year(pumpDate) as year, month(pumpDate) as month, day(pumpDate) as day, valve_open, '.
    'driveHZ, outlet_psi, pump_kwh, solar_kwh, comment, ('.time().
    ' - start_time)/60 as runtime  from pump_log_temp';
-$data= mysql_query($sql);
-echo mysql_error();
-$row = mysql_fetch_array($data);
+$data= $dbcon->query($sql);
+$row = $data->fetch(PDO::FETCH_ASSOC);
 if ($row['year']) {
      $dYear           = $row['year'];
      $dMonth       = $row['month'];
@@ -189,10 +186,9 @@ setInterval(function () {
       $sql          = "select fieldID, elapsed_time, irr_device, start_time, (".
      "case when start_time is null then elapsed_time else elapsed_time + (".time().
      "- start_time)/60 end) as cur_time from field_irrigation";
-     $sqldata     = mysql_query($sql);
-     echo mysql_error();
+     $sqldata     = $dbcon->query($sql);
      $numRows     = 0;
-     while($row = mysql_fetch_array($sqldata)){
+     while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
           $numRows++;
           $irrigation_device = '<option value = 0 selected disabled> Device</option>';
           if($row[irr_device] != null) {
@@ -253,7 +249,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Soil/irrigationFunctions.php';
 </form>
 <?php
 if (!empty($_POST['submit'])) {
-   echo 'SUBMITTED';
      $numRows          = $_POST['numRows'];
      $date            = $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'];
      // $valve           = escapehtml($_POST['valve']);
@@ -275,44 +270,77 @@ if (!empty($_POST['submit'])) {
      $comment          = escapehtml($_POST['comment']);
 
      $queryValves = "select group_concat(fieldID SEPARATOR ', ') as valves from field_irrigation where start_time is not null";
-     $result = mysql_query($queryValves);
-     echo mysql_error();
-     $row = mysql_fetch_array($result);
-     $valve = mysql_real_escape_string($row['valves']);
+     $result = $dbcon->query($queryValves);
+     $row = $result->fetch(PDO::FETCH_ASSOC);
+     $valve = $row['valves'];
      $queryTime = "select start_time from pump_log_temp";
-     $result = mysql_query($queryTime);
-     echo mysql_error();
-     $row = mysql_fetch_array($result);
+     $result = $dbcon->query($queryTime);
+     $row = $result->fetch(PDO::FETCH_ASSOC);
      $start_time = $row['start_time'];
      $runtime = (time() - $start_time)/60;
      $queryMaster= 'INSERT into pump_master (pumpDate,valve_open,driveHZ,outlet_psi,pump_kwh,solar_kwh,comment,run_time) values(\''.
-        $date.'\', \''.$valve.'\', '.$drive.', '.$outlet.', '.$pump_kwh.', '.
+        $date.'\', :valve, '.$drive.', '.$outlet.', '.$pump_kwh.', '.
         $solar_kwh.', \''.$comment.'\', '.$runtime.')';
-     mysql_query($queryMaster) or die(mysql_error());
-     echo mysql_error();
-     $id                = mysql_insert_id();
+     try {
+        $stmt = $dbcon->prepare($queryMaster);
+        $stmt->bindParam(':valve', $valve, PDO::PARAM_STR);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
+     $id                = $dbcon->lastInsertId();
      // delete from pump_log_temp table
      $sqlDelete  = 'delete from pump_log_temp';
-     mysql_query($sqlDelete) or die(mysql_error());
-     echo mysql_error();
+     try {
+        $stmt = $dbcon->prepare($sqlDelete);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
      // insert to pump_field table with data from field_irrigation table
-     $insertQuery= 'Insert into pump_field (fieldID, irr_device, elapsed_time, id) (select fieldID, irr_device, case when start_time is null then elapsed_time else elapsed_time + ('.time().'- start_time)/60 end, '.$id.' from field_irrigation)';
-     mysql_query($insertQuery) or die(mysql_error());
-     echo mysql_error();
+     $insertQuery= "Insert into pump_field (fieldID, irr_device, elapsed_time, id) ".
+        "(select fieldID, irr_device, case when start_time is null then elapsed_time else elapsed_time + (".
+        time()."- start_time)/60 end, ".$id." from field_irrigation)";
+     try {
+        $stmt = $dbcon->prepare($insertQuery);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
      // delete data in the field_irrigation(temp) table
-     $deleteQuery= 'delete from field_irrigation';
-     mysql_query($deleteQuery) or die(mysql_error());
-     echo mysql_error();
+     $deleteQuery = 'delete from field_irrigation';
+     try {
+        $stmt = $dbcon->prepare($deleteQuery);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
      $_POST['submit'] = 0;
 //     echo '<script type="text/javascript">alert("Data Entered Successfully!");</script>';
      echo ' <meta http-equiv="refresh" content=0;URL="pumpInfo.php?tab=soil:soil_irrigation:irrigation_input">';
      // echo ' <meta http-equiv="refresh" content=0;URL="pumpInfo.php?tab=soil:soil_irrigation:irrigation_input">';
      //echo "<script>location.reload(true);</script>";
 } else if (!empty($_POST['cancel'])){
-     mysql_query("delete from field_irrigation");
-     echo mysql_error();
-     mysql_query("delete from pump_log_temp");
-     echo mysql_error();
+     $deleteQuery = "delete from field_irrigation";
+     try {
+        $stmt = $dbcon->prepare($deleteQuery);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
+     $deleteQuery = "delete from pump_log_temp";
+     try {
+        $stmt = $dbcon->prepare($deleteQuery);
+        $stmt->execute();
+     } catch (PDOException $p) {
+        phpAlert('', $p);
+        die();
+     }
      // echo ' <meta http-equiv="refresh" content=0;URL="pumpInfo.php?tab=soil:soil_irrigation:irrigation_input">';
      // echo ' <meta http-equiv="refresh" content=0;URL="pumpInfo.php">';
      echo ' <meta http-equiv="refresh" content=0;URL="pumpInfo.php?tab=soil:soil_irrigation:irrigation_input">';

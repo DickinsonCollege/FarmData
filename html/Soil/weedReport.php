@@ -34,8 +34,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
  <select name ="weed" id="weed" class="mobile-select">
  <option value = "%" selected > All</option>
  <?php
- $result=mysql_query("Select weedName from weed");
- while ($row1 =  mysql_fetch_array($result)){
+ $result=$dbcon->query("Select weedName from weed");
+ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
  echo "\n<option value= \"$row1[weedName]\">$row1[weedName]</option>";
  }
  echo '</select>';

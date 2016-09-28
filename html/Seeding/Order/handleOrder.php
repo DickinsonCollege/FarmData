@@ -47,6 +47,7 @@ function update_inventory() {
    global $isCover;
    global $crop;
    global $cover;
+   global $dbcon;
    $rowNum = $_POST['invRows'];
    if ($isCover) {
       $sql = "delete from coverSeedInventory where crop = '".$cover."'";
@@ -55,29 +56,47 @@ function update_inventory() {
       $sql = "delete from seedInventory where crop = '".$crop."'";
       $inTable = "seedInventory";
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
-   for ($i = 1; $i <= $rowNum; $i++) {
-       if (isset($_POST['variety'.$i])) {
-          $variety = escapehtml($_POST['variety'.$i]);
-          $code = escapehtml(getString($_POST['code'.$i]));
-          $rowft = getNum($_POST['rowft'.$i]);
-          $inven = getNum($_POST['inven'.$i]);
-          if (!$isCover) {
-             $defUnit = escapehtml(getString($_POST['unit'.$i]));
-             $inven = convertToGram($inven, $defUnit);
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
+   $sql = "insert into ".$inTable." values (:crop, :variety, :sYear, :code, :rowft, :inven)";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      for ($i = 1; $i <= $rowNum; $i++) {
+          if (isset($_POST['variety'.$i])) {
+             $variety = escapehtml($_POST['variety'.$i]);
+             $code = escapehtml(getString($_POST['code'.$i]));
+             $rowft = getNum($_POST['rowft'.$i]);
+             $inven = getNum($_POST['inven'.$i]);
+             if (!$isCover) {
+                $defUnit = escapehtml(getString($_POST['unit'.$i]));
+                $inven = convertToGram($inven, $defUnit);
+             }
+             $sYear = getNum($_POST['sYear'.$i]);
+             $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+             $stmt->bindParam(':variety', $variety, PDO::PARAM_STR);
+             $stmt->bindParam(':sYear', $sYear, PDO::PARAM_INT);
+             $stmt->bindParam(':code', $code, PDO::PARAM_STR);
+             $stmt->bindParam(':rowft', $rowft, PDO::PARAM_STR);
+             $stmt->bindParam(':inven', $inven, PDO::PARAM_STR);
+             $stmt->execute();
+   /*
+             $sql = "insert into ".$inTable." values ('".$crop."', '".$variety."', ".$sYear.", '".
+                $code."', ".$rowft.", ".$inven.")";
+   */
           }
-          $sYear = getNum($_POST['sYear'.$i]);
-          $sql = "insert into ".$inTable." values ('".$crop."', '".$variety."', ".$sYear.", '".
-             $code."', ".$rowft.", ".$inven.")";
-          $res = mysql_query($sql);
-          echo mysql_error();
-       }
+      }
+   } catch (PDOException $p) {
+      die($p->getMessage);
    }
 }
 
 function insert_order_row($crop, $year, $i, $status) {
    global $isCover;
+   global $dbcon;
    $variety = escapehtml($_POST['varOrder'.$i]);
    $source = escapehtml($_POST['varSource'.$i]);
    $catalogOrder = escapehtml($_POST['catalogOrder'.$i]);
@@ -110,8 +129,12 @@ function insert_order_row($crop, $year, $i, $status) {
       $sql .= ", '".$search['source'.$j]."', '".$search['sdate'.$j]."'";
    }
    $sql .= ", ".$id.")";
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
 }
 
 function update_order() {
@@ -119,6 +142,7 @@ function update_order() {
    global $crop;
    global $cover;
    global $year;
+   global $dbcon;
    $rowNum = $_POST['orderRows'];
    if ($isCover) {
       $sql = "delete from coverOrderItem where crop = '".$cover."' and status <> 'ARRIVED' and year = ".
@@ -127,8 +151,12 @@ function update_order() {
       $sql = "delete from orderItem where crop = '".$crop."' and status <> 'ARRIVED' and year = ".
          $year;
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
    for ($i = 1; $i <= $rowNum; $i++) {
       if (isset($_POST['varOrder'.$i]) || isset($_POST['varSource'.$i])) {
          insert_order_row($crop, $year, $i, "");
@@ -140,6 +168,7 @@ function order_arrived($row) {
    global $isCover;
    global $crop;
    global $cover;
+   global $dbcon;
    $unitsPerCatUnit = getNum($_POST['unitsPerCatUnit'.$row]);
    $catUnitsOrdered = getNum($_POST['catUnitsOrdered'.$row]);
    $inven = $unitsPerCatUnit * $catUnitsOrdered;
@@ -161,16 +190,24 @@ function order_arrived($row) {
    }
    $sql = "update ".$ordTbl." set status = 'ARRIVED' where crop = '".$ordcrop.
       "' and status <> 'ARRIVED' and id = ".$row;
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
    $variety = escapehtml($_POST['varOrder'.$row]);
    $sYear = $_POST['year'];
    $org = $_POST['organic'.$row];
    include 'make_code.php';
    $sql = "insert into ".$invTbl." values ('".$crop."', '".$variety."', ".$sYear.", '".
       $code."', 0, ".$inven.")";
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
 }
 
 if (isset($_POST['updateInven']) || isset($_POST['update_order']) ||
@@ -185,16 +222,24 @@ if (isset($_POST['addVar'])) {
    } else {
      $sql = "insert into variety values('".$crop."', upper('".$variety."'))";
    }
-   $res = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage);
+   }
    update_inventory();
    update_order();
 } 
 if (isset($_POST['addSource'])) {
      $source = escapehtml($_POST['newSource']);
      $sql = "insert into source values(upper('".$source."'))";
-     $res = mysql_query($sql);
-     echo mysql_error();
+     try {
+        $stmt = $dbcon->prepare($sql);
+        $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage);
+      }
      update_inventory();
      update_order();
 }

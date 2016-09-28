@@ -8,8 +8,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
 if (isset($_GET['id'])) {
    $sqlDel="DELETE FROM gh_seeding WHERE id=".$_GET['id'];
-   mysql_query($sqlDel);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sqlDel);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
 }
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -22,7 +26,7 @@ $crop = escapehtml($_GET['crop']);
 
 $sql="Select id, username, seedDate,crop,numseeds_planted,flats,cellsFlat,varieties,gen, comments from gh_seeding where crop like '".
    $crop."' and gen like '".$genSel."' and seedDate between '".$year."-".$month."-".$day."' AND '".
-   $tcurYear."-".$tcurMonth."-".$tcurDay."' order by seedDate ";
+   $tcurYear."-".$tcurMonth."-".$tcurDay."' order by seedDate";
 if ($crop!="%") {
    $total = "select sum(numseeds_planted) as totalSum from gh_seeding where seedDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
@@ -33,7 +37,11 @@ if ($crop!="%") {
 }
 echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
 
-$result=mysql_query($sql);
+try {
+   $result=$dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+}
 //$parts = explode("/* delimiter */", $sql);
 if ($crop == '%') {
    $crp = 'All Crops';
@@ -65,7 +73,7 @@ if ($_SESSION['admin']) {
    echo "<th>User</th><th>Edit</th><th>Delete</th>";
 }
 echo "</tr></thead>";
-while ( $row = mysql_fetch_array($result)) {
+while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<tr><td>";
    echo $row['seedDate'];
    echo "</td><td>";
@@ -111,18 +119,24 @@ echo "</table>";
 if($crop != '%' && !$_SESSION['bigfarm']) {
      echo "<br clear=\"all\"/>";
      echo "<div class='pure-form pure-form-aligned'>";
-     $totalResult = mysql_query($total);
-     echo mysql_error();
-     while($row5 = mysql_fetch_array($totalResult)){
+     try {
+        $totalResult = $dbcon->query($total);
+     } catch (PDOException $p) {
+        phpAlert("Error calculating seed total", $p);
+     }
+     while($row5 = $totalResult->fetch(PDO::FETCH_ASSOC)){
         echo '<div class="pure-control-group">';
         echo '<label for="totals"> Total Number of Seeds Planted:</label>';
    echo ' <input type="textbox" name="total" id="totals" class="textbox2" disabled value='.$row5['totalSum'].'>';
         echo '</div>';
      }
      // echo "<br clear=\"all\"/>";
-     $totalResult = mysql_query($totalf);
-     echo mysql_error();
-     while($row5 = mysql_fetch_array($totalResult)){
+     try {
+        $totalResult = $dbcon->query($totalf);
+     } catch (PDOException $p) {
+        phpAlert('Error calculating tray total', $p);
+     }
+     while($row5 = $totalResult->fetch(PDO::FETCH_ASSOC)){
         echo '<div class="pure-control-group">';
         echo '<label for="totalt"> Total Number of Trays Planted:</label>';
    echo ' <input type="textbox" name="total" id="totalt" class="textbox2" disabled value='.$row5['totalFlats'].'>';

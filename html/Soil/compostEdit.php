@@ -17,10 +17,11 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
-$sqlget = "SELECT id, year(util_date) as yr, month(util_date) as mth, day(util_date) as dy, util_date, fieldID, incorpTool,".
+$sqlget = "SELECT id, year(util_date) as yr, month(util_date) as mth, day(util_date) as dy, util_date, ".
+   "fieldID, incorpTool,".
    "pileID, tperacre, incorpTiming, fieldSpread, comments FROM utilized_on where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $util_date = $row['util_date'];
 $fieldID = $row['fieldID'];
@@ -70,8 +71,8 @@ echo '<label>Name of Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$fieldID.'" selected>'.$fieldID.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -91,9 +92,9 @@ echo "<label>Compost Pile ID:</label> ";
 echo "<select name='pileID' id='pileID'>";
 echo "<option value=\"".$pileID."\" selected>".$pileID."</selected>";
 $sql = "select pileID from compost_pile";
-$result = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($result)) {
-	echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
 }
 echo "</select></div>";
 
@@ -102,9 +103,9 @@ echo "<label>Incorporation Tool:</label> ";
 echo "<select name='incorpTool' id='incorpTool'>";
 echo "<option value='".$incorpTool."' selected>".$incorpTool."</selected>";
 $sql = "Select tool_name from tools";
-$result = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($result)) {
-	echo "<option value='".$row['tool_name']."'>".$row['tool_name']."</option>";
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   echo "<option value='".$row['tool_name']."'>".$row['tool_name']."</option>";
 }
 echo "</select></div>";
 
@@ -131,32 +132,34 @@ echo '<br clear="all"/>';
 echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
-	$comments = escapehtml($_POST['comments']);
-	$year = escapehtml($_POST['year']);
-	$month = escapehtml($_POST['month']);
-	$day = escapehtml($_POST['day']);
-	$fieldID = escapehtml($_POST['fieldID']);
-	$incorpTool = escapehtml($_POST['incorpTool']);
-	$pileID = escapehtml($_POST['pileID']);
-	$tperacre = escapehtml($_POST['tperacre']);
-	$incorpTiming = escapehtml($_POST['incorpTiming']);
-	$fieldSpread = escapehtml($_POST['fieldSpread']);
+   $comments = escapehtml($_POST['comments']);
+   $year = escapehtml($_POST['year']);
+   $month = escapehtml($_POST['month']);
+   $day = escapehtml($_POST['day']);
+   $fieldID = escapehtml($_POST['fieldID']);
+   $incorpTool = escapehtml($_POST['incorpTool']);
+   $pileID = escapehtml($_POST['pileID']);
+   $tperacre = escapehtml($_POST['tperacre']);
+   $incorpTiming = escapehtml($_POST['incorpTiming']);
+   $fieldSpread = escapehtml($_POST['fieldSpread']);
 
-	$sql = "update utilized_on set util_date='".$year."-".$month."-".$day."', fieldID='".$fieldID."', 
-		incorpTool='".$incorpTool."', pileId='".$pileID."', tperacre=".$tperacre.", 
-		incorpTiming='".$incorpTiming."', fieldSpread=".$fieldSpread.", comments='".$comments."'
-		WHERE id=".$id;
-   $result = mysql_query($sql);
+   $sql = "update utilized_on set util_date='".$year."-".$month."-".$day."', fieldID='".$fieldID.
+               "', incorpTool='".$incorpTool."', pileId='".$pileID."', tperacre=".$tperacre.
+               ", incorpTiming='".$incorpTiming."', fieldSpread=".$fieldSpread.", comments='".$comments.
+               "' WHERE id=".$id;
+    try {
+       $stmt = $dbcon->prepare($sql);
+       $stmt->execute();
+    } catch (PDOException $p) {
+       phpAlert('', $p);
+       die();
+    }
    
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=compostTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&fieldID=".encodeURIComponent($origFieldID).
-        "&pileID=".encodeURIComponent($origPileID).
-        "&tab=soil:soil_fert:soil_compost:compost_report\">";
-   }
+    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+    echo '<meta http-equiv="refresh" content="0;URL=compostTable.php?year='.$origYear.'&month='.$origMonth.
+      '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+      "&fieldID=".encodeURIComponent($origFieldID).
+      "&pileID=".encodeURIComponent($origPileID).
+      "&tab=soil:soil_fert:soil_compost:compost_report\">";
 }
 ?>

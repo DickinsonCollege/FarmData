@@ -28,8 +28,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/fieldID.php';
 <select id= "crop" name="crop" class="mobile-select">
 <option value="%" selected> All </option>
 <?php
-$result = mysql_query("SELECT crop from plant");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT crop from plant");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "<option value= '".$row['crop']."'>".$row['crop']."</option>";
 }
 ?>
@@ -41,8 +41,8 @@ while ($row =  mysql_fetch_array($result)){
 <select name="material" id="material" class="mobile-select">
 <option value = "%" selected> All </option>
 <?php
-$result = mysql_query("SELECT fertilizerName from fertilizerReference");
-while ($row =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT fertilizerName from fertilizerReference");
+while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[fertilizerName]\">$row[fertilizerName]</option>";
 }
 ?>

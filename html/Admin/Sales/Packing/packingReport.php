@@ -28,9 +28,10 @@ echo '</div>';
 <select name='crop_product' id='crop_product' class='mobile-select'>
 <option value='%'>All</option>
 <?php
-$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union SELECT product as crop FROM product where active=1) as tmp order by crop";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$sql = "SELECT crop FROM (select crop from plant WHERE active=1 union SELECT product as crop FROM product ".
+   "where active=1) as tmp order by crop";
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_NUM)) {
 	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
 }
 ?>
@@ -42,8 +43,8 @@ while ($row = mysql_fetch_array($result)) {
 <option value='%'>All</option>
 <?php
 $sql = "SELECT targetName FROM targets";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_NUM)) {
 	echo "<option value='".escapeHTML($row[0])."'>".$row[0]."</option>";
 }
 ?>

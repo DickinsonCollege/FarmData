@@ -1,31 +1,29 @@
 <?php 
 
 $sql = "select * from units";
-$result = mysql_query($sql);
-echo mysql_error();
+$result = $dbcon->query($sql);
 $conversion = array();
 $default_unit = array();
-while ($row = mysql_fetch_array($result)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $conversion[$row['crop']][$row['unit']] = $row['conversion'];
 }
 $sql = "select * from product";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $conversion[$row['product']][$row['unit']] = 1;
    $default_unit[$row['product']] = $row['unit'];
 }
 
 $sql = "select * from plant";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    $default_unit[$row['crop']] = $row['units'];
 }
 
 $sql = "select * from targets where active = 1 order by targetName";
 $targs = array();
-$resultt = mysql_query($sql);
-echo mysql_error();
-while ($rowt = mysql_fetch_array($resultt)) {
+$resultt = $dbcon->query($sql);
+while ($rowt = $resultt->fetch(PDO::FETCH_ASSOC)) {
    $targs[] = $rowt['targetName'];
 }
 

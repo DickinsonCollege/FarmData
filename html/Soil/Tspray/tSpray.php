@@ -132,46 +132,69 @@ $sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre, "
    .$_POST['year']."-".$_POST['month']."-".$_POST['day']."' , ".$numField." , ".
    $numMaterial." , ".$waterPerAcre." , '".$comSanitized.
    "' , '".$username. "', ".$_POST['status'].", '')";
-$rusultM=mysql_query($sqlM);
-echo mysql_error();
-$currentID= mysql_insert_id();
+try {
+   $resultM=$dbcon->prepare($sqlM);
+// $resultM->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   $resultM->execute();
+   $currentID= $dbcon->lastInsertId();
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
+}
 
 $fieldInd=1;
 $crop_array = JSON_decode($numCropRows);
-while($fieldInd<= $_POST['numField']){
-   $field = escapehtml($_POST['field'.$fieldInd]);
-   $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
-$crops = "";
-for ($i = 1; $i <= $crop_array[$fieldInd]; $i++) {
-   if ($crops != "") {
-      $crops .= "; ";
+$sqlF="INSERT INTO tSprayField VALUES(:id, :fld, :bed, :crops)";
+try {
+   $stmt = $dbcon->prepare($sqlF);
+   while($fieldInd<= $_POST['numField']){
+      $field = escapehtml($_POST['field'.$fieldInd]);
+      $bed = escapehtml($_POST['maxBed2'.$fieldInd]);
+      $crops = "";
+      for ($i = 1; $i <= $crop_array[$fieldInd]; $i++) {
+         if ($crops != "") {
+            $crops .= "; ";
+         }
+         $crops .= escapehtml($_POST['crop_'.$fieldInd.'_'.$i]);
+      }
+   //   $sqlF="INSERT INTO tSprayField VALUES(".$currentID." , '". $field."' , ".$bed.",'".$crops."')";
+      $stmt->bindParam(':id', $currentID, PDO::PARAM_INT);
+      $stmt->bindParam(':fld', $field, PDO::PARAM_STR);
+      $stmt->bindParam(':bed', $bed, PDO::PARAM_INT);
+      $stmt->bindParam(':crops', $crops, PDO::PARAM_STR);
+      $stmt->execute();
+      $fieldInd++;
    }
-   $crops .= escapehtml($_POST['crop_'.$fieldInd.'_'.$i]);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
 }
-   $sqlF="INSERT INTO tSprayField VALUES(".$currentID." , '". $field."' , ".$bed.",'".$crops."')";
-
-   mysql_query($sqlF);
-	echo mysql_error();
-   $fieldInd++;
-}
-
 
 $materialInd=1;
 
-while($materialInd<= $_POST['numMaterial']){
-   $material = escapehtml($_POST['material2'.$materialInd]);
-   $rate = escapehtml($_POST['rate2'.$materialInd]);
-   $total = escapehtml($_POST['actuarialTotal'.$materialInd]);
-   $sqlW="INSERT INTO tSprayWater VALUES(".$currentID." , '". $material."', ".
-      $rate." , ".$total."  );";
-   mysql_query($sqlW);
-   //echo $sqlW;
-	echo mysql_error();
-   $materialInd++;
-}
+$sqlW="INSERT INTO tSprayWater VALUES(:id, :mat, :rate, :total)";
+try {
+   $stmt = $dbcon->prepare($sqlW);
+   while($materialInd<= $_POST['numMaterial']){
+      $material = escapehtml($_POST['material2'.$materialInd]);
+      $rate = escapehtml($_POST['rate2'.$materialInd]);
+      $total = escapehtml($_POST['actuarialTotal'.$materialInd]);
+   //   $sqlW="INSERT INTO tSprayWater VALUES(".$currentID." , '". $material."', ".
+   //      $rate." , ".$total."  );";
+      $stmt->bindParam(':id', $currentID, PDO::PARAM_INT);
+      $stmt->bindParam(':mat', $material, PDO::PARAM_STR);
+      $stmt->bindParam(':rate', strval($rate), PDO::PARAM_STR);
+      $stmt->bindParam(':total', strval($total), PDO::PARAM_STR);
+      $success = $stmt->execute();
+      $materialInd++;
+   }
+} catch (PDOException $p) {
+   phpAlert('', $p);
+   die();
 }
 if(!empty($_POST['submit'])) {
    echo "<script> showAlert('Entered Data Succesfully!'); </script>";
+}
 }
 
 ?>

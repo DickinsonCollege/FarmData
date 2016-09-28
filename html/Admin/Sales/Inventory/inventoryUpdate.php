@@ -12,19 +12,24 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
       $editto = $_POST[edit] - $_GET[amount];
       $sql = "select conversion, default_unit from units where crop = '".$crop."' and unit = '".$unit."'";
       // echo "<script type='text/javascript'>alert(\"".$sql."\");</script>";
-      $result = mysql_query($sql);
-      if (mysql_num_rows($result) > 0) {
-         $convrow = mysql_fetch_array($result);
+      $result = $dbcon->query($sql);
+      if ($convrow = $result->fetch(PDO::FETCH_ASSOC)) {
          $conversion = $convrow['conversion'];
          $unit = $convrow['default_unit'];
          $editto = $editto / $conversion;
       }
       $sqlInsert = "Insert into correct (correctDate, crop_product, grade, amount, unit) values('".
          date('Y-m-d')."', '".$crop."', ".$_GET[gradeupdate].", ".$editto.", '".$unit."')";
-      mysql_query($sqlInsert) or die(mysql_error());
-      echo "Edited Data Successfully!";
+      try {
+         $stmt = $dbcon->prepare($sqlInsert);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not update inventory".$p->getMessage()."\");</script>";
+         die();
+      }
+      echo "<script>alert(\"Updated Inventory Successfully!\");</script>";
    } else {
-      echo "<script type='text/javascript'>alert('Please enter the amount you want to edit to');</script>";
+      echo "<script type='text/javascript'>alert('Please enter the amount you want to update to.');</script>";
    }
    echo "<meta http-equiv='refresh' content=\"0;URL=inventoryTable.php?crop_product=".
        encodeURIComponent($_GET[crop_product])."&grade=".$_GET[grade].

@@ -3,8 +3,12 @@ session_start();
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/escapehtml.php';
-$dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or die ("Connect Failed! :".mysql_error());
-mysql_select_db('wahlst_users');
+try {
+   $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass');
+   $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $d) {
+   die($d->getMessage());
+}
 ?>
 <form name='form' class="pure-form pure-form-aligned" method='post' action="<?php $_PHP_SELF ?>">
 <center>
@@ -13,12 +17,10 @@ mysql_select_db('wahlst_users');
 <div class="pure-control-group">
 <label for="user">Username:</label>
 <select name="userid" id="userid" onchange="update();">
-<option value=0 selected disabled>Username</option>
 <?php
 $sql="select username from users where dbase='".$_SESSION['db']."'";
-$result = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo '\n<option value="'.$row['username'].'">'.$row['username'].'</option>';
 }
 ?>
@@ -55,7 +57,7 @@ function update() {
    xmlhttp.open("GET", "getUserExt.php?user=" + encodeURIComponent(user), false);
    xmlhttp.send();
    var info = eval("(" + xmlhttp.responseText + ")");
-   DOCument.getElementById("active").selectedIndex = info['active'];
+   document.getElementById("active").selectedIndex = info['active'];
    document.getElementById("adminS").selectedIndex = info['admin'];
 }
 </script>
@@ -75,6 +77,9 @@ function update() {
 
 <br clear="all">
 <br clear="all">
+<script type="text/javascript">
+update();
+</script>
 <input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 <?php
 if (!empty($_POST['submit'])){
@@ -97,28 +102,30 @@ if (!empty($_POST['submit'])){
       }
       if ($runupdate) {
          $sql = "select * from users where username = '".$userid."'";
-         $result = mysql_query($sql);
+         $result = $dbcon->query($sql);
          if ($result) {
             $ct = 0;
-            while ($row = mysql_fetch_array($result)) {
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                $ct = $ct + 1;
             }
             if ($ct == 1) {
-               $result = mysql_query($update);
-               if (!$result) {
-                  echo "<script>alert(\"Could not update user: Please try again!\\n".mysql_error()."\");</script> \n";
-               } else {
-                  echo "<script>showAlert(\"Updated User successfully!\");</script> \n";
+               try {
+                  $stmt = $dbcon->prepare($update);
+                  $stmt->execute();
+               } catch (PDOException $p) {
+                  phpAlert('Could not update user', $p);
+                  die();
                }
+               echo "<script>showAlert(\"Updated User Successfully!\");</script> \n";
             } else {
                echo "<script>alert(\"No such user: ".$userid."!\");</script>";
             }
          } else {
-            echo "<script>alert(\"Could not connect to user database!\\n".mysql_error()."\");</script>";
+            echo "<script>alert(\"Could not connect to user database!\");</script>";
          }
       }
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

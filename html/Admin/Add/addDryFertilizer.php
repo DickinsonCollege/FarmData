@@ -13,21 +13,36 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <input class="textbox3 mobile-input" type="text" name="name" id="name">
 </div>
 <br clear="all"/>
-<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add">
+<script>
+function show_confirm() {
+   var i = document.getElementById("name").value;
+   if (checkEmpty(i)) {
+      alert("Please Enter Fertilizer Name");
+      return false;
+   }
+   var con="Fertilizer Name: "+ i+ "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
+}
+</script>
+<input class="submitbutton pure-button wide" type="submit" name="add" value="Add" id="add"
+   onclick = "return show_confirm()";>
 </form>
 <?php
 if (isset($_POST['add'])) {
    $name = escapehtml(strtoupper($_POST['name']));
    if (!empty($name)) {
       $sql="insert into fertilizerReference(fertilizerName) values ('".$name."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add Dry Fertilizer: Please try again!\\n".mysql_error()."\");</script>";
-      } else {
-         echo "<script>showAlert('Added Dry Fertilizer successfully!');</script> ";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not add Dry Fertilizer: Please try again!\\n".$p->getMessage().
+            "\");</script>";
+         die();
       }
+      echo "<script>showAlert('Added Dry Fertilizer successfully!');</script> ";
    } else {
-      echo  "<script>alert('Enter all data! ".mysql_error()."');</script>";
+      echo  "<script>alert('Enter all data! ');</script>";
    }
 }
 ?>

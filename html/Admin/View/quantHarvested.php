@@ -20,20 +20,22 @@
       $tday = $_GET['tday'];
       $crop = escapehtml($_GET['crop']);
       // find all the fields that are harvested with this particular crop and date range
-      $sql = "select distinct fieldID from harvested where crop='".$crop."' and hardate between '".$year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by fieldID";
-      $sqldata = mysql_query($sql);
+      $sql = "select distinct fieldID from harvested where crop='".$crop."' and hardate between '".
+         $year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by fieldID";
+      $sqldata = $dbcon->query($sql);
       $header = array("date");
       $count = 1;
-      while($row = mysql_fetch_array($sqldata)){
+      while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
          $header[$count] = $row['fieldID'];
          $count++;
       }
       // find all the date which a particular crop is harvested.
-      $sql = "select distinct hardate from harvested where crop='".$crop."' and hardate between '".$year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by hardate";
-      $sqldata = mysql_query($sql);      
+      $sql = "select distinct hardate from harvested where crop='".$crop."' and hardate between '".
+         $year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by hardate";
+      $sqldata = $dbcon->query($sql);      
       $dateArray = array();      
       $count = 0;
-      while($row = mysql_fetch_array($sqldata)){
+      while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
          $dateArray[$count] = $row['hardate'];
          $count++;
       }
@@ -46,15 +48,16 @@
       echo '<center><h2>Quantity harvested in each field of '.$crop.' between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h2></center>';
       $count = 0;
       for ($count; $count < count($dateArray); $count++){
-         $sql= "select fieldID, sum(yield) from harvested where crop='".$crop."' and hardate='".$dateArray[$count]."' group by fieldID";
-         $sqldata = mysql_query($sql);
+         $sql= "select fieldID, sum(yield) from harvested where crop='".$crop."' and hardate='".
+            $dateArray[$count]."' group by fieldID";
+         $sqldata = $dbcon->query($sql);
          $rowdata[0] = substr($dateArray[$count], 2, 2).'/'.substr($dateArray[$count], 5,2).'/'.substr($dateArray[$count],8,2);
          $fill0 = 1;
          for ($fill0; $fill0 <= count($header)-1;$fill0++){
             $rowdata[$fill0] = 0;
          }
          //$rowdata[0] = $dateArray[$count];
-         while($row = mysql_fetch_array($sqldata)){
+         while($row = $sqldata->fetch(PDO::FETCH_ASSOC)){
             $countCheck = 1;
             for ($countCheck; $countCheck <= count($header)-1;$countCheck++){
                if ($row['fieldID']==$header[$countCheck]){
@@ -66,8 +69,8 @@
       }   
 //print_r($array);
       // find the unit of the chart
-      $sql = mysql_query("select distinct unit from harvested where crop='".$crop."'");
-      $row = mysql_fetch_array($sql);
+      $sql = $dbcon->query("select distinct unit from harvested where crop='".$crop."'");
+      $row = $sql->fetch(PDO::FETCH_ASSOC);
       echo"<input type='hidden' id='unit' value='".$row['unit']."'/>";
       $json = json_encode($array);
    ?>

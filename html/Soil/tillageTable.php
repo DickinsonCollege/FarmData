@@ -8,8 +8,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if(isset($_GET['id'])){
       $sqlDel="DELETE FROM tillage WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PODException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
 
    $year = $_GET['year'];
@@ -20,10 +25,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $tcurDay = $_GET['tday'];
    $fieldID = escapehtml($_GET['fieldID']);
    if(!empty($_GET['fieldID'])) {
-      $sql = "Select id, tractorName, fieldID, tilldate, tool, num_passes, comment, minutes,  percent_filled from tillage where tilldate between '".
+      $sql = "Select id, tractorName, fieldID, tilldate, tool, num_passes, comment, minutes, percent_filled ".
+         " from tillage where tilldate between '".
          $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
          $tcurDay."' and fieldID like '".$fieldID."'  order by tilldate";
-      $sqldata = mysql_query($sql) or die(mysql_error());
+      $sqldata = $dbcon->query($sql);
       echo "<center>";
       if( $fieldID == "%") {
          echo "<h2> Tillage Report for All Fields </h2>";
@@ -37,7 +43,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
         echo "<th>Edit</th><th>Delete</th>";
      }
      echo "</tr></thead>";
-   while($row = mysql_fetch_array($sqldata)) {
+   while($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo "<tr><td>";
    echo $row['tractorName'];
    echo "</td><td>";
@@ -83,11 +89,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "</table>";
    echo '<br clear="all"/>';
    echo '<div class="pure-form pure-form-aligned">';
-   $total="Select sum(num_passes) as total, sum(minutes) as total2, avg(num_passes) as average, avg(minutes) as average2 from tillage where tilldate between '".
+   $total="Select sum(num_passes) as total, sum(minutes) as total2, avg(num_passes) as average, ".
+      "avg(minutes) as average2 from tillage where tilldate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and fieldID like '".$fieldID."'" ;
-   $result=mysql_query($total) or die(mysql_error());
-   while ($row1 = mysql_fetch_array($result)  ) {
+   $result = $dbcon->query($total);
+   while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<div class="pure-control-group">';
         echo "<label for='total'>Total Number of Passes:</label> ";
    echo "<input readonly class='textbox2 mobile-input' type ='text' value=".$row1['total'].">";

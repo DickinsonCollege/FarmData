@@ -8,8 +8,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM fertilizer WHERE id=".$_GET['id'];
-      mysql_query($sqlDel) or die(mysql_error());
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
    $year = $_GET['year'];
    $month = $_GET['month'];
@@ -24,7 +29,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       "from fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and crops like '%".
       $crops."%' and fertilizer like '".$material."' order by inputDate";
-   $sqldata = mysql_query($sql) or die(mysql_error());
+   $sqldata = $dbcon->query($sql);
    if( $fieldID == "%") {
       $fld = "All Fields";
    } else {
@@ -51,7 +56,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
-   while ($row = mysql_fetch_array($sqldata)) {
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['inputDate'];
       echo "</td><td>";
@@ -95,8 +100,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          "-".$day."' AND '".$tcurYear."-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID.
          "' and crops like '".  $crops."' and fertilizer like '".$material."'";
 
-      $result=mysql_query($total) or die(mysql_error());
-      while ($row1 = mysql_fetch_array($result)  ) {
+      $result=$dbcon->query($total);
+      while ($row1 = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<div class="pure-control-group">';
         echo "<label for='total'>Total ".$material." Applied:</label> ";
 	echo "<input readonly class='textbox2' type ='text' value=".

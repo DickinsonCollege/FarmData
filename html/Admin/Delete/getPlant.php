@@ -2,8 +2,8 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $crop = escapehtml($_GET['crop']);
 $sql = "select units, units_per_case, dh_units, active from plant where crop='".$crop."'";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = $dbcon->query($sql);
+$row = $result->fetch(PDO::FETCH_ASSOC);
 
 $plantarray = array();
 $plantarray[0] = $row['units'];

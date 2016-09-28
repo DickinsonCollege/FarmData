@@ -13,11 +13,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 </div>
 <script>
 function show_confirm() {
-        var i = document.getElementById("name").value;
-        var con="Compost Unit: "+ i+ "\n";
-
-
-return confirm("Confirm Entry: " +"\n"+con);
+   var i = document.getElementById("name").value;
+   if (checkEmpty(i)) {
+      alert("Enter Compost Unit");
+      return false;
+   }
+   var con="Compost Unit: "+ i+ "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 <br clear="all"/>
@@ -28,14 +30,16 @@ if (!empty($_POST['done'])) {
    if(!empty($_POST['name'])) {
       $name = escapehtml(strtoupper($_POST['name']));
       $sql="Insert into compost_unit(unit) values ('".$name."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add unit: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Added Unit Successfully!\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert("Could not add compost unit", $p);
+         die();
       }
+      echo "<script>showAlert(\"Added Unit Successfully!\");</script> \n";
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\");</script> \n";
    }
 }
 ?>

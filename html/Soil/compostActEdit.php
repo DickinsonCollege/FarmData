@@ -18,8 +18,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id, year(actDate) as yr, month(actDate) as mth, day(actDate) as dy, actDate, pileID,
     activity, comments FROM compost_activity where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $actDate = $row['actDate'];
 $pileID = $row['pileID'];
@@ -65,8 +65,8 @@ echo "<label>Compost Pile ID:</label> ";
 echo "<select name='pileID' id='pileID'>";
 echo "<option value=\"".$pileID."\" selected>".$pileID."</selected>";
 $sql = "select pileID from compost_pile";
-$result = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
 }
 echo "</select></div>";
@@ -76,8 +76,8 @@ echo '<label>Compost Activity:</label> ';
 echo '<select name="act" id="act">';
 echo '<option value="'.$act.'" selected>'.$act.' </option>';
 $sql = 'select activityName from compost_activities';
-$sqldata = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['activityName'].'">'.$row['activityName'].' </option>';
 }
 echo '</select></div>';
@@ -102,18 +102,20 @@ if ($_POST['submit']) {
    $pileID = escapehtml($_POST['pileID']);
    $act = escapehtml($_POST['act']);
 
-   echo $sql = "update compost_activity set actDate='".$year."-".$month."-".$day.
+   $sql = "update compost_activity set actDate='".$year."-".$month."-".$day.
       "', activity='".$act."', pileId='".$pileID."', comments='".$comments."' WHERE id=".$id;
-   $result = mysql_query($sql);
-   
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=compostTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay."&pileID=".
-        encodeURIComponent($origPileID)."&fieldID=".encodeURIComponent($origFieldID).
-        "&tab=soil:soil_fert:soil_compost:compost_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=compostTable.php?year='.$origYear.'&month='.$origMonth.
+     '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay."&pileID=".
+     encodeURIComponent($origPileID)."&fieldID=".encodeURIComponent($origFieldID).
+     "&tab=soil:soil_fert:soil_compost:compost_report\">";
 }
 ?>

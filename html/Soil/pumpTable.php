@@ -19,10 +19,7 @@ $end = $tcurYear."-".$tcurMonth."-".$tcurDay;
 $sql="select pumpDate, run_time/60 as run_time, driveHZ, pump_kwh, solar_kwh, comment ".
    " from pump_master where pumpDate between '". 
    $start."' AND '".$end."' order by pumpDate";
-$result=mysql_query($sql);
-if(!$result){
-    echo "<script>alert(\"Could not Generate Pump Log Report: Please try again!\\n".mysql_error()."\");</script>\n";
-}
+$result=$dbcon->query($sql);
 echo '<input type="hidden" value="'.escapehtml($sql).'" name = "query" id="query">';
 echo "<center>";
 echo "<h2> Pump Log Report from ".$start." to ".$end."</h2>";
@@ -34,9 +31,8 @@ if ($farm == "dfarm") {
    echo "<th>Solar KWH</th>";
 }
 echo "<th>&nbsp;&nbsp;&nbsp;&nbsp;Comment</th></tr></thead>";
-while ( $row = mysql_fetch_array($result)) {
+while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
-        //echo str_replace("-","/",$row['sDate']);
 	echo $row['pumpDate'];
         echo "</td><td>";
         echo number_format((float) $row['run_time'], 2, '.', '');

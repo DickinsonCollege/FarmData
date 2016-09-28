@@ -49,10 +49,6 @@ function populate() {
       '<label for="admin">Change Active Status:</label> ' +
       '<select name="active" id="active">';
 
-/*
-"<div class=\"styled-select\" id=\"activediv\"> <select name=\"active\" id=\"active\" class='mobile-select'>";
-console.log(active);
-*/
    if (active == "1") {
       newActive += "<option selected value='1'>Yes</option><option value='0'>No</option>";
    }  else {
@@ -71,13 +67,12 @@ console.log(active);
 <div class="pure-control-group">
 <label for="product">Product:</label>
 <select name='product' id='product' class='mobile-select' onchange='populate();'>
-<option disabled selected>Product</option>
 <?php
-$result = mysql_query("SELECT product from product");
-        while ($row1 =  mysql_fetch_array($result)){
-                echo "\n<option value= \"$row1[product]\">$row1[product]</option>";
-        }
-        echo "</select></div>";
+$result = $dbcon->query("SELECT product from product");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+   echo "\n<option value= \"$row1[product]\">$row1[product]</option>";
+}
+echo "</select></div>";
 ?>
 
 <div class="pure-control-group" id="renamediv">
@@ -110,7 +105,9 @@ if ($_SESSION['sales_invoice']) {
 </select>
 </div>
 
-
+<script type="text/javascript">
+populate();
+</script>
  
 <br clear="all"/>
 <input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
@@ -121,18 +118,20 @@ if(!empty($_POST['submit'])) {
    $rename = escapehtml(strtoupper($_POST['rename']));
    $unit = escapehtml($_POST['newunit']);
    $active = $_POST['active'];
-      $dh_units = escapehtml($_POST['dh_units']);
-      $units_per_case = escapehtml($_POST['units_per_case']);
-      $query = "UPDATE product SET product=upper('".$rename."'), dh_units=upper('".$dh_units."'), units_per_case=".
-       $units_per_case.", active= ".$active.", unit =upper('".$unit. "') WHERE product='".$product."'";
-      $sql = mysql_query($query) or die(mysql_error());
-      if (!$sql) {
-         echo '<script> alert("Could not edit product, please try again"); </script>';
-      } else {
-         echo '<script> alert("Changed product successfully"); </script>';
-      }
+   $dh_units = escapehtml($_POST['dh_units']);
+   $units_per_case = escapehtml($_POST['units_per_case']);
+   $query = "UPDATE product SET product=upper('".$rename."'), dh_units=upper('".$dh_units.
+      "'), units_per_case=".  $units_per_case.", active= ".$active.", unit =upper('".$unit.
+      "') WHERE product='".$product."'";
+   try {
+      $stmt = $dbcon->prepare($query);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not update product".$p->getMessage()."\");</script>";
+      die();
+   }
+   echo '<script> alert("Changed product successfully"); </script>';
 }
-
 ?>
 </form>
 </body>

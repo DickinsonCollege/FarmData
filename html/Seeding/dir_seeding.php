@@ -77,6 +77,12 @@ if ($_SESSION['seed_order']) {
   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
   if ($_SESSION['labor']) {
      echo '
+        var wk = document.getElementById("numW").value;
+        if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+           showError("Enter a valid number of workers!");
+           return false;
+        }
+   con = con+"Number of workers: " + wk + "<br>";
         var tme = document.getElementById("time").value;
    var unit = document.getElementById("timeUnit").value;
         if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
@@ -123,8 +129,8 @@ if (!isset($field)) {
    echo 'selected';
 }
 echo '> Field Name</option>';
-$result=mysql_query("Select fieldID from field_GH where active = 1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fieldID from field_GH where active = 1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   $fieldID = $row1['fieldID'];
   echo "\n<option value= \"".$fieldID."\"";
   if (isset($field) && $field == $fieldID) {
@@ -142,8 +148,8 @@ while ($row1 =  mysql_fetch_array($result)){
 echo '<select name="cropButton" id="cropButton" class="mobile-select">';
 echo '<option disabled selected value="0">Crop</option>';
 $sql = "select distinct crop from plant where active=1";
-$res = mysql_query($sql);
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
   echo '<option value="'.$row['crop'].'">'.$row['crop'].'</option>';
 }
 ?>
@@ -280,7 +286,7 @@ name ="bedftv" id="bedftv" value ="0">
 <option value = 1 selected>1</option>
 <?php
 $cons=2;
-while ($cons<8) {
+while ($cons<10) {
     if ($cons != 6) {
    echo "\n<option value =\"$cons\">$cons</option>";
     }
@@ -364,8 +370,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
    if (!$_SESSION['bedft']) {
       $sql = "select length from field_GH where fieldID = '".$fld."'";
-      $result = mysql_query($sql); 
-      $row= mysql_fetch_array($result);
+      $result = $dbcon->query($sql); 
+      $row= $result->fetch(PDO::FETCH_ASSOC);
       $len = $row['length'];
       $bedftv = $bedftv * $len;
    } 
@@ -375,9 +381,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
    if ($_SESSION['seed_order']) {
       $sql = "select seedsGram, seedsRowFt from seedInfo where crop = '".$crop."'";
-      $res = mysql_query($sql);
+      $res = $dbcon->query($sql);
       $seedInfo = true;
-      if ($row = mysql_fetch_array($res)) {
+      if ($row = $res->fetch(PDO::FETCH_ASSOC)) {
          $seedsGram = $row['seedsGram'];
          $seedsRowFt = $row['seedsRowFt'];
       } else {
@@ -400,9 +406,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                $comSanitized .= "<br>";
             }
             $var = "select variety from seedInventory where code ='".$code."' and crop = '".$crop."'";
-            $vr = mysql_query($var);
-            echo mysql_error();
-            if ($vrow = mysql_fetch_array($vr)) {
+            $vr = $dbcon->query($var);
+            if ($vrow = $vr->fetch(PDO::FETCH_ASSOC)) {
                $variety = $vrow['variety'];
             } else {
                $variety = "No Variety";
@@ -417,23 +422,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                $grams = $seedsPlanted / $seedsGram;
                $dec = "update seedInventory set inInventory = inInventory - ".$grams." where crop = '".
                   $crop."' and code = '".$code."'";
-               $decres = mysql_query($dec);
-               echo mysql_error();
+               try {
+                  $res = $dbcon->prepare($dec);
+                  $res->execute();
+               } catch (PDOException $p) {
+                  phpAlert('Error updating seed inventory', $p);
+               }
             }
          }
      }
    }
 
-$sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen)
-   VALUES
-   ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
-      $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."', ".$gen.")";
-   $result = mysql_query($sql);
-   if(!$result){ 
-       echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-   }   
+   $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen) VALUES".
+      " ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
+         $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."', ".$gen.")";
+   try {
+      $result = $dbcon->prepare($sql);
+      $result->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not enter seeding data', $p);
+      die();
+   }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   $result->closeCursor();
 } 
 ?>
 

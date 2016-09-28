@@ -42,16 +42,35 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <script type="text/javascript">
 function show_confirm() {
    var i = document.getElementById("cover").value;
+   if (checkEmpty(i)) {
+      alert("Please Enter Cover Crop Name");
+      return false;
+   }
    var con="Cover Crop Species: "+ i+ "\n";
-   var i = document.getElementById("min");
-   var strUser3 = i.value;
-   con=con+"Drill Rate Minimum: "+ strUser3+ "\n";
+   var i = document.getElementById("min").value;
+   if (checkEmpty(i) || i < 0 || !isFinite(i)) {
+      alert("Please Enter Valid Drill Rate Minimum");
+      return false;
+   }
+   con=con+"Drill Rate Minimum: "+ i + "\n";
    var i = document.getElementById("max").value;
+   if (checkEmpty(i) || i < 0 || !isFinite(i)) {
+      alert("Please Enter Valid Drill Rate Maximum");
+      return false;
+   }
    con=con+"Drill Rate Maximum:  "+ i+ "\n";
    var i = document.getElementById("bmin").value;
-   con=con+"Broadcaster Rate Minimum:  "+ i+ "\n";
+   if (checkEmpty(i) || i < 0 || !isFinite(i)) {
+      alert("Please Enter Valid Broadcast Rate Minimum");
+      return false;
+   }
+   con=con+"Broadcast Rate Minimum:  "+ i+ "\n";
    var i = document.getElementById("bmax").value;
-   con=con+"Broadcaster Rate Maximum:  "+ i+ "\n";
+   if (checkEmpty(i) || i < 0 || !isFinite(i)) {
+      alert("Please Enter Valid Broadcast Rate Maximum");
+      return false;
+   }
+   con=con+"Broadcast Rate Maximum:  "+ i+ "\n";
    var i = document.getElementById("legume").checked;
    con=con+"Legume:  "+ i+ "\n";
    return confirm("Confirm Entry: " +"\n"+con);
@@ -75,20 +94,26 @@ if (!empty($_POST['done'])) {
      (float)($bmin) > 0 && !empty($bmin) && (float)($bmax) > 0 && !empty($bmax)) {
       $sql="Insert into coverCrop(crop,drillRateMin, drillRateMax, brcstRateMin, brcstRateMax, legume) ".
          "values ('".$cover."','".$min."','".$max."','".$bmin."','".$bmax."','".$legume."')";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add cover crop: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Added Cover Crop Successfully!\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not add Cover Crop: Please try again!\\n".$p->getMessage().
+            "\");</script>";
+         die();
       }
+      echo "<script>showAlert(\"Added Cover Crop Successfully!\");</script> \n";
       $sql = "insert into coverVariety values('".$cover."', '".$cover."')";
-      $result = mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add cover crop variety: Please try again!\\n".
-              mysql_error()."\");</script>\n";
-      } 
-   }else {
-      echo    "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not add Cover Crop Variety".$p->getMessage()."\");</script>";
+         die();
+      }
+      echo "<script>showAlert('Added Cover Crop successfully!');</script> ";
+   } else {
+      echo    "<script>alert(\"Enter all data!\\n\");</script> \n";
    }
 }
 ?>

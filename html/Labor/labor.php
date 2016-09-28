@@ -88,7 +88,6 @@ function show_confirm() {
         var msg = "Confirm Entry:"+"<br>"+con;
 
 	// return confirm("Confirm Entry:"+"<br>"+con);
-console.log(msg);
         showConfirm(msg, 'laborform');
 }
 </script>
@@ -111,9 +110,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <option value="N/A">N/A</option>
 <?php
    $sql = 'select fieldID from field_GH where active = 1';
-   $result = mysql_query($sql);
-   echo mysql_error();
-   while ($row = mysql_fetch_array($result)) {
+   $result = $dbcon->query($sql);
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].'</option>';
    }
 ?>
@@ -249,8 +247,8 @@ addCrop();
 <select class="mobile-select" name="task" id="task">
 <option disabled value = "0" selected>  TASK </option>
 <?php
-$result=mysql_query("Select task from task");
-while ($row1 =  mysql_fetch_array($result)){  
+$result=$dbcon->query("Select task from task");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){  
    echo "\n<option value= \"$row1[task]\">".$row1[task]."</option>";
 }
 ?>
@@ -316,21 +314,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $comments = escapehtml( $_POST['comments']);
    $user =escapehtml( $_SESSION['username']);
    $numCrps = $_POST['numCropsInp'];
-   $success = true;
-   for ($i=1; $i <= $numCrps; $i++) {
-      $crop = escapehtml($_POST['crop'.$i]);
-      $perc = escapehtml($_POST['perc'.$i]);
-      $sql = "INSERT INTO labor(username,ldate,crop,fieldID,task,hours, comments) VALUES('".
-        $user."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."','".
-        $task."',".(($perc * $totalHours)/100).",'".$comments."')";
-      $value = mysql_query($sql);
-      if(!$value){
-          echo "<script>showError(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-          $success = false;
+   $sql = "INSERT INTO labor(username,ldate,crop,fieldID,task,hours, comments) VALUES('".
+      $user."','".$year.'-'.$month.'-'.$day."', :crop,'".$fieldID."','".
+      $task."', :perc, '".$comments."')";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      for ($i=1; $i <= $numCrps; $i++) {
+         $crop = escapehtml($_POST['crop'.$i]);
+         $perc = escapehtml($_POST['perc'.$i]);
+         $perc = ($perc * $totalHours)/100;
+         $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+         $stmt->bindParam(':perc', $perc, PDO::PARAM_INT);
+         $stmt->execute();
+/*
+         $sql = "INSERT INTO labor(username,ldate,crop,fieldID,task,hours, comments) VALUES('".
+           $user."','".$year.'-'.$month.'-'.$day."','".$crop."','".$fieldID."','".
+           $task."',".(($perc * $totalHours)/100).",'".$comments."')";
+*/
       }
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
-   if ($success) {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-   }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>

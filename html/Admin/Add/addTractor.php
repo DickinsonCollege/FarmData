@@ -18,12 +18,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 <script>
 function show_confirm() {
-        var i = document.getElementById("name").value;
-        var con="Tractor Name : "+ i+ "\n";
-
-
-return confirm("Confirm Entry: " +"\n"+con);
-
+   var i = document.getElementById("name").value;
+   if (checkEmpty(i)) {
+      alert("Enter Tractor Name");
+      return false;
+   }
+   var con="Tractor Name: "+ i+ "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 <input onclick= "return show_confirm()";  class="submitbutton pure-button wide" type="submit" name="done" value="Add">
@@ -32,15 +33,18 @@ $active = 1;
 if (!empty($_POST['done'])) {
    if(!empty($_POST['name'])) {
       $name = escapehtml(strtoupper($_POST['name']));
-      $sql="Insert into tractor(tractorName,active) values ('".$name."','".$active."') on duplicate key update active=1";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add tractor: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Added Tractor Successfully!\");</script> \n";
+      $sql="Insert into tractor(tractorName,active) values ('".$name."','".$active.
+         "') on duplicate key update active=1";
+      try {
+         $stmt = $dbcon->query($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
       }
+      echo "<script>showAlert(\"Added Tractor Successfully!\");</script> \n";
    } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+      echo "<script>alert(\"Enter all data!\\n\");</script> \n";
    }
 }
 ?>

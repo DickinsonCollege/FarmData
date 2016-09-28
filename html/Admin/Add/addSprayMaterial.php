@@ -8,55 +8,55 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 <script type="text/javascript">
 function show_confirm() {
-	var spraymaterial = document.getElementById('spraymaterial').value;
-	var trateunits = document.getElementById('trateunits').value;
-	var tratemin = document.getElementById('tratemin').value;
-	var tratemax = document.getElementById('tratemax').value;
-	var tratedefault = document.getElementById('tratedefault').value;
-	var brateunits = document.getElementById('brateunits').value;
-	var bratemin = document.getElementById('bratemin').value;
-	var bratemax = document.getElementById('bratemax').value;
-	var bratedefault = document.getElementById('bratedefault').value;
-	var rei = document.getElementById('rei').value;
-	var ppe = document.getElementById('ppe').value;
-	// var active = document.getElementById('active').value;
+   var spraymaterial = document.getElementById('spraymaterial').value;
+   var trateunits = document.getElementById('trateunits').value;
+   var tratemin = document.getElementById('tratemin').value;
+   var tratemax = document.getElementById('tratemax').value;
+   var tratedefault = document.getElementById('tratedefault').value;
+   var brateunits = document.getElementById('brateunits').value;
+   var bratemin = document.getElementById('bratemin').value;
+   var bratemax = document.getElementById('bratemax').value;
+   var bratedefault = document.getElementById('bratedefault').value;
+   var rei = document.getElementById('rei').value;
+   var ppe = document.getElementById('ppe').value;
+   // var active = document.getElementById('active').value;
 
-	if (spraymaterial ===  "") {
-		alert("Enter a Spray Material Name!");
-		return false;
-	} else if (trateunits === "") {
-		alert("Enter a Tractor Rate Unit!");
-		return false;
-	} else if (checkEmpty(tratemin) || !isFinite(tratemin) || tratemin <= 0) {
-		alert("Enter a valid Minimum Tractor Rate!");
-		return false;
-	} else if (checkEmpty(tratemax) || !isFinite(tratemax) || tratemax <= 0) {
-		alert("Enter a valid Maximum Tractor Rate!");
-		return false;
-	} else if (checkEmpty(tratedefault) || !isFinite(tratedefault) || tratedefault <= 0) {
-		alert("Enter a valid Default Tractor Rate!");
-		return false;
-	} else if (brateunits === "") {
-		alert("Enter a Backpack Rate Unit!");
-		return false;
-	} else if (checkEmpty(bratemin) || !isFinite(bratemin) || bratemin <= 0) {
-		alert("Enter a valid Minimum Backpack Rate!");
-		return false;
-	} else if (checkEmpty(bratemax) || !isFinite(bratemax) || bratemax <= 0) {
-		alert("Enter a valid Maximum Backpack Rate!");
-		return false;
-	} else if (checkEmpty(bratedefault) || !isFinite(bratedefault) || bratedefault <= 0) {
-		alert("Enter a valid Default Backpack Rate!");
-		return false;
-	} else if (checkEmpty(rei)) {
-		alert("Enter a valid Restricted Entry Interval!");
-		return false;
-	} else if (ppe === "") {
-		alert("Enter Personal Protection Equipment!");
-		return false;
-	} else {
-		return true;
-	}
+   if (spraymaterial ===  "") {
+      alert("Enter a Spray Material Name!");
+      return false;
+   } else if (trateunits === "") {
+      alert("Enter a Tractor Rate Unit!");
+      return false;
+   } else if (checkEmpty(tratemin) || !isFinite(tratemin) || tratemin <= 0) {
+      alert("Enter a valid Minimum Tractor Rate!");
+      return false;
+   } else if (checkEmpty(tratemax) || !isFinite(tratemax) || tratemax <= 0) {
+      alert("Enter a valid Maximum Tractor Rate!");
+      return false;
+   } else if (checkEmpty(tratedefault) || !isFinite(tratedefault) || tratedefault <= 0) {
+      alert("Enter a valid Default Tractor Rate!");
+      return false;
+   } else if (brateunits === "") {
+      alert("Enter a Backpack Rate Unit!");
+      return false;
+   } else if (checkEmpty(bratemin) || !isFinite(bratemin) || bratemin <= 0) {
+      alert("Enter a valid Minimum Backpack Rate!");
+      return false;
+   } else if (checkEmpty(bratemax) || !isFinite(bratemax) || bratemax <= 0) {
+      alert("Enter a valid Maximum Backpack Rate!");
+      return false;
+   } else if (checkEmpty(bratedefault) || !isFinite(bratedefault) || bratedefault <= 0) {
+      alert("Enter a valid Default Backpack Rate!");
+      return false;
+   } else if (checkEmpty(rei)) {
+      alert("Enter a valid Restricted Entry Interval!");
+      return false;
+   } else if (ppe === "") {
+      alert("Enter Personal Protection Equipment!");
+      return false;
+   } else {
+      return true;
+   }
 }
 </script>
 
@@ -137,34 +137,36 @@ function show_confirm() {
 <br clear="all"/>
 <?php
 if (isset($_POST['add'])) {
-	$spraymaterial = escapehtml(strtoupper($_POST['spraymaterial']));
-	$trateunits = escapehtml(strtoupper($_POST['trateunits']));
-	$tratemin = escapehtml($_POST['tratemin']);
-	$tratemax = escapehtml($_POST['tratemax']);
-	$tratedefault = escapehtml($_POST['tratedefault']);
-	$brateunits = escapehtml(strtoupper($_POST['brateunits']));
-	$bratemin = escapehtml($_POST['bratemin']);
-	$bratemax = escapehtml($_POST['bratemax']);
-	$bratedefault = escapehtml($_POST['bratedefault']);
-	$rei = escapehtml($_POST['rei']);
-	$ppe = escapehtml($_POST['ppe']);
-	// $active = escapehtml($_POST['active']);
-	$active = 1;
+   $spraymaterial = escapehtml(strtoupper($_POST['spraymaterial']));
+   $trateunits = escapehtml(strtoupper($_POST['trateunits']));
+   $tratemin = escapehtml($_POST['tratemin']);
+   $tratemax = escapehtml($_POST['tratemax']);
+   $tratedefault = escapehtml($_POST['tratedefault']);
+   $brateunits = escapehtml(strtoupper($_POST['brateunits']));
+   $bratemin = escapehtml($_POST['bratemin']);
+   $bratemax = escapehtml($_POST['bratemax']);
+   $bratedefault = escapehtml($_POST['bratedefault']);
+   $rei = escapehtml($_POST['rei']);
+   $ppe = escapehtml($_POST['ppe']);
+   // $active = escapehtml($_POST['active']);
+   $active = 1;
 
    $sql="INSERT into tSprayMaterials
-		(sprayMaterial, TRateUnits, TRateMin, TRateMax, TRateDefault, 
-		BRateUnits, BRateMin, BRateMax, BRateDefault, REI_HRS, PPE, active)
-		VALUES 
-		('".$spraymaterial."', 
-		'".$trateunits."', ".$tratemin.", ".$tratemax.", ".$tratedefault.", 
-		'".$brateunits."', ".$bratemin.", ".$bratemax.", ".$bratedefault.", 
-		'".$rei."', '".$ppe."', ".$active.")";
- 
-	$result = mysql_query($sql);
-   if (!$result) {
-      echo "<script>alert(\"Could not add spray material: Please try again!\\n".mysql_error()."\");</script> \n";
-   } else {
-      echo "<script>showAlert(\"Added spray material successfully!\");</script> \n";
+      (sprayMaterial, TRateUnits, TRateMin, TRateMax, TRateDefault, 
+      BRateUnits, BRateMin, BRateMax, BRateDefault, REI_HRS, PPE, active)
+      VALUES 
+      ('".$spraymaterial."', 
+      '".$trateunits."', ".$tratemin.", ".$tratemax.", ".$tratedefault.", 
+      '".$brateunits."', ".$bratemin.", ".$bratemax.", ".$bratedefault.", 
+      '".$rei."', '".$ppe."', ".$active.")";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      echo "<script>alert(\"Could not add spray material: Please try again!\\n".$p->getMessage().
+      "\");</script>";
+      die();
    }
+   echo "<script>showAlert(\"Added spray material successfully!\");</script> \n";
 }
 

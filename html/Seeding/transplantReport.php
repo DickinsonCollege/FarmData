@@ -26,8 +26,8 @@ echo "</div>";
 <select name="transferredCrop" class='mobile-select'>
 <option value = "%"> All </option>
 <?php
-$result = mysql_query("SELECT distinct crop from transferred_to");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct crop from transferred_to");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
 }
 ?>
@@ -38,8 +38,8 @@ while ($row1 =  mysql_fetch_array($result)){
 <select name='fieldID' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
-$result = mysql_query("SELECT distinct fieldID from transferred_to");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct fieldID from transferred_to");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 ?>
@@ -52,8 +52,8 @@ echo "<div class='pure-control-group'>";
 echo '<label for="genSel">Succession #:</label> ';
 echo '<select name="genSel">';
 echo '<option value = "%" selected="selected"> All </option>';
-$result = mysql_query("SELECT distinct gen from transferred_to order by gen");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct gen from transferred_to order by gen");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[gen]\">$row1[gen]</option>";
 }
 echo '</select>';

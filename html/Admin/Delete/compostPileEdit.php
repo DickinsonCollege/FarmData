@@ -9,17 +9,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 $origPileID = $_GET['pileID'];
 
 $sqlget = "SELECT pileID, comments, active FROM compost_pile where pileID='".$origPileID."'";
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $pileID = $row['pileID'];
 $comments = $row['comments'];
 $active = escapehtml($row['active']);
 
 if ($active == 1) {
-	$activeText = "Yes";
+   $activeText = "Yes";
 } else {
-	$activeText = "No";
+   $activeText = "No";
 }
 ?>
 
@@ -58,26 +58,26 @@ echo '<br clear="all"/>';
 echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo "</form>";
 if ($_POST['submit']) {
-	$comments = escapehtml($_POST['comments']);
-	$pileID = escapehtml($_POST['pileID']);
-	$active = escapehtml($_POST['active']);
-	if ($active === "Yes") {
-		$active = 1;
-	} else {
-		$active = 0;
-	}
-
-	$sql = "UPDATE compost_pile
-		SET pileID='".$pileID."', comments='".$comments."', active=".$active." 
-		WHERE pileID='".$origPileID."'";
-   $result = mysql_query($sql);
-   
-	if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
+   $comments = escapehtml($_POST['comments']);
+   $pileID = escapehtml($_POST['pileID']);
+   $active = escapehtml($_POST['active']);
+   if ($active === "Yes") {
+      $active = 1;
    } else {
-      echo "<script>alert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;';
-     echo 'URL=compostPileTable.php?tab=admin:admin_delete:deleteother:deletecompostpile">';
+      $active = 0;
    }
+
+   $sql = "UPDATE compost_pile SET pileID='".$pileID."', comments='".$comments."', active=".$active.
+      " WHERE pileID='".$origPileID."'";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not edit compost pile?', $p);
+      die();
+   }
+   echo "<script>alert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;';
+   echo 'URL=compostPileTable.php?tab=admin:admin_delete:deleteother:deletecompostpile">';
 }
 ?>

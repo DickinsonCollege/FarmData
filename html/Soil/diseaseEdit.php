@@ -18,8 +18,8 @@ $origCrop= $_GET['crop'];
 $origStage= $_GET['stage'];
 $sqlget = "SELECT id, year(sDate) as yr, month(sDate) as mth, day(sDate) as dy,".
    "disease ,fieldID, crops, infest, stage, comments FROM diseaseScout where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $fieldID = $row['fieldID'];
 $disease = $row['disease'];
 $crops = $row['crops'];
@@ -65,8 +65,8 @@ echo "<label>Name of Field:</label> ";
 echo "<select name='fieldID' id='fieldID' class='mobile-select'>";
 echo "<option value='".$fieldID."' selected>".$fieldID."</option>";
 $sql = "SELECT fieldID from field_GH where active=1";
-$result = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 	echo "<option value='".$row['fieldID']."'>".$row['fieldID']."</option>";
 }
 echo '</select></div>';
@@ -81,8 +81,8 @@ echo "<label>Disease:</label> ";
 echo "<select name='disease' id='disease' class='mobile-select'>";
 echo "<option value='".$disease."' selected>".$disease."</option>";
 $sql = "select diseaseName from disease";
-$result = mysql_query($sql);
-while ($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 	echo "<option value='".$row['diseaseName']."'>".$row['diseaseName']."</option>";
 }
 echo '</select></div>';
@@ -100,9 +100,8 @@ echo "<div class='pure-control-group'>";
 echo "<label>Stage:</label> ";
 echo "<select name='stage' id='stage' class='mobile-select'>";
 $sql = "select stage from stage";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['stage']."' ";
    if ($stage == $row['stage']) {
       echo " selected";
@@ -136,19 +135,21 @@ if (isset($_POST['submit'])) {
      $month."-".$day."', disease='".$disease."', infest=".$infest.",stage='".$stage."', comments='".
      $comments."' where id=".$id;
 
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=diseaseTable.php?year='.
-        $origYear.'&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
-        '&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&fieldID=".encodeURIComponent($origFieldID).
-        "&crop=".encodeURIComponent($origCrop).
-        "&disease=".encodeURIComponent($origDisease).
-        "&stage=".encodeURIComponent($origStage).
-        "&tab=soil:soil_scout:soil_disease:disease_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=diseaseTable.php?year='.
+     $origYear.'&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.
+     '&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     "&fieldID=".encodeURIComponent($origFieldID).
+     "&crop=".encodeURIComponent($origCrop).
+     "&disease=".encodeURIComponent($origDisease).
+     "&stage=".encodeURIComponent($origStage).
+     "&tab=soil:soil_scout:soil_disease:disease_report\">";
 }
 ?>

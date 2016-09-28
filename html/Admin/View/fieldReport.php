@@ -7,12 +7,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 <form name='form' method='POST' action='/down.php'>
 <?php
    $sql = "select fieldID, size, numberOfBeds, length from field_GH";
-   $sqldata = mysql_query($sql) or die(mysql_error());
+   $sqldata = $dbcon->query($sql);
    echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<center><h2>Information on All Fields </h2></center>";
    
    echo "<thead><tr><th>Field</th><th>Size (acres)</th><th>Number of Beds</th><th>Length (feet)</th></tr></thead>";
-   while ($row = mysql_fetch_array($sqldata)) {
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr><td>";
       echo $row['fieldID'];
       echo "</td><td>";

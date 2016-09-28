@@ -35,8 +35,8 @@ if (!$isCover) {
    echo '<label for="crop">Crop:</label> ';
    echo '<select name="crop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
-   $result = mysql_query("SELECT distinct crop from plant");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result = $dbcon->query("SELECT distinct crop from plant");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
      echo "\n<option value= '".$row1['crop']."'>".$row1['crop']."</option>";
    }
    echo '</select>';
@@ -48,8 +48,8 @@ if (!$isCover) {
 <select name='source' class='mobile-select'>
 <option value = "%" selected="selected"> All </option>
 <?php
-$result = mysql_query("SELECT distinct source from source order by source");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("SELECT distinct source from source order by source");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= '".$row1['source']."'>".$row1['source']."</option>";
 }
 ?>
@@ -86,8 +86,8 @@ if ($isCover) {
    echo '<label for="crop">Crop:</label> ';
    echo '<select name="crop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
-   $result = mysql_query("SELECT distinct crop from plant");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result = $dbcon->query("SELECT distinct crop from plant");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
      echo "\n<option value= '".$row1['crop']."'>".$row1['crop']."</option>";
    }
    echo '</select>';
@@ -106,8 +106,8 @@ if ($isCover) {
    echo '<label for="covercrop">Crop:</label> ';
    echo '<select name="covercrop" class="mobile-select">';
    echo '<option value = "%"> All </option>';
-   $result = mysql_query("SELECT distinct crop from coverCrop");
-   while ($row1 =  mysql_fetch_array($result)){
+   $result = $dbcon->query("SELECT distinct crop from coverCrop");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
      echo "\n<option value= '".$row1['crop']."'>".$row1['crop']."</option>";
    }
    echo '</select>';

@@ -1,21 +1,19 @@
 <?php session_start(); ?>
+<form name='form' method='POST' action='/down.php'>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 $farm = $_SESSION['db'];
-$result = mysql_query("Select crop, units, units_per_case, dh_units, active from plant");
+if ($_SESSION['sales_invoice']) {
+   $sql = "select crop, units, units_per_case, dh_units as invoice_units, active from plant";
+} else {
+   $sql = "select crop, units, active from plant";
+}
+// $result = $dbcon->query("Select crop, units, units_per_case, dh_units, active from plant");
+$result = $dbcon->query($sql);
 
 echo "<table class = 'pure-table pure-table-bordered'>";
-
-/**
-echo "<colgroup>";
-echo "<col width='10px' id='col1'/>";
-echo "<col id='col2'/>";
-echo "<col id='col3'/>";
-echo "<col id='col4'/>";
-echo "</colgroup>";
-**/
 
 // Table Header
 echo "<center><h2>Crop Table </h2><center>";
@@ -31,7 +29,7 @@ echo "<th>Active?</th></tr></thead>";
 
 
 // Display Data
-while($row = mysql_fetch_array($result)) {
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['crop'];
         echo "</td><td>";
@@ -41,7 +39,7 @@ while($row = mysql_fetch_array($result)) {
 		echo "<td>";
 		echo $row['units_per_case'];
 		echo "</td><td>";
-		echo $row['dh_units'];
+		echo $row['invoice_units'];
 		echo "</td>";
 	}
 	echo "<td>";
@@ -56,4 +54,10 @@ while($row = mysql_fetch_array($result)) {
 }
 
 echo "</table>";
+echo '<br clear="all"/>';
+
+echo '<input type="submit" class="submitbutton pure-button wide" name="submit" value="Download Report">';
+echo '<br clear = "all">';
+echo "<input type = \"hidden\" name = \"query\" value = \"".$sql."\">";
+echo "</form>";
 ?>

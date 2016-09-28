@@ -17,7 +17,7 @@ $farm = $_SESSION['db'];
 <div id='table2' class='pure-control-group'>
 <label for="table">Select Table:</label>
 <select name='tableSelector' id='tableSelector' onChange='createTableHeader();'>
-<option value='default' disabled selected>&nbsp;</option>
+<option value='default' disabled selected>Table</option>
 <option value='dir_planted'>Direct Seeding</option>
 <option value='harvested'>Harvesting</option>
 <option value='gh_seeding'>Tray Seeding</option>

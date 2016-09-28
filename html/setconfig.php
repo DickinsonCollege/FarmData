@@ -1,17 +1,22 @@
 <?php
 $sql = "show columns from config";
-$res = mysql_query($sql);
-echo mysql_error();
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   die($p->getMessage());
+}
 $ids = array();
-while ($row = mysql_fetch_array($res)) {
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    $ids[] = $row['Field'];
 }
 $sql = "select * from config";
-$res = mysql_query($sql);
-echo mysql_error();
-$row = mysql_fetch_array($res);
+try {
+   $res = $dbcon->query($sql);
+} catch (PDOException $p) {
+   die($p->getMessage());
+}
+$row = $res->fetch(PDO::FETCH_ASSOC);
 for ($i = 0; $i < count($ids); $i++) {
    $_SESSION[$ids[$i]] = $row[$ids[$i]];
 }
-//print_r($_SESSION);
 ?>

@@ -5,16 +5,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
-$result = mysql_query("select materialName from compost_materials");
-echo mysql_error();
+$result = $dbcon->query("select materialName from compost_materials");
 $materials=array();
-while ($row = mysql_fetch_array($result)) {
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
   $mat = $row['materialName'];
   $unitSQL = "Select distinct unit from compost_units where material='".$mat."'";
-  $res2 = mysql_query($unitSQL);
-  echo mysql_error();
+  $res2 = $dbcon->query($unitSQL);
   $units = array();
-  while ($row2 = mysql_fetch_array($res2)) {
+  while ($row2 = $res2->fetch(PDO::FETCH_ASSOC)) {
      $units[] = $row2['unit'];
   }
   $materials[$mat] = $units;
@@ -77,7 +75,6 @@ function show_confirm() {
 function getUnits(num) {
   var material = document.getElementById('material' + num).value;
   material = escapeHtml(material);
-console.log(material);
   var unitDiv = document.getElementById('unitsDiv' + num);
   opts = "";
   units = mat_units[material];
@@ -97,10 +94,6 @@ function addMaterialToTable() {
      numMaterialsInput.value++;
      var numMaterials = numMaterialsInput.value;
 
-/*
-     var tbl = document.getElementById("materialsTable");
-     var row = tbl.insertRow(-1);
-*/
      var tbl = document.getElementById("materialsTable").getElementsByTagName('tbody')[0];
       var row = tbl.insertRow(-1);
 
@@ -114,8 +107,8 @@ function addMaterialToTable() {
           "<option value=0 selected disabled>Material</option>";
 
           <?php
-          $result = mysql_query("select materialName from compost_materials");
-          while ($row = mysql_fetch_array($result)) {
+          $result = $dbcon->query("select materialName from compost_materials");
+          while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                echo "cellHTML+= \"<option value='".$row['materialName']."'>".
                  $row['materialName']."</option>\";";
           }
@@ -169,8 +162,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="pileID" id="pileID" class='mobile-select'>
 <option value = 0 selected disabled> Pile ID</option>
 <?php
-$result=mysql_query("Select pileID from compost_pile where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select pileID from compost_pile where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
      echo "\n<option value= '".$row1[pileID]."'>".$row1[pileID]."</option>";
 }
 echo '</select>';
@@ -241,29 +234,42 @@ if (isset($_POST['submit'])) {
      $date = $year."-".$month."-".$day;
      $numMaterials = $_POST['numMaterials'];
 
-     for ($i = 1; $i <= $numMaterials; $i++) {
-          $material = escapehtml($_POST["material".$i]);
-          $amount = escapehtml($_POST["amount".$i]);
-          $units = escapehtml($_POST["units".$i]);
-          $convSQL = "select pounds, cubicyards from compost_units where ".
-             "material = '".$material."' and unit = '".$units."'";
-          $result = mysql_query($convSQL); 
-          echo mysql_error();
-          while ($row1 =  mysql_fetch_array($result)){
-             $pounds = $row1['pounds'];
-             $cf = $row1['cubicyards'];
-          }
-          $sql="INSERT INTO compost_accumulation (accDate, pileID, material, pounds, cubicyards, comments) 
-               VALUES ('".$date."', '".$pileID."', '".$material."', ".
-               ($amount * $pounds).", ".($amount * $cf).", '".$comments."')";
-        $result = mysql_query($sql);
-          if (!$result) break;
-     }
-
-   if(!$result) { 
-      echo "<script> alert(\"Could not enter Compost Accumulation Data! Try again.\\n ".mysql_error()."\n\"); </script>";
-   }else {
-      echo "<script> showAlert(\"Compost Accumulation Record Entered Successfully\"); </script>";
+//     $sql="INSERT INTO compost_accumulation (accDate, pileID, material, pounds, cubicyards, comments) ".
+//          "VALUES ('".$date."', '".$pileID."', '".$material."', ".
+//          ($amount * $pounds).", ".($amount * $cf).", '".$comments."')";
+     try {
+        $sql="INSERT INTO compost_accumulation (accDate, pileID, material, pounds, cubicyards, comments) ".
+             "VALUES (:date, :pileID, :material, :lbs, :cyards, :comments)";
+        $stmt=$dbcon->prepare($sql);
+        for ($i = 1; $i <= $numMaterials; $i++) {
+             $material = escapehtml($_POST["material".$i]);
+             $amount = escapehtml($_POST["amount".$i]);
+             $units = escapehtml($_POST["units".$i]);
+             $convSQL = "select pounds, cubicyards from compost_units where ".
+                "material = '".$material."' and unit = '".$units."'";
+             $result = $dbcon->query($convSQL); 
+             if ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
+                $pounds = $row1['pounds'];
+                $cf = $row1['cubicyards'];
+             } else {
+                echo "<script> showAlert(\"No units for material!\"); </script>";
+                die();
+             }
+             $lbs = $amount * $pounds;
+             $cyards = $amount * $cf;
+             $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+             $stmt->bindParam(':pileID', $pileID, PDO::PARAM_INT);
+             $stmt->bindParam(':material', $material, PDO::PARAM_STR);
+             $stmt->bindParam(':lbs', $lbs, PDO::PARAM_STR);
+             $stmt->bindParam(':cyards', $cyards, PDO::PARAM_STR);
+             $stmt->bindParam(':comments', $comments, PDO::PARAM_STR);
+             $stmt->execute();
+        }
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+
+   echo "<script> showAlert(\"Compost Accumulation Record Entered Successfully\"); </script>";
 }
 ?>

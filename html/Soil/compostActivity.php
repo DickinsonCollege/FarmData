@@ -23,7 +23,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
            return false;
         }
         con += "Activity: " + act + "\nPiles: ";
-	var numActivities = document.getElementById("numActivities").value;
+   var numActivities = document.getElementById("numActivities").value;
         if (numActivities < 1) {
            alert("Please Select At Least One Pile");
            return false;
@@ -47,48 +47,44 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
     }
 
 function addActivityToTable() {
-	var numActivitiesInput = document.getElementById("numActivities");
-	numActivitiesInput.value++;
-	var numActivities = numActivitiesInput.value;
+   var numActivitiesInput = document.getElementById("numActivities");
+   numActivitiesInput.value++;
+   var numActivities = numActivitiesInput.value;
 
 
-/*
-	var tbl = document.getElementById("activitiesTable");
-	var row = tbl.insertRow(-1);
-*/
         var tbl = document.getElementById("activitiesTable").getElementsByTagName('tbody')[0];
         var row = tbl.insertRow(-1);
 
-	row.id = "row" + numActivities;
-	var cell = row.insertCell(0);
+   row.id = "row" + numActivities;
+   var cell = row.insertCell(0);
 
-	var cellHTML = "";
-	cellHTML += "<div class='styled-select' id='pileIDDiv'>" + 
-		"<select name='pileID" + numActivities + "' id='pileID" + numActivities + "' class='mobile-select'>" + 
-		"<option value=0 selected disabled>Pile ID</option>";
+   var cellHTML = "";
+   cellHTML += "<div class='styled-select' id='pileIDDiv'>" + 
+      "<select name='pileID" + numActivities + "' id='pileID" + numActivities + "' class='mobile-select'>" + 
+      "<option value=0 selected disabled>Pile ID</option>";
 
-		<?php
-		$result = mysql_query("Select pileID from compost_pile where active=1");
-		while ($row = mysql_fetch_array($result)) {
-			echo "cellHTML += \"<option value='".
+      <?php
+      $result = $dbcon->query("Select pileID from compost_pile where active=1");
+      while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+         echo "cellHTML += \"<option value='".
                   $row['pileID']."'>".$row['pileID']."</option>\";";
-		}
-		?>
+      }
+      ?>
 
-	cellHTML += "</select></div>";
-	cell.innerHTML = cellHTML;
+   cellHTML += "</select></div>";
+   cell.innerHTML = cellHTML;
 }
 
 function removeActivityFromTable() {
-	var numActivitiesInput = document.getElementById("numActivities");
-	var numActivities = numActivitiesInput.value;
+   var numActivitiesInput = document.getElementById("numActivities");
+   var numActivities = numActivitiesInput.value;
 
-	if (numActivities >= 1) {
-		numActivitiesInput.value--;
+   if (numActivities >= 1) {
+      numActivitiesInput.value--;
 
-		var tbl = document.getElementById("activitiesTable");
-		tbl.deleteRow(numActivities);
-	}
+      var tbl = document.getElementById("activitiesTable");
+      tbl.deleteRow(numActivities);
+   }
 }
 </script>
 
@@ -104,9 +100,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name="activity" id="activity" class='mobile-select'>
 <option value = 0 selected disabled>Activity</option>
 <?php
-$result=mysql_query("Select activityName from compost_activities");
-while ($row1 =  mysql_fetch_array($result)){
-	echo "\n<option value= \"$row1[activityName]\">$row1[activityName]</option>";
+$result=$dbcon->query("Select activityName from compost_activities");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
+   echo "\n<option value= \"$row1[activityName]\">$row1[activityName]</option>";
 }
 echo '</select>';
 echo '</div>';
@@ -129,9 +125,9 @@ Pile ID
 <select name='pileID1' id='pileID1' class='mobile-select'>
 <option value=0 selected disabled>Pile ID</option>
 <?php
-$result = mysql_query("Select pileID from compost_pile where active=1");
-while ($row = mysql_fetch_array($result)) {
-	echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
+$result = $dbcon->query("Select pileID from compost_pile where active=1");
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   echo "<option value=\"".$row['pileID']."\">".$row['pileID']."</option>";
 }
 ?>
 </select>
@@ -173,52 +169,77 @@ while ($row = mysql_fetch_array($result)) {
 </div>
 <?php
 if (isset($_POST['submit'])) {
-	$year = $_POST['year'];
-	$month = $_POST['month'];
-	$day = $_POST['day'];
-	$date = $year."-".$month."-".$day;
-	$activity = escapehtml($_POST['activity']);
-	$comments = escapehtml($_POST['comments']);
-	$numActivities = $_POST['numActivities'];
+   $year = $_POST['year'];
+   $month = $_POST['month'];
+   $day = $_POST['day'];
+   $date = $year."-".$month."-".$day;
+   $activity = escapehtml($_POST['activity']);
+   $comments = escapehtml($_POST['comments']);
+   $numActivities = $_POST['numActivities'];
 
-	if ($activity === "COMBINING") {
-		$bigPileID = escapehtml($_POST['pileID1']);
-		$commentText = "Combined Piles ".$bigPileID.", ";
-		for ($i = 2; $i <= $numActivities; $i++) {
-			$pileID = escapehtml($_POST["pileID".$i]);
-			$commentText .= $pileID.", ";
+   if ($activity === "COMBINING") {
+      $bigPileID = escapehtml($_POST['pileID1']);
+      $commentText = "Combined Piles ".$bigPileID.", ";
+      $sql = "INSERT into compost_activity (actDate, pileID, activity, comments) ".
+            "VALUES ('".$date."', :pileID, '".$activity."', 'Combined Into Pile ".$bigPileID."')";
+      $sqlAct = "UPDATE compost_pile SET active=0 WHERE pileID=:pileID";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmtAct = $dbcon->prepare($sqlAct);
+         for ($i = 2; $i <= $numActivities; $i++) {
+            $pileID = escapehtml($_POST["pileID".$i]);
+            $commentText .= $pileID.", ";
+   
+            // Insert into Compost Activity
+   /*
+            $sql = "INSERT into compost_activity (actDate, pileID, activity, comments) 
+               VALUES ('".$date."', '".$pileID."', '".$activity."', 'Combined Into Pile ".$bigPileID."')";
+   */
+         
+            $stmt->bindParam(':pileID', $pileID, PDO::PARAM_STR);
+            $stmt->execute();
 
-			// Insert into Compost Activity
-			$sql = "INSERT into compost_activity (actDate, pileID, activity, comments) 
-				VALUES ('".$date."', '".$pileID."', '".$activity."', 'Combined Into Pile ".$bigPileID."')";
-			$result = mysql_query($sql);
+            // Set combined piles to inactive
+   //         $sql = "UPDATE compost_pile SET active=0 WHERE pileID='".$pileID."'";
+            $stmtAct->bindParam(':pileID', $pileID, PDO::PARAM_STR);
+            $stmtAct->execute();
+         }
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
+      $commentText .= "into one pile";
+      $comments .= "\n".$commentText;
 
-			// Set combined piles to inactive
-			$sql = "UPDATE compost_pile SET active=0 WHERE pileID='".$pileID."'";
-			$result = mysql_query($sql);
-		}
-		$commentText .= "into one pile";
-		$comments .= "\n".$commentText;
+      // Insert into Compost Activity
+      $sql = "INSERT INTO compost_activity (actDate, pileID, activity, comments) ".
+         "VALUES ('".$date."', '".$bigPileID."', '".$activity."', '".$comments."')";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
 
-		// Insert into Compost Activity
-		$sql = "INSERT INTO compost_activity (actDate, pileID, activity, comments) 
-			VALUES ('".$date."', '".$bigPileID."', '".$activity."', '".$comments."')";
-		$result = mysql_query($sql);
-
-	} else {
-		for ($i = 1; $i <= $numActivities; $i++) {
-			$pileID = escapehtml($_POST["pileID".$i]);
-			$sql = "INSERT INTO compost_activity (actDate, pileID, activity, comments) 
-				VALUES ('".$date."', '".$pileID."', '".$activity."', '".$comments."')";
-			$result = mysql_query($sql);
-			if (!$result) break;
-		}
-	}
-
-   if(!$result) { 
-      echo "<script> alert(\"Could not enter Compost Activity Data! Try again.\\n ".mysql_error()."\"); </script>";
-   }else {
-      echo "<script> showAlert(\"Compost Activity Record Entered Successfully\"); </script>";
+   } else {
+      $sql = "INSERT INTO compost_activity (actDate, pileID, activity, comments) ".
+         "VALUES ('".$date."', :pileID, '".$activity."', '".$comments."')";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         for ($i = 1; $i <= $numActivities; $i++) {
+            $pileID = escapehtml($_POST["pileID".$i]);
+           // $sql = "INSERT INTO compost_activity (actDate, pileID, activity, comments) 
+           //    VALUES ('".$date."', '".$pileID."', '".$activity."', '".$comments."')";
+            $stmt->bindParam(':pileID', $pileID, PDO::PARAM_STR);
+            $stmt->execute();
+         }
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
    }
+
+   echo "<script> showAlert(\"Compost Activity Record Entered Successfully\"); </script>";
 }
 ?>

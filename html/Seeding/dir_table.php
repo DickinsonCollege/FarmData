@@ -7,8 +7,12 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 if (isset($_GET['id'])) {
    $sqlDel="DELETE FROM dir_planted WHERE id=".$_GET['id'];
-   mysql_query($sqlDel);
-   echo mysql_error();
+   try {
+      $res = $dbcon->prepare($sqlDel);
+      $res->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
 }
 $year = $_GET['year'];
 $month = $_GET['month'];
@@ -33,14 +37,34 @@ if ($crop != "%") {
      "between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".
      $tcurMonth."-".$tcurDay."' AND crop ='".$crop."' and fieldID like '".
      $fieldID."' and gen like '".$genSel."'";
-   $totalResult = mysql_query($total);
-echo mysql_error();
-   $btotalResult = mysql_query($btotal);
-echo mysql_error();
+   try {
+      $totalResult = $dbcon->query($total);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
+   $acretotal = "select sum(bedft * size / (length * numberOfBeds)) as acreft ".
+     " from dir_planted, field_GH ".
+     " where dir_planted.fieldID = field_GH.fieldID and plantdate ".
+     "between '".$year."-".$month."-".$day."' AND '".$tcurYear."-".
+     $tcurMonth."-".$tcurDay."' AND crop ='".$crop."' and field_GH.fieldID like '".
+     $fieldID."' and gen like '".$genSel."'";
+   try {
+      $acreTotal = $dbcon->query($acretotal);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
+   try {
+      $btotalResult = $dbcon->query($btotal);
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+   }
 }
 
-$result=mysql_query($sql);
-echo mysql_error();
+try {
+   $result=$dbcon->query($sql);
+} catch (PDOException $p) {
+   phpAlert('', $p);
+}
 echo "<table class='pure-table pure-table-bordered'>";
 echo "<center>";
 echo "<h2> Direct Seeding Report for ";
@@ -84,7 +108,7 @@ if ($_SESSION['admin']) {
   echo "<th>User</th><th>Edit</th><th>Delete</th>";
 }
 echo "</tr></thead>";
-while ( $row = mysql_fetch_array($result)) {
+while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<tr><td>";
    echo  $row['plantdate'];
    echo "</td><td>";
@@ -138,19 +162,25 @@ echo "</table>";
 if($crop != '%') {
         echo '<br clear="all"/>';
    echo "<div class='pure-form pure-form-aligned'>";
-   while($row5 = mysql_fetch_array($btotalResult)){
+   while($row5 = $btotalResult->fetch(PDO::FETCH_ASSOC)){
       echo '<div class="pure-control-group">';
       echo '<label for="total"> Total Bed Feet Planted:</label> '.
               '<input disabled type="textbox" name="total" id="total" class="textbox2" value='
               .number_format((float) $row5['totalSum'], 1, '.', '').'>';
       echo "</div>";
    }
-        //echo '<br clear="all"/>';
-   while($row5 = mysql_fetch_array($totalResult)){
+   while($row5 = $totalResult->fetch(PDO::FETCH_ASSOC)){
       echo '<div class="pure-control-group">';
       echo '<label for="total"> Total Row Feet Planted:</label>'.
              ' <input disabled type="textbox" name="total" id="total" class="textbox2" value='.
              number_format((float) $row5['totalSum'], 1, '.', '').'>';
+      echo "</div>";
+   }
+   while($row6 = $acreTotal->fetch(PDO::FETCH_ASSOC)){
+      echo '<div class="pure-control-group">';
+      echo '<label for="total"> Total Acres Planted:</label>'.
+             ' <input disabled type="textbox" name="total" id="total" class="textbox2" value='.
+             number_format((float) $row6['acreft'], 3, '.', '').'>';
       echo "</div>";
    }
         echo '</div>';

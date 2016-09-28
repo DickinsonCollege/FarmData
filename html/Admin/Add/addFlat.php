@@ -18,9 +18,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 
 <script>
 function show_confirm() {
-        var size = document.getElementById("size").value;
-        var con = "Tray Size: "+ size + "\n";
-	return confirm("Confirm Entry: " +"\n"+con);
+   var size = document.getElementById("size").value;
+   if (size == "" || !isFinite(size) || size < 0) {
+      alert("Enter valid tray size!");
+      return false;
+   }
+   var con = "Tray Size: "+ size + "\n";
+   return confirm("Confirm Entry: " +"\n"+con);
 }
 </script>
 
@@ -28,22 +32,20 @@ function show_confirm() {
 <?php
 $active = 1;
 if (!empty($_POST['done'])) {
-   if(!empty($_POST['size'])) {
-      $size = escapehtml($_POST['size']);
-      if ($size < 0) {
-         echo "<script>alert(\"Tray size cannot be negative!\");</script> \n";
-         exit(0);
-      }
-      $sql="Insert into flat values ('". $size."');";
-      $result=mysql_query($sql);
-      if (!$result) {
-         echo "<script>alert(\"Could not add tray size: Please try again!\\n".mysql_error()."\");</script>\n";
-      } else {
-         echo "<script>showAlert(\"Added Tray Size Successfully!\");</script> \n";
-      }
-   } else {
-      echo "<script>alert(\"Enter all data!\\n".mysql_error()."\");</script> \n";
+   $size = escapehtml($_POST['size']);
+   if ($size < 0) {
+      echo "<script>alert(\"Tray size cannot be negative!\");</script> \n";
+      die();
    }
+   $sql="Insert into flat values ('". $size."');";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not add tray size', $p);
+      die();
+   }
+   echo "<script>showAlert(\"Added Tray Size Successfully!\");</script> \n";
 }
 ?>
 

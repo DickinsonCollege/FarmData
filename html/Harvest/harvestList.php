@@ -28,12 +28,14 @@ table.primary tr.other{
 echo "<center>";
 echo '<h2> Harvest List for '.$date.'</h2>';
 echo "</center>";
-echo '<table class="primary pure-table pure-table-bordered">';
+echo '<table id = "harvTable" class="primary pure-table pure-table-bordered">';
 if($detail==1){
 
    $th= "<thead> <th>Crop </th> <th>Field</th>";
+   $used = array();
    for ($i = 0; $i < count($targs); $i++) {
       $th .= '<th>'.$targs[$i].'</th>';
+      $used[$i] = 0;
    }
    $th .= "<th>Total</th> <th>Harvested</th> </tr></thead>";
    // echo $th;
@@ -47,10 +49,13 @@ echo "<thead><tr>
 }
 
 $sql = "select * from harvestListItem where id=".$currentID;
-$result = mysql_query($sql);
-echo mysql_error();
+try {
+   $result = $dbcon->query($sql);
+} catch (PDOException $p) {
+  phpAlert('', $p);
+}
 $tabArr = array();
-while($row=mysql_fetch_array($result)){
+while($row=$result->fetch(PDO::FETCH_ASSOC)){
    $tabArr[$row['crop']][$row['target']]=$row['amt'];
    $tabArr[$row['crop']]['fieldID']=$row['fieldID'];
    $tabArr[$row['crop']][$row['target'].'_units']=$row['units'];
@@ -63,24 +68,13 @@ foreach ($tabArr as $crp=>$arr) {
    for ($i = 0; $i < count($targs); $i++) {
       if (isset($tabArr[$crp][$targs[$i]])) {
          $reqs[$i] = $tabArr[$crp][$targs[$i]];
+         $used[$i] += $reqs[$i];
          $reqs_unit[$i] = $tabArr[$crp][$targs[$i].'_units'];
+         $tot += $reqs[$i] / $conversion[$crp][$reqs_unit[$i]];
       } else {
          $reqs[$i] = 0;
       }
-      $tot += $reqs[$i] / $conversion[$crp][$reqs_unit[$i]];
    }
-/*
-   $sql = "select sum(yield) * (Select conversion from units where crop= '".$crp."' and unit = '".
-      $tabArr[$crp]['units']."') as yld, unit from harvested, harvestList where harvested.crop='".
-     $crp."' and harvested.hardate=harvestList.harDate and harvestList.id=".$currentID.
-     " group by unit";
-   $itemYield=0;
-   $result = mysql_query($sql);
-   echo mysql_error();
-   while ($row=mysql_fetch_array($result)) {
-      $itemYield=$row['yld'];
-   }
-*/
    if ($detail == 1 && $cnt % 5 == 0) {
       echo $th;
    }
@@ -88,9 +82,13 @@ foreach ($tabArr as $crp=>$arr) {
       $crp."' and harvested.hardate = harvestList.harDate and harvestList.id=".
       $currentID." group by unit";
    $itemYield=0;
-   $result = mysql_query($sql);
-   echo mysql_error();
-   while ($row=mysql_fetch_array($result)) {
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+     phpAlert('', $p);
+   }
+   $tabArr = array();
+   while ($row=$result->fetch(PDO::FETCH_ASSOC)) {
       $itemYield=$row['yld'];
    }
    if($itemYield>=$tot){
@@ -119,6 +117,16 @@ foreach ($tabArr as $crp=>$arr) {
    $cnt++;
 }
 echo '</table>';
+if ($detail==1) {
+   for ($i = 0; $i < count($used); $i++) {
+      if ($used[$i] > 0) {
+         echo "<script type='text/javascript'>";
+         echo "document.getElementById('harvTable').rows[0].cells[".($i+2).
+            "].style.backgroundColor = 'green';";
+         echo "</script>";
+      }
+   }
+}
 ?>
 
 <br clear="all"/>
@@ -135,7 +143,7 @@ if ($_SESSION['mobile']) {
 -->
 <?php
 $sql="SELECT comment from harvestList where id=".$currentID;
-$row= mysql_fetch_array( mysql_query($sql));
+$row= $dbcon->query($sql)->fetch(PDO::FETCH_ASSOC);
 if ($_SESSION['mobile']) {
   echo "<label class='label_comments'>";
 } else {

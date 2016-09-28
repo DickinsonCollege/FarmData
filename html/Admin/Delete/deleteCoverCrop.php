@@ -71,13 +71,12 @@ function populate() {
 <div class="pure-control-group">
 <label for="crop">Cover Crop:</label>
 <select name='crop' id='crop' class='mobile-select' onchange='populate();'>
-<option disabled selected>Cover Crop</option>
 <?php
-$result = mysql_query("SELECT crop from coverCrop");
-        while ($row1 =  mysql_fetch_array($result)){
-                echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
-        }
-        echo "</select></div>";
+$result = $dbcon->query("SELECT crop from coverCrop");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+   echo "\n<option value= \"$row1[crop]\">$row1[crop]</option>";
+}
+echo "</select></div>";
 ?>
 
 <div class="pure-control-group" id="renamediv">
@@ -118,6 +117,9 @@ $result = mysql_query("SELECT crop from coverCrop");
 <select name="active" id="active" class='mobile-select'>
 </select>
 </div>
+<script type="text/javascript">
+populate();
+</script>
 
 <br clear="all"/>
 <input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
@@ -134,36 +136,14 @@ if(!empty($_POST['submit'])) {
    $query = "update coverCrop set crop = upper('".$rename."'), drillRateMin = '".$drillMin.
       "', drillRateMax = '".$drillMax.  "', brcstRateMin = '".$broadMin.  "', brcstRateMax = '".$broadMax.
       "', legume = ".$legume.", active = ".$active." where crop='".$crop."'";
-   $res = mysql_query($query);
-   echo mysql_error();
-   if (!$res) {
-      echo '<script> alert("Could not edit cover crop, please try again"); </script>';
-   } else {
-      echo '<script> alert("Changed cover crop successfully"); </script>';
+   try {
+      $stmt = $dbcon->prepare($query);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('Could not update cover crop', $p);
+      die();
    }
-/*
-   if ($_SESSION['sales_invoice']) {
-      $dh_units = escapehtml($_POST['dh_units']);
-      $units_per_case = escapehtml($_POST['units_per_case']);
-      $query = "UPDATE plant SET crop=upper('".$rename."'), dh_units='".$dh_units."', units_per_case=".
-       $units_per_case.", active= ".$active." WHERE crop='".$crop."'";
-      $sql = mysql_query($query) or die(mysql_error());
-      if (!$sql) {
-         echo '<script> alert("Could not edit plant, please try again"); </script>';
-      } else {
-         echo '<script> alert("Changed plant successfully"); </script>';
-      }
-   } else {
-      $query = "UPDATE plant SET crop=upper('".$rename."'), active = ".$active." WHERE crop='".$crop."'";
-      $sql = mysql_query($query) or die(mysql_error());        
-      if (!$sql) {
-         echo '<script> alert("Could not edit plant, please try again"); </script>';
-      } else {
-         echo '<script> alert("Changed plant successfully"); </script>';
-      }
-
-   }
-  */
+   echo '<script> alert("Changed cover crop successfully"); </script>';
 }
 
 ?>

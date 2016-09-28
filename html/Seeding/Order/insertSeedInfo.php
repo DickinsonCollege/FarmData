@@ -66,80 +66,131 @@ if (!$isCover) {
    $rowftToPlant = $_POST['rowftToPlant'];
    $defUnit = $_POST['defUnit'];
    $sql = "select * from seedInfo where crop = '".$crop."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   if (mysql_num_rows($res) == 0) {
-      $sql = "insert into seedInfo values('".$crop."', 0, 0, 'GRAM')";
-      $res = mysql_query($sql);
-      echo mysql_error();
-      $oldDefUnit = "";
-   } else {
-       $row = mysql_fetch_array($res);
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
+   if ($row = $res->fetch(PDO::FETCH_ASSOC)) {
        $oldDefUnit = $row['defUnit'];
+   } else {
+      $sql = "insert into seedInfo values('".$crop."', 0, 0, 'GRAM')";
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
+      $oldDefUnit = "";
    }
    if ($defUnit != $oldDefUnit) {
       $convert = convert_units($oldDefUnit, $defUnit);
       $sql = "update orderItem set unitsPerCatUnit = unitsPerCatUnit * ".
         $convert." where crop = '".$crop."'";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    if (isset($seedsIn)) {
       $seeds = convertFromGram($seedsIn, $defUnit);
       $sql = "update seedInfo set seedsGram = ".$seeds.", defUnit = '".$defUnit."' where crop = '".
          $crop."'";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    if (isset($rowft)) {
       $sql = "update seedInfo set seedsRowFt = ".$rowft." where crop = '".  $crop."'";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    if (isset($rowftToPlant) && $rowftToPlant != "") {
       $sql = "select * from toOrder where crop = '".$crop."' and year = ".$year;
-      $res = mysql_query($sql);
-      echo mysql_error();
-      if (mysql_num_rows($res) == 0) {
-         $sql = "insert into toOrder values('".$crop."', ".$year.", ".$rowftToPlant.", 1)";
-         $res = mysql_query($sql);
-         echo mysql_error();
-      } else {
+      try {
+         $res = $dbcon->query($sql);
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
+      if ($res->fetch(PDO::FETCH_ASSOC)) {
          $sql = "update toOrder set rowFt = ".$rowftToPlant." where crop = '".$crop."' and year = ".
             $year;
-         $res = mysql_query($sql);
-         echo mysql_error();
+         try {
+            $stmt = $dbcon->prepare($sql);
+            $success = $stmt->execute();
+         } catch (PDOException $p) {
+            die($p->getMessage());
+         }
+      } else {
+         $sql = "insert into toOrder values('".$crop."', ".$year.", ".$rowftToPlant.", 1)";
+         try {
+            $stmt = $dbcon->prepare($sql);
+            $success = $stmt->execute();
+         } catch (PDOException $p) {
+            die($p->getMessage());
+         }
       }
    }
 } else {
    $sql = "select * from coverSeedInfo where crop = '".$cover."'";
-   $res = mysql_query($sql);
-   echo mysql_error();
-   if (mysql_num_rows($res) == 0) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
+   if (!$res->fetch(PDO::FETCH_ASSOC)) {
       $sql = "insert into coverSeedInfo values('".$cover."', 0)";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    $sql = "select * from coverToOrder where crop = '".$cover."' and year = ".$year;
-   $res = mysql_query($sql);
-   echo mysql_error();
-   if (mysql_num_rows($res) == 0) {
+   try {
+      $res = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
+   if (!$res->fetch(PDO::FETCH_ASSOC)) {
       $sql = "insert into coverToOrder values('".$cover."', ".$year.", 0, 1)";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    $acres = escapehtml($_POST['acres']);
    $rate = escapehtml($_POST['rate']);
    if (isset($rate)) {
       $sql = "update coverSeedInfo set rate = ".$rate." where crop = '".  $cover."'";
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
    if (isset($acres)) {
       $sql = "update coverToOrder set acres = ".$acres." where crop = '".  $cover."' and year = ".
          $year;;
-      $res = mysql_query($sql);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         die($p->getMessage());
+      }
    }
 } 
 echo '<meta http-equiv="refresh" content="0;URL=order.php?year='.$year.'&crop='.encodeURIComponent($crop).

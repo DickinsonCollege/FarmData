@@ -17,8 +17,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlMaster = "select id, year(seedDate) as yr, month(seedDate) as mth, day(seedDate) as dy,area_seeded, seed_method, incorp_tool, fieldID, seedDate, comments from coverSeed_master where id=".$id;
 
-$sqldata = mysql_query($sqlMaster) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlMaster);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $id = $row['id'];
 $curYear = $row['yr'];
@@ -62,8 +62,8 @@ echo "<label>Field ID:</label>";
 echo "<select name='fieldID' id='fieldID' onchange='callAll();'>";
 echo "<option value\"=".$fieldID."\" selected>".$fieldID."</option>";
 $sql = "SELECT fieldID FROM field_GH where active=1";
-$sqldata = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value=\"".$row['fieldID']."\">".$row['fieldID']."</option>";
 }
 echo '</select></div>';
@@ -77,8 +77,8 @@ echo '<div class="pure-control-group">';
 echo "<label>Seeding Method:</label>";
 echo "<select name ='seed_method' id='seed_method' class='mobile-select' onchange='callAll();'>";
 echo "<option value=".$seed_method.">".$seed_method."</option>";
-$result=mysql_query("select seed_method from seedingMethod");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("select seed_method from seedingMethod");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[seed_method]\">$row1[seed_method]</option>";
 }
 
@@ -89,8 +89,8 @@ echo '<div class="pure-control-group">';
 echo "<label>Incorporation Tool:</label>";
 echo "<select name ='incorp_tool' id='incorp_tool' class='mobile-select'>";
 echo "<option value ='".$incorp_tool."'>".$incorp_tool."</option>";
-$result=mysql_query("Select tool_name from tools where type='INCORPORATION'");
-while ($row1 =  mysql_fetch_array($result)){
+$result = $dbcon->query("Select tool_name from tools where type='INCORPORATION'");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[tool_name]\">$row1[tool_name]</option>";
 }
 echo "</select>";
@@ -100,24 +100,25 @@ echo "<br clear='all'>";
 
 echo "<table name='covercrop' id='covercrop' class='pure-table pure-table-bordered'>";
 echo "<thead><tr><th>Species</th><th>Seed Rate</th><th>Number Of Pounds</th></tr></thead>";
+echo "<tbody>";
 $sql = "select * from coverSeed where id=".$id;
-$result = mysql_query($sql);
+$result = $dbcon->query($sql);
 $numRows = 0;
-while($row=mysql_fetch_array($result)){
+while($row=$result->fetch(PDO::FETCH_ASSOC)){
    $numRows++;
    // generate options for crops
    $optionCrop = "";
    $sql = "SELECT crop FROM coverCrop where active = 1";
-   $sqldata = mysql_query($sql) or die(mysql_error);
-   while ($rowCrop = mysql_fetch_array($sqldata)) {
+   $sqldata = $dbcon->query($sql);
+   while ($rowCrop = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       $optionCrop = $optionCrop."<option value='".$rowCrop['crop']."'>".$rowCrop['crop']."</option>";
    }
    // generate options for rate of seed
    $rate_of_seed_option ="";
    if ($seed_method=="DRILL") {
       $sql="Select drillRateMin,drillRateMax from coverCrop where crop='".$row['crop']."'";
-      $result1=mysql_query($sql);
-      while ($rowM=mysql_fetch_array($result1)) {
+      $result1=$dbcon->query($sql);
+      while ($rowM=$result1->fetch(PDO::FETCH_ASSOC)) {
          $min=$rowM['drillRateMin'];
          $max=$rowM['drillRateMax'];
       }
@@ -125,13 +126,13 @@ while($row=mysql_fetch_array($result)){
       $min = 0;
       $max = 0;
       $sql="Select brcstRateMin,brcstRateMax from coverCrop where crop='".$row['crop']."'";
-      $result2=mysql_query($sql);
-      while ($rowB=mysql_fetch_array($result2)) {
+      $result2=$dbcon->query($sql);
+      while ($rowB=$result2->fetch(PDO::FETCH_ASSOC)) {
          $min=$rowB['brcstRateMin'];
          $max=$rowB['brcstRateMax'];
       }
    }
-    $min2=$min;
+   $min2=$min;
    $min2." ".$max;
    while ($min2<=$max) {
       $min2Formated=number_format($min2,1,'.','');
@@ -155,15 +156,16 @@ while($row=mysql_fetch_array($result)){
    echo "</div>";
    echo "</td></tr>";
 }
+echo "</tbody></table>";
 echo "<input type='hidden' value='".$numRows."' name='numRows' id='numRows'>";
-echo "</table>";
 ?>
 <script type='text/javascript'>
    var numRows=document.getElementById('numRows').value;
    function addRow(){
       numRows++;
       document.getElementById('numRows').value = numRows;
-      var table = document.getElementById("covercrop").getElementsByTagName('tbody')[0];
+      var tab = document.getElementById("covercrop");
+      var table = tab.getElementsByTagName('tbody')[0];
       var row = table.insertRow(numRows - 1);
       row.id      = "row" + numRows;
       row.name    = "row" + numRows;
@@ -171,8 +173,8 @@ echo "</table>";
       cell0.innerHTML = '<div class="styled-select" id="cropDiv'+numRows+'"><select name ="crop'+numRows+'" id="crop'+numRows+'" onChange="addPounds(\'num_poundsDiv'+numRows+'\',\''+numRows+'\'); addTotalPound(\'id'+numRows+'\',\''+numRows+'\');" class="mobile-select">'+
          '<option value = 0 selected disabled>Species</option>'+
          '<?php
-            $result=mysql_query("Select crop from coverCrop where active = 1");
-            while ($row1 =  mysql_fetch_array($result)){
+            $result=$dbcon->query("Select crop from coverCrop where active = 1");
+            while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
                echo "<option value= \"$row1[crop]\">$row1[crop]</option>";
             }
          ?>'+'</select></div>';
@@ -283,31 +285,48 @@ if ($_POST['submit']) {
    
    $sqlMaster = "update coverSeed_master set seed_method='".$seed_method."', incorp_tool='".$incorp_tool."', comments='".$comments."', seedDate='".$year."-".$month."-".$day."', fieldID='".$fieldID."', area_seeded=".$area_seeded." where id=".$id;   
    
-   $result = mysql_query($sqlMaster);
-   echo mysql_error();
+   try {
+      $stmt = $dbcon->prepare($sqlMaster);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
      
    $sqlDelete = "delete from coverSeed where id=".$id;
-   mysql_query($sqlDelete) or die(mysql_error());
-   
-   $count=1;
-   while($count <= $numberOfRows){
-      $crop = escapehtml($_POST['crop'.$count]);
-      $seedRate = escapehtml($_POST['numpounds'.$count]);
-      $numpounds = escapehtml($_POST['pound'.$count]);
-      $sqlAdd = "Insert into coverSeed (crop, seedRate, num_pounds, id) values('".$crop."', ".$seedRate.",".$numpounds.",".$id.")";
-
-      mysql_query($sqlAdd) or die(mysql_error());
-      $count++;
+   try {
+      $stmt = $dbcon->prepare($sqlDelete);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
    
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=coverTable.php?year='.$origYear.'&month='.$origMonth.
-         '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-         "&fieldID=".encodeURIComponent($origFieldID).
-         "&tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_report\">";
+   $sqlAdd = "Insert into coverSeed (crop, seedRate, num_pounds, id) values".
+      "(:crop, :seedRate, :numpounds, :id)";
+   try {
+      $stmt = $dbcon->prepare($sqlAdd);
+      $count=1;
+      while($count <= $numberOfRows){
+         $crop = escapehtml($_POST['crop'.$count]);
+         $seedRate = escapehtml($_POST['numpounds'.$count]);
+         $numpounds = escapehtml($_POST['pound'.$count]);
+         $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
+         $stmt->bindParam(':seedRate', $seedRate, PDO::PARAM_STR);
+         $stmt->bindParam(':numpounds', $numpounds, PDO::PARAM_STR);
+         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+         $stmt->execute();
+         $count++;
+      }
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=coverTable.php?year='.$origYear.'&month='.$origMonth.
+      '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+      "&fieldID=".encodeURIComponent($origFieldID).
+      "&tab=soil:soil_fert:soil_cover:soil_coverseed:coverseed_report\">";
 }
 ?>

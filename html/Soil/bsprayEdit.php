@@ -17,8 +17,8 @@ $origSprayedMaterial = $_GET['sprayMaterial'];
  
 $sqlget = "SELECT id,year(sprayDate) as yr, month(sprayDate) as mth, day(sprayDate) as dy, materialSprayed,".
    "sprayDate,fieldID, crops, water, totalMaterial, comments, rate, mixedWith FROM bspray where id = ".$id;
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $field = $row['fieldID'];
 $materialSprayed = $row['materialSprayed'];
 $crops = $row['crops'];
@@ -69,8 +69,8 @@ echo '<label>Material Sprayed:</label> ';
 echo '<select name="materialSprayed" id="materialSprayed">';
 echo '<option value="'.$materialSprayed.'" selected>'.$materialSprayed.' </option>';
 $sql = 'select sprayMaterial from tSprayMaterials';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['sprayMaterial'].'">'.$row['sprayMaterial'].' </option>';
 }
 echo '</select></div>';
@@ -80,8 +80,8 @@ echo '<label>Field:</label> ';
 echo '<select name="fieldID" id="fieldID">';
 echo '<option value="'.$field.'" selected>'.$field.' </option>';
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die("ERROR3");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['fieldID'].'">'.$row['fieldID'].' </option>';
 }
 echo '</select></div>';
@@ -134,15 +134,17 @@ if ($_POST['submit']) {
    $sql = "update bspray set crops='".$crops."', fieldID='".$fld."', sprayDate='".$year."-".
      $month."-".$day."', materialSprayed='".$materialSprayed."',water=".$water.",totalMaterial=".$totalMaterial.",comments='".
      $comSanitized."',mixedWith='".$mixedWith."', rate='".$rate."' where id=".$id;
-   $result = mysql_query($sql);
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=sprayTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay."&fieldID=".
-        encodeURIComponent($_GET['fieldID'])."&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
-        "&tab=soil:soil_spray:bspray:bspray_report\">";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=sprayTable.php?year='.$origYear.'&month='.$origMonth.
+     '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay."&fieldID=".
+     encodeURIComponent($_GET['fieldID'])."&sprayMaterial=".encodeURIComponent($_GET['sprayMaterial']).
+     "&tab=soil:soil_spray:bspray:bspray_report\">";
 }
 ?>

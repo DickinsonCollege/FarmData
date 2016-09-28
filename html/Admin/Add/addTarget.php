@@ -42,12 +42,14 @@ if (!empty($_POST['done'])) {
    $name = escapehtml($_POST['target']);
    $pre = escapehtml($_POST['prefix']);
    $sql="insert into targets(targetName, prefix, nextNum) values('".$name."', '".$pre."', 1)";
-   $result=mysql_query($sql);
-   if (!$result) {
-      echo "<script>alert(\"Could not add sales target: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Added Sales Target Successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert("Could not add sales target", $p);
+      die();
    }
+   echo "<script>showAlert(\"Added Sales Target Successfully!\");</script> \n";
 }
 ?>
 

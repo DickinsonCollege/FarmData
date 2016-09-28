@@ -9,8 +9,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 <?php
    if (isset($_GET['id'])) {
       $sqlDel="DELETE FROM pack WHERE id=".$_GET['id'];
-      mysql_query($sqlDel);
-      echo mysql_error();
+      try {
+         $stmt = $dbcon->prepare($sqlDel);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         echo "<script>alert(\"Could not update user".$p->getMessage()."\");</script>";
+         die();
+      }
    }
 
    $year = $_GET['year'];
@@ -24,15 +29,16 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $grade = $_GET['grade'];
    $bringback = $_GET['bringback'];
 
-   $sql = "SELECT id, packDate, crop_product, grade, amount, unit, comments, bringBack, target FROM pack 
-      WHERE packDate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' 
-      AND pack.crop_product like '".$crop_product."' AND pack.target like '".$target."' AND pack.grade like '".$grade."'";
+   $sql = "SELECT id, packDate, crop_product, grade, amount, unit, comments, bringBack, target FROM pack ".
+      "WHERE packDate BETWEEN '".$year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
+      "' AND pack.crop_product like '".$crop_product."' AND pack.target like '".$target.
+      "' AND pack.grade like '".$grade."'";
    if ($bringback != "%") {
       $sql .= " AND bringback=".$bringback;
    }
    $sql .= " ORDER BY packDate, crop_product, target, grade";
    
-   $result = mysql_query($sql);
+   $result = $dbcon->query($sql);
    
    echo "<table class = 'pure-table pure-table-bordered'>";
    $crpProd = $_GET['crop_product'];
@@ -53,7 +59,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    } else {
       $monthName = date('F', mktime(0, 0, 0, $month, 10));
       $tcurMonthName = date('F', mktime(0, 0, 0, $tcurMonth, 10));
-      $dat = "From: ".$monthName." ".$day." ".$year."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To: ".$tcurMonthName." ".$tcurDay." ".$tcurYear;
+      $dat = "From: ".$monthName." ".$day." ".$year."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To: ".$tcurMonthName.
+         " ".$tcurDay." ".$tcurYear;
    }
 
    echo "<center><h2>Packing Report for ".$crpProd."<br>
@@ -68,7 +75,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       <th>Unit</th>
       <th style='width:20%'>Comments</th>
       <th>Bring Back</th><th>Edit</th><th>Delete</th></tr></thead>";
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       echo "<tr>";
       echo "<td>";
       echo $row['packDate'];
@@ -79,16 +86,15 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "</td><td>";
       echo $row['grade'];
       echo "</td><td>";
-                $amount = $row['amount'];
-                $unit = $row['unit'];
+      $amount = $row['amount'];
+      $unit = $row['unit'];
       $convsql = "SELECT conversion FROM units WHERE crop='".$row['crop_product'].
          "' AND unit='POUND'";
-      $convresult = mysql_query($convsql);
-      if (mysql_num_rows($convresult) > 0) {
-         $convrow = mysql_fetch_array($convresult);
+      $convresult = $dbcon->query($convsql);
+      if ($convrow = $convresult->fetch(PDO::FETCH_NUM)) {
          $conversion = $convrow[0];
-                        $amount = $amount * $conversion;
-                        $unit = 'POUND';
+         $amount = $amount * $conversion;
+         $unit = 'POUND';
       }
       echo number_format((float) $amount, 2, '.', '');
       echo "</td><td>";

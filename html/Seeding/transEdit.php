@@ -3,14 +3,20 @@
 
 $farm = $_SESSION['db'];
 if ($farm != 'dfarm') {
-   $dbcon = mysql_connect('localhost', 'wahlst_usercheck', 'usercheckpass') or 
-       die ("Connect Failed! :".mysql_error());
-   mysql_select_db('wahlst_users');
+   try {
+      $dbcon = new PDO('mysql:host=localhost;dbname=wahlst_users', 'wahlst_usercheck', 'usercheckpass');
+      $dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+   } catch (PDOException $d) {
+      die($d->getMessage());
+   }
    $sql="select username from users where dbase='".$_SESSION['db']."'";
-   $result = mysql_query($sql);
-   echo mysql_error();
+   try {
+      $result = $dbcon->query($sql);
+   } catch (PDOException $p) {
+      die($p->getMessage());
+   }
    $useropts='';
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $useropts.='<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 }
@@ -35,8 +41,8 @@ $sqlget = "SELECT id, gen, year(transdate) as tyr, month(transdate) as tmth, day
    year(seedDate) as syr, month(seedDate) as smth, day(seedDate) as sdy,
    transdate, seedDate, fieldID, bedft, rowsBed, hours, flats, comments FROM transferred_to WHERE id = ".$id;
 
-$sqldata = mysql_query($sqlget) or die(mysql_error());
-$row = mysql_fetch_array($sqldata);
+$sqldata = $dbcon->query($sqlget);
+$row = $sqldata->fetch(PDO::FETCH_ASSOC);
 
 $id = $row['id'];
 $egen = $row['gen'];
@@ -123,8 +129,8 @@ echo '<label>Crop:</label>';
 echo '<select name="crop" id="crop" onchange="updateSeedDate();">';
 echo '<option value="'.$curCrop.'" selected>'.$curCrop.' </option>';
 $sql = 'select distinct crop from gh_seeding WHERE year(seedDate)=year(now())';
-$sqldata = mysql_query($sql) or die("ERROR2");
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo '<option value="'.$row['crop'].'">'.$row['crop'].' </option>';
 }
 echo '</select>';
@@ -142,8 +148,8 @@ echo '<select name="user" id="user">';
 echo '<option value="'.$user.'" selected>'.$user.'</option>';
 if ($farm == 'dfarm') {
    $sql = 'select username from users where active = 1';
-   $sqldata = mysql_query($sql) or die("ERROR3");
-   while ($row = mysql_fetch_array($sqldata)) {
+   $sqldata = $dbcon->query($sql);
+   while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
       echo '<option value="'.$row['username'].'">'.$row['username'].'</option>';
    }
 } else {
@@ -156,8 +162,8 @@ echo "<label>Name of Field:</label>";
 echo "<select name='fieldID' id='fieldID'>";
 echo "<option value='".$fieldID."' selected>".$fieldID."</option>";
 $sql = 'select fieldID from field_GH where active = 1';
-$sqldata = mysql_query($sql) or die();
-while ($row = mysql_fetch_array($sqldata)) {
+$sqldata = $dbcon->query($sql);
+while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['fieldID']."'>".$row['fieldID']."</option>";
 }
 echo '</select></div>';
@@ -226,18 +232,20 @@ if ($_POST['submit']) {
       .$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."', comments='".$comments."', fieldID='".
       $fieldID."',gen=".$gen." WHERE id=".$id;
 
-   $result = mysql_query($sql);
-   
-   if(!$result){
-       echo "<script>alert(\"Could not update data: Please try again!\\n".mysql_error()."\");</script>\n";
-   } else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
-      echo '<meta http-equiv="refresh" content="0;URL=transTable.php?year='.$origYear.'&month='.$origMonth.
-        '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
-        "&transferredCrop=".encodeURIComponent($origCrop).
-        "&fieldID=".encodeURIComponent($origField)."&genSel=".$origGen.
-        "&tab=seeding:transplant:transplant_report&submit=Submit\">";
-   }
+   try {
+      $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+       phpAlert('Could not update transplant data', $p);
+       die();
+   } 
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   echo '<meta http-equiv="refresh" content="0;URL=transTable.php?year='.$origYear.'&month='.$origMonth.
+     '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.
+     "&transferredCrop=".encodeURIComponent($origCrop).
+     "&fieldID=".encodeURIComponent($origField)."&genSel=".$origGen.
+     "&tab=seeding:transplant:transplant_report&submit=Submit\">";
 }
 
 ?>

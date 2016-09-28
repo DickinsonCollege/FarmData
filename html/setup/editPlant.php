@@ -4,9 +4,8 @@ var numeric = [0, 0, 1, 0];
 var units = [];
 <?php
 $sql = "select unit from extUnits";
-$res = mysql_query($sql);
-echo mysql_error();
-while ($row = mysql_fetch_array($res)) {
+$res = $dbcon->query($sql);
+while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
    echo 'units.push("'.$row['unit'].'");';
 }
 if (isset($_POST['invoicey'])) {

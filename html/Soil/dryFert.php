@@ -20,8 +20,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <select name ="fieldID" id="fieldID" onchange="addInput();addInput3();" class="mobile-select">
 <option value = 0 selected disabled> FieldID</option>
 <?php
-$result=mysql_query("Select distinct fieldID from field_GH where active=1");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select distinct fieldID from field_GH where active=1");
+while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
 }
 ?>
@@ -36,8 +36,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 <select name ="mat" id="mat" class="mobile-select">
 <option value = 0 selected disabled> Material </option>
 <?php
-$result=mysql_query("Select fertilizerName from fertilizerReference");
-while ($row1 =  mysql_fetch_array($result)){
+$result=$dbcon->query("Select fertilizerName from fertilizerReference");
+while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
    echo "\n<option value= \"$row1[fertilizerName]\">$row1[fertilizerName]</option>";
 }
 ?>
@@ -206,16 +206,19 @@ if (isset($_POST['submit'])) {
       $crops .= escapehtml($_POST['crop'.$i]);
    }
    echo "<script>addInput3();</script>";
-   $sql="Insert into fertilizer(username,inputDate,fieldID, fertilizer, crops, rate, numBeds, totalApply, comments) values ('".
+   $sql="Insert into fertilizer(username,inputDate,fieldID, fertilizer, crops, rate, numBeds, totalApply, ".
+      "comments) values ('".
       $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$mat.
       "', '".$crops."',".$_POST['rate'].",".$_POST['beds'].",".$_POST['pounds'] * $_POST['beds'].
       ",'".$comments."')";
-   $result = mysql_query($sql);
-   if (!$result) {
-      echo "<script>alert(\"Could not enter data: Please try again!\\n".mysql_error()."\");</script>\n";
-   }else {
-      echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
    }
+   echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 }
 ?>
 

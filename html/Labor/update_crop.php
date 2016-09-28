@@ -6,10 +6,9 @@ if ($fieldID == "N/A") {
 } else {
    $sql = "select crop from (select crop from dir_planted  where fieldID = '".$fieldID."' and year(plantdate) = '".$_GET['plantyear']."' union select crop from transferred_to where fieldID = '".$fieldID."' and year(transdate) = '".$_GET['plantyear']."') as crp order by crop";
 }
-$result = mysql_query($sql);
-while($row = mysql_fetch_array($result)) {
+$result = $dbcon->query($sql);
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 echo "<option value=\"".$row['crop']."\">".$row['crop']."</option>";
 }
-mysql_close();
 ?>
 
