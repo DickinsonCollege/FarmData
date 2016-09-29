@@ -1,0 +1,42 @@
+To upgrade from FARMDATA1.0, to FARMDATA1.1, you must adjust several
+of the tables in your farm information database.  Connect to that
+database from phpMyAdmin or a terminal and execute the the following
+commands.  In phpMyAdmin, paste the commands into the "Run SQL Query"
+box and click "Go":
+
+alter table coverCrop drop column id;
+alter table coverCrop add column active tinyint(1) default 1 after legume;
+alter table tSprayMaterials modify column REI_HRS varchar(20);
+alter table gh_seeding add column gen int default 1 after cellsFlat;
+alter table dir_planted add column gen int default 1 after hours;
+alter table transferred_to add column gen int default 1 after flats;
+alter table harvested add column gen int default 1 after unit;
+alter table config add column gens tinyint(1) default 1 after bedft;
+
+To upgrade from FARMDATA1.1 to FARMDATA1.2, you must adjust one
+additional table in your farm information database.  The necessary
+command is:
+
+alter table distribution add column pricePerUnit double default 0 after unit;
+
+To upgrade from FARMDATA1.0 to FARMDATA1.2, first use the commands above
+to upgrade to FARMDATA1.1, then upgrade to FARMDATA1.2.  You do NOT need
+to install the code for FARMDATA1.1 to upgrade to FARMDATA1.2.
+
+To upgrade from FARMDATA1.2 to FARMDATA1.3, you must adjust several tables
+in your farm information database.  The necessary commands are:
+
+alter table comments add column id int auto_increment primary key;
+alter table product add column active tinyint(1) default 1;
+alter table tSprayField add column crops text;
+update tSprayField set crops = (select crops from tSprayMaster where 
+  tSprayMaster.id = tSprayField.id);
+alter table tSprayMaster drop column crops;
+
+
+To upgrade from FARMDATA1.0 to FARMDATA1.3, first use the commands above
+to upgrade to FARMDATA1.1, then upgrade to FARMDATA1.2, then FARMDATA1.3.
+You do NOT need to install the code for FARMDATA1.1 or FARMDATA1.2 to 
+upgrade to FARMDATA1.3.
+
+No table modifications are needed to upgrade from FARMDATA1.3 to FARMDATA1.4.
