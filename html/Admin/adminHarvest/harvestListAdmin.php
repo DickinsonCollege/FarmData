@@ -105,10 +105,11 @@ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
              echo "\n";
           }
         ?>
-	document.getElementById('total').value = sum;
+	document.getElementById('total').value = sum.toFixed(2);;
 	document.getElementById('default_unit').innerHTML = '&nbsp;&nbsp;' + default_unit[crop];
    }	
 	
+window.onload=function() {addInput();checkIfOnList();}
 </script>
 <?php
 for ($i = 0; $i < count($targs); $i++) {

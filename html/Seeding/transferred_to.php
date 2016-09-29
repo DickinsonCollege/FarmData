@@ -282,13 +282,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
 
    $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
-   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,hours,comments) VALUESs ('".
+   $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,".
+      "hours,comments) VALUES ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
       ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."')";
    try {
       $stmt = $dbcon->prepare($sql);
-      $stmt->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $stmt->execute();
    } catch (PDOException $p) {
        phpAlert('Could not enter transplant data', $p);

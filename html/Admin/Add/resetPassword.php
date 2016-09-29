@@ -78,7 +78,7 @@ function update() {
 <br clear="all">
 <br clear="all">
 <script type="text/javascript">
-update();
+window.onload=function() {update();}
 </script>
 <input class="submitbutton pure-button wide" type="submit" name="submit" value="Submit">
 <?php

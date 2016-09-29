@@ -126,7 +126,7 @@ if (!$isCover) {
             $year;
          try {
             $stmt = $dbcon->prepare($sql);
-            $success = $stmt->execute();
+            $stmt->execute();
          } catch (PDOException $p) {
             die($p->getMessage());
          }
@@ -134,7 +134,7 @@ if (!$isCover) {
          $sql = "insert into toOrder values('".$crop."', ".$year.", ".$rowftToPlant.", 1)";
          try {
             $stmt = $dbcon->prepare($sql);
-            $success = $stmt->execute();
+            $stmt->execute();
          } catch (PDOException $p) {
             die($p->getMessage());
          }

@@ -67,10 +67,11 @@ $comments = $row['comments'];
 
 <script type='text/javascript'>
 function updateSeedDate() {
-   var crop = encodeURIComponent(document.getElementById('crop').value);
+   var crop = document.getElementById('crop').value;
+   var cropEnc = encodeURIComponent(crop);
 
    var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("GET", "update_trans.php?crop="+crop, false);
+   xmlhttp.open("GET", "update_trans.php?crop="+cropEnc, false);
    xmlhttp.send();
    
         var cur = "";

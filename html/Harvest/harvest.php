@@ -190,6 +190,7 @@ window.onload=function() {
       document.getElementById("harvestTable").style.width=min;
    }
       // console.log(document.getElementById("harvestTable").style.width);
+   addRow();
 
 }
 </script>
@@ -343,7 +344,7 @@ if($currentDate){
   echo "<script type=\"text/javascript\">";
   echo "var eb = document.getElementById(\"cropButton\");";
   echo "eb.value = \"".html_entity_decode($currentCrop, ENT_QUOTES)."\";";
-  echo "addRow();";
+  //echo "addRow();";
   echo "</script>";
 }
 ?>
@@ -457,7 +458,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $value->execute();
    } catch (PDOException $p) {
       phpAlert('Could not enter data', $p);
-      die('fatal error');
+      die();
    }
    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
 

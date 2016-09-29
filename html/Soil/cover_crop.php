@@ -358,8 +358,6 @@ if(!empty($_POST['submit'])) {
             $pound = escapehtml($_POST['pound'.$count]);
             $var = "select variety from coverSeedInventory where code ='".$code."' and crop = '".$crop."'";
             $vr = $dbcon->query($var);
-            $error = $dbcon->errorInfo();
-            echo $error[2];
             if ($vrow = $vr->fetch(PDO::FETCH_ASSOC)) {
                $variety = $vrow['variety'];
             } else {
@@ -373,7 +371,7 @@ if(!empty($_POST['submit'])) {
                $stmt->bindParam(':pound', $pound, PDO::PARAM_STR);
                $stmt->bindParam(':crop', $crop, PDO::PARAM_STR);
                $stmt->bindParam(':code', $code, PDO::PARAM_STR);
-               $success = $stmt->execute();
+               $stmt->execute();
             }
             $count++;
          }

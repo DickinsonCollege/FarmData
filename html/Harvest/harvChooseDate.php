@@ -32,18 +32,16 @@ if(isset($_POST['date'])){
 
     $sql_result=$dbcon->query("SELECT id FROM harvestList WHERE harDate='$listDate'");
 
-    if($res=$sql_result->fetch(PDO::FETCH_ASSOC)) {
-           $currentID= $res["id"];
+    if ($res=$sql_result->fetch(PDO::FETCH_ASSOC)) {
+       $currentID= $res["id"];
+       echo ' <meta http-equiv="refresh" content=0;URL="harvestList.php?tab=harvest:harvestList&year='.
+         $year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
     }else{
-       $sql="INSERT INTO harvestList(harDate, comment) VALUES('".$listDate."','')";
-       echo "<br>";
-       $result = $dbcon->prepare($sql);
-           $result->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-           $success = $result->execute();
-           $currentID = $dbcon->lastInsertId();
+       echo "<script type='text/javascript'>";
+       echo "alert('No harvest list for the date specified!');";
+       echo "</script>";
     }    
 
-    echo ' <meta http-equiv="refresh" content=0;URL="harvestList.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0 ">';
 
 }
 ?>

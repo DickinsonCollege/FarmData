@@ -230,7 +230,7 @@ if ($_POST['submit']) {
      $prep->execute();
    } catch (PDOException $p) {
       phpAlert('', $p);
-      die('fatal error');
+      die();
    }
    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    echo "<meta http-equiv=\"refresh\" content=\"0;URL=harvestTable.php?year=".$origYear.'&month='

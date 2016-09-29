@@ -66,15 +66,16 @@ foreach ($tabArr as $crp=>$arr) {
    $reqs = array();
    $reqs_unit = array();
    for ($i = 0; $i < count($targs); $i++) {
-      if (isset($tabArr[$crp][$targs[$i]])) {
-         $reqs[$i] = $tabArr[$crp][$targs[$i]];
+      if (isset($arr[$targs[$i]])) {
+         $reqs[$i] = $arr[$targs[$i]];
          $used[$i] += $reqs[$i];
-         $reqs_unit[$i] = $tabArr[$crp][$targs[$i].'_units'];
+         $reqs_unit[$i] = $arr[$targs[$i].'_units'];
          $tot += $reqs[$i] / $conversion[$crp][$reqs_unit[$i]];
       } else {
          $reqs[$i] = 0;
       }
    }
+
    if ($detail == 1 && $cnt % 5 == 0) {
       echo $th;
    }
@@ -87,7 +88,6 @@ foreach ($tabArr as $crp=>$arr) {
    } catch (PDOException $p) {
      phpAlert('', $p);
    }
-   $tabArr = array();
    while ($row=$result->fetch(PDO::FETCH_ASSOC)) {
       $itemYield=$row['yld'];
    }
@@ -97,7 +97,7 @@ foreach ($tabArr as $crp=>$arr) {
       echo "<tr>";
    }
    echo "<td> <a class=\"gx2\" href=\"harvest.php?tab=harvest:harvestInput&crop=".encodeURIComponent($crp)."&date=".$date."&year=".$year."&month=".$month."&day=".$day."&currentID=".$currentID."\">".$crp." </a> </td>";
-   echo "<td>".$tabArr[$crp]['fieldID']."</td>";
+   echo "<td>".$arr['fieldID']."</td>";
    if ($detail == 1) {
       for ($i = 0; $i < count($reqs); $i++) {
          echo "<td>".$reqs[$i]." ";

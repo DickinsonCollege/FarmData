@@ -356,7 +356,7 @@ try {
 }
 }
 if(!empty($_POST['submit'])) {
-   echo "<script> showAlert('Edit Data Succesfully!'); </script>";
+   echo "<script> showAlert('Edited Tractor Spray Record Succesfully!'); </script>";
 
    echo '<meta http-equiv="refresh" content=0;URL="deleteTspray.php?year='.$origYear.'&month='.$origMonth.
         '&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.'&crop='.$origCrop.

@@ -134,7 +134,6 @@ $sqlM="INSERT INTO tSprayMaster(sprayDate,noField,noMaterial,waterPerAcre, "
    "' , '".$username. "', ".$_POST['status'].", '')";
 try {
    $resultM=$dbcon->prepare($sqlM);
-// $resultM->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
    $resultM->execute();
    $currentID= $dbcon->lastInsertId();
 } catch (PDOException $p) {
@@ -185,7 +184,7 @@ try {
       $stmt->bindParam(':mat', $material, PDO::PARAM_STR);
       $stmt->bindParam(':rate', strval($rate), PDO::PARAM_STR);
       $stmt->bindParam(':total', strval($total), PDO::PARAM_STR);
-      $success = $stmt->execute();
+      $stmt->execute();
       $materialInd++;
    }
 } catch (PDOException $p) {
