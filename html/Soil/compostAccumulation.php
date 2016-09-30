@@ -85,7 +85,6 @@ function getUnits(num) {
   unitDiv.innerHTML = "<div id='unitsDiv" + num + "'>" + 
      "<select name ='units" + num + "' id='units" + num + 
      "' class='wide'>" + 
-     "<option value=0 selected disabled>Unit</option>" +
      opts + "</select></div>";
 }
 
@@ -103,8 +102,8 @@ function addMaterialToTable() {
 
      var cellHTML = "";
      cellHTML +=  "<select name='material" + numMaterials + "' id='material" + 
-           numMaterials + "' class='wide' onChange='getUnits(" + numMaterials + ");'>" + 
-          "<option value=0 selected disabled>Material</option>";
+           numMaterials + "' class='wide' onChange='getUnits(" + numMaterials + ");'>";
+ // + "<option value=0 selected disabled>Material</option>";
 
           <?php
           $result = $dbcon->query("select materialName from compost_materials");
@@ -196,7 +195,12 @@ Unit:
 </div>
 </div>
 <script type="text/javascript">
-addMaterialToTable();
+window.onload=function() {
+   addMaterialToTable();
+   var numMaterialsInput = document.getElementById("numMaterials");
+   var numMaterials = numMaterialsInput.value;
+   getUnits(numMaterials);
+}
 </script>
 <br clear='all'>
 <!--

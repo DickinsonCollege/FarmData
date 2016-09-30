@@ -32,7 +32,7 @@ if(!empty($_POST['submit'])) {
          phpAlert('Could not remove task.  Is it used in a labor record?', $p);
          die();
       }
-       echo '<script> alert("Removed Task Successfully"); </script>';
+      echo '<script> alert("Removed Task Successfully"); </script>';
    } else {
         echo '<script> alert("Please Select a Task"); </script>';
    }

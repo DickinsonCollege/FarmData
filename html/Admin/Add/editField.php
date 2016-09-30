@@ -136,7 +136,7 @@ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
 </div>
 <br clear="all"/>
 <script type="text/javascript">
-getFieldInfo();
+window.onload=function() {getFieldInfo();}
 </script>
 
 <input class="submitbutton pure-button wide" type="submit" name="add" id="submit" value="Update">

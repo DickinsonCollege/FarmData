@@ -86,7 +86,7 @@ echo "</select></div>";
 </div>
 <br clear="all"> 
 <script type="text/javascript">
-addInput();
+window.onload=function() {addInput();}
 </script>
 <input class="submitbutton pure-button wide" name="submit" type="submit" id="submit" value="Submit">
 

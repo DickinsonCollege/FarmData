@@ -118,7 +118,7 @@ echo "</select></div>";
 </select>
 </div>
 <script type="text/javascript">
-populate();
+window.onload=function() {populate();}
 </script>
 
 <br clear="all"/>

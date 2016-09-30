@@ -106,7 +106,7 @@ if ($_SESSION['sales_invoice']) {
 </div>
 
 <script type="text/javascript">
-populate();
+window.onload=function() {populate();}
 </script>
  
 <br clear="all"/>

@@ -29,6 +29,7 @@
  $transplanting = true;
  $laborc = false;
  $harvesting = false;
+// assumes onload not called from this file
  include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
 <!--

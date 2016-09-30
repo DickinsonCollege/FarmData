@@ -190,7 +190,7 @@ echo "</select></div>";
 <br clear="all"> 
 
 <script type="text/javascript">
-addInput();
+window.onload=function() {addInput();}
 </script>
 
 

@@ -33,6 +33,7 @@ echo "</div>";
 $laborc = false;
 $harvesting = false;
 $transplanting = false;
+// assumes onload not called from this file
 include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
 <input type="hidden" name="numRows" id="numRows" value=0>
@@ -104,6 +105,8 @@ function clearTable() {
       removeRow();
    }
 }
+
+function addInput() {}
 </script>
 
 <div class='pure-control-group'>

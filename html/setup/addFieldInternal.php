@@ -120,6 +120,6 @@ function addField() {
 <input type="button" class="submitbutton" id="newField" name="newField" value="New Field"
   onclick="addField();">
 <script type="text/javascript">
-addField();
+window.onload=function(){addField();}
 </script>
 </form>

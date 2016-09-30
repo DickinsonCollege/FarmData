@@ -103,7 +103,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)){
 
 <td>
 <script type="text/javascript">
-checkIfOnList();
+window.onload=function() {checkIfOnList();}
 </script>
 <input type="submit" name="submit" value="Submit" class="genericbutton pure-button wide">
 </td>

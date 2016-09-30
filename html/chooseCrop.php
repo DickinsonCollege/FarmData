@@ -26,7 +26,7 @@ function overlay() {
         }
         but.innerHTML="<div class=\"styled-select\">" + 
            '<select name="crop" id="cropButton" onChange="update();clearTable();">' +
-           '<option disabled selected="selected"  value = 0> Crop </option>' +
+//           '<option disabled selected="selected"  value = 0> Crop </option>' +
            xmlhttp.responseText + "</select></div>";
 }
 
@@ -45,9 +45,14 @@ function clearTable() {
 <div class='pure-control-group'>
 <label for="cropButton">Crop:</label>
 <select name="crop" id="cropButton" class='mobile-select' onChange="update();clearTable();">
+<!--
 <option disabled selected="selected"  value = 0> Crop </option>
+-->
 </select>
 </div>
 <script type="text/javascript">
-overlay();
+window.onload=function() {
+   overlay();
+   addInput();
+}
 </script>
