@@ -126,6 +126,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 ?>
 </select></div>
 
+<script type="text/javascript">
+function addFieldID() {}
+</script>
+
 <?php
 if($_SESSION['mobile']){
 echo "<br clear=\"all\">";
@@ -211,10 +215,14 @@ value="Remove Field">
 <script type="text/javascript">
 function getGen(j) {
    var year = document.getElementById("year").value;
+   var month = document.getElementById("month").value;
+   var day = document.getElementById("day").value;
+   var date = year + "-" + month + "-" + day;
    var crop = encodeURIComponent(document.getElementById("cropButton").value);
    var fldID = encodeURIComponent(document.getElementById("fieldID" + j).value);
    xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&plantyear="+year + "&fieldID=" + fldID, false);
+   //xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&harvDate="+year + "&fieldID=" + fldID, false);
+   xmlhttp.open("GET", "update_Gen.php?crop="+crop+"&harvDate="+ date + "&fieldID=" + fldID, false);
    xmlhttp.send();
    var cell25 = document.getElementById('genCell' + j);
    cell25.innerHTML=" <select name='gen" + j + "' id=\'gen" +j +
@@ -228,9 +236,13 @@ function addRow() {
       showError("Error: choose crop first!");
    } else {
       var year = document.getElementById("year").value;
+      var month = document.getElementById("month").value;
+      var day = document.getElementById("day").value;
+      var date = year + "-" + month + "-" + day;
       var crop = encodeURIComponent(cb.value);
       xmlhttp= new XMLHttpRequest();
-      xmlhttp.open("GET", "update_field.php?crop="+crop+"&plantyear="+year, false);
+      // xmlhttp.open("GET", "update_field.php?crop="+crop+"&plantyear="+year, false);
+      xmlhttp.open("GET", "update_field.php?crop="+crop+"&harvDate="+date, false);
       xmlhttp.send();
       if(xmlhttp.responseText=="\n") {
           showError("Error: no " + cb.value + " planted in " + year + "!");

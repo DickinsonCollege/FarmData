@@ -5,7 +5,38 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
-   echo "<center><h2>  Labor Report for All tasks for All Crops in All Fields"."</h2></center>";
+   $year = $_GET['year'];
+   $month = $_GET['month'];
+   $day = $_GET['day'];
+   $tcurYear = $_GET['tyear'];
+   $tcurMonth = $_GET['tmonth'];
+   $tcurDay = $_GET['tday'];
+   $crop = escapehtml($_GET['crop']);
+   $fieldID = escapehtml($_GET['fieldID']);
+   $task = escapehtml($_GET['task']);
+   $origCrop = escapehtml($_GET['crop']);
+   $origFieldID = escapehtml($_GET['fieldID']);
+   $origTask = escapehtml($_GET['task']);
+
+   echo "<center><h2>  Labor Report for ";
+   if ($origTask == '%') {
+      echo "All Tasks";
+   } else {
+      echo $origTask;
+   }
+   echo " for ";
+   if ($origCrop == '%') {
+      echo "All Crops";
+   } else {
+      echo $origCrop;
+   }
+   echo " in ";
+   if ($origFieldID == '%') {
+      echo "All Fields";
+   } else {
+      echo "Field: ".$origFieldID;
+   }
+   echo "</h2></center>";
    if ($_SESSION['admin']) {
       echo '<h3>Note for administrative users: use "Harvest->Report", ';
       echo '"Seed->Direct Seeding->Report" or ';
@@ -23,18 +54,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          die();
       }
    }
-   $year = $_GET['year'];
-   $month = $_GET['month'];
-   $day = $_GET['day'];
-   $tcurYear = $_GET['tyear'];
-   $tcurMonth = $_GET['tmonth'];
-   $tcurDay = $_GET['tday'];
-   $crop = escapehtml($_GET['crop']);
-   $fieldID = escapehtml($_GET['fieldID']);
-   $task = escapehtml($_GET['task']);
-   $origCrop = escapehtml($_GET['crop']);
-   $origFieldID = escapehtml($_GET['fieldID']);
-   $origTask = escapehtml($_GET['task']);
    $sql = "SELECT id, username, ldate,crop,fieldID,task,hours,comments FROM (".
       "select id, username, ldate, crop, fieldId, task, hours, comments ".
       "from labor union ".

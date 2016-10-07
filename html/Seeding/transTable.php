@@ -24,8 +24,9 @@ $crop = escapehtml($_GET['transferredCrop']);
 $genSel = $_GET['genSel'];
 $fieldID = escapehtml($_GET['fieldID']);
 $sql="Select id, username, transferred_to.fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft,".
-  " transdate,datediff(transdate,seedDate) as diffdate,flats, gen, hours, comments, bedft/length as beds".
-  " from  transferred_to, field_GH where transferred_to.fieldID = field_GH.fieldID and".
+  " transdate,datediff(transdate,seedDate) as diffdate,flats, gen, hours, comments, bedft/length as beds, ".
+  " annual, year(lastHarvest) as lastYear ".
+  "from  transferred_to, field_GH where transferred_to.fieldID = field_GH.fieldID and".
   " crop like '".$crop."' and transferred_to.fieldID like '".
   $fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".$day.
   "' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by transdate";
@@ -117,6 +118,8 @@ if ($_SESSION['gens']) {
 if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
+echo "<th> Annual </th>";
+echo "<th> Last Harvest Year </th>";
 echo "<th><center> Comments</center></th>";
 if ($_SESSION['admin']) {
    echo "<th>User</th><th>Edit</th><th>Delete</th>";
@@ -160,9 +163,18 @@ echo "</tr></thead>";
    }
    if ($_SESSION['labor']) {
      echo number_format((float) $row['hours'], 2, '.', '');
-     echo "</td><td>";
+     echo "</td>";
    }
+   if ($row['annual'] == 1) {
+      echo "<td>Yes</td>";
+      echo "<td>&nbsp;</td>";
+   } else {
+      echo "<td>No</td>";
+      echo "<td>".$row['lastYear']."</td>";
+   }
+   echo "<td>";
    echo $row['comments'];
+   echo "</td>";
    if ($_SESSION['admin']) {
       echo "<td>".$row['username']."</td>";
       echo "<td><form method='POST' action=\"transEdit.php?month=".$month."&day=".$day."&year=".$year.

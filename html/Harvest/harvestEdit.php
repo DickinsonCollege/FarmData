@@ -58,8 +58,11 @@ function addInput2(){
    var newdiv = document.getElementById('fieldID2');
    var crop = encodeURIComponent(document.getElementById("crop").value);
    var year = document.getElementById("year").value;
+   var month = document.getElementById("month").value;
+   var day = document.getElementById("day").value;
+   var date = year + "-" + month + "-" + day;
    xmlhttp= new XMLHttpRequest();
-   xmlhttp.open("GET", "update_field.php?crop="+crop+"&plantyear="+year, false);
+   xmlhttp.open("GET", "update_field.php?crop="+crop+"&harvDate="+date, false);
    xmlhttp.send();
    var cur="";
    if (crop=="<?php echo $curCrop;?>") {

@@ -4,7 +4,6 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
-// include $_SERVER['DOCUMENT_ROOT'].'/testPureMenu.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 
@@ -25,6 +24,14 @@ function show_confirm() {
       return false;
    }
    con += "Crop: "+ crp + "<br>";
+   var annual = document.getElementById("annual").value;
+   if (annual == 1) {
+      con += "Annual: yes<br>";
+   } else {
+      con += "Annual: no<br>";
+      var lastYear = document.getElementById("lastYear").value;
+      con += "Last Harvest: " + lastYear + "<br>";
+   }
 <?php
 if ($_SESSION['seed_order']) {
    echo '
@@ -107,7 +114,7 @@ if ($_SESSION['seed_order']) {
 <div class="pure-control-group">
 <label for="planted">Date of Seeding:</label>
 <?php
-if ($_SESSION['mobile']) echo "<br clear='all'/>";
+// if ($_SESSION['mobile']) echo "<br clear='all'/>";
 if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
    $dDay = $_POST['day'];
    $dMonth = $_POST['month'];
@@ -124,11 +131,13 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <label for="fieldcrop">Name of Field:</label>
 <select name="fieldID" id= "fieldID" class='mobile-select'>
 <?php
+/*
 echo '<option disabled value = 0  style="display:none; width: auto;" ';
 if (!isset($field)) {
    echo 'selected';
 }
 echo '> Field Name</option>';
+*/
 $result=$dbcon->query("Select fieldID from field_GH where active = 1");
 while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
   $fieldID = $row1['fieldID'];
@@ -146,7 +155,7 @@ while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
 <label>Crop:</label>
 <?php
 echo '<select name="cropButton" id="cropButton" class="mobile-select">';
-echo '<option disabled selected value="0">Crop</option>';
+// echo '<option disabled selected value="0">Crop</option>';
 $sql = "select distinct crop from plant where active=1";
 $res = $dbcon->query($sql);
 while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
@@ -155,7 +164,25 @@ while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
 ?>
 </select></div>
 
+<div class="pure-control-group" id = "annualdiv">
+<label>Annual:</label>
+<select name="annual" id="annual" class="mobile-select" onchange="addLastHarvestDate();">
+<option value=1 selected>Annual</option>
+<option value=0>Perennial</option>
+</select>
+</div>
+
+<div class="pure-control-group" id = "lastharvdiv">
+</div>
+
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/annual.php';
+?>
+
 <script type="text/javascript">
+
+function addFieldID() {}
+
 var numRows = 0;
 
 function update_feet() {
@@ -348,6 +375,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $bedftv = $bedftv / $numrows;
    }
    $fld = escapehtml($_POST['fieldID']);
+   $annual = $_POST['annual'];
+   if ($annual == 1) {
+      $lastYear = $_POST['year'];
+   } else {
+      $lastYear = $_POST['lastYear'];
+   }
 
    if ($_SESSION['labor']) {
       // Check if given time is in minutes or hours
@@ -433,9 +466,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      }
    }
 
-   $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen) VALUES".
-      " ('".$_SESSION['username']."','".$fld."','".$crop."','".$_POST['year']."-".$_POST['month']."-".
-         $_POST['day']."',".$bedftv.", ".$numrows.", ".$totalHours.", '".$comSanitized."', ".$gen.")";
+   $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen, annual, ".
+      "lastHarvest) VALUES ('".$_SESSION['username']."','".$fld."','".$crop."','
+      ".$_POST['year']."-".$_POST['month']."-".  $_POST['day']."',".  $bedftv.", ".$numrows.", ".
+      $totalHours.", '".$comSanitized."', ".$gen.", ".$annual.", '".$lastYear."-12-31')";
    try {
       $result = $dbcon->prepare($sql);
       $result->execute();

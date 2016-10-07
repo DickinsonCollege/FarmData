@@ -147,94 +147,92 @@ echo '<form method="POST" action = "/Seeding/transplantReport.php?tab=seeding:tr
 </div>
 
 
-<script>
-     function show_confirm() {
-        var i = document.getElementById("cropButton");
-        var strUser3 = i.value;
-         if(checkEmpty(strUser3) || strUser3=="Crop") {
-        showError("Please Select A Crop");
+<script type="text/javascript">
+function show_confirm() {
+   var crp = document.getElementById("cropButton").value;
+   if (checkEmpty(crp) || crp=="Crop") {
+      showError("Please Select A Crop");
+      return false;
+   }
+   var con="Crop: "+ crp + "<br>";
+   var annual = document.getElementById("annual").value;
+   if (annual == 1) {
+      con += "Annual: yes<br>";
+   } else {
+      con += "Annual: no<br>";
+      var lastYear = document.getElementById("lastYear").value;
+      con += "Last Harvest: " + lastYear + "<br>";
+   }
+   var sd = document.getElementById("seedDate").value;
+   if (checkEmpty(sd)) {
+      showError("Please Select A Crop that Has Been Seeded");
+      return false;
+    }
+    con += "Seed Date: "+ sd + "<br>";
+    var fld = document.getElementById("fieldID").value;
+    if (checkEmpty(fld)) {
+      showError("Please Select A Field Name");
+      return false;
+    }
+    con += "Name of Field: "+ fld + "<br>";
+    var mth = document.getElementById("month").value;
+    var day = document.getElementById("day").value;
+    var year = document.getElementById("year").value;
+    con += "Date of Transplant: "+ year + "-" + mth + "-" + day + "<br>";
+
+    var bf = document.getElementById("bedftv").value;
+    var r = document.getElementById("rowbd").value;
+    var rowBed = document.getElementById("rowBed");
+
+     if (checkEmpty(r)) {
+        showError("Please Select the Number of Rows per Bed");
         return false;
-        }
-	var con="Crop: "+ strUser3+ "<br>";
-	var i = document.getElementById("seedDate");
-        var strUser3 = i.value;
-        console.log(strUser3+"seedDate");
-	 if(checkEmpty(strUser3)) {
-        showError("Please Select A Crop that Has Been Seeded");
+     }
+     var div = 1;
+     if (rowBed && rowBed.value == "row") {
+        div = r;
+     }
+     var bed = <?php if (!$_SESSION['bedft']) {
+        echo '"Number of Beds";';
+     } else {
+        echo '"Number of Bed Feet";';
+     } ?>
+     if (checkEmpty(bf) || isNaN(bf) || bf<=0) {
+        showError("Please enter valid "+bed+"!");
         return false;
-        }
-        var con=con+"Seed Date: "+ strUser3+ "<br>";
-        var i = document.getElementById("fieldID");
-        var strUser3 = i.value;
-         if(checkEmpty(strUser3)) {
-        showError("Please Select A Field Name");
-        return false;
-        }
-        var con=con+"Name of Field: "+ strUser3+ "<br>";
-        var i = document.getElementById("month");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+"Date of Transplant: "+strUser3+"-";
-        var i = document.getElementById("day");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+strUser3+"-";
-        var i = document.getElementById("year");
-        var strUser3 = i.options[i.selectedIndex].text;
-        var con=con+strUser3+"<br>";
+     }
+     con += bed + ": "+ bf + "<br>";
+     con += "Rows/Bed: "+ r + "<br>";
 
-        var i = document.getElementById("bedftv").value;
-
-        var r = document.getElementById("rowbd").value;
-        var rowBed = document.getElementById("rowBed");
-
-        if(checkEmpty(r)) {
-          showError("Please Select the Number of Rows per Bed");
-          return false;
-        }
-        var div = 1;
-        if (rowBed && rowBed.value == "row") {
-            div = r;
-        }
-        var bed = <?php if (!$_SESSION['bedft']) {
-           echo '"Number of Beds";';
-        } else {
-           echo '"Number of Bed Feet";';
-        } ?>
-        if (checkEmpty(i) || isNaN(i) || i<=0) {
-           showError("Please enter valid "+bed+"!");
-           return false;
-        }
-        var con=con+bed+": "+ i + "<br>";
-        var con=con+"Rows/Bed: "+ r + "<br>";
-
-        var numF = document.getElementById("numFlats").value;
-        if (checkEmpty(numF) || numF<=0 || !isFinite(numF)) {
-           showError("Please enter a valid number of trays!");
-           return false;
-        }
-        var con=con+"Number of trays: "+ numF+ "<br>";
+     var numF = document.getElementById("numFlats").value;
+     if (checkEmpty(numF) || numF<=0 || !isFinite(numF)) {
+         showError("Please enter a valid number of trays!");
+         return false;
+     }
+     con += "Number of trays: "+ numF+ "<br>";
 
 <?php
   include $_SERVER['DOCUMENT_ROOT'].'/Seeding/checkGen.php';
   if ($_SESSION['labor']) {
     echo '
-        var numW = document.getElementById("numW").value;
-        if (checkEmpty(numW) || numW<=0 || !isFinite(numW)) {
-           showError("Enter a valid number of workers!");
-           return false;
-        }
-        var con=con+"Number of workers: "+ numW+ "<br>";
+     var numW = document.getElementById("numW").value;
+     if (checkEmpty(numW) || numW<=0 || !isFinite(numW)) {
+        showError("Enter a valid number of workers!");
+        return false;
+     }
+     con += "Number of workers: "+ numW+ "<br>";
 
-        var tme = document.getElementById("time").value;
-	var unit = document.getElementById("timeUnit").value;
-        if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
-           showError("Enter a valid number of " + unit + "!");
-           return false;
-        }
-	con = con+"Number of " + unit + ": " + tme + "<br>";';
+     var tme = document.getElementById("time").value;
+     var unit = document.getElementById("timeUnit").value;
+     if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+        showError("Enter a valid number of " + unit + "!");
+        return false;
+     }
+     con += "Number of " + unit + ": " + tme + "<br>";';
   }
 ?>
 
-	// return confirm("Confirm Entry:"+"<br>"+con);
+   // return confirm("Confirm Entry:"+"<br>"+con);
    var msg = "Confirm Entry:"+"<br>"+con;
    showConfirm(msg, 'transform');
 }
@@ -280,13 +278,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $totalHours = 0;
    }
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
+   $annual = $_POST['annual'];
+   if ($annual == 1) {
+      $lastYear = $_POST['year'];
+   } else {
+      $lastYear = $_POST['lastYear'];
+   }
 
    $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
    $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,".
-      "hours,comments) VALUES ('".
+      "hours,comments,annual,lastHarvest) VALUES ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
-      ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."')";
+      ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."', ".$annual.
+      ", '".$lastYear."-12-31')";
    try {
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();

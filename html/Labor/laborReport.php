@@ -48,6 +48,7 @@ while ($row = $res->fetch(PDO::FETCH_ASSOC)){
 <script type="text/javascript">
  function addFieldID() {
 	
+console.log("HERE");
 	var newdiv = document.getElementById('fieldID2');
 	var f = document.getElementById("tyear");
 	var g = document.getElementById("year");
@@ -64,7 +65,7 @@ while ($row = $res->fetch(PDO::FETCH_ASSOC)){
         + xmlhttp.responseText+"</select> </div>";
 }
 
-addFieldID();
+window.onload = function() {addFieldID();}
 </script>
 -->
 

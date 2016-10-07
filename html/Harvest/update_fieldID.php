@@ -2,9 +2,10 @@
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 
 $crop = escapehtml($_GET['crop']);
+$sdate = $_GET['sdate'];
+$edate = $_GET['edate'];
 $sql = "SELECT distinct fieldID from harvested  where crop like '".
-  $crop."' and year(hardate) between '".$_GET['year']."' and '".
-  $_GET['tyear']."'";
+  $crop."' and hardate between '".$sdate."' and '".$edate."'";
 $result = $dbcon->query($sql);
 echo "<option value='%'> All </option>";
 while($row = $result->fetch(PDO::FETCH_ASSOC)) {

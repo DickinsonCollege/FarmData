@@ -20,7 +20,8 @@
       $tday = $_GET['tday'];
       $crop = escapehtml($_GET['crop']);
       // find all the fields that are harvested with this particular crop and date range
-      $sql = "select distinct fieldID from harvested where crop='".$crop."' and hardate between '".
+      $sql = "select distinct fieldID from harvested, plant where harvested.crop = plant.crop and ".
+         " harvested.unit = plant.units and harvested.crop='".$crop."' and hardate between '".
          $year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by fieldID";
       $sqldata = $dbcon->query($sql);
       $header = array("date");
@@ -30,7 +31,8 @@
          $count++;
       }
       // find all the date which a particular crop is harvested.
-      $sql = "select distinct hardate from harvested where crop='".$crop."' and hardate between '".
+      $sql = "select distinct hardate from harvested, plant where harvested.crop = plant.crop and ".
+         " harvested.unit = plant.units and harvested.crop='".$crop."' and hardate between '".
          $year."-".$month."-".$day."' and '".$tyear."-".$tmonth."-".$tday."' order by hardate";
       $sqldata = $dbcon->query($sql);      
       $dateArray = array();      
@@ -48,7 +50,8 @@
       echo '<center><h2>Quantity harvested in each field of '.$crop.' between '.$year.'-'.$month.'-'.$day.' and '.$tyear.'-'.$tmonth.'-'.$tday.'</h2></center>';
       $count = 0;
       for ($count; $count < count($dateArray); $count++){
-         $sql= "select fieldID, sum(yield) from harvested where crop='".$crop."' and hardate='".
+         $sql= "select fieldID, sum(yield) from harvested, plant where harvested.crop = plant.crop and ".
+            " harvested.unit = plant.units and harvested.crop='".$crop."' and hardate='".
             $dateArray[$count]."' group by fieldID";
          $sqldata = $dbcon->query($sql);
          $rowdata[0] = substr($dateArray[$count], 2, 2).'/'.substr($dateArray[$count], 5,2).'/'.substr($dateArray[$count],8,2);
@@ -69,9 +72,9 @@
       }   
 //print_r($array);
       // find the unit of the chart
-      $sql = $dbcon->query("select distinct unit from harvested where crop='".$crop."'");
+      $sql = $dbcon->query("select units from plant where crop='".$crop."'");
       $row = $sql->fetch(PDO::FETCH_ASSOC);
-      echo"<input type='hidden' id='unit' value='".$row['unit']."'/>";
+      echo"<input type='hidden' id='unit' value='".$row['units']."'/>";
       $json = json_encode($array);
    ?>
    <script type="text/javascript">

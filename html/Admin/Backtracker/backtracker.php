@@ -345,10 +345,13 @@ function createDropdown(fieldname, data, rowNum){
    } else if (fieldname === "fieldID" && tableName == "harvested") {
       var a = document.getElementById("crop" + rowNum);
       var cropName = a.options[a.selectedIndex].value;
-      var b = document.getElementById("hardate" + rowNum + "year");
-      var plantYear = b.options[b.selectedIndex].value;
+      var harvYear = document.getElementById("hardate" + rowNum + "year").value;
+      var harvMonth = document.getElementById("hardate" + rowNum + "month").value;
+      harvMonth = new Date(harvMonth + "1, 2000").getMonth() + 1;
+      var harvDay = document.getElementById("hardate" + rowNum + "day").value;
+      var harvDate = harvYear + "-" + harvMonth + "-" + harvDay;
       xmlhttp.open("GET", "/Harvest/update_field.php?crop="+
-         encodeURIComponent(cropName)+"&plantyear="+plantYear, false);
+         encodeURIComponent(cropName)+"&harvDate="+harvDate, false);
       xmlhttp.send();
       extraOptions = xmlhttp.responseText;
    } else if (fieldname === "seedDate" && tableName === "transferred_to") {
@@ -473,11 +476,14 @@ function addInput(rowNum, fieldName) {
 
          var a = document.getElementById("crop" + rowNum);
          var cropName = a.options[a.selectedIndex].value;
-         var b = document.getElementById("hardate" + rowNum + "year");
-         var plantYear = b.options[b.selectedIndex].value;
+         var harvYear = document.getElementById("hardate" + rowNum + "year").value;
+         var harvMonth = document.getElementById("hardate" + rowNum + "month").value;
+         harvMonth = new Date(harvMonth + "1, 2000").getMonth() + 1;
+         var harvDay = document.getElementById("hardate" + rowNum + "day").value;
+         var harvDate = harvYear + "-" + harvMonth + "-" + harvDay;
       
          xmlhttp.open("GET", "/Harvest/update_field.php?crop="+
-            encodeURIComponent(cropName)+"&plantyear="+plantYear, false);
+            encodeURIComponent(cropName)+"&harvDate="+harvDate, false);
          xmlhttp.send();
 
          var newElem = document.getElementById("fieldID" + rowNum + "div");
@@ -565,10 +571,23 @@ function insertAllRows() {
                values[fields_array.indexOf("unit") - 1] = escapeescapeHtml(defaultUnit_conversion[0]);
             }
 
-            values_array_json = JSON.stringify(values);
-            fields_array_json = JSON.stringify(fields_array);
+            if (tableName === "dir_planted" || tableName === "transferred_to") {
+               farray = fields_array.slice();
+               farray.push("annual");
+               farray.push("lastHarvest");
+               fields_array_json = JSON.stringify(farray);
+               varray = values.slice();
+               varray.push("1");
+               varray.push(yearElem + "-12-31");
+               values_array_json = JSON.stringify(varray);
+               tabSize = tableSize + 2;
+            } else {
+               values_array_json = JSON.stringify(values);
+               fields_array_json = JSON.stringify(fields_array);
+               tabSize = tableSize;
+            }
             xmlhttp.open("GET", "insert_row.php?tableName="
-     +tableName+"&tableSize="+(tableSize-1)+"&fields_array="+
+     +tableName+"&tableSize="+(tabSize-1)+"&fields_array="+
      fields_array_json+"&values_array="+encodeURIComponent(values_array_json),
     false);
             xmlhttp.send();

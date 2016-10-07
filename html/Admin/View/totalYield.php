@@ -14,10 +14,15 @@
    <?php
       $year = $_GET['year'];
       $crop = escapehtml($_GET['crop']);
+      $sql = "select units from plant where crop = '".$crop."'";
+      $sqldata = $dbcon->query($sql);
+      $row = $sqldata->fetch(PDO::FETCH_ASSOC);
+      $unit = $row['units'];
       $array = array();
       $array[0] = array("fieldID", "Yield");
       echo '<center><h2>Total Yield for each field of '.$crop.' in '.$year.'</h2></center>';   
-      $sql = "select fieldID, sum(yield) from harvested where crop='".$crop."' and year(hardate)=".$year.
+      $sql = "select fieldID, sum(yield) from harvested, plant where harvested.crop='".$crop.
+          "' and harvested.crop = plant.crop and harvested.unit = plant.units and year(hardate)=".$year.
          " group by fieldID";
       $sqldata = $dbcon->query($sql);
       $count=0;
@@ -26,10 +31,14 @@
              intval($row['sum(yield)']));
          $count++;
       }
+/*
       $sql = $dbcon->query("select distinct unit, sum(yield) from harvested where crop='".$crop.
          "' and year(hardate)=".$year);
+*/
+      $sql = $dbcon->query("select sum(yield) from harvested, plant where harvested.crop = plant.crop and ".
+         " harvested.unit = plant.units and harvested.crop='".$crop."' and year(hardate)=".$year);
       $row = $sql->fetch(PDO::FETCH_ASSOC);
-      echo"<input type='hidden' id='unit' value='".$row['unit']."'/>";
+      echo"<input type='hidden' id='unit' value='".$unit."(S)'/>";
       echo"<input type='hidden' id='total' value='".$row['sum(yield)']."'/>";
       $json = json_encode($array);
    ?>
@@ -51,7 +60,7 @@ else {
       var view  = new google.visualization.DataView(data);
       view.setColumns([0,1,{calc:"stringify", sourceColumn: 1, type :"string", role: "annotation"}]);
       var unit = document.getElementById('unit').value;
-      var options = {'title':'Total of Yield: '+document.getElementById('total').value+ ' '+ unit,
+      var options = {'title':'Total Yield: '+document.getElementById('total').value+ ' '+ unit,
                      'hAxis':{title:'FIELD ID', titleTextStyle:{color: 'red'}},
                      //'legend': 'none',
                      'vAxis':{title: unit},

@@ -37,9 +37,10 @@ $tcurYear = $_GET['tyear'];
 $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
-$sqlget = "SELECT id, gen, year(transdate) as tyr, month(transdate) as tmth, day(transdate) as tdy, crop, username, 
-   year(seedDate) as syr, month(seedDate) as smth, day(seedDate) as sdy,
-   transdate, seedDate, fieldID, bedft, rowsBed, hours, flats, comments FROM transferred_to WHERE id = ".$id;
+$sqlget = "SELECT id, gen, year(transdate) as tyr, month(transdate) as tmth, day(transdate) as tdy, ".
+   "crop, username, year(seedDate) as syr, month(seedDate) as smth, day(seedDate) as sdy, transdate, ".
+   "seedDate, fieldID, bedft, rowsBed, hours, flats, comments, annual, year(lastHarvest) ".
+   "FROM transferred_to WHERE id = ".$id;
 
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
@@ -63,6 +64,8 @@ $rowsBed = $row['rowsBed'];
 $hours = $row['hours'];
 $flats = $row['flats'];
 $comments = $row['comments'];
+$annual = $row['annual'];
+$lastYear = $row['lastYear'];
 ?>
 
 <script type='text/javascript'>
@@ -105,19 +108,19 @@ echo "</center>";
 echo '<fieldset>';
 echo '<div class="pure-control-group">';
 echo "<label>Date Transplanted:</label>";
-echo "<select name='transMonth' id='transMonth'>";
+echo "<select name='month' id='month'>";
 echo '<option value='.$transMonth.' selected>'.date("F", mktime(0,0,0, $transMonth,10)).' </option';
    for ($mth = 1; $mth <= 12; $mth++) {
       echo "\n <option value='$mth'>".date("F", mktime(0,0,0, $mth, 10))."</option>";
    }
 echo "</select>";
-echo "<select name='transDay' id='transDay'>";
+echo "<select name='day' id='day'>";
 echo "<option value='".$transDay."' selected>".$transDay."</option>";
    for ($day = $transDay - $transDay+1; $day <= 31; $day++) {
       echo "\n <option value='".$day."'>".$day."</option>";
    }
 echo "</select>";
-echo "<select name='transYear' id='transYear'>";
+echo "<select name='year' id='year'>";
 echo "<option value='".$transYear."' selected>".$transYear."</option>";
    for ($yr = $transYear - 4; $yr < $transYear + 5; $yr++) {
       echo "\n <option value='".$yr."'>".$yr."</option>";
@@ -136,6 +139,23 @@ while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
 }
 echo '</select>';
 echo '</div>';
+
+echo '<div class="pure-control-group" id="annualdiv">';
+echo '<label>Annual:</label>';
+echo '<select name="annual" id="annual" class="mobile-select" onchange="addLastHarvestDate();">';
+if ($annual == 1) {
+   echo "<option value=1 selected>Annual</option>";
+   echo "<option value=0>Perennial</option> ";
+} else {
+   echo "<option value=0 selected>Perennial</option> ";
+   echo "<option value=1>Annual</option>";
+}
+echo '</select></div>';
+
+echo '<div class="pure-control-group" id="lastharvdiv">';
+echo '</div>';
+
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/annual.php';
 
 echo '<div class="pure-control-group" id="seedDateDiv">';
 echo "<label>Date Seeded:</label>";
@@ -223,15 +243,21 @@ if ($_POST['submit']) {
       $hours = escapehtml($_POST['hours']);
    }
    $seedDate = escapehtml($_POST['seedDate']);
-   $transYear = escapehtml($_POST['transYear']);
-   $transMonth = escapehtml($_POST['transMonth']);
-   $transDay = escapehtml($_POST['transDay']);  
+   $transYear = escapehtml($_POST['year']);
+   $transMonth = escapehtml($_POST['month']);
+   $transDay = escapehtml($_POST['day']);  
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
+   $annual = escapehtml($_POST['annual']);
+   if ($annual == 1) {
+      $lastYear = $_POST['year'];
+   } else {
+      $lastYear = $_POST['lastYear'];
+   }
  
    $sql = "update transferred_to set username='".$username."',crop='".$crop."', seedDate='".$seedDate."', 
       transdate='".$transYear."-".$transMonth."-".$transDay."', flats='".$flats."', bedft='"
       .$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."', comments='".$comments."', fieldID='".
-      $fieldID."',gen=".$gen." WHERE id=".$id;
+      $fieldID."',gen=".$gen.", annual = ".$annual.", lastHarvest = '".$lastYear."-12-31' WHERE id=".$id;
 
    try {
       $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");

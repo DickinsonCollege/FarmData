@@ -1,4 +1,6 @@
  <script type="text/javascript">
+ function addFieldID() {}
+
  function getflats() {
     var p = document.getElementById("cropButton");
     var plnt = encodeURIComponent(p.value);
@@ -32,14 +34,22 @@
 // assumes onload not called from this file
  include $_SERVER['DOCUMENT_ROOT'].'/chooseCrop.php';
 ?>
-<!--
-<label for="seedDate">Crop:</label>
-<div id="plant" class="styled-select">
-<select name="crop" id="crop" onChange="addInput()" >
-<option value= 0 selected="selected" style="display:none" disabled> Crop</option>
+
+<div class="pure-control-group" id = "annualdiv">
+<label>Annual:</label>
+<select name="annual" id="annual" class="mobile-select" onchange="addLastHarvestDate();">
+<option value=1 selected>Annual</option>
+<option value=0>Perennial</option>
 </select>
 </div>
--->
+
+<div class="pure-control-group" id = "lastharvdiv">
+</div>
+
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/annual.php';
+?>
+
 <div class="pure-control-group" id="seedInput">
 <label for='seedDate'>Date of Tray Seeding: </label>
 <select name="seedDate" id= "seedDate" class='mobile-select'>

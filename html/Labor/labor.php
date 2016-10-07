@@ -129,8 +129,11 @@ var cropOps = "";
 function setCropOps() {
   var fieldID = encodeURIComponent(document.getElementById('fieldID').value);
   var year = document.getElementById('year').value;
+  var month = document.getElementById('month').value;
+  var day = document.getElementById('day').value;
+  var date = year + "-" + month + "-" + day;
   xmlhttp= new XMLHttpRequest();
-  xmlhttp.open("GET", "update_crop.php?fieldID="+fieldID+"&plantyear="+year, false);
+  xmlhttp.open("GET", "update_crop.php?fieldID="+fieldID+"&laborDate="+date, false);
   xmlhttp.send();
   cropOps = xmlhttp.responseText;
 }
@@ -208,17 +211,20 @@ setCropOps();
 addCrop();
 
  function addInput() {}
+/*
  function addInput2(){
     var newdiv = document.getElementById('fieldID2');
-    var f = document.getElementById("year");
+    var year = document.getElementById("year").value;
+    var month = document.getElementById("month").value;
+    var day = document.getElementById("day").value;
+    var date = year + "-" + month + "-" + day;
     var crp = encodeURIComponent(document.getElementById("cropButton").value);
-    var strUser2 = f.options[f.selectedIndex].text;
     xmlhttp= new XMLHttpRequest();
     var cropString = crp;
     if (cropString == "N/A" || cropString == "0") {
         cropString = "%";
     }
-    xmlhttp.open("GET", "/Harvest/update_field.php?crop="+cropString+"&plantyear="+strUser2, false);
+    xmlhttp.open("GET", "/Harvest/update_field.php?crop="+cropString+"&harvDate="+date, false);
     var g = document.getElementById("crop");
     xmlhttp.send();
     if(xmlhttp.responseText=="\n" && crp != "N/A") {
@@ -230,6 +236,11 @@ addCrop();
    +xmlhttp.responseText+"</select> </div>";
 //console.log('c'+newdiv.innerHTML+'d');
 //console.log('c2'+xmlhttp.responseText+'d2');
+}
+*/
+
+function addFieldID() {
+  setCropOps();
 }
  </script>
 </fieldset>

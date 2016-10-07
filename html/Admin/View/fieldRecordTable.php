@@ -34,7 +34,8 @@ if (!$row) {
 } else {
    echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<h3>DIRECT SEEDING</h3>";
-   echo "<thead><tr><th>Date</th><th>Crop</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th><th> Comments </th></tr></thead>";
+   echo "<thead><tr><th>Date</th><th>Crop</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th>".
+      "<th> Comments </th></tr></thead>";
    do {
       echo "<tr><td>";
       echo $row['plantdate'];
@@ -113,17 +114,72 @@ if (!$rowcrop) {
          echo "</td><td>";
          echo $unit = $row['unit'];
          echo "</td><td>";
-         echo $row['yield'];
+         echo number_format((float) $row['yield'], 2, '.', '');
          echo "</td><td>";
          echo $row['comments'];
          echo "</td></tr>";
          echo "\n";
       }
       if ($farm != 'wahlst_spiralpath') {
+         $total="Select sum(yield) as total from harvested where hardate between '".$year."-".$month."-".
+           $day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' and harvested.crop like '" .$crop.
+          "' and harvested.fieldID like '".$fieldID."'";
+         try {
+            $res=$dbcon->query($total);
+         } catch (PDOException $p) {
+            phpAlert('', $p);
+         }
+         $rt = $res->fetch(PDO::FETCH_ASSOC);
+         $total = $rt['total'];
+         $rowsql = "select sum(bedft * rowsBed) as rowft ".
+                   "from dir_planted ".
+                   "where crop = '".$crop."' and fieldID = '".$fieldID."' and exists".
+                   "(select * from harvested where dir_planted.fieldID = harvested.fieldID and ".
+                   "  dir_planted.gen = harvested.gen and harvested.crop = dir_planted.crop and ".
+                   "  hardate between plantdate and lastHarvest and hardate between '".
+                   $year."-".$month."-".$day."' and '".$tcurYear."-".$tcurMonth."-".$tcurDay."')";
+         try {
+            $rr=$dbcon->query($rowsql);
+         } catch (PDOException $p) {
+            phpAlert('', $p);
+         }
+         if ($rft = $rr->fetch(PDO::FETCH_ASSOC)) {
+            $rowft = $rft['rowft'];
+         } else {
+            $rowft = 0;
+         }
+
+         $rowtsql = "select sum(bedft * rowsBed) as rowft ".
+                    "from transferred_to ".
+                    "where crop = '".$crop."' and fieldID = '".$fieldID."' and exists".
+                    "(select * from harvested where transferred_to.fieldID = harvested.fieldID and ".
+                    "  transferred_to.gen = harvested.gen and harvested.crop = transferred_to.crop and ".
+                    " hardate between transdate and lastHarvest ".
+//                    " year(hardate) = year(transdate) ".
+                    " and hardate between '".
+                    $year."-".$month."-".$day."' and '".$tcurYear."-".$tcurMonth."-".$tcurDay."')";
+         try {
+            $rrt=$dbcon->query($rowtsql);
+         } catch (PDOException $p) {
+            phpAlert('', $p);
+         }
+         if ($rftt = $rrt->fetch(PDO::FETCH_ASSOC)) {
+            $rowftt = $rftt['rowft'];
+         } else {
+            $rowftt = 0;
+         }
+         $rowft += $rowftt;
+
+         echo '<tr style="background:#ADD8E6"><td>Total Yield:</td><td>'.$crop.'</td><td>'.
+            number_format((float) $total, 2, '.', '').' '.
+            $unit.'(S)</td><td>'.number_format((float) ($total/$rowft), 2, '.', '').' '.$unit.
+            '(S)/Row Foot</td><td>&nbsp;</td></tr>';
+
+/*
          $sqlfeet = "select sum(rowft) as sumrowft from ".
            "(select bedft * rowsBed as rowft from dir_planted where crop like '".$crop.
            "' and fieldID like '".$fieldID."' and plantdate between '".$year."-01-01' AND '".
-           $tcurYear."-".$tcurMonth."-".$tcurDay."' union ".
+           $tcurYear."-".$tcurMonth."-".$tcurDay."' union all ".
            "select bedft * rowsBed as rowft from  transferred_to where ".
            "transdate between '".$year."-01-01' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay.
            "' and fieldID like '".$fieldID."' and crop like '".$crop."') as planted";
@@ -133,6 +189,7 @@ if (!$rowcrop) {
          echo '<tr style="background:#ADD8E6"><td>Total Yield:</td><td>'.$crop.'</td><td>'.$totyield.' '.
             $unit.'</td><td>'.number_format((float) ($totyield/$feet), 2, '.', '').' '.$unit.
             '/Row Foot</td><td>&nbsp;</td></tr>';
+*/
       }
    } while ($rowcrop = $cropdata->fetch(PDO::FETCH_ASSOC));
    echo "</table>";

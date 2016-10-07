@@ -24,8 +24,10 @@ $genSel = $_GET['genSel'];
 $crop = escapehtml($_GET['crop']);
 $fieldID = escapehtml($_GET['fieldID']);
 
-$sql="select id, plantdate,dir_planted.crop,dir_planted.fieldID,bedft,rowsBed,bedft * rowsBed as rowft, bedft / length as beds, hours, comments";
-$sql .= ", gen, username from dir_planted, field_GH where dir_planted.fieldID = field_GH.fieldID and dir_planted.crop like '".$crop."' and ".
+$sql="select id, plantdate,dir_planted.crop,dir_planted.fieldID,bedft,rowsBed,bedft * rowsBed as rowft, ".
+   "bedft / length as beds, hours, comments, gen, username, annual, year(lastHarvest) as lastYear ".
+   "from dir_planted, field_GH ".
+   "where dir_planted.fieldID = field_GH.fieldID and dir_planted.crop like '".$crop."' and ".
    "dir_planted.fieldID like '".$fieldID."' and gen like '".$genSel."' and plantdate between '".$year."-".
    $month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".$tcurDay."' order by plantdate ";
 if ($crop != "%") {
@@ -103,6 +105,8 @@ if ($_SESSION['labor']) {
 if ($_SESSION['gens']) {
    echo "<th>Succ&nbsp;#</th>";
 }
+echo "<th> Annual </th>";
+echo "<th> Last Harvest Year </th>";
 echo "<th> Comments </th>";
 if ($_SESSION['admin']) {
   echo "<th>User</th><th>Edit</th><th>Delete</th>";
@@ -129,11 +133,20 @@ while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "</td><td>";
     if ($_SESSION['labor']) {
         echo number_format((float) $row['hours'], 2, '.', '');
-        echo "</td><td>";
+        echo "</td>";
     }
    if ($_SESSION['gens']) {
-      echo $row['gen']."</td><td>";
+      echo "<td>";
+      echo $row['gen']."</td>";
    }
+   if ($row['annual'] == 1) {
+      echo "<td>Yes</td>";
+      echo "<td>&nbsp;</td>";
+   } else {
+      echo "<td>No</td>";
+      echo "<td>".$row['lastYear']."</td>";
+   }
+   echo "<td>";
    echo $row['comments'];
    echo "</td>";
    if ($_SESSION['admin']) {

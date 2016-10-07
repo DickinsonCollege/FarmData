@@ -1,6 +1,6 @@
 <?php session_start();?>
-<body onload="addFieldID();">
 <!--
+<body onload="addFieldID();">
 <div class="layout">
 <div id="main">
 -->
@@ -34,7 +34,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/date_transdate.php';
 <!--
 <div id="crop2" class ="pure-control-group">
 -->
-<select name="crop" id="crop" class="mobile-select" onChange="addFieldID()">
+<select name="crop" id="crop" class="mobile-select" onChange="addFieldID();">
 <option value = "%"> All </option>
 <?php
 $result = $dbcon->query("SELECT distinct crop from harvested");
@@ -48,6 +48,12 @@ while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
 <label for="fieldID"> Name of Field: </label>
 <select id= "fieldID" name="fieldID" class="mobile-select">
 <option value="%"> All </option>
+<?php
+   $result = $dbcon->query("SELECT fieldID from field_GH where active = 1");
+   while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
+      echo "<option value= '".$row1['fieldID']."'>".$row1['fieldID']."</option>";
+   }
+?>
 </select>
 </div>
 <script type="text/javascript">
@@ -56,11 +62,16 @@ while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
 	var newdiv = document.getElementById('fieldID2');
 	var crop = encodeURIComponent(document.getElementById("crop").value);
 	var tyear = document.getElementById("tyear").value;
+	var tmonth = document.getElementById("tmonth").value;
+	var tday = document.getElementById("tday").value;
+        var tdate = tyear + "-" + tmonth + "-" + tday;
 	var year = document.getElementById("year").value;
+	var month = document.getElementById("month").value;
+	var day = document.getElementById("day").value;
+        var date = year + "-" + month + "-" + day;
 	xmlhttp= new XMLHttpRequest();
-	xmlhttp.open("GET", "update_fieldID.php?crop="+crop+"&year="+year+"&tyear="+tyear, false);
+	xmlhttp.open("GET", "update_fieldID.php?crop="+crop+"&sdate="+date+"&edate="+tdate, false);
 	xmlhttp.send();
-	// console.log(xmlhttp.responseText);
 	newdiv.innerHTML= "<div class='pure-control-group' id='fieldID2'>" +
          "<label for='fieldID'> Name of Field: </label> " +
          "<select name= 'fieldID' id= 'fieldID' class='mobile-select'> " +

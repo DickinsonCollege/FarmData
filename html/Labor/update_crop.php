@@ -4,7 +4,10 @@ $fieldID = escapehtml($_GET['fieldID']);
 if ($fieldID == "N/A") {
    $sql = "select crop from plant where active=1 order by crop";
 } else {
-   $sql = "select crop from (select crop from dir_planted  where fieldID = '".$fieldID."' and year(plantdate) = '".$_GET['plantyear']."' union select crop from transferred_to where fieldID = '".$fieldID."' and year(transdate) = '".$_GET['plantyear']."') as crp order by crop";
+   $sql = "select crop from (select crop from dir_planted  where fieldID = '".$fieldID.
+      "' and '".$_GET['laborDate']."' between plantdate and lastHarvest ".
+      " union select crop from transferred_to where fieldID = '".$fieldID."' and ".
+      " '".$_GET['laborDate']."' between transdate and lastHarvest) as crp order by crop";
 }
 $result = $dbcon->query($sql);
 while($row = $result->fetch(PDO::FETCH_ASSOC)) {

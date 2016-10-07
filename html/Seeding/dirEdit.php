@@ -36,8 +36,9 @@ $origField = $_GET['fieldID'];
 $origGen = $_GET['genSel'];
 
 
-$sqlget = "SELECT gen,id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, username,".
-   "plantdate,fieldID,bedft,rowsBed,hours, comments FROM dir_planted where id = ".$id;
+$sqlget = "SELECT gen,id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, ".
+   "username, plantdate, fieldID, bedft, rowsBed, hours, annual, year(lastHarvest) as lastYear, comments ".
+   "FROM dir_planted where id = ".$id;
 try {
    $sqldata = $dbcon->query($sqlget);
 } catch (PDOException $p) {
@@ -56,6 +57,8 @@ $curDay = $row['dy'];
 $curCrop = $row['crop'];
 $comments = $row['comments'];
 $hours = $row['hours'];
+$annual = $row['annual'];
+$lastYear = $row['lastYear'];
 
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=seeding:direct:direct_report&year=".$origYear."&month=".$origMonth."&day=".$origDay.
@@ -113,6 +116,23 @@ while ($row = $sqldata->fetch(PDO::FETCH_ASSOC)) {
 }
 echo '</select></div>';
 
+echo '<div class="pure-control-group" id="annualdiv">';
+echo '<label>Annual:</label>';
+echo '<select name="annual" id="annual" class="mobile-select" onchange="addLastHarvestDate();">';
+if ($annual == 1) {
+   echo "<option value=1 selected>Annual</option>";
+   echo "<option value=0>Perennial</option> ";
+} else {
+   echo "<option value=0 selected>Perennial</option> ";
+   echo "<option value=1>Annual</option>";
+}
+echo '</select></div>';
+
+echo '<div class="pure-control-group" id="lastharvdiv">';
+echo '</div>';
+
+include $_SERVER['DOCUMENT_ROOT'].'/Seeding/annual.php';
+
 echo '<div class="pure-control-group">';
 echo '<label>User:</label>';
 echo '<select name="user" id="user">';
@@ -161,6 +181,13 @@ echo $comments;
 echo "</textarea>";
 echo '</div>';
 echo '<br clear="all"/>';
+?>
+
+<script type="text/javascript">
+window.onload=function() {addLastHarvestDate();}
+</script>
+
+<?php
 echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo '</fieldset>';
 echo "</form>";
@@ -180,10 +207,17 @@ if ($_POST['submit']) {
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $user = escapehtml($_POST['user']);
+   $annual = escapehtml($_POST['annual']);
+   if ($annual == 1) {
+      $lastYear = $_POST['year'];
+   } else {
+      $lastYear = $_POST['lastYear'];
+   }
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
      $month."-".$day."', bedft=".$bedftv.",rowsBed=".$numrows.",hours=".$hours.",comments='".
-     $comSanitized."',crop='".$crop."',gen=".$gen." where id=".$id;
+     $comSanitized."',crop='".$crop."',gen=".$gen.", annual = ".$annual.", lastHarvest = '".
+     $lastYear."-12-31' where id=".$id;
    try {
       $result = $dbcon->prepare($sql);
       $result->execute();

@@ -55,12 +55,13 @@ for ($i = 0; $i < $tableSize; $i++) {
 	}
 }
 
+$dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
 $sql = "INSERT INTO ".$tableName." (".$columns.") VALUES (".$values.")";
 try {
    $stmt = $dbcon->prepare($sql);
    $stmt->execute();
 } catch (PDOException $p) {
-   echo "<script>alert(\"Could not insert data".$p->getMessage()."\");</script>";
+   echo "Could not insert data: ".$p->getMessage();
    die();
 }
 ?>
