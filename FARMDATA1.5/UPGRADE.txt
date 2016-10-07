@@ -1,0 +1,81 @@
+To upgrade to a new version of FARMDATA while keeping your existing databases
+(and their contents):
+
+  1. download the new version of FARMDATA and unpack it.  We will refer to this
+     version as FARMDATA1.X.
+  2. copy the config file that was created when you installed FARMDATA from the
+     original installation directory into the FARMDATA1.X directory that was
+     created in the previous step.
+  3. cd into the FARMDATA1.X directory
+  4. execute the command:  ./install.sh
+  5. the install procedure will ask you to accept the license agreement, and
+     whether your web server supports SSL.  If you have obtained an SSL certificate
+     since installing FARMDATA, you can upgrade FARMDATA to run over SSL by
+     answering "y" here.
+  6. the install procedure will detect the config file and ask you
+     whether you wish to upgrade your existing FARMDATA or to do a new
+     installation.  If you decide to do a new installation, delete both databases
+     created during your initial FARMDATA installation before proceeding.  If you
+     decide to upgrade your existing FARMDATA, the install procedure will configure
+     the new source files and copy them to the installation directory, but will
+     leave your existing databases unchanged.
+
+  NOTE: to upgrade by multiple versions, follow the upgrade instructions 
+  for each intermediate version.  For example, to upgrade from FARMDATA 1.2
+  to FARMDATA 1.5, first make the table modifications specified below for
+  upgrading from FARMDATA 1.2 to FARMDATA 1.3, and then the modifications
+  for upgrading from FARMDATA 1.3 to 1.4 (none in that case), and then 
+  finally the modifications for upgrading from FARMDATA 1.4 to 1.5.  You
+  only need to upgrade the code for the version you are upgrading to - 
+  that is, you do not need to download the code for and upgrade to FARMDATA 1.3
+  and 1.4 to upgrade from FARMDATA 1.2 to 1.5.
+
+  To upgrade from FARMDATA1.0, to FARMDATA1.1, you must adjust several
+  of the tables in your farm information database (in addition to upgrading the
+  code).  Connect to that database from phpMyAdmin or a terminal and execute the
+  following commands.  In phpMyAdmin, paste the commands into the "Run SQL Query"
+  box and click "Go":
+
+alter table coverCrop drop column id;
+alter table coverCrop add column active tinyint(1) default 1 after legume;
+alter table tSprayMaterials modify column REI_HRS varchar(20);
+alter table gh_seeding add column gen int default 1 after cellsFlat;
+alter table dir_planted add column gen int default 1 after hours;
+alter table transferred_to add column gen int default 1 after flats;
+alter table harvested add column gen int default 1 after unit;
+alter table config add column gens tinyint(1) default 1 after bedft;
+
+To upgrade from FARMDATA1.1 to FARMDATA1.2, you must adjust one
+additional table in your farm information database.  The necessary
+command is:
+
+alter table distribution add column pricePerUnit double default 0 after unit;
+
+To upgrade from FARMDATA1.2 to FARMDATA1.3, you must adjust several tables
+in your farm information database.  The necessary commands are:
+
+alter table comments add column id int auto_increment primary key;
+alter table product add column active tinyint(1) default 1;
+alter table tSprayField add column crops text;
+update tSprayField set crops = (select crops from tSprayMaster where 
+  tSprayMaster.id = tSprayField.id);
+alter table tSprayMaster drop column crops;
+
+No table modifications are needed to upgrade from FARMDATA1.3 to FARMDATA1.4.
+
+To upgrade from FARMDATA1.4 to FARMDATA1.5, you must adjust several tables in
+your farm information database.  The necessary commands are:
+
+alter table utilized_on modify fieldSpread float;
+alter table tSprayMaster drop crops;
+alter table tSprayField add column crops text after numOfBed;
+alter table dir_planted add column annual tinyint(1) default 1;
+alter table dir_planted add column lastHarvest date;
+update dir_planted set lastHarvest = concat(year(plantdate), '-12-31');
+alter table dir_planted modify lastHarvest date not null;
+alter table dir_planted modify plantdate date not null;
+alter table transferred_to add column annual tinyint(1) default 1;
+alter table transferred_to add column lastHarvest date;
+update transferred_to set lastHarvest = concat(year(transdate), '-12-31');
+alter table transferred_to modify lastHarvest date not null;
+alter table transferred_to modify transdate date not null;
