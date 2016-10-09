@@ -170,8 +170,7 @@ echo "<script>console.log(\"".$_POST[$targs[$i]]."\");</script>";
 
 <?php
 if($deleteCrop&&$deleteCrop!=$crop){
-   $sql="DELETE FROM harvestListItem where id=$currentID and crop='".
-      $deleteCrop."'";
+   $sql="DELETE FROM harvestListItem where id=".$currentID." and crop='".$deleteCrop."'";
    try {
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();
@@ -248,6 +247,16 @@ echo "<tbody>";
 echo "</table>";
 ?>
 <br clear="all"/>
+
+
+<form name="download" method="POST" action="/down.php">
+<?php
+$sql = "select crop, amt as amount, units as unit, fieldID, target from harvestListItem where id = ".
+   $currentID." order by crop";
+?>
+<input type="hidden" name="query" value="<?php echo escapehtml($sql);?>">
+<input type="submit" name="form" class="submitbutton pure-button wide" value="Download Harvest List" > 
+</form>
 
 <form name='comment' method='POST'>
 <center>

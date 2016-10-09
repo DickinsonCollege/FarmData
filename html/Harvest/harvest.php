@@ -119,7 +119,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <?php
 $sql = "SELECT crop FROM plant WHERE active=1";
 $result = $dbcon->query($sql);
-   // echo "<option value=0 disabled>Crop</option>";
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
    echo "<option value='".$row['crop']."'>".$row['crop']."</option>";
 }
@@ -194,7 +193,7 @@ window.onload=function() {
       document.getElementById("harvestTable").style.width=min;
    }
       // console.log(document.getElementById("harvestTable").style.width);
-   addRow();
+//   addRow();
 
 }
 </script>

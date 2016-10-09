@@ -181,12 +181,19 @@ echo '<form method="post" action = "harvestList.php?tab=harvest:harvestList&year
 <?php
 echo "<div class='pure-u-1-2'>";
 echo '<form method="post" action = "addComment.php?tab=harvest:harvestList&year='.$year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.'&detail=0"><input type="submit" class="submitbutton pure-button wide" value = "Add Comment"></form>';
-echo '<br clear="all"/>';
+// echo '<br clear="all"/>';
 echo ' <meta http-equiv="refresh" content=60;URL="harvestList.php?tab=harvest:harvestList&year='.
    $year.'&month='.$month.'&day='.$day.'&currentID='.$currentID.
    '&detail='.$detail.' ">';
 ?>
 </div>
 </div>
+<form name="download" method="POST" action="/down.php">
+<?php
+$sql = "select crop, amt as amount, units as unit, fieldID, target from harvestListItem where id = ".
+$currentID." order by crop"; ?>
+<input type="hidden" name="query" value="<?php echo escapehtml($sql);?>">
+<input type="submit" name="form" class="submitbutton pure-button wide" value="Download Harvest List" >
+</form>
 </html>
 
