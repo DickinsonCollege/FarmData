@@ -67,8 +67,6 @@ To upgrade from FARMDATA1.4 to FARMDATA1.5, you must adjust several tables in
 your farm information database.  The necessary commands are:
 
 alter table utilized_on modify fieldSpread float;
-alter table tSprayMaster drop crops;
-alter table tSprayField add column crops text after numOfBed;
 alter table dir_planted add column annual tinyint(1) default 1;
 alter table dir_planted add column lastHarvest date;
 update dir_planted set lastHarvest = concat(year(plantdate), '-12-31');

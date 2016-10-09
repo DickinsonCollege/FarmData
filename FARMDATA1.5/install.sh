@@ -313,8 +313,8 @@ for file in "src/extlogin.php" "src/design.php" "src/logout.php" "src/admintab.p
         exit 1; }
    sed -i "s%/mobileDesign2\.css%/$FDIR/mobileDesign2.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
-#   sed -i "s%/tableDesign\.css%/$FDIR/tableDesign.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
-#        exit 1; }
+   sed -i "s%/tableDesign\.css%/$FDIR/tableDesign.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
+        exit 1; }
    sed -i "s%/design\.css%/$FDIR/design.css%" $file || { echo "Error configuring files.  Exiting FARMDATA install";
         exit 1; }
    sed -i "s%/apple%/$FDIR/apple%" $file || { echo "Error configuring files.  Exiting FARMDATA install";

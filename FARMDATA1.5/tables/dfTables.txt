@@ -227,7 +227,7 @@ create table tSprayField(
    id int,
    fieldID varchar(30),
    numOfBed int,
-   crops text;
+   crops text,
    foreign key(id) references tSprayMaster(id),
    foreign key(fieldID) references field_GH(fieldID) on update cascade
 )ENGINE=INNODB;
