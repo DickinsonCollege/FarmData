@@ -25,7 +25,7 @@ $genSel = $_GET['genSel'];
 $fieldID = escapehtml($_GET['fieldID']);
 $sql="Select id, username, transferred_to.fieldID,crop,seedDate,bedft,rowsBed,bedft * rowsBed as rowft,".
   " transdate,datediff(transdate,seedDate) as diffdate,flats, gen, hours, comments, bedft/length as beds, ".
-  " annual, year(lastHarvest) as lastYear ".
+  " annual, lastHarvest ".
   "from  transferred_to, field_GH where transferred_to.fieldID = field_GH.fieldID and".
   " crop like '".$crop."' and transferred_to.fieldID like '".
   $fieldID."' and gen like '".$genSel."' and transdate between '".$year."-".$month."-".$day.
@@ -119,7 +119,7 @@ if ($_SESSION['labor']) {
    echo "<th>Hours</th>";
 }
 echo "<th> Annual </th>";
-echo "<th> Last Harvest Year </th>";
+echo "<th> Last Harvest Date </th>";
 echo "<th><center> Comments</center></th>";
 if ($_SESSION['admin']) {
    echo "<th>User</th><th>Edit</th><th>Delete</th>";
@@ -170,7 +170,7 @@ echo "</tr></thead>";
       echo "<td>&nbsp;</td>";
    } else {
       echo "<td>No</td>";
-      echo "<td>".$row['lastYear']."</td>";
+      echo "<td>".$row['lastHarvest']."</td>";
    }
    echo "<td>";
    echo $row['comments'];

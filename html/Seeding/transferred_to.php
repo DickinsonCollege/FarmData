@@ -161,12 +161,18 @@ function show_confirm() {
    } else {
       con += "Annual: no<br>";
       var lastYear = document.getElementById("lastYear").value;
-      con += "Last Harvest: " + lastYear + "<br>";
+      var lastMonth = document.getElementById("lastMonth").value;
+      var lastDay = document.getElementById("lastDay").value;
+      con += "Last Harvest Date: " + lastMonth + "-" + lastDay + "-" + lastYear + "<br>";
    }
    var sd = document.getElementById("seedDate").value;
    if (checkEmpty(sd)) {
       showError("Please Select A Crop that Has Been Seeded");
       return false;
+    }
+    var sar = sd.split("-");
+    if (sar.length == 3) {
+       sd = sar[2] + "-" + sar[1] + "-" + sar[0];
     }
     con += "Seed Date: "+ sd + "<br>";
     var fld = document.getElementById("fieldID").value;
@@ -178,7 +184,7 @@ function show_confirm() {
     var mth = document.getElementById("month").value;
     var day = document.getElementById("day").value;
     var year = document.getElementById("year").value;
-    con += "Date of Transplant: "+ year + "-" + mth + "-" + day + "<br>";
+    con += "Date of Transplant: "+ mth + "-" + day + "-" + year + "<br>";
 
     var bf = document.getElementById("bedftv").value;
     var r = document.getElementById("rowbd").value;
@@ -281,8 +287,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $annual = $_POST['annual'];
    if ($annual == 1) {
       $lastYear = $_POST['year'];
+      $lastMonth = 12;
+      $lastDay = 31;
    } else {
       $lastYear = $_POST['lastYear'];
+      $lastMonth = $_POST['lastMonth'];
+      $lastDay = $_POST['lastDay'];
    }
 
    $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
@@ -291,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."',".$bedftv.
       ", ".$numrows.", ".$numFlats.", ".$gen.", ".$totalHours.",'".$comSanitized."', ".$annual.
-      ", '".$lastYear."-12-31')";
+      ", '".$lastYear."-".$lastMonth."-".$lastDay."')";
    try {
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();

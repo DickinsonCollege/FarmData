@@ -33,11 +33,9 @@ function show_confirm() {
    }
    var con="Crop: "+ crp + "<br>";
    var m = document.getElementById("month").value;
-   con=con+"Date of Harvest: "+m+"-";
    var d = document.getElementById("day").value;
-   con=con+d+"-";
    var y = document.getElementById("year").value;
-   con=con+y+"<p>";
+   con=con+"Date of Harvest: "+ m +"-"+d+"-"+y+"<p>";
 
    var numRows = document.getElementById("numRows").value;
    if (numRows < 1) {
@@ -244,7 +242,7 @@ function addRow() {
       xmlhttp.open("GET", "update_field.php?crop="+crop+"&harvDate="+date, false);
       xmlhttp.send();
       if(xmlhttp.responseText=="\n") {
-          showError("Error: no " + cb.value + " planted in " + year + "!");
+          showError("Error: no " + cb.value + " available for harvest on " + date + "!");
           return;
       }
       numRows++;

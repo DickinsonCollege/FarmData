@@ -29,8 +29,10 @@ function show_confirm() {
       con += "Annual: yes<br>";
    } else {
       con += "Annual: no<br>";
+      var lastMonth = document.getElementById("lastMonth").value;
+      var lastDay = document.getElementById("lastDay").value;
       var lastYear = document.getElementById("lastYear").value;
-      con += "Last Harvest: " + lastYear + "<br>";
+      con += "Last Harvest Date: " + lastMonth + "-" + lastDay + "-" + lastYear + "<br>";
    }
 <?php
 if ($_SESSION['seed_order']) {
@@ -50,12 +52,10 @@ if ($_SESSION['seed_order']) {
 }
 ?>
 
-   var mth = document.getElementById("month").value;
-   con += "Date of Seeding: " + mth + "-";
-   var dy = document.getElementById("day").value;
-   con += dy + "-";
    var yr = document.getElementById("year").value;
-   con += yr + "<br>";
+   var mth = document.getElementById("month").value;
+   var dy = document.getElementById("day").value;
+   con += "Date of Seeding: " + mth + "-" + dy + "-" + yr + "<br>";
    var i = document.getElementById("bedftv").value;
    var r = document.getElementById("rowbd").value;
    if (checkEmpty(r)) {
@@ -378,7 +378,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $annual = $_POST['annual'];
    if ($annual == 1) {
       $lastYear = $_POST['year'];
+      $lastMonth = 12;
+      $lastDay = 31;
    } else {
+      $lastMonth = $_POST['lastMonth'];
+      $lastDay = $_POST['lastDay'];
       $lastYear = $_POST['lastYear'];
    }
 
@@ -469,7 +473,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $sql="INSERT INTO dir_planted(username,fieldID,crop,plantdate,bedft,rowsBed,hours,comments, gen, annual, ".
       "lastHarvest) VALUES ('".$_SESSION['username']."','".$fld."','".$crop."','
       ".$_POST['year']."-".$_POST['month']."-".  $_POST['day']."',".  $bedftv.", ".$numrows.", ".
-      $totalHours.", '".$comSanitized."', ".$gen.", ".$annual.", '".$lastYear."-12-31')";
+      $totalHours.", '".$comSanitized."', ".$gen.", ".$annual.", '".
+      $lastYear."-".$lastMonth."-".$lastDay."')";
    try {
       $result = $dbcon->prepare($sql);
       $result->execute();

@@ -37,7 +37,8 @@ $origGen = $_GET['genSel'];
 
 
 $sqlget = "SELECT gen,id,year(plantdate) as yr, month(plantdate) as mth, day(plantdate) as dy, crop, ".
-   "username, plantdate, fieldID, bedft, rowsBed, hours, annual, year(lastHarvest) as lastYear, comments ".
+   "username, plantdate, fieldID, bedft, rowsBed, hours, annual, year(lastHarvest) as lastYear, ".
+   "month(lastHarvest) as lastMonth, day(lastHarvest) as lastDay, comments ".
    "FROM dir_planted where id = ".$id;
 try {
    $sqldata = $dbcon->query($sqlget);
@@ -59,6 +60,8 @@ $comments = $row['comments'];
 $hours = $row['hours'];
 $annual = $row['annual'];
 $lastYear = $row['lastYear'];
+$lastMonth = $row['lastMonth'];
+$lastDay = $row['lastDay'];
 
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=seeding:direct:direct_report&year=".$origYear."&month=".$origMonth."&day=".$origDay.
@@ -210,14 +213,18 @@ if ($_POST['submit']) {
    $annual = escapehtml($_POST['annual']);
    if ($annual == 1) {
       $lastYear = $_POST['year'];
+      $lastMonth = 12;
+      $lastDay = 31;
    } else {
       $lastYear = $_POST['lastYear'];
+      $lastMonth = $_POST['lastMonth'];
+      $lastDay = $_POST['lastDay'];
    }
    include $_SERVER['DOCUMENT_ROOT'].'/Seeding/setGen.php';
    $sql = "update dir_planted set username='".$user."', fieldID='".$fld."', plantdate='".$year."-".
      $month."-".$day."', bedft=".$bedftv.",rowsBed=".$numrows.",hours=".$hours.",comments='".
      $comSanitized."',crop='".$crop."',gen=".$gen.", annual = ".$annual.", lastHarvest = '".
-     $lastYear."-12-31' where id=".$id;
+     $lastYear."-".$lastMonth."-".$lastDay."' where id=".$id;
    try {
       $result = $dbcon->prepare($sql);
       $result->execute();

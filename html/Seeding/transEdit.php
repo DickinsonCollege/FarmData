@@ -39,7 +39,8 @@ $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id, gen, year(transdate) as tyr, month(transdate) as tmth, day(transdate) as tdy, ".
    "crop, username, year(seedDate) as syr, month(seedDate) as smth, day(seedDate) as sdy, transdate, ".
-   "seedDate, fieldID, bedft, rowsBed, hours, flats, comments, annual, year(lastHarvest) ".
+   "seedDate, fieldID, bedft, rowsBed, hours, flats, comments, annual, year(lastHarvest) as lastYear, ".
+   "month(lastHarvest) as lastMonth, day(lastHarvest) as lastDay ".
    "FROM transferred_to WHERE id = ".$id;
 
 $sqldata = $dbcon->query($sqlget);
@@ -66,6 +67,8 @@ $flats = $row['flats'];
 $comments = $row['comments'];
 $annual = $row['annual'];
 $lastYear = $row['lastYear'];
+$lastMonth = $row['lastMonth'];
+$lastDay = $row['lastDay'];
 ?>
 
 <script type='text/javascript'>
@@ -227,10 +230,16 @@ echo "</div>";
 echo '<br clear="all"/>';
 echo '<br clear="all"/>';
 
-echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
-echo '</fieldset>';
-echo "</form>";
+?>
+<script type="text/javascript">
+window.onload=function() {addLastHarvestDate();}
+</script>
 
+<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>
+</fieldset>
+</form>
+
+<?php
 if ($_POST['submit']) {
    $username = escapehtml($_POST['user']);
    $comments = escapehtml($_POST['comments']);
@@ -250,14 +259,19 @@ if ($_POST['submit']) {
    $annual = escapehtml($_POST['annual']);
    if ($annual == 1) {
       $lastYear = $_POST['year'];
+      $lastMonth = 12;
+      $lastDay = 31;
    } else {
       $lastYear = $_POST['lastYear'];
+      $lastMonth = $_POST['lastMonth'];
+      $lastDay = $_POST['lastDay'];
    }
  
    $sql = "update transferred_to set username='".$username."',crop='".$crop."', seedDate='".$seedDate."', 
       transdate='".$transYear."-".$transMonth."-".$transDay."', flats='".$flats."', bedft='"
       .$bedftv."', rowsBed='".$rowsbed."', hours='".$hours."', comments='".$comments."', fieldID='".
-      $fieldID."',gen=".$gen.", annual = ".$annual.", lastHarvest = '".$lastYear."-12-31' WHERE id=".$id;
+      $fieldID."',gen=".$gen.", annual = ".$annual.", lastHarvest = '".
+      $lastYear."-".$lastMonth."-".$lastDay."' WHERE id=".$id;
 
    try {
       $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
