@@ -78,6 +78,12 @@ $result = $dbcon->query("SELECT distinct task from task");
 echo "\n<option value= \"TRANSPLANTING\">TRANSPLANTING</option>";
 echo "\n<option value= \"DIRECT PLANTING\">DIRECT PLANTING</option>";
 echo "\n<option value= \"HARVESTING\">HARVESTING</option>";
+if ($_SESSION['dryfertilizer']) {
+   echo "\n<option value= \"DRY FERTILIZER\">DRY FERTILIZER</option>";
+}
+if ($_SESSION['liquidfertilizer']) {
+   echo "\n<option value= \"LIQUID FERTILIZER\">LIQUID FERTILIZER</option>";
+}
 while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[task]\">$row[task]</option>";
 }

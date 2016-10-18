@@ -116,13 +116,15 @@ if ($_SESSION['labor']) {
 
    <div class="pure-control-group">
 <label>Enter time in Hours or Minutes:</label>
-<input onkeypress=\'stopSubmitOnEnter(event)\'; type="text" name="time" id="time" value="1"
+<input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time" value="1"
   class="textbox2 mobile-input-half single_table">
-<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\'>
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
 </div>';
+
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
 }
 ?>
 
@@ -295,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $lastDay = $_POST['lastDay'];
    }
 
-   $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
+   // $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
    $sql="INSERT INTO transferred_to(username,fieldID,crop,seedDate,transdate,bedft,rowsBed,flats,gen,".
       "hours,comments,annual,lastHarvest) VALUES ('".
       $user."','".$fld."','".$crop."','".$_POST['seedDate']."','".

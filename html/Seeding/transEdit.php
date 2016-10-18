@@ -64,7 +64,7 @@ $bedftv = $row['bedft'];
 $rowsBed = $row['rowsBed'];
 $hours = $row['hours'];
 $flats = $row['flats'];
-$comments = $row['comments'];
+$comments = escapeescapehtml($row['comments']);
 $annual = $row['annual'];
 $lastYear = $row['lastYear'];
 $lastMonth = $row['lastMonth'];
@@ -224,7 +224,11 @@ if ($_SESSION['labor']) {
 echo '<div class="pure-control-group">';
 echo '<label>Comments:</label>';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
-echo $comments;
+$comarr = explode("<br>", $comments);
+foreach ($comarr as $com) {
+   echo $com;
+   echo "\n";
+}
 echo "</textarea>";
 echo "</div>";
 echo '<br clear="all"/>';
@@ -242,7 +246,7 @@ window.onload=function() {addLastHarvestDate();}
 <?php
 if ($_POST['submit']) {
    $username = escapehtml($_POST['user']);
-   $comments = escapehtml($_POST['comments']);
+   $comments=str_replace("\n", "<br>", trim(escapehtml($_POST['comments'])));
    $crop = escapehtml($_POST['crop']);
    $fieldID = escapehtml($_POST['fieldID']);
    $flats = escapehtml($_POST['flats']);
@@ -274,7 +278,7 @@ if ($_POST['submit']) {
       $lastYear."-".$lastMonth."-".$lastDay."' WHERE id=".$id;
 
    try {
-      $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
+//      $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();
    } catch (PDOException $p) {

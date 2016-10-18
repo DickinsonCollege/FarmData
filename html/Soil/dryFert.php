@@ -34,7 +34,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 <div class="pure-control-group">
 <label for="crop"> Material:  </label>
 <select name ="mat" id="mat" class="mobile-select">
-<option value = 0 selected disabled> Material </option>
 <?php
 $result=$dbcon->query("Select fertilizerName from fertilizerReference");
 while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
@@ -169,10 +168,49 @@ function show_confirm() {
       return false;
    }
    con += "Width: " + wd + " feet\n";
+<?php
+   if ($_SESSION['labor']) {
+      echo 'var wk = document.getElementById("numW").value;
+      if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+         showError("Enter a valid number of workers!");
+         return false;
+      }
+      con = con+"Number of workers: " + wk + "\n";
+      var tme = document.getElementById("time").value;
+      var unit = document.getElementById("timeUnit").value;
+      if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+         showError("Enter a valid number of " + unit + "!");
+         return false;
+      }
+      con = con+"Number of " + unit + ": " + tme + "\n";';
+   }
+?>
 
    return confirm("Confirm Entry:"+"\n"+con);
 }
 </script>
+
+<?php
+if ($_SESSION['labor']) {
+   echo '
+   <div class="pure-control-group">
+   <label for="numWorkers">Number of workers (optional):</label>
+   <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2mobile-input single_table">
+   </div>
+
+   <div class="pure-control-group">
+   <label>Enter time in Hours or Minutes:</label>
+   <input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time"
+   class="textbox2 mobile-input-half single_table" value="1">
+   <select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
+   <option value="minutes">Minutes</option>
+   <option value="hours">Hours</option>
+   </select>
+   </div> ';
+
+   include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+}
+?>
 <div class="pure-control-group">
 <label for="comments"> Comments: </label>
 <textarea name="comments" id="comments"
@@ -206,11 +244,30 @@ if (isset($_POST['submit'])) {
       $crops .= escapehtml($_POST['crop'.$i]);
    }
    echo "<script>addInput3();</script>";
+   if ($_SESSION['labor']) {
+      // Check if given time is in minutes or hours
+      $time = escapehtml($_POST['time']);
+      if ($_POST['timeUnit'] == "minutes") {
+         $hours = $time/60;
+      } else if ($_POST['timeUnit'] == "hours") {
+         $hours = $time;
+      }
+      // Check if num workers is filled in
+      $numW = escapehtml($_POST['numW']);
+      if ($numW != "") {
+         $totalHours = $hours * $numW;
+      } else {
+         $totalHours = $hours;
+      }
+   } else {
+      $totalHours = 0;
+   }
+
    $sql="Insert into fertilizer(username,inputDate,fieldID, fertilizer, crops, rate, numBeds, totalApply, ".
-      "comments) values ('".
+      "comments, hours) values ('".
       $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$mat.
       "', '".$crops."',".$_POST['rate'].",".$_POST['beds'].",".$_POST['pounds'] * $_POST['beds'].
-      ",'".$comments."')";
+      ",'".$comments."', ".$totalHours.")";
    try {
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();

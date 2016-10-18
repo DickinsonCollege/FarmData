@@ -51,12 +51,11 @@ $egen = $row['gen'];
 $field = $row['fieldID'];
 $bedftv = $row['bedft'];
 $rowsBed = $row['rowsBed'];
-$com = $row['comments'];
 $curYear = $row['yr'];
 $curMonth = $row['mth'];
 $curDay = $row['dy'];
 $curCrop = $row['crop'];
-$comments = $row['comments'];
+$comments = escapeescapehtml($row['comments']);
 $hours = $row['hours'];
 $annual = $row['annual'];
 $lastYear = $row['lastYear'];
@@ -180,7 +179,11 @@ if ($_SESSION['labor']) {
 echo '<div class="pure-control-group">';
 echo '<label>Comments:</label>';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
-echo $comments;
+$comarr = explode("<br>", $comments);
+foreach ($comarr as $com) {
+   echo $com;
+   echo "\n";
+}
 echo "</textarea>";
 echo '</div>';
 echo '<br clear="all"/>';
@@ -195,11 +198,12 @@ echo "<input type='submit' name='submit' value='Update Record' class = 'submitbu
 echo '</fieldset>';
 echo "</form>";
 if ($_POST['submit']) {
-   $comSanitized=escapehtml($_POST['comments']);
+   $comSanitized=str_replace("\n", "<br>", trim(escapehtml($_POST['comments'])));
    $bedftv = escapehtml($_POST['bedftv']);
    $numrows = escapehtml($_POST['rowsbed']);
    $fld = escapehtml($_POST['fieldID']);
    $crop = escapehtml($_POST['crop']);
+   $hours = 0;
    if ($_SESSION['labor']) {
       $hours = escapehtml($_POST['hours']);
       if ($hours == "") {

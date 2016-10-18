@@ -38,7 +38,7 @@ $tcurDay = $_GET['tday'];
 $material = $_GET['material'];
 $origCrops 	  = $_GET['crop'];
 $sqlget = "SELECT id,year(inputdate) as yr, month(inputdate) as mth, day(inputdate) as dy, username,".
-   "fertilizer ,fieldID, crops, rate, numBeds, totalApply, comments FROM fertilizer where id = ".$id;
+   "fertilizer ,fieldID, crops, rate, numBeds, totalApply, hours, comments FROM fertilizer where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $field = $row['fieldID'];
@@ -53,6 +53,7 @@ $comments = $row['comments'];
 $numBeds = $row['numBeds'];
 $rate = $row['rate'];
 $totalApply = $row['totalApply'];
+$hours = $row['hours'];
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_fertilizer:dry_fertilizer:dry_fertilizer_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay.
@@ -136,6 +137,13 @@ echo '<label>Total Material Applied:</label> ';
 echo '<input type="text" class="textbox3" name="totalApply" id="totalApply" value="'.$totalApply.'">';
 echo '</div>';
 
+if ($_SESSION['labor']) {
+   echo '<div class="pure-control-group">';
+   echo '<label>Hours:</label>';
+   echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
+   echo '</div>';
+}
+
 echo '<div class="pure-control-group">';
 echo '<label>Comments:</label> ';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
@@ -161,9 +169,17 @@ if (isset($_POST['submit'])) {
    $day = escapehtml($_POST['day']);
    $rate = escapehtml($_POST['rate']);
    $totalApply = escapehtml($_POST['totalApply']);
+   $hours = 0;
+   if ($_SESSION['labor']) {
+      $hours = escapehtml($_POST['hours']);
+      if ($hours == "") {
+         $hours = 0;
+      }
+   }
    $sql = "update fertilizer set crops='".$crops."', fieldID='".$fld."', inputdate='".$year."-".
      $month."-".$day."', fertilizer='".$fertilizer."',username='".$username."',numBeds=".$numBeds.
-     ",comments='".  $comSanitized."',rate=".$rate.", totalApply=".$totalApply." where id=".$id;
+     ",comments='".  $comSanitized."',rate=".$rate.", totalApply=".$totalApply.", hours=".$hours.
+     " where id=".$id;
 
    try {
       $stmt = $dbcon->prepare($sql);

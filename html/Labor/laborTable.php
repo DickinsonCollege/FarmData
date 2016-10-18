@@ -38,9 +38,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    }
    echo "</h2></center>";
    if ($_SESSION['admin']) {
-      echo '<h3>Note for administrative users: use "Harvest->Report", ';
-      echo '"Seed->Direct Seeding->Report" or ';
-      echo '"Seed->Transplanting->Report" to edit/delete records for ';
+      echo '<h3>Note for administrative users: use the reports for harvesting, direct seeding, ';
+      echo 'transplanting, dry and liquid fertilizing to edit/delete records for ';
       echo 'those tasks</h3>';
       echo "<br clear='all'/>";
    }
@@ -54,20 +53,9 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
          die();
       }
    }
-   $sql = "SELECT id, username, ldate,crop,fieldID,task,hours,comments FROM (".
-      "select id, username, ldate, crop, fieldId, task, hours, comments ".
-      "from labor union ".
-      "select -1 as id, username, hardate as ldate, crop, fieldID, ".
-      "'HARVESTING' as task, hours, comments from harvested union ".
-      "select -1 as id, username, transdate as ldate, crop, fieldID, ".
-      "'TRANSPLANTING' as task, hours, comments from transferred_to union ".
-      "select -1 as id, username, plantdate as ldate, crop, fieldID, ".
-      "'DIRECT PLANTING' as task, hours, comments from dir_planted) as tmp ".
-      "where ldate BETWEEN '".  $year."-".$month."-".$day."' AND '".
-       $tcurYear."-".$tcurMonth.
-       "-".$tcurDay."' and crop like '" .$crop."' and fieldID like '".
-       $fieldID."' and task like '".$task.
-       "' and hours > 0 order by crop, ldate";
+   $sql = "select * from laborview where ldate BETWEEN '".  $year."-".$month."-".$day."' AND '".
+      $tcurYear."-".$tcurMonth."-".$tcurDay."' and crop like '" .$crop."' and fieldID like '".
+      $fieldID."' and task like '".$task."' and hours > 0 order by crop, ldate";
    $sqldata = $dbcon->query($sql);
    echo "<table class = 'pure-table pure-table-bordered'>";
    if($fieldID == "%") {

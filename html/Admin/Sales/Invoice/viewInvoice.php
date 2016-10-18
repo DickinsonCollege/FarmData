@@ -22,7 +22,7 @@ $sql="Select product,cases,(Select units from plant where crop=invoice_entry.pro
    "select unit from product where product.product=invoice_entry.product) as unit, ".
    "(Select units_per_case from plant where crop=invoice_entry.product union select units_per_case ".
    "from product where product.product= invoice_entry.product) as units_per_case, ".
-   "cases*(select units_per_case) as totalUnits,price_case,price_case*cases as total from invoice_entry ".
+   "cases*(select units_per_case) as total_units,price_case,price_case*cases as total_price from invoice_entry ".
    "where invoice_no=".$id;
 $result2 = $dbcon->query($sql);
 echo '<br clear="all"/>';
@@ -31,7 +31,7 @@ echo "<center><h2>".$farm." Invoice # ".$invoiceID."&nbsp;<br>Customer:&nbsp; ".
   $target."</h2></center>";
 echo "<thead><tr><th>Product</th><th><center>Cases</center></th><th>Unit</th><th>Units per Case</th><th>Total Units</th><th><center>Price per Case</center></th><th>Total</th></tr></thead>";
 while ($row = $result2->fetch(PDO::FETCH_ASSOC)) {
-	$dec2=number_format($row['total'],2,'.','');
+	$dec2=number_format($row['total_price'],2,'.','');
         $dec=number_format($row['price_case'],2,'.','');
         echo "<tr><td>";
         echo $row['product'];
@@ -42,7 +42,7 @@ while ($row = $result2->fetch(PDO::FETCH_ASSOC)) {
         echo "</td><td>";
         echo $row['units_per_case'];
         echo "</td><td>";
-        echo $row['totalUnits'];
+        echo $row['total_units'];
         echo "</td><td align='right'>";
         echo "$".$dec;
         echo "</td><td align='right'>";
@@ -86,5 +86,14 @@ echo "<label for='app'>Approved By:</label> ";
 echo "<input type='text' readonly name='app' id='app' class='textbox2' value='".$appBy."'><br>\n";
 echo '</div>';
 echo '</div>';
+echo '<br clear = "all">';
+echo "<div class='pure-g'>";
+echo "<div class='pure-u-1-1'>";
+echo "<form name='form' method='POST' action='/down.php'>";
+echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
+echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Invoice">';
+echo "</form>";
+echo "</div>";
+echo "</div>";
 ?>
 

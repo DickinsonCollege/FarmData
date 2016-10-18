@@ -25,7 +25,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $fieldID = escapehtml($_GET['fieldID']);
    $crops = escapehtml($_GET['crop']);
    $material = escapehtml($_GET['material']);
-   $sql = "select id, username, inputDate, fieldID, fertilizer, crops, rate, numBeds, totalApply, comments ".
+   $sql = "select id, username, inputDate, fieldID, fertilizer, crops, rate, numBeds, totalApply, hours, ".
+      "comments ".
       "from fertilizer where inputDate between '".  $year."-".$month."-".$day."' AND '".$tcurYear.
       "-".$tcurMonth."-". $tcurDay."' and fieldID like '".$fieldID."' and crops like '%".
       $crops."%' and fertilizer like '".$material."' order by inputDate";
@@ -51,7 +52,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "<table class='pure-table pure-table-bordered'>";
    
    echo "<thead><tr><th>Date</th><th>Field</th><th>Material</th><th>Crops</th><th>Application Rate<br>".
-     "(lbs/acre)</th><th>Number of Beds</th><th>Total Material Applied</th><th>Comments</th>";
+     "(lbs/acre)</th><th>Number of Beds</th><th>Total Material Applied</th>";
+   if ($_SESSION['labor']) {
+      echo "<th>Hours</th>";
+   }
+   echo "<th>Comments</th>";
    if ($_SESSION['admin']) {
       echo "<th>User</th><th>Edit</th><th>Delete</th>";
    }
@@ -72,6 +77,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "</td><td>";
       echo $row['totalApply'];
       echo "</td><td>";
+      if ($_SESSION['labor']) {
+         echo number_format((float) $row['hours'], 2, '.', '');
+         echo "</td><td>";
+      }
       echo $row['comments'];
       echo "</td>";
       if ($_SESSION['admin']) {

@@ -76,6 +76,23 @@ function show_confirm() {
           return false;
        }
    }
+<?php
+   if ($_SESSION['labor']) {
+      echo 'var wk = document.getElementById("numW").value;
+      if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+         showError("Enter a valid number of workers!");
+         return false;
+      }
+      con = con+"\nNumber of workers: " + wk + "\n";
+      var tme = document.getElementById("time").value;
+      var unit = document.getElementById("timeUnit").value;
+      if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+         showError("Enter a valid number of " + unit + "!");
+         return false;
+      }
+      con = con+"Number of " + unit + ": " + tme + "\n";';
+   }
+?>
 
    return confirm("Confirm Entry:"+"\n"+con);
 }
@@ -87,7 +104,6 @@ function show_confirm() {
 <div class="pure-control-group">
 <label for="crop"> Material:  </label>
 <select name ="mat" id="mat" class='mobile-select'>
-<option value = 0 selected disabled> Material </option>
 <?php
    $result=$dbcon->query("Select fertilizerName from liquidFertilizerReference");
    while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
@@ -102,7 +118,6 @@ function show_confirm() {
    <input type="text" size="6" class="textbox2 mobile-input-half single_table" name="quantity" id="quantity"> 
 
 <select name="unit" id="unit" class='mobile-select-half single_table'>
-   <option value=0 selected disabled> Unit </option>
    <option value="QUARTS" > QUARTS </option>
    <option value="GALLONS" > GALLONS</option>
 </select></div>
@@ -167,7 +182,27 @@ function show_confirm() {
 </div>
 <br clear="all"/>
 
+<?php
+if ($_SESSION['labor']) {
+   echo '
+   <div class="pure-control-group">
+   <label for="numWorkers">Number of workers (optional):</label>
+   <input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" class="textbox2mobile-input single_table">
+   </div>
 
+   <div class="pure-control-group">
+   <label>Enter time in Hours or Minutes:</label>
+   <input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time"
+   class="textbox2 mobile-input-half single_table" value="1">
+   <select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
+   <option value="minutes">Minutes</option>
+   <option value="hours">Hours</option>
+   </select>
+   </div> ';
+
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+}
+?>
 
 <div class="pure-control-group">
 <label for="comments"> Comments: </label>
@@ -191,6 +226,7 @@ onclick="return confirmLeave();">
 if (isset($_POST['submit'])) {
    $numRows = $_POST['hid'];
    $sum = 0;
+   $totRows = 0;
    // find the sum of the area = sum length i * numDripRowsi
    for ($i=1; $i <= $numRows; $i++){
       $fieldID = escapehtml($_POST['fieldID'.$i]);
@@ -199,17 +235,36 @@ if (isset($_POST['submit'])) {
       $row1 =  $result->fetch(PDO::FETCH_ASSOC);
       $length=$row1['length'];
       $sum = $sum + $length * $num_drip_rows;
+      $totRows += $num_drip_rows;
    }
    
    $comments = escapehtml($_POST['comments']);
    $username = escapehtml($_SESSION['username']);
    $mat = escapehtml($_POST['mat']);
    $totalQuantity = escapehtml($_POST['quantity']);
-   $unit     = escapehtml($_POST['unit']);
+   $unit = escapehtml($_POST['unit']);
+   if ($_SESSION['labor']) {
+      // Check if given time is in minutes or hours
+      $time = escapehtml($_POST['time']);
+      if ($_POST['timeUnit'] == "minutes") {
+         $hours = $time/60;
+      } else if ($_POST['timeUnit'] == "hours") {
+         $hours = $time;
+      }
+      // Check if num workers is filled in
+      $numW = escapehtml($_POST['numW']);
+      if ($numW != "") {
+         $totalHours = $hours * $numW;
+      } else {
+         $totalHours = $hours;
+      }
+   } else {
+      $totalHours = 0;
+   }
    $sql="Insert into liquid_fertilizer(username,inputDate,fieldID, fertilizer, quantity, dripRows, ".
-      "unit, comments) values ('".
+      "unit, comments, hours) values ('".
       $username."','".$_POST['year']."-".$_POST['month']."-".$_POST['day']."', :fieldID,'".$mat.
-      "', :quantity, :num_drip_rows, '".$unit."', '".$comments."')";
+      "', :quantity, :num_drip_rows, '".$unit."', '".$comments."', :hours)";
    try {
       $stmt = $dbcon->prepare($sql);
       for ( $i=1; $i <= $numRows; $i++) {
@@ -222,6 +277,8 @@ if (isset($_POST['submit'])) {
          $stmt->bindParam(':fieldID', $fieldID, PDO::PARAM_STR);
          $stmt->bindParam(':quantity', $quantity, PDO::PARAM_STR);
          $stmt->bindParam(':num_drip_rows', $num_drip_rows, PDO::PARAM_INT);
+         $hours = $totalHours * $num_drip_rows / $totRows;
+         $stmt->bindParam(':hours', $hours, PDO::PARAM_STR);
          $stmt->execute();
 /*
       $sql="Insert into liquid_fertilizer(username,inputDate,fieldID, fertilizer, quantity, dripRows, unit, comments

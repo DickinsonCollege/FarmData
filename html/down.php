@@ -19,7 +19,10 @@ while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
       echo "\n";
    }
    for ($i=0;$i<count($head);$i=$i+1) {
-      echo "\"".htmlspecialchars_decode($row1[$head[$i]], ENT_QUOTES)."\"".",";
+//      echo "\"".str_replace("\r", ";", str_replace("<br>", ";", 
+//         htmlspecialchars_decode($row1[$head[$i]], ENT_QUOTES)))."\"".",";
+      echo "\"".preg_replace("/\r<br>|<br>\r|\r|<br>/", ";", 
+         htmlspecialchars_decode($row1[$head[$i]], ENT_QUOTES))."\"".",";
    }
    
    echo "\n";

@@ -143,7 +143,6 @@ if(isset($_POST['submit'])){
    include 'tableInvoice.php';
 ?>
 
-<br clear="all"/>
 <form name='comment' method='POST'>
 <!--
 <label for="comment">Add Notes</label>

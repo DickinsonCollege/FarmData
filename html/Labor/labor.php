@@ -273,12 +273,17 @@ while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
 
 <div class = "pure-control-group">
 <label>Enter time in Hours or Minutes:</label>
-<input onkeypress= 'stopSubmitOnEnter(event)'; type = "text" name="time" id="time" class="textbox2 mobile-input">  
-<select name="timeUnit" id="timeUnit" class="mobile-select">
+<input onkeypress= 'stopSubmitOnEnter(event);stopTimer();' type = "text" name="time" id="time" 
+   class="textbox2 mobile-input" value="1">  
+<select name="timeUnit" id="timeUnit" class="mobile-select" onchange="stopTimer();">
    <option value="minutes">Minutes</option>
    <option value="hours">Hours</option>
 </select>
 </div>
+
+<?php
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+?>
 
 <div class = "pure-control-group">
 <label for="comments">Comments:</label>

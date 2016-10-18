@@ -4,7 +4,7 @@ $sql="Select product,cases,(Select dh_units from plant where crop=invoice_entry.
      "select dh_units from product where product.product=invoice_entry.product) as unit, ".
      "(Select units_per_case from plant where crop=invoice_entry.product union select units_per_case ".
      "from product where product.product=invoice_entry.product) as units_per_case, ".
-     "cases*(select units_per_case) as totalUnits, price_case,price_case*cases as total ".
+     "cases*(select units_per_case) as total_units, price_case,price_case*cases as total_price ".
      "from invoice_entry where invoice_no=".$currentID;
 $result2 = $dbcon->query($sql);
 //echo '<br clear="all"/>';
@@ -22,11 +22,11 @@ while ($row = $result2->fetch(PDO::FETCH_ASSOC)) {
    echo "</td><td>";
    echo $row['units_per_case'];
    echo "</td><td>";
-   echo $row['totalUnits'];
+   echo $row['total_units'];
    echo "</td><td align='right'>";
    echo "$".number_format((float) $row['price_case'], 2, '.', '');
    echo "</td><td align='right'>";
-   echo "$".number_format((float) $row['total'], 2, '.', '');
+   echo "$".number_format((float) $row['total_price'], 2, '.', '');
    echo "<td><form method=\"POST\" action=\"invoiceEntry.php?year=".$listYear."&month=".$listMonth."&day=".
       $listDay."&currentID=".$currentID."&deleteProduct=".encodeURIComponent($row['product']).
       '&target='.encodeURIComponent($target).
@@ -38,5 +38,12 @@ while ($row = $result2->fetch(PDO::FETCH_ASSOC)) {
 
 echo "</table>";
 
+echo '<br clear = "all">';echo "<div class='pure-g'>";
+echo "<div class='pure-u-1-1'>";
+echo "<form name='form' method='POST' action='/down.php'>";
+echo "<input type = \"hidden\" name = \"query\" value = \"".escapehtml($sql)."\">";
+echo '<input class="submitbutton pure-button wide" type="submit" name="submit" value="Download Invoice">';echo "</form>";
+echo "</div>";
+echo "</div>";
 ?>
 

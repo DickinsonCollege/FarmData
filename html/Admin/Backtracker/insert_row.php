@@ -55,7 +55,7 @@ for ($i = 0; $i < $tableSize; $i++) {
 	}
 }
 
-$dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
+// $dbcon->query("SET SESSION sql_mode = 'ALLOW_INVALID_DATES'");
 $sql = "INSERT INTO ".$tableName." (".$columns.") VALUES (".$values.")";
 try {
    $stmt = $dbcon->prepare($sql);

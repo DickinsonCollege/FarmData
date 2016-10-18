@@ -37,7 +37,7 @@ $tcurDay = $_GET['tday'];
 $material = encodeURIComponent($_GET['material']);
 //echo $origFieldID. 'material '.$material.' group '.$group;
 $sqlget = "SELECT id, year(inputdate) as yr, month(inputdate) as mth, day(inputdate) as dy, username,".
-   "fertilizer ,fieldID, dripRows, unit, quantity, comments FROM liquid_fertilizer where id = ".$id;
+   "fertilizer ,fieldID, dripRows, unit, quantity, hours, comments FROM liquid_fertilizer where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 //$user = $row['username'];
@@ -51,6 +51,7 @@ $username = $row['username'];
 $comments = $row['comments'];
 $dripRows = $row['dripRows'];
 $unit = $row['unit'];
+$hours = $row['hours'];
 $quantity = $row['quantity'];
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action='".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_fert:soil_fertilizer:liquid_fertilizer:liquid_fertilizer_report&year=".$origYear.
@@ -130,6 +131,13 @@ echo "<option value='QUARTS'>QUARTS</option>";
 echo "<option value='GALLONS'>GALLONS</option>";
 echo "</select></div>";
 
+if ($_SESSION['labor']) {
+   echo '<div class="pure-control-group">';
+   echo '<label>Hours:</label>';
+   echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
+   echo '</div>';
+}
+
 echo '<div class="pure-control-group">';
 echo '<label>Comments:</label> ';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
@@ -150,10 +158,18 @@ if (isset($_POST['submit'])) {
    $dripRows = escapehtml($_POST['dripRows']);
    $unit = escapehtml($_POST['unit']);
    $quantity = escapehtml($_POST['quantity']);
+         $hours = 0;
+   if ($_SESSION['labor']) {
+      $hours = escapehtml($_POST['hours']);
+      if ($hours == "") {
+         $hours = 0;
+      }
+   }
 
    $sql = "update liquid_fertilizer set fieldID='".$fld."', inputdate='".$year."-".
      $month."-".$day."', fertilizer='".$fertilizer."',username='".$username."', dripRows=".$dripRows.
-     ",comments='".  $comSanitized."', unit='".$unit."', quantity=".$quantity." where id=".$id;
+     ",comments='".  $comSanitized."', unit='".$unit."', quantity=".$quantity.", hours=".$hours.
+     " where id=".$id;
 //   echo $sql;
 //   echo '<BR>';
 //   echo $totalApply;

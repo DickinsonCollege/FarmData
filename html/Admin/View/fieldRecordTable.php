@@ -32,8 +32,8 @@ if (!$row) {
    echo '<h3>DIRECT SEEDING</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<h3>DIRECT SEEDING</h3>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Date</th><th>Crop</th><th>Bed Feet</th><th>Rows/Bed</th><th>Row Feet</th>".
       "<th> Comments </th></tr></thead>";
    do {
@@ -64,8 +64,8 @@ if (!$row) {
    echo '<h3>TRANSPLANTING</h3><br clear="all"/>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<h3>TRANSPLANTING</h3>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Date</th><th>Crop<center></th><th>Bed Feet</th><th>Rows/Bed</th><th><center>Row Feet</center></th><th><center> Comments</center></th></tr></thead>";
    do {
       echo "<tr><td>";
@@ -94,8 +94,8 @@ if (!$rowcrop) {
    echo '<h3>HARVESTING</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<h3>HARVESTING</h3>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Date</th><th>Crop</th><th>Unit</th><th>Yield</th><th>  Comments  </th></tr></thead>";
    do {
       $crop = $rowcrop['crop'];
@@ -207,8 +207,8 @@ if ($_SESSION['tillage']) {
       echo '<h3>TILLAGE</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>TILLAGE</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
    
       echo "<thead><tr><th>Date</th><th>Tractor</th><th>Implement</th><th>% tilled</th><th>Passes</th><th>Comments</th></tr></thead>";
       do {
@@ -241,8 +241,8 @@ if ($_SESSION['compost']) {
       echo '<h3>COMPOST</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>COMPOST</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th> Date</th><th>Pile ID</th><th>Incorporation Tool</th><th>Incorporation Timing</th><th>Tons per Acre</th><th>Comments</th></tr></thead>";
       do {
          echo "<tr><td>";
@@ -274,8 +274,8 @@ if ($_SESSION['irrigation']) {
       echo '<h3>IRRIGATION</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>IRRIGATION</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Irrigation Device</th><th>Hours</th><th>Comments</th></tr></thead>";
       do {
          echo "<tr><td>";
@@ -302,8 +302,8 @@ if ($_SESSION['liquidfertilizer']) {
       echo '<h3>LIQUID FERTILIZER</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>LIQUID FERTILIZER</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Material</th><th>Total Material Applied</th><th>Unit</th><th>Drip Rows</th><th>Comments</th></tr></thead>";
       do {
          echo "<tr><td>";
@@ -335,8 +335,8 @@ if ($_SESSION['dryfertilizer']) {
       echo '<h3>DRY FERTILIZER</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>DRY FERTILIZER</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Product</th><th>Application Rate<br>"."(lbs/acre)</th><th>Bed Feet</th><th>Total Applied</th><th>Comments</th></tr></thead>";
       do {
          echo "<tr><td>";
@@ -375,8 +375,8 @@ if ($_SESSION['cover']) {
       echo '<h3>COVER CROP SEEDING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>COVER CROP SEEDING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th style='width:45%;'>Date</th> <th>FieldID</th> <th>Seeding Method</th> <th>Area Seeded</th><th>Incorporation Tool</th><th style='width: 60%;' >Crop</th><th>Comments</th></tr></thead>";
       do {
          $area=number_format($row['areaSeeded'],3,'.','');
@@ -426,8 +426,8 @@ if ($_SESSION['cover']) {
       echo '<h3>COVER CROP INCORPORATION</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>COVER CROP INCORPORATION</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Cover Crop</th><th>Seed Date</th><th>Incorporation Tool</th>".
          "<th>Total Biomass</th><th> Biomass Pounds Per Acre </th><th>Comments</th></tr></thead>";
       do {
@@ -488,8 +488,8 @@ if ($_SESSION['insect']) {
       echo '<h3>INSECT SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>INSECT SCOUTING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Crops</th><th>Insect</th><th>Average Count</th><th>Comments</th></tr></thead>";
       do {
          echo "<tr><td>";
@@ -519,8 +519,8 @@ if ($_SESSION['weed']) {
       echo '<h3>WEED SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>WEED SCOUTING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Species</th><th>Infestation Level</th><th>% Gone to Seed</th>".
          "<th>Comment</th></tr></thead>";
       do {
@@ -551,8 +551,8 @@ if ($_SESSION['disease']) {
       echo '<h3>DISEASE SCOUTING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>DISEASE SCOUTING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th>".
          "<th>Crop Stage</th><th>Comments</th></tr></thead>";
       do {
@@ -586,8 +586,8 @@ if ($_SESSION['backspray']) {
       echo '<h3>BACKPACK SPRAYING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>BACKPACK SPRAYING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<thead><tr><th>Date</th><th>Material Sprayed</th><th>Rate</th><th>Total Material</th>".
          "<th>Crops</th><th> Comments </th></tr></thead>";
       do {
@@ -628,8 +628,8 @@ if ($_SESSION['tractorspray']) {
       echo '<h3>TRACTOR SPRAYING</h3>No records this period.';
       echo '<br clear="all"/>';
    } else {
-      echo "<table class = 'pure-table pure-table-bordered'>";
       echo "<h3>TRACTOR SPRAYING</h3>";
+      echo "<table class = 'pure-table pure-table-bordered'>";
       echo '<thead><tr><th>Date</th><th>% Sprayed</th> <th>Material</th> <th>Rate</th> <th>Total Material</th>'.
          '<th>Crops</th> <th>Comments</th> </tr></thead>';
       do {
@@ -656,8 +656,8 @@ if (!$row) {
    echo '<h3>LABOR</h3>No records this period.';
    echo '<br clear="all"/>';
 } else {
-   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<h3>LABOR</h3>";
+   echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Date</th><th>Crop</th><th>Task</th><th>Hours</th><th>Comments </th></tr></thead>";
    $hours=0;
    do {

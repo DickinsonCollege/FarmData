@@ -55,7 +55,7 @@ function addLastHarvestDate() {
          sel += "<option value=" + lastYear + ">" + lastYear + "</option>";
       }
       var curYear = parseInt(document.getElementById("year").value);
-      for (var yr = curYear + 1; yr < curYear + 6; yr++) {
+      for (var yr = curYear + 1; yr < curYear + 11; yr++) {
          sel += "<option value=" + yr + ">" + yr + "</option>";
       }
       sel += "</select>";

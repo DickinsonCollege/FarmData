@@ -51,8 +51,8 @@ $user = $row['username'];
 $curCrop = $row['crop'];
 $seedDate = $row['seedDate'];
 $numseeds_planted = $row['numseeds_planted'];
-$comments = $row['comments'];
-$varieties = $row['varieties'];
+$comments = escapeescapehtml($row['comments']);
+$varieties = escapeescapehtml($row['varieties']);
 $flats = $row['flats'];
 $cellsFlat = $row['cellsFlat'];
 
@@ -118,7 +118,11 @@ echo '</div>';
 echo '<div class="pure-control-group">';
 echo "<label>Varieties:</label>";
 echo "<textarea rows=\"5\" cols=\"30\" name = \"varieties\" id = \"varieties\">";
-echo $varieties;
+$vararr = explode("<br>", $varieties);
+foreach ($vararr as $var) {
+   echo $var;
+   echo "\n";
+}
 echo "</textarea>";
 echo '</div>';
 
@@ -144,7 +148,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/getGen.php';
 echo '<div class="pure-control-group">';
 echo '<label>Comments:</label>';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
-echo $comments;
+$comarr = explode("<br>", $comments);
+foreach ($comarr as $com) {
+   echo $com;
+   echo "\n";
+}
 echo "</textarea>";
 echo '</div>';
 echo '<br clear="all"/>';
@@ -154,10 +162,11 @@ echo "<input type='submit' name='submit' value='Update Record' class = 'submitbu
 echo "<fieldset>";
 echo "</form>";
 if ($_POST['submit']) {
-    $comSanitized = escapehtml($_POST['comments']);
+    $comSanitized=str_replace("\n", "<br>", trim(escapehtml($_POST['comments'])));
     $crop = escapehtml($_POST['crop']);
     $numseeds_planted = escapehtml($_POST['numseeds_planted']);
-    $varieties = escapehtml($_POST['varieties']);
+    // $varieties = escapehtml($_POST['varieties']);
+    $varieties=str_replace("\n", "<br>", trim(escapehtml($_POST['varieties'])));
     $flats = escapehtml($_POST['flats']);
     $cellsFlat = escapehtml($_POST['cellsFlat']);
     $year = escapehtml($_POST['year']);

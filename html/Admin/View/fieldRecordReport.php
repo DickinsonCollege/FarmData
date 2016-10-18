@@ -21,7 +21,7 @@ echo '</div>';
 ?>
 
 <div class = "pure-control-group">
-<label for="fieldID">FieldID:</label>
+<label for="fieldID">Field:</label>
 <select id = "fieldID" name="fieldID" class='mobile-select'>
 <?php
 $result = $dbcon->query("SELECT distinct fieldID from field_GH");
