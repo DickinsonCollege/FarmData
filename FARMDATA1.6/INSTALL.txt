@@ -1,0 +1,154 @@
+Planning Your FARMDATA Installation
+
+Before installing FARMDATA, make sure that:
+  - you have console (terminal) access to your web server
+  - your server is running Linux or some other flavor of Unix
+  - your server has PHP (version 5.3 or higher) and MySQL Server (version 5.1
+    or higher)
+  - the PDO module for PHP and MySQL is installed.  You can check this by
+    executing the command (from the terminal):
+
+    php -m | grep pdo_mysql
+
+    If the command produces one line of output (containing: pdo_mysql), then
+    the module is installed.
+  - you have the PEAR PHP extension installed
+  - you have the Mail and Mail_Mime PEAR packages installed (only for emailing
+    invoices)
+  - you know your domain name (i.e. web server hostname)
+  - you know whether or not your web server provides Secure Sockets Layer
+    (SSL) via an SSL certificate.  Running FARMDATA over SSL is highly
+    recommended.
+  - you know the full path to the document root directory for your web server
+    (that is, the directory that your web server serves files from).  If you
+    have a dedicated server, the document root directory will be something like
+     "/var/www/html".  If you have a shared hosting account, the document root
+    directory will likely be a subdirectory of your home directory. 
+  - you know the subdirectory of the document root directory in which you would 
+    like to install FARMDATA.  The installation procedure will create this 
+    subdirectory if it doesn't exist.  Installing directly in the document root
+    directory will work, but is not recommended unless your web server will
+    be used for FARMDATA only.  If you install FARMDATA in the document root
+    directory, the URL for FARMDATA will just be the hostname of your server.
+    If you install in a subdirectory of the document root directory, the URL
+    will be: https://your.server.name/subdirectory.name
+    (http://your.server.name/subdirectory.name if you are not using SSL)
+  - you know whether your webserver is also the machine that is running MySQL.
+    If not, you also need to know the name of that machine, and to create and
+    populate the databases on that machine before running the install
+    procedure.
+  - you decide whether to have the installation procedure create the necessary
+    MySQL databases for you, or if you would like to create those databases
+    yourself.
+
+      - If you decide to have the installation procedure create the databases,
+       you will need to enter the username and password for a MySQL
+       administrator account on your system - that is, a user that can create
+       databases and additional database users.  You will be prompted for 
+       this username and password during the installation procedure.
+      - If you create the databases yourself (recommended in a shared hosting
+       environment), create two MySQL databases.  One will be used for
+       storing user account information, and the second for storing the 
+       actual planting, harvesting, ... data.  You will also need to create
+       a user for each database with full privileges on that database.
+       You MUST create a separate user for each database.  You will be
+       prompted for the name of each database, user and password
+       during the installation procedure.  After installation, adjust the
+       privileges for each user as follows:
+         - the user for the user account information database needs select,
+           insert and update privileges on that database (remove all others)
+         - the user for the farm information database needs lock tables,
+           select, delete, insert, show view and update privileges on that
+           database (remove all others)
+          
+  - you have chosen a username and password for your FARMDATA account.
+    The installation procedure will create this account for you, and you will
+    be able to use this account to create additional users within FARMDATA.
+
+Installing FARMDATA
+
+  - cd into the directory in which you unpacked the FARMDATA source (which
+    should be the directory that contains this file)
+  - execute the command: chmod 755 install.sh
+
+    to ensure that the install script can be executed
+  - execute the command:  ./install.sh
+  - the install procedure will prompt you for the information listed above
+  - report any installation issues by creating a ticket at:
+https://sourceforge.net/p/farmdata/tickets/
+  Make sure to copy and paste any error messages into your ticket. 
+
+  To begin using FARMDATA, go to the URL specified above and log in with the
+  username and password that you specified during the installation. 
+  For a quick start on configuring FARMDATA (highly recommended), log in to:
+  https://your.server.name/subdirectory.name/setup
+
+When MySQL is Running on a Different Server
+
+  If your MySQL server and web server are not the same, you will need to log in
+  to your MySQL server to create and populate the databases for FARMDATA.  Do
+  this before running the install procedure as described in the previous
+  section.
+
+  - as described in Section "Planning Your FARMDATA Installation" above, create
+    the user account and farm information databases and a database user for
+    each.  You will likely do this via cpanel or some other control panel
+    provided by your web hosting company.
+  - use phpMyAdmin to log in to the user account database as either the user for
+    the user account database that you created above or an administrative user. 
+  - click the SQL tab, and copy and paste the contents of the file
+    tables/userTables.txt (from the FARMDATA1.X directory) into the "Run SQL
+    Query" box.  Click "Go" and verify that the query executed successfully.
+  - clear the contents of the "Run SQL Query Box".  The X above represents the
+    FARMDATA version number - currently 1 - 5.
+  - in the "Run SQL Query" box, enter:
+ 
+    insert into farms values ('INFODB', 'INFODBPASS', 'INFODBUSER');
+ 
+    where:
+
+     - INFODB is the name of the farm information database
+     - INFODBPASS is the password of the farm information database user
+     - INFODBUSER is the username of the farm information database user
+
+    The single quotes (') around each of these values are required.  Click "Go"
+    and verify that the query executed successfully.
+
+  - go to this website: https://www.functions-online.com/crypt.html to get the
+    encrypted value of your FARMDATA password
+  - enter whatever you would like your FARMDATA password to be for
+    $str and 123salt for $salt.  Click "Run", and copy the value of result.
+  - back in phpMyAdmin, clear the contents of the "Run SQL Query Box"
+  - in the "Run SQL Query" box, enter:
+
+    insert into users values ('USERNAME', 'PASSWORD', 'INFODB', 1, 1);
+
+    where:
+
+     - USERNAME is what you would like for your FARMDATA username.  Many
+       people will use an email address for this.
+     - PASSWORD is the encrypted value that you copied above. 
+     - INFODB is the name of the farm information database.  Again, the single
+       quotes around these values are required.
+     - the 1's specify that you are a FARMDATA administrative user, and that
+       your account is active
+
+  - Click "Go" and verify that the query executed successfully.
+  - log out of phpMyAdmin
+  - use phpMyAdmin to log in to the farm information database as either the user
+    for the farm information database that you created above or an
+    administrative user. 
+  - click the SQL tab, and copy and paste the contents of the file
+    tables/baseTables.txt (from the FARMDATA1.X directory) into the "Run SQL
+    Query" box.  Click "Go" and verify that the query executed successfully.
+  - clear the contents of the "Run SQL Query Box"
+    copy and paste the contents of the file tables/dfTables.txt (from the
+    FARMDATA1.X directory) into the "Run SQL Query" box.  Click "Go" and verify
+    that the query executed successfully.
+  - proceed with normal FARMDATA installation as described in the previous
+    section.
+  - when you are finished, you should be able to log in to FARMDATA using the
+    username you specified above and the unencrypted password that you
+    specified.  That is, use the value that you typed for $str and
+    not the encrypted value that the website returned.
+
