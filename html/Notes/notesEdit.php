@@ -21,6 +21,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/clearForm.php';
 
 $id = $_GET['id'];
 $origYear = $_GET['year'];
@@ -31,7 +32,7 @@ $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
 $sqlget = "SELECT id, year(comDate) as yr, month(comDate) as mth, day(comDate) as dy, username,".
-   "comments FROM comments where id = ".$id;
+   "comments, filename FROM comments where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $user = $row['username'];
@@ -39,12 +40,14 @@ $comments = $row['comments'];
 $curMonth = $row['mth'];
 $curYear = $row['yr'];
 $curDay = $row['dy'];
+$filename = $row['filename'];
 ?>
 
 <?php
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$SERVER['PHP_SELF'].
    "?tab=harvest:harvestReport&year=".$origYear."&month=".$origMonth."&day=".$origDay.
-   "&fieldID="."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&id=".$id."\">";
+   "&fieldID="."&tyear=".$tcurYear."&tmonth=".$tcurMonth."&tday=".$tcurDay."&id=".$id."\" ".
+    "enctype='multipart/form-data'>";
 
 echo "<center>";
 echo "<H2> Edit Comments</H2>";
@@ -91,10 +94,42 @@ echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
 echo $comments;
 echo "</textarea>";
 echo '</div>';
-echo '<br clear="all"/>';
+
+echo '<div class="pure-control-group">';
+echo '<label>Current Picture: </label>';
+if ($filename == "") {
+   echo "None";
+   echo "</div>";
+} else {
+   $pos = strrpos($filename, "/");
+   echo "<input readonly class='textbox2 mobile-input' type='text' value='";
+   echo substr($filename, $pos + 1);
+   echo "'/>";
+   echo "</div>";
+   echo "\n\n";
+   echo '<div class="pure-control-group">';
+   echo "\n";
+   echo '<label for="del">Delete: </label>';
+   echo "\n";
+   echo '<input type="checkbox" id="del" name="del">';
+   echo "\n";
+   echo '</div>';
+   echo "\n";
+}
 ?>
 
+<div class="pure-control-group" id="filediv">
+<label for="file">Upload New Picture (optional): </label>
+<input type="file" name="fileIn" id="file">
+</div>
+
+<div class="pure-control-group">
+<label for="clear">Max File Size: 2 MB </label>
+<input type="button" value="Clear Picture" onclick="clearForm();">
+</div>
+
 <?php
+echo '<br clear="all"/>';
 echo "<input type='submit' name='submit' value='Update Record' class = 'submitbutton pure-button wide'>";
 echo '<fieldset>';
 echo "</form>";
@@ -114,6 +149,26 @@ if ($_POST['submit']) {
       phpAlert('', $p);
       die();
    }
+
+   include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageEdit.php';
+
+   if ($newfile != "") {
+      $sql = "update comments set filename=";
+      if ($newfile == "null") {
+         $sql .= "null";
+      } else {
+         $sql .= "'".$newfile."'";
+      }
+      $sql .= " where id=".$id;
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
+   }
+
    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    echo "<meta http-equiv=\"refresh\" content=\"0;URL=notesTable.php?year=".$origYear.'&month='
      .$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.'&tmonth='.$tcurMonth.'&tday='.$tcurDay.

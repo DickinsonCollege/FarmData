@@ -4,8 +4,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/clearForm.php';
 ?>
-<form name='form' id='test' class='pure-form pure-form-aligned'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_disease:disease_input">
+<form name='form' id='test' class='pure-form pure-form-aligned'  method='POST' 
+   action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_disease:disease_input"
+   enctype="multipart/form-data">
 <center>
 <h2> Disease Scouting Input Form </h2>
 </center>
@@ -13,6 +16,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 <div class="pure-control-group">
 <label for='date'> Date: </label>
 <?php
+if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
+   $dDay = $_POST['day'];
+   $dMonth = $_POST['month'];
+   $dYear = $_POST['year'];
+}
+if (isset($_POST['fieldID'])) {
+   $field = escapehtml($_POST['fieldID']);
+}
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 </div>
@@ -22,11 +33,17 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <div class="pure-control-group">
 <label for="fieldID"> Name of Field: </label>
 <select name ="fieldID" id="fieldID" class="mobile-select">
+<!--
 <option value = 0 selected disabled> Field Name</option>
+-->
 <?php
 $result=$dbcon->query("Select fieldID from field_GH where active=1");
 while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
-echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
+   echo "\n<option value= '".$row1[fieldID]."'";
+   if (isset($field) && $field == $row1['fieldID']) {
+      echo " selected";
+   }
+   echo ">".$row1[fieldID]."</option>";
 }
 echo '</select>';
 echo '</div>';
@@ -36,6 +53,43 @@ echo '</div>';
 include $_SERVER['DOCUMENT_ROOT'].'/Soil/crop.php';
 ?>
 
+<div class="pure-control-group">
+<label>Disease: </label>
+<select name ="disease" id="disease" class="mobile-select">
+<?php
+    $sql = 'Select diseaseName from disease';
+    $result = $dbcon->query($sql);            
+    while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){              
+        echo '<option value="'.$row1['diseaseName'].'">'.$row1['diseaseName'].'</option>';
+    }
+?>
+</select>
+</div>
+
+<div class="pure-control-group">
+<label>Infestation: </label>
+<select name ="infest" id="infest" class="mobile-select">
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+</div>
+
+<div class="pure-control-group">
+<label>Stage: </label>
+<select name ="stage" id="stage" class="mobile-select">
+<?php
+   $result = $dbcon->query("select stage from stage");
+   while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
+      echo '<option value="'.$row1['stage'].'">'.$row1['stage'].'</option>';
+   }   
+?>
+</select>
+</div>
+
+<!--
 <br clear="all"/>
 <center>
 <table name="fieldTable" id="fieldTable"  
@@ -111,6 +165,18 @@ function removeRow() {
 </div>
 <br clear="all">
 <br clear="all">
+-->
+
+<div class="pure-control-group" id="filediv">
+<label for="file">Picture (optional): </label>
+<input type="file" name="fileIn" id="file">
+</div>
+
+<div class="pure-control-group">
+<label for="clear">Max File Size: 2 MB </label>
+<input type="button" value="Clear Picture" onclick="clearForm();">
+</div>
+
 <div class="pure-control-group">
 <label >Comments: </label>
 <textarea name="comments" id="comments"
@@ -119,8 +185,10 @@ cols=30 rows=5>
 </div>
 <script type="text/javascript">
 function show_confirm() {
+/*
    var hid = document.getElementById("hid");
    hid.value = numRows;  
+*/
    var mth = document.getElementById("month").value;
    var con="Scout Date: " + mth + "-";
    var dy = document.getElementById("day").value;
@@ -148,6 +216,27 @@ function show_confirm() {
       }
    }
    con += "Crops: "+ crops + "\n";
+   var disease = document.getElementById("disease").value;
+   if (checkEmpty(disease)) {
+      alert("Please Select a Disease");
+      return false;
+   }
+   con=con+"Disease: "+disease+"\n";
+
+   var infest = document.getElementById("infest").value;
+   if(checkEmpty(infest) && infest != 0) {
+       alert("Please Select an Infestation Level");
+       return false;
+    }
+    con=con+"Infestation Level: "+infest+"\n";
+
+   var stage = document.getElementById("stage").value;
+   if (checkEmpty(stage)) {
+      alert("Please Select Stage");
+      return false;
+   }
+   con=con+"Stage: "+stage+"\n";
+/*
    if (numRows == 0) {
       alert("No disease entered.");
       return false;
@@ -186,9 +275,21 @@ function show_confirm() {
          return false;
       }
    }
+*/
 
    var i = document.getElementById("comments").value;
    var con=con+"Comments: "+ i+ "\n";
+
+   var fname = document.getElementById("file").value;
+   if (fname != "") {
+   var pos = fname.lastIndexOf(".");
+   var ext = fname.substring(pos + 1, fname.length).toLowerCase();
+   if (ext != "gif" && ext != "png" && ext != "jpg" && ext != "jpeg") {
+      alert("Invalid image type: only gif, png, jpg and jpeg allowed.");
+      return false;
+   }
+      con += "Picture: "+ fname + "\n";
+   }
 
    return confirm("Confirm Entry:"+"\n"+con);
 }
@@ -221,6 +322,36 @@ if (isset($_POST['submit'])) {
       }
       $crops .= $crp;
    }
+   $disease = escapehtml( $_POST['disease']);
+   $infest = escapehtml( $_POST['infest']);
+   $stage = escapehtml( $_POST['stage']);
+
+   include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageUpload.php';
+
+   $sql = "Insert into diseaseScout(sDate,fieldID,crops,disease,infest,stage,comments,filename) values ('".
+      $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
+      $fieldID."','".$crops."', :disease, :infest, :stage,'".$comments."', ";
+   if ($fname == "null") {
+      $sql .= "null";
+   } else {
+      $sql .= ":filename";
+   }
+   $sql .= ")";
+   try {
+      $stmt = $dbcon->prepare($sql);
+      $stmt->bindParam(':disease', $disease, PDO::PARAM_STR);
+      $stmt->bindParam(':infest', $infest, PDO::PARAM_INT);
+      $stmt->bindParam(':stage', $stage, PDO::PARAM_STR);
+      if ($fname != "null") {
+         $stmt->bindParam(':filename', $fname, PDO::PARAM_STR);
+      }
+      $stmt->execute();
+   } catch (PDOException $p) {
+      phpAlert('', $p);
+      die();
+   }
+
+/*
    try {
       $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
          $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
@@ -230,12 +361,10 @@ if (isset($_POST['submit'])) {
          $species = escapehtml( $_POST['species'.$var]);
          $infest = escapehtml( $_POST['infest'.$var]);
          $stage = escapehtml( $_POST['stage'.$var]);
-/*
-         $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
-            $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
-            $fieldID."','".$crops."','".$species."','".$infest."','".$stage.
-            "','".$comments."')";
-*/
+//       $sql = "Insert into diseaseScout(sDate, fieldID, crops, disease, infest, stage, comments) values ('".
+//          $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
+//          $fieldID."','".$crops."','".$species."','".$infest."','".$stage.
+//          "','".$comments."')";
          $stmt->bindParam(':species', $species, PDO::PARAM_STR);
          $stmt->bindParam(':infest', $infest, PDO::PARAM_INT);
          $stmt->bindParam(':stage', $stage, PDO::PARAM_STR);
@@ -246,6 +375,7 @@ if (isset($_POST['submit'])) {
       phpAlert('', $p);
       die();
    }
+*/
    echo "<script>showAlert('Entered Data Successfully!');</script>";
 }
 

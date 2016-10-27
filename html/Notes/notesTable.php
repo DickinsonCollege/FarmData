@@ -21,7 +21,9 @@ $tcurMonth = $_GET['tmonth'];
 $tcurDay = $_GET['tday'];
 
 if (isset($_GET['submit'])) {   
-   $sql= "Select id,username,comDate,comments from comments where comDate between '".$_GET['year']."-".$_GET['month']."-".$_GET['day']."'and '".$_GET['tyear']."-".$_GET['tmonth']."-".$_GET['tday']."'";
+   $sql= "Select id,username,comDate,comments,filename from comments where comDate between '".
+      $_GET['year']."-".$_GET['month']."-".$_GET['day']."'and '".
+      $_GET['tyear']."-".$_GET['tmonth']."-".$_GET['tday']."'";
    $result=$dbcon->query($sql);
    echo "<table class = 'pure-table pure-table-bordered'>";
    echo "<colgroup> <col id='col1'/>";
@@ -29,7 +31,7 @@ if (isset($_GET['submit'])) {
    echo "<col id='col3' />";
    echo "</colgroup>";
    echo "<center><h2> Comments Report </h2></center>";
-   echo "<thead><tr><th>UserName</th><th> Date </th><th>Comments</th><th>Edit</th><th>Delete</th></tr></thead>";
+   echo "<thead><tr><th>UserName</th><th> Date </th><th>Comments</th><th>Picture</th><th>Edit</th><th>Delete</th></tr></thead>";
    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo "<tr><td>";
         echo $row['username'];
@@ -37,6 +39,19 @@ if (isset($_GET['submit'])) {
         echo $row['comDate'];
         echo "</td><td>";
         echo $row['comments'];
+        echo "</td><td>";
+        $filename = $row['filename'];
+        if ($filename == "") {
+           echo "&nbsp;";
+        } else {
+           $width = "200";
+           $pos = strrpos($filename, ".");
+           $ext = substr($filename, $pos + 1);
+           if ($_SESSION['mobile']) {
+              $width = "80";
+           }
+           echo '<img style="width:'.$width.'px" src="'.$filename.'"/>';
+        }
         echo "</td>";
         echo "\n";
 	if ($_SESSION['admin'] OR $row['username'] == $_SESSION['username']) {

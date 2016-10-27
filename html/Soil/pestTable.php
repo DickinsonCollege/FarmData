@@ -27,7 +27,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $crop = escapehtml($_GET['crop']);
    $fieldID = escapehtml($_GET['fieldID']);
    $pest = escapehtml($_GET['pest']);
-   $sql="select id, sDate,crops,fieldID,pest,avgCount,comments from pestScout where sDate between '".
+   $sql="select id,sDate,crops,fieldID,pest,avgCount,comments,filename from pestScout ".
+      "where sDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and crops like '%".$crop."%' and fieldID like '".
       $fieldID."' and pest like '".$pest."' order by sDate";
@@ -50,7 +51,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "<center><h2> Insect Scouting Report for ".$var." in ".
     $var2." for ".$var3."</h2></center>";
    echo "<table class='pure-table pure-table-bordered'>";
-   echo "<thead><tr><th>Scout Date</th><th>Crops</th><th>Field ID</th><th>Insect</th><th>Average Count</th><th>Comments</th>";
+   echo "<thead><tr><th>Scout Date</th><th>Crops</th><th>Field ID</th><th>Insect</th>";
+   echo "<th>Average Count</th><th>Comments</th><th>Picture</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
@@ -68,6 +70,19 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
         echo $row['avgCount'];
         echo "</td><td>";
         echo $row['comments'];
+        echo "</td><td>";
+        $filename = $row['filename'];
+        if ($filename == "") {
+           echo "&nbsp;";
+        } else {
+           $width = "200";
+           $pos = strrpos($filename, ".");
+           $ext = substr($filename, $pos + 1);
+           if ($_SESSION['mobile']) {
+              $width = "80";
+           }
+           echo '<img style="width:'.$width.'px" src="'.$filename.'"/>';
+        }
         echo "</td>";
         if ($_SESSION['admin']) {
            echo "<td><form method='POST' action=\"pestEdit.php?month=".$month.

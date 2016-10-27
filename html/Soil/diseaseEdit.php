@@ -4,6 +4,7 @@
 include $_SERVER['DOCUMENT_ROOT'].'/Admin/authAdmin.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/clearForm.php';
 
 $id=$_GET['id'];
 $origYear = $_GET['year'];
@@ -17,7 +18,7 @@ $origDisease = $_GET['disease'];
 $origCrop= $_GET['crop'];
 $origStage= $_GET['stage'];
 $sqlget = "SELECT id, year(sDate) as yr, month(sDate) as mth, day(sDate) as dy,".
-   "disease ,fieldID, crops, infest, stage, comments FROM diseaseScout where id = ".$id;
+   "disease ,fieldID, crops, infest, stage, comments, filename FROM diseaseScout where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $fieldID = $row['fieldID'];
@@ -29,6 +30,7 @@ $curYear = $row['yr'];
 $curMonth = $row['mth'];
 $curDay = $row['dy'];
 $comments = $row['comments'];
+$filename = $row['filename'];
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_scout:soil_disease:disease_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay."&tyear=".$tcurYear.
@@ -36,7 +38,7 @@ echo "<form name='form' class='pure-form pure-form-aligned' method='post' action
    "&crop=".encodeURIComponent($origCrop).
    "&fieldID=".encodeURIComponent($origFieldID).
    "&stage=".encodeURIComponent($origStage).
-   "&disease=".encodeURIComponent($origDisease)."&id=".$id."\">";
+   "&disease=".encodeURIComponent($origDisease)."&id=".$id."\" enctype='multipart/form-data'>";
 
 echo "<center>";
 echo "<H2> Edit Disease Scouting Record </H2>";
@@ -110,6 +112,40 @@ while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
 }
 echo "</select></div>";
 
+echo '<div class="pure-control-group">';
+echo '<label>Current Picture: </label>';
+if ($filename == "") {
+   echo "None";
+   echo "</div>";
+} else {
+   $pos = strrpos($filename, "/");
+   echo "<input readonly class='textbox2 mobile-input' type='text' value='";
+   echo substr($filename, $pos + 1);
+   echo "'/>";
+   echo "</div>";
+   echo "\n\n";
+   echo '<div class="pure-control-group">';
+   echo "\n";
+   echo '<label for="del">Delete: </label>';
+   echo "\n";
+   echo '<input type="checkbox" id="del" name="del">';
+   echo "\n";
+   echo '</div>';
+   echo "\n";
+}
+?>
+
+<div class="pure-control-group" id="filediv">
+<label for="file">Upload New Picture (optional): </label>
+<input type="file" name="fileIn" id="file">
+</div>
+
+<div class="pure-control-group">
+<label for="clear">Max File Size: 2 MB </label>
+<input type="button" value="Clear Picture" onclick="clearForm();">
+</div>
+
+<?php
 echo "<div class='pure-control-group'>";
 echo '<label>Comments:</label>';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
@@ -142,6 +178,26 @@ if (isset($_POST['submit'])) {
       phpAlert('', $p);
       die();
    }
+
+   include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageEdit.php';
+
+   if ($newfile != "") {
+      $sql = "update diseaseScout set filename=";
+      if ($newfile == "null") {
+         $sql .= "null";
+      } else {
+         $sql .= "'".$newfile."'";
+      }
+      $sql .= " where id=".$id;
+      try {
+         $stmt = $dbcon->prepare($sql);
+         $stmt->execute();
+      } catch (PDOException $p) {
+         phpAlert('', $p);
+         die();
+      }
+   }
+
    echo "<script>showAlert(\"Entered data successfully!\");</script> \n";
    echo '<meta http-equiv="refresh" content="0;URL=diseaseTable.php?year='.
      $origYear.'&month='.$origMonth.'&day='.$origDay.'&tyear='.$tcurYear.

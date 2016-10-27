@@ -28,7 +28,8 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $crop = escapehtml($_GET['crop']);
    $stage = escapehtml($_GET['stage']);
    $disease = escapehtml($_GET['disease']);
-   $sql="Select id, sDate,fieldID,crops,disease,infest,stage,comments from diseaseScout where sDate between '".
+   $sql="Select id, sDate,fieldID,crops,disease,infest,stage,comments,filename from diseaseScout ".
+      "where sDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and fieldID like '".$fieldID."' and stage like '".$stage."' and disease like '"
       .$disease."' and crops like '%".$crop."%'";
@@ -56,26 +57,40 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "<center><h2> Disease Scouting Records in Field: ".$var2." for Crop: ".$var3." Disease: ".$var." at Stage: ".$var4."</h2></center>";
 
    echo "<table class='pure-table pure-table-bordered'>";
-   echo "<thead><tr><th>Scout Date</th><th>Field ID</th><th>Crops</th><th>Disease Species</th><th>Infestation Level</th><th>Crop Stage</th><th>Comments</th>";
+   echo "<thead><tr><th>Scout Date</th><th>Field ID</th><th>Crops</th><th>Disease Species</th>".
+      "<th>Infestation Level</th><th>Crop Stage</th><th>Comments</th><th>Picture</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
    echo "</tr></thead>";
    while ( $row = $result->fetch(PDO::FETCH_ASSOC)) {
-        echo "<tr><td>";
-	echo $row['sDate'];
-        echo "</td><td>";
-        echo $row['fieldID'];
-        echo "</td><td>";
-        echo $row['crops'];
-        echo "</td><td>";
-        echo $row['disease'];
-        echo "</td><td>";
-        echo $row['infest'];
-        echo "</td><td>";
-        echo $row['stage'];
-        echo "</td><td>";
-        echo $row['comments'];
+      echo "<tr><td>";
+      echo $row['sDate'];
+      echo "</td><td>";
+      echo $row['fieldID'];
+      echo "</td><td>";
+      echo $row['crops'];
+      echo "</td><td>";
+      echo $row['disease'];
+      echo "</td><td>";
+      echo $row['infest'];
+      echo "</td><td>";
+      echo $row['stage'];
+       echo "</td><td>";
+       echo $row['comments'];
+       echo "</td><td>";
+       $filename = $row['filename'];
+       if ($filename == "") {
+          echo "&nbsp;";
+       } else {
+          $width = "200";
+          $pos = strrpos($filename, ".");
+          $ext = substr($filename, $pos + 1);
+          if ($_SESSION['mobile']) {
+             $width = "80";
+          }
+          echo '<img style="width:'.$width.'px" src="'.$filename.'"/>';
+       }
         echo "</td>";
         if ($_SESSION['admin']) {
            echo "<td><form method=\"POST\" action=\"diseaseEdit.php?month=".

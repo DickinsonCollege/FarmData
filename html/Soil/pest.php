@@ -4,14 +4,24 @@ include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
 include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
+include $_SERVER['DOCUMENT_ROOT'].'/Soil/clearForm.php';
 ?>
 <center>
 <h2> Insect Scouting Input Form </h2>
 </center>
-<form name='form' class='pure-form pure-form-aligned' id='test'  method='POST' action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_pest:pest_input">
+<form name='form' class='pure-form pure-form-aligned' id='test' method='POST' enctype="multipart/form-data"
+   action="<?php echo $_SERVER['PHP_SELF'];?>?tab=soil:soil_scout:soil_pest:pest_input">
 <div class='pure-control-group'>
 <label for='date'>Date: </label>
 <?php
+if (isset($_POST['day']) && isset($_POST['month']) && isset($_POST['year'])) {
+   $dDay = $_POST['day'];
+   $dMonth = $_POST['month'];
+   $dYear = $_POST['year'];
+}
+if (isset($_POST['fieldID'])) {
+   $field = escapehtml($_POST['fieldID']);
+}
 include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 ?>
 </div>
@@ -19,11 +29,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <div class='pure-control-group'>
 <label for="fieldID">Name of Field: </label>
 <select name ="fieldID" id="fieldID" class="mobile-select">
-<option value = 0 selected disabled> Field Name</option>
 <?php
 $result=$dbcon->query("Select fieldID from field_GH where active=1");
 while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){
-echo "\n<option value= \"$row1[fieldID]\">$row1[fieldID]</option>";
+   echo "\n<option value= '".$row1[fieldID]."'";
+   if (isset($field) && $field == $row1['fieldID']) {
+      echo " selected";
+   }
+   echo ">".$row1[fieldID]."</option>";
 }
 echo '</select>';
 echo '</div>';
@@ -32,7 +45,6 @@ echo '</div>';
 <div class='pure-control-group'>
 <label for="Pest"> Insect: </label>
 <select name="pest" id="pest" class="mobile-select">
-<option  value = 0 selected disabled > Insect </option>
 <?php
 $result=$dbcon->query("Select pestName from pest");
 while ($row1 = $result->fetch(PDO::FETCH_ASSOC)){  
@@ -121,6 +133,17 @@ function removeSampleRow() {
 <input  type="text" readonly class ="textbox2 mobile-input" id="average" name="average">
 </div>
 
+
+<div class="pure-control-group" id="filediv">
+<label for="file">Picture (optional): </label>
+<input type="file" name="fileIn" id="file">
+</div>
+
+<div class="pure-control-group">
+<label for="clear">Max File Size: 2 MB </label>
+<input type="button" value="Clear Picture" onclick="clearForm();">
+</div>
+
 <div class="pure-control-group">
 <label >Comments:</label>
 <textarea name="comments" id="comments"
@@ -168,6 +191,16 @@ function show_confirm() {
         return false;
      }
      con += "Average Insects Per Plant: " + avg + "\n";
+     var fname = document.getElementById("file").value;
+     if (fname != "") {
+        var pos = fname.lastIndexOf(".");
+        var ext = fname.substring(pos + 1, fname.length).toLowerCase();
+        if (ext != "gif" && ext != "png" && ext != "jpg" && ext != "jpeg") {
+           alert("Invalid image type: only gif, png, jpg and jpeg allowed.");
+           return false;
+        }
+        con += "Picture: "+ fname + "\n";
+     }
      var cmt = document.getElementById("comments").value;
      con += "Comments: "+ cmt + "\n";
 
@@ -204,11 +237,23 @@ if (isset($_POST['submit'])) {
       }
       $crops .= $crp;
    }
-   $sql="Insert into pestScout(sDate,fieldID,crops,pest,avgCount,comments) values ('".
+
+   include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageUpload.php';
+
+   $sql="Insert into pestScout(sDate,fieldID,crops,pest,avgCount,comments, filename) values ('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID.
-      "','".$crops."','".$pest."','".$average."','".$comments."')";
+      "','".$crops."','".$pest."','".$average."','".$comments."', ";
+   if ($fname == "null") {
+      $sql .= "null";
+   } else {
+      $sql .= ":filename";
+   }
+   $sql .= ")";
    try {
       $stmt = $dbcon->prepare($sql);
+      if ($fname != "null") {
+         $stmt->bindParam(':filename', $fname, PDO::PARAM_STR);
+      }
       $stmt->execute();
    } catch (PDOException $p) {
       phpAlert('', $p);

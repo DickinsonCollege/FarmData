@@ -17,8 +17,8 @@
 <br clear="all"/>
 <div class="pure-g">
 <div class="pure-u-1-2">
-<input type="button" id="addCrop" name="addCrop" class="submitbutton pure-button wide" onClick="addCropRow();"
-value="Add Crop">
+<input type="button" id="addCrop" name="addCrop" class="submitbutton pure-button wide" 
+  onClick="addCropRow('');" value="Add Crop">
 </div>
 <div class="pure-u-1-2">
 <input type="button" id="removeCrop" name="removeCrop" class="submitbutton pure-button wide" onClick="removeCropRow();"
@@ -31,7 +31,7 @@ value="Remove Crop">
 <script type="text/javascript">
    var numCropRows = 0;
 
-   function addCropRow() {
+   function addCropRow(crp) {
       numCropRows++;
       var numCrops = document.getElementById("numCropRows");
       numCrops.value = numCropRows;
@@ -43,7 +43,11 @@ value="Remove Crop">
 
       row.id="cropRow" + numCropRows;
       var cell0 = row.insertCell(-1);
-      var cropID = '<?php
+      var cropID = "";
+      if (crp != "") {
+         cropID = "<option value='" + crp + "'>" + crp + "</option>";
+      }
+      cropID += '<?php
       $result=$dbcon->query("Select crop from plant where active=1");
       while ($row1 =  $result->fetch(PDO::FETCH_ASSOC)){
           echo "<option value = \"".$row1['crop']."\">".$row1['crop']."</option>";
@@ -53,9 +57,14 @@ value="Remove Crop">
   if (!$_SESSION['mobile']) { echo "2"; }?>" id="cropDiv'+numCropRows+
         '"> <select class="wide" name ="crop' + 
         numCropRows +'" id="crop' + numCropRows + '" >' +
-       '<option value = 0 selected disabled> Crop </option>' +  cropID + '</select></div>';
+      //  '<option value = 0 selected disabled> Crop </option>' +  
+       cropID + '</select></div>';
    }
-   addCropRow();
+<?php
+if (!isset($_POST['numCropRows'])) {
+   echo 'addCropRow("");';
+}
+?>
 
    function removeCropRow(){
       if (numCropRows > 0){
@@ -68,3 +77,14 @@ value="Remove Crop">
    }
 
 </script>
+
+<?php
+if (isset($_POST['numCropRows'])) {
+  echo "<script type='text/javascript'>";
+  for ($i = 1; $i <= $_POST['numCropRows']; $i++) {
+     // array_push($crps, escapehtml($_POST['crop'.$i]));
+     echo "addCropRow('".escapehtml($_POST['crop'.$i])."');";
+   }
+   echo "</script>";
+}
+?>
