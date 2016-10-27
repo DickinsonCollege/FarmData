@@ -8,6 +8,14 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 ?>
 <?php
    if(isset($_GET['id'])){
+      $sql = "select filename from weedScout where id=".$_GET['id'];
+      $result=$dbcon->query($sql);
+      $row = $result->fetch(PDO::FETCH_ASSOC);
+      $filename = $row['filename'];
+      if ($filename != "") {
+         unlink($filename);
+      }
+
       $sqlDel="DELETE FROM weedScout WHERE id=".$_GET['id'];
       try {
          $stmt = $dbcon->prepare($sqlDel);

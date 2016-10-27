@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/connection.php';
 include $_SERVER['DOCUMENT_ROOT'].'/stopSubmit.php';
 ?>
 <center>
-<h2> Disease Scout Report </h2>
+<h2> Disease Scouting Report </h2>
 </center>
 <form name='form' class="pure-form pure-form-aligned" id='test'  method='GET' action="diseaseTable.php">
 <input type="hidden" name="tab" 
