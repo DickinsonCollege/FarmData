@@ -113,3 +113,8 @@ create view laborview as
   (select -1 as id, username, inputDate as ldate, crops as crop, fieldID, 'DRY FERTILIZER' as task,
       hours, comments
   from fertilizer);
+
+alter table pestScout add column filename varchar(200) default null;
+alter table comments add column filename varchar(200) default null;
+alter table diseaseScout add column filename varchar(200) default null;
+alter table weedScout add column filename varchar(200) default null;

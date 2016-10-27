@@ -255,8 +255,14 @@ create table pest(
    pestName varchar(30) primary key) ENGINE=INNODB;
 
 create table pestScout(
-   id int auto_increment primary key,sDate date,crops text,
-   fieldID varchar(30),pest varchar(30),avgCount float,comments text,
+   id int auto_increment primary key,
+   sDate date,
+   crops text,
+   fieldID varchar(30),
+   pest varchar(30),
+   avgCount float,
+   comments text,
+   filename varchar(200) default null,
    foreign key(pest) references pest(pestName) on update cascade,
    foreign key (fieldID) references field_GH(fieldID) on update cascade) ENGINE=INNODB;
 
@@ -279,6 +285,7 @@ create table weedScout(
    goneToSeed int,
    comments text, 
    id int NOT NULL AUTO_INCREMENT primary key,
+   filename varchar(200) default null,
    foreign key(weed) references weed(weedName) on update cascade,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    unique(sDate,fieldID,weed))
@@ -356,9 +363,15 @@ create table disease (
    diseaseName varchar(30) primary key) ENGINE=INNODB;
 
 create table diseaseScout(
-   sDate date,fieldID varchar(30),crops text,disease varchar(30),
-   infest int,stage varchar(30),comments text,
+   sDate date,
+   fieldID varchar(30),
+   crops text,
+   disease varchar(30),
+   infest int,
+   stage varchar(30),
+   comments text,
    id int NOT NULL AUTO_INCREMENT primary key,
+   filename varchar(200) default null,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
    foreign key(disease) references disease(diseaseName) on update cascade,
    foreign key(stage) references stage(stage) on update cascade) ENGINE=INNODB;

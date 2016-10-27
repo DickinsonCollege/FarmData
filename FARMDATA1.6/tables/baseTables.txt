@@ -124,6 +124,7 @@ create table comments(
    username varchar(50),
    comDate date not null,
    comments text,
+   filename varchar(200) default null,
    id int auto_increment primary key) ENGINE=INNODB;
 
 create table gh_seeding(
