@@ -389,6 +389,7 @@ rm -rf src/files/*
 echo "Moving files to installation directory"
 cp -r src/* $FULLPATH
 
+mkdir -p $FULLPATH/files/
 chmod 777 $FULLPATH/files/
 mkdir -p $FULLPATH/files/$FARMDB
 chmod 777 $FULLPATH/files/$FARMDB

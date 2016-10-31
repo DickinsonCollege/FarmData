@@ -99,27 +99,6 @@ create table harvested(
     primary key(id))
 ENGINE=INNODB;
 
-create view laborview as
-  (select id, username, ldate, crop, fieldID, task, hours, comments
-  from labor)
-     union
-  (select -1 as id, username, hardate as ldate, crop, fieldID, 'HARVESTING' as task, hours, comments
-  from harvested)
-     union
-  (select -1 as id, username, transdate as ldate, crop, fieldID, 'TRANSPLANTING' as task, hours, comments
-  from transferred_to)
-     union 
-  (select -1 as id, username, plantdate as ldate, crop, fieldID, 'DIRECT PLANTING' as task, hours, comments
-   from dir_planted)
-     union 
-  (select -1 as id, username, inputDate as ldate, 'N/A' as crop, fieldID, 'LIQUID FERTILIZER' as task,
-      hours, comments
-   from liquid_fertilizer)
-     union 
-  (select -1 as id, username, inputDate as ldate, crops as crop, fieldID, 'DRY FERTILIZER' as task, 
-      hours, comments
-   from fertilizer);
-
 create table comments(
    username varchar(50),
    comDate date not null,
