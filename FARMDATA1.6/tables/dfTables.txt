@@ -262,6 +262,7 @@ create table pestScout(
    pest varchar(30),
    avgCount float,
    comments text,
+   hours float default 0,
    filename varchar(200) default null,
    foreign key(pest) references pest(pestName) on update cascade,
    foreign key (fieldID) references field_GH(fieldID) on update cascade) ENGINE=INNODB;
@@ -284,6 +285,7 @@ create table weedScout(
    infestLevel int,
    goneToSeed int,
    comments text, 
+   hours float default 0,
    id int NOT NULL AUTO_INCREMENT primary key,
    filename varchar(200) default null,
    foreign key(weed) references weed(weedName) on update cascade,
@@ -370,6 +372,7 @@ create table diseaseScout(
    infest int,
    stage varchar(30),
    comments text,
+   hours float default 0,
    id int NOT NULL AUTO_INCREMENT primary key,
    filename varchar(200) default null,
    foreign key(fieldID) references field_GH(fieldID) on update cascade,
@@ -603,10 +606,10 @@ create table coverSeedInventory (
 
 create view laborview as
   (select id, username, ldate, crop, fieldID, task, hours, comments
-  from labor)
+   from labor)
      union
   (select -1 as id, username, hardate as ldate, crop, fieldID, 'HARVESTING' as task, hours, comments
-  from harvested)
+   from harvested)
      union
   (select -1 as id, username, transdate as ldate, crop, fieldID, 'TRANSPLANTING' as task, hours, comments
   from transferred_to)
@@ -620,4 +623,16 @@ create view laborview as
      union 
   (select -1 as id, username, inputDate as ldate, crops as crop, fieldID, 'DRY FERTILIZER' as task, 
       hours, comments
-   from fertilizer);
+   from fertilizer)
+     union 
+  (select -1 as id, '' as username, sDate as ldate, crops as crop, fieldID, 'INSECT SCOUTING' as task, 
+      hours, comments
+   from pestScout)
+     union 
+  (select -1 as id, '' as username, sDate as ldate, '' as crop, fieldID, 'WEED SCOUTING' as task, 
+      hours, comments
+   from weedScout)
+     union 
+  (select -1 as id, '' as username, sDate as ldate, crops as crop, fieldID, 'DISEASE SCOUTING' as task, 
+      hours, comments
+   from diseaseScout);

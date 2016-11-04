@@ -92,29 +92,43 @@ alter table fertilizer modify username varchar(50);
 alter table liquid_fertilizer modify username varchar(50);
 alter table fertilizer add column hours float default 0;
 alter table liquid_fertilizer add column hours float default 0;
-drop view laborview;
-create view laborview as
-  (select id, username, ldate, crop, fieldID, task, hours, comments
-  from labor)
-     union
-  (select -1 as id, username, hardate as ldate, crop, fieldID, 'HARVESTING' as task, hours, comments
-  from harvested)
-     union
-  (select -1 as id, username, transdate as ldate, crop, fieldID, 'TRANSPLANTING' as task, hours, comments
-  from transferred_to)
-     union
-  (select -1 as id, username, plantdate as ldate, crop, fieldID, 'DIRECT PLANTING' as task, hours, comments
-  from dir_planted)
-     union
-  (select -1 as id, username, inputDate as ldate, 'N/A' as crop, fieldID, 'LIQUID FERTILIZER' as task,
-      hours, comments
-  from liquid_fertilizer)
-     union
-  (select -1 as id, username, inputDate as ldate, crops as crop, fieldID, 'DRY FERTILIZER' as task,
-      hours, comments
-  from fertilizer);
-
 alter table pestScout add column filename varchar(200) default null;
 alter table comments add column filename varchar(200) default null;
 alter table diseaseScout add column filename varchar(200) default null;
 alter table weedScout add column filename varchar(200) default null;
+alter table pestScout add column hours float default 0;
+alter table weedScout add column hours float default 0;
+alter table diseaseScout add column hours float default 0;
+drop view laborview;
+create view laborview as
+  (select id, username, ldate, crop, fieldID, task, hours, comments
+   from labor)
+      union
+  (select -1 as id, username, hardate as ldate, crop, fieldID, 'HARVESTING' as task, hours, comments
+   from harvested)
+      union
+  (select -1 as id, username, transdate as ldate, crop, fieldID, 'TRANSPLANTING' as task, hours, comments
+   from transferred_to)
+      union
+  (select -1 as id, username, plantdate as ldate, crop, fieldID, 'DIRECT PLANTING' as task, hours, comments
+   from dir_planted)
+      union
+  (select -1 as id, username, inputDate as ldate, 'N/A' as crop, fieldID, 'LIQUID FERTILIZER' as task,
+      hours, comments
+   from liquid_fertilizer)
+      union
+  (select -1 as id, username, inputDate as ldate, crops as crop, fieldID, 'DRY FERTILIZER' as task,
+      hours, comments
+   from fertilizer)
+      union
+  (select -1 as id, '' as username, sDate as ldate, crops as crop, fieldID, 'INSECT SCOUTING' as task,
+      hours, comments
+   from pestScout)
+      union
+  (select -1 as id, '' as username, sDate as ldate, '' as crop, fieldID, 'WEED SCOUTING' as task,
+      hours, comments
+   from weedScout)
+      union
+  (select -1 as id, '' as username, sDate as ldate, crops as crop, fieldID, 'DISEASE SCOUTING' as task,
+      hours, comments
+   from diseaseScout);
