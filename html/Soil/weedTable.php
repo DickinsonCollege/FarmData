@@ -33,7 +33,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $tcurDay = $_GET['tday'];
    $weed = escapehtml($_GET['weed']);
    $fieldID = escapehtml($_GET['fieldID']);
-   $sql="Select id, sDate,fieldID,weed,infestLevel,goneToSeed,comments,filename from weedScout ".
+   $sql="Select id, sDate,fieldID,weed,infestLevel,goneToSeed,comments,filename,hours from weedScout ".
       "where sDate between '". 
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and weed like '".$weed."' and fieldID like '".$fieldID.
@@ -53,8 +53,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $var2."</h2></center>";
 
    echo "<table class='pure-table pure-table-bordered' >";
-   echo "<thead><tr><th>Scout Date</th><th>Field</th><th>Species</th><th>Infestation</th><th>Seed</th>".
-      "<th>Comment</th><th>Picture</th>";
+   echo "<thead><tr><th>Scout Date</th><th>Field</th><th>Species</th><th>Infestation</th><th>Seed</th>";
+   if ($_SESSION['labor']) {
+      echo "<th>Hours</th>";
+   }
+   echo "<th>Comment</th><th>Picture</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
@@ -71,6 +74,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo "</td><td>";
       echo $row['goneToSeed'];
       echo "</td><td>";
+      if ($_SESSION['labor']) {
+         echo number_format((float) $row['hours'], 2, '.', '');
+         echo "</td><td>";
+      }
       echo $row['comments'];
       echo "</td><td>";
       $filename = $row['filename'];

@@ -36,7 +36,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $crop = escapehtml($_GET['crop']);
    $stage = escapehtml($_GET['stage']);
    $disease = escapehtml($_GET['disease']);
-   $sql="Select id, sDate,fieldID,crops,disease,infest,stage,comments,filename from diseaseScout ".
+   $sql="Select id, sDate,fieldID,crops,disease,infest,stage,comments,hours,filename from diseaseScout ".
       "where sDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and fieldID like '".$fieldID."' and stage like '".$stage."' and disease like '"
@@ -66,7 +66,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
 
    echo "<table class='pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Scout Date</th><th>Field ID</th><th>Crops</th><th>Disease Species</th>".
-      "<th>Infestation Level</th><th>Crop Stage</th><th>Comments</th><th>Picture</th>";
+      "<th>Infestation Level</th><th>Crop Stage</th>";
+   if ($_SESSION['labor']) {
+      echo "<th>Hours</th>";
+   }
+   echo "<th>Comments</th><th>Picture</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
@@ -84,46 +88,50 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
       echo $row['infest'];
       echo "</td><td>";
       echo $row['stage'];
-       echo "</td><td>";
-       echo $row['comments'];
-       echo "</td><td>";
-       $filename = $row['filename'];
-       if ($filename == "") {
-          echo "&nbsp;";
-       } else {
-          $width = "200";
-          $pos = strrpos($filename, ".");
-          $ext = substr($filename, $pos + 1);
-          if ($_SESSION['mobile']) {
-             $width = "80";
-          }
-          echo '<img style="width:'.$width.'px" src="'.$filename.'"/>';
+      echo "</td><td>";
+      if ($_SESSION['labor']) {
+         echo number_format((float) $row['hours'], 2, '.', '');
+         echo "</td><td>";
+      }
+      echo $row['comments'];
+      echo "</td><td>";
+      $filename = $row['filename'];
+      if ($filename == "") {
+         echo "&nbsp;";
+      } else {
+         $width = "200";
+         $pos = strrpos($filename, ".");
+         $ext = substr($filename, $pos + 1);
+         if ($_SESSION['mobile']) {
+            $width = "80";
+         }
+         echo '<img style="width:'.$width.'px" src="'.$filename.'"/>';
+      }
+       echo "</td>";
+       if ($_SESSION['admin']) {
+          echo "<td><form method=\"POST\" action=\"diseaseEdit.php?month=".
+             $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
+             "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+             "&fieldID=".encodeURIComponent($_GET['fieldID']).
+             "&crop=".encodeURIComponent($_GET['crop']).
+             "&disease=".encodeURIComponent($_GET['disease']).
+             "&stage=".encodeURIComponent($_GET['stage']).
+             "&tab=soil:soil_scout:soil_disease:disease_report\">";
+          echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form></td>";
+
+          echo "<td><form method=\"POST\" action=\"diseaseTable.php?month=".
+             $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
+             "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
+             "&fieldID=".encodeURIComponent($_GET['fieldID']).
+             "&crop=".encodeURIComponent($_GET['crop']).
+             "&disease=".encodeURIComponent($_GET['disease']).
+             "&stage=".encodeURIComponent($_GET['stage']).
+             "&tab=soil:soil_scout:soil_disease:disease_report\">";
+          echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton pure-button wide\"";
+          echo "onclick='return warn_delete();' value=\"Delete\"></form></td>";
+
        }
-        echo "</td>";
-        if ($_SESSION['admin']) {
-           echo "<td><form method=\"POST\" action=\"diseaseEdit.php?month=".
-              $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
-              "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
-              "&fieldID=".encodeURIComponent($_GET['fieldID']).
-              "&crop=".encodeURIComponent($_GET['crop']).
-              "&disease=".encodeURIComponent($_GET['disease']).
-              "&stage=".encodeURIComponent($_GET['stage']).
-              "&tab=soil:soil_scout:soil_disease:disease_report\">";
-           echo "<input type=\"submit\" name=\"submitEdit\" class=\"editbutton pure-button wide\" value=\"Edit\"></form></td>";
-
-           echo "<td><form method=\"POST\" action=\"diseaseTable.php?month=".
-              $month."&day=".$day."&year=".$year."&tmonth=".$tcurMonth.
-              "&tyear=".$tcurYear."&tday=".$tcurDay."&id=".$row['id'].
-              "&fieldID=".encodeURIComponent($_GET['fieldID']).
-              "&crop=".encodeURIComponent($_GET['crop']).
-              "&disease=".encodeURIComponent($_GET['disease']).
-              "&stage=".encodeURIComponent($_GET['stage']).
-              "&tab=soil:soil_scout:soil_disease:disease_report\">";
-           echo "<input type=\"submit\" name=\"submit\" class=\"deletebutton pure-button wide\"";
-           echo "onclick='return warn_delete();' value=\"Delete\"></form></td>";
-
-        }
-        echo "</tr>";
+       echo "</tr>";
    }
    echo "</table>";
    echo '<br clear="all"/>';

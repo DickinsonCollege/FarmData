@@ -177,6 +177,30 @@ function removeRow() {
 <input type="button" value="Clear Picture" onclick="clearForm();">
 </div>
 
+<?php
+if ($_SESSION['labor']) {
+echo '
+<div class="pure-control-group">
+<label for="numWorkers">Number of workers (optional):</label>
+<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW"
+   class="textbox2 mobile-input single_table">
+</div>
+
+<div class="pure-control-group">
+<label>Enter time in Hours or Minutes:</label>
+<input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time"
+class="textbox2 mobile-input-half single_table" value="1">
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
+<option value="minutes">Minutes</option>
+<option value="hours">Hours</option>
+</select>
+</div> ';
+
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+}
+?>
+
+
 <div class="pure-control-group">
 <label >Comments: </label>
 <textarea name="comments" id="comments"
@@ -185,10 +209,6 @@ cols=30 rows=5>
 </div>
 <script type="text/javascript">
 function show_confirm() {
-/*
-   var hid = document.getElementById("hid");
-   hid.value = numRows;  
-*/
    var mth = document.getElementById("month").value;
    var con="Scout Date: " + mth + "-";
    var dy = document.getElementById("day").value;
@@ -236,46 +256,25 @@ function show_confirm() {
       return false;
    }
    con=con+"Stage: "+stage+"\n";
-/*
-   if (numRows == 0) {
-      alert("No disease entered.");
+
+<?php
+if ($_SESSION['labor']) {
+   echo '
+   var wk = document.getElementById("numW").value;
+   if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+      showError("Enter a valid number of workers!");
       return false;
    }
-   var a=1;
-   var alldisease = [];
-   while (a <= numRows) {
-      var i = document.getElementById("species"+a);
-      var disease = i.value;
-      alldisease[a - 1] = disease;
-      if (checkEmpty(disease)) {
-         alert("Please Select a Disease in box: "+a);
-         return false;
-      }
-      con=con+"\nDisease "+a+": "+disease+"\n";
-      var i = document.getElementById("stage"+a);
-      var stage = i.value;
-      if (checkEmpty(stage)) {
-         alert("Please Stage in box: "+a);
-         return false;
-      }
-      con=con+"Stage "+a+": "+stage+"\n";
-      var i = document.getElementById("infest"+a);
-      var infest = i.value;
-      if(checkEmpty(infest) && infest != 0) {
-         alert("Please Select a Infestation level in box: "+a);
-         return false;
-      }
-      con=con+"Infestation Level "+a+": "+infest+"\n";
-      a++;
-   }       
-   alldisease.sort();
-   for (i = 0; i < alldisease.length - 1; i++) {
-      if (alldisease[i] == alldisease[i + 1]) {
-         alert("Error: same disease entered twice!");
-         return false;
-      }
+   con = con+"Number of workers: " + wk + "\n";
+   var tme = document.getElementById("time").value;
+   var unit = document.getElementById("timeUnit").value;
+   if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+      showError("Enter a valid number of " + unit + "!");
+      return false;
    }
-*/
+   con = con+"Number of " + unit + ": " + tme + "\n";';
+}
+?>
 
    var i = document.getElementById("comments").value;
    var con=con+"Comments: "+ i+ "\n";
@@ -326,11 +325,30 @@ if (isset($_POST['submit'])) {
    $infest = escapehtml( $_POST['infest']);
    $stage = escapehtml( $_POST['stage']);
 
+   if ($_SESSION['labor']) {
+      // Check if given time is in minutes or hours
+      $time = escapehtml($_POST['time']);
+      if ($_POST['timeUnit'] == "minutes") {
+         $hours = $time/60;
+      } else if ($_POST['timeUnit'] == "hours") {
+         $hours = $time;
+      }
+      // Check if num workers is filled in
+      $numW = escapehtml($_POST['numW']);
+      if ($numW != "") {
+         $totalHours = $hours * $numW;
+      } else {
+         $totalHours = $hours;
+      }
+   } else {
+      $totalHours = 0;
+   }
+
    include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageUpload.php';
 
-   $sql = "Insert into diseaseScout(sDate,fieldID,crops,disease,infest,stage,comments,filename) values ('".
-      $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
-      $fieldID."','".$crops."', :disease, :infest, :stage,'".$comments."', ";
+   $sql = "Insert into diseaseScout(sDate,fieldID,crops,disease,infest,stage,comments,hours,filename) ".
+      "values ('".  $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".
+      $fieldID."','".$crops."', :disease, :infest, :stage,'".$comments."', ".$totalHours.", ";
    if ($fname == "null") {
       $sql .= "null";
    } else {

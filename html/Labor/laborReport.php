@@ -84,6 +84,15 @@ if ($_SESSION['dryfertilizer']) {
 if ($_SESSION['liquidfertilizer']) {
    echo "\n<option value= \"LIQUID FERTILIZER\">LIQUID FERTILIZER</option>";
 }
+if ($_SESSION['insect']) {
+   echo "\n<option value= \"INSECT SCOUTING\">INSECT SCOUTING</option>";
+}
+if ($_SESSION['weed']) {
+   echo "\n<option value= \"WEED SCOUTING\">WEED SCOUTING</option>";
+}
+if ($_SESSION['disease']) {
+   echo "\n<option value= \"DISEASE SCOUTING\">DISEASE SCOUTING</option>";
+}
 while ($row =  $result->fetch(PDO::FETCH_ASSOC)){
   echo "\n<option value= \"$row[task]\">$row[task]</option>";
 }

@@ -18,7 +18,7 @@ $origDisease = $_GET['disease'];
 $origCrop= $_GET['crop'];
 $origStage= $_GET['stage'];
 $sqlget = "SELECT id, year(sDate) as yr, month(sDate) as mth, day(sDate) as dy,".
-   "disease ,fieldID, crops, infest, stage, comments, filename FROM diseaseScout where id = ".$id;
+   "disease ,fieldID, crops, infest, stage, comments, hours, filename FROM diseaseScout where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $fieldID = $row['fieldID'];
@@ -31,6 +31,7 @@ $curMonth = $row['mth'];
 $curDay = $row['dy'];
 $comments = $row['comments'];
 $filename = $row['filename'];
+$hours = $row['hours'];
 echo "<form name='form' class='pure-form pure-form-aligned' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_scout:soil_disease:disease_report&year=".$origYear.
    "&month=".$origMonth."&day=".$origDay."&tyear=".$tcurYear.
@@ -146,6 +147,17 @@ if ($filename == "") {
 </div>
 
 <?php
+if ($_SESSION['labor']) {
+   echo '<div class="pure-control-group">';
+   echo "\n";
+   echo '<label>Hours:</label>';
+   echo "\n";
+   echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
+   echo "\n";
+   echo '</div>';
+   echo "\n";
+}
+
 echo "<div class='pure-control-group'>";
 echo '<label>Comments:</label>';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
@@ -166,10 +178,17 @@ if (isset($_POST['submit'])) {
    $day = escapehtml($_POST['day']);
    $infest = escapehtml($_POST['infest']);
    $stage = escapehtml($_POST['stage']);
+   $hours = 0;
+   if ($_SESSION['labor']) {
+      $hours = escapehtml($_POST['hours']);
+      if ($hours == "") {
+         $hours = 0;
+      }
+   }
 
    $sql = "update diseaseScout set crops='".$crops."', fieldID='".$fieldID."', sDate='".$year."-".
      $month."-".$day."', disease='".$disease."', infest=".$infest.",stage='".$stage."', comments='".
-     $comments."' where id=".$id;
+     $comments."', hours=".$hours." where id=".$id;
 
    try {
       $stmt = $dbcon->prepare($sql);

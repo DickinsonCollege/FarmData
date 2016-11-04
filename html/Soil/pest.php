@@ -144,6 +144,29 @@ function removeSampleRow() {
 <input type="button" value="Clear Picture" onclick="clearForm();">
 </div>
 
+<?php
+if ($_SESSION['labor']) {
+echo '
+<div class="pure-control-group">
+<label for="numWorkers">Number of workers (optional):</label>
+<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW" 
+   class="textbox2 mobile-input single_table">
+</div>
+
+<div class="pure-control-group">
+<label>Enter time in Hours or Minutes:</label>
+<input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time"
+class="textbox2 mobile-input-half single_table" value="1">
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
+<option value="minutes">Minutes</option>
+<option value="hours">Hours</option>
+</select>
+</div> ';
+
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+}
+?>
+
 <div class="pure-control-group">
 <label >Comments:</label>
 <textarea name="comments" id="comments"
@@ -201,6 +224,26 @@ function show_confirm() {
         }
         con += "Picture: "+ fname + "\n";
      }
+
+<?php
+if ($_SESSION['labor']) {
+   echo '
+   var wk = document.getElementById("numW").value;
+   if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+      showError("Enter a valid number of workers!");
+      return false;
+   }
+   con = con+"Number of workers: " + wk + "\n";
+   var tme = document.getElementById("time").value;
+   var unit = document.getElementById("timeUnit").value;
+   if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+      showError("Enter a valid number of " + unit + "!");
+      return false;
+   }
+   con = con+"Number of " + unit + ": " + tme + "\n";';
+}
+?>
+
      var cmt = document.getElementById("comments").value;
      con += "Comments: "+ cmt + "\n";
 
@@ -238,11 +281,30 @@ if (isset($_POST['submit'])) {
       $crops .= $crp;
    }
 
+   if ($_SESSION['labor']) {
+      // Check if given time is in minutes or hours
+      $time = escapehtml($_POST['time']);
+      if ($_POST['timeUnit'] == "minutes") {
+         $hours = $time/60;
+      } else if ($_POST['timeUnit'] == "hours") {
+         $hours = $time;
+      }
+      // Check if num workers is filled in
+      $numW = escapehtml($_POST['numW']);
+      if ($numW != "") {
+         $totalHours = $hours * $numW;
+      } else {
+         $totalHours = $hours;
+      }
+   } else {
+      $totalHours = 0;
+   }
+
    include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageUpload.php';
 
-   $sql="Insert into pestScout(sDate,fieldID,crops,pest,avgCount,comments, filename) values ('".
+   $sql="Insert into pestScout(sDate,fieldID,crops,pest,avgCount,comments,hours,filename) values ('".
       $_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID.
-      "','".$crops."','".$pest."','".$average."','".$comments."', ";
+      "','".$crops."','".$pest."','".$average."','".$comments."', ".$totalHours.", ";
    if ($fname == "null") {
       $sql .= "null";
    } else {

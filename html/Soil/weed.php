@@ -162,6 +162,29 @@ function removeRow() {
 <input type="button" value="Clear Picture" onclick="clearForm();">
 </div>
 
+<?php
+if ($_SESSION['labor']) {
+echo '
+<div class="pure-control-group">
+<label for="numWorkers">Number of workers (optional):</label>
+<input onkeypress= \'stopSubmitOnEnter(event)\'; type = "text" value = 1 name="numW" id="numW"
+  class="textbox2 mobile-input single_table">
+</div>
+
+<div class="pure-control-group">
+<label>Enter time in Hours or Minutes:</label>
+<input onkeypress=\'stopSubmitOnEnter(event);stopTimer();\' type="text" name="time" id="time"
+class="textbox2 mobile-input-half single_table" value="1">
+<select name="timeUnit" id="timeUnit" class=\'mobile-select-half single_table\' onchange="stopTimer();">
+<option value="minutes">Minutes</option>
+<option value="hours">Hours</option>
+</select>
+</div> ';
+
+include $_SERVER['DOCUMENT_ROOT'].'/timer.php';
+}
+?>
+
 <div class="pure-control-group">
 <label for="comments"> Comments: </label>
 <textarea name="comments" rows="5" cols="30" id="comments"></textarea>
@@ -192,72 +215,25 @@ function show_confirm() {
       }
       con += "Picture: "+ fname + "\n";
    }
-/*
-   var hid = document.getElementById("hid");
-   hid.value = numRows;
-*/
-   /*var i = document.getElementById("fieldID");
-   var strUser3 = i.value;
-   if(checkEmpty(strUser3)) {
-      alert("Please Select a FieldID");
+
+<?php
+if ($_SESSION['labor']) {
+   echo '
+   var wk = document.getElementById("numW").value;
+   if (checkEmpty(wk) || tme<=wk || !isFinite(wk)) {
+      showError("Enter a valid number of workers!");
       return false;
    }
-   var con="Field ID: "+ strUser3+ "\n";*/
-/*
-   var i = document.getElementById("month");
-   var strUser3 = i.options[i.selectedIndex].text;
-   var con="Scout Date: "+strUser3+"-";
-   var i = document.getElementById("day");
-   var strUser3 = i.options[i.selectedIndex].text;
-   con=con+strUser3+"-";
-   var i = document.getElementById("year");
-   var strUser3 = i.options[i.selectedIndex].text;
-   con=con+strUser3+"\n\n";
-   var a=1;
-   var allweeds = [];
-   while (a <= numRows) {
-      var i = document.getElementById("fieldID"+a);
-      var strUser3 = i.value;
-      if(checkEmpty(strUser3)) {
-         alert("Please Select a FieldID in row: "+a);
-         return false;
-      }
-      con=con + "FieldID: "+ strUser3+ "\n";
-      
-      var i = document.getElementById("species"+a);
-      var spec = i.value;
-      allweeds[a - 1] = spec;
-      if(checkEmpty(spec)) {
-         alert("Please Select a Weed Species in Row: " + a);
-         return false;
-      }
-      con=con+"Weed Species "+a+": "+spec+"\n";
-      var i = document.getElementById("infest"+a);
-      var infest = i.value;
-      if(checkEmpty(infest) && infest != 0) {
-      // if(checkEmpty(infest)) {
-         alert("Please Select an Infestation Level for " + spec);
-         return false;
-      }
-      con=con+"Infestation Level: " + infest +"\n";
-      var i = document.getElementById("g2seed"+a);
-      var toseed = i.value;
-      if (checkEmpty(toseed) && toseed != 0) {
-      // if (checkEmpty(toseed)) {
-         alert("Please Select a Gone to Seed Percentage for "+ spec);
-         return false;
-      }
-      con=con+"Gone to Seed Percentage: " + toseed +"\n\n";
-      a++;
-      }       
-   allweeds.sort();
-   for (i = 0; i < allweeds.length - 1; i++) {
-        if (allweeds[i] == allweeds[i + 1]) {
-           alert("Error: same weed species entered twice!");
-         return false;
-      }
+   con = con+"Number of workers: " + wk + "\n";
+   var tme = document.getElementById("time").value;
+   var unit = document.getElementById("timeUnit").value;
+   if (checkEmpty(tme) || tme<=0 || !isFinite(tme)) {
+      showError("Enter a valid number of " + unit + "!");
+      return false;
    }
-*/
+   con = con+"Number of " + unit + ": " + tme + "\n";';
+}
+?>
 
    var com = document.getElementById("comments").value;
    con += "Comments: "+ com + "\n";
@@ -279,11 +255,30 @@ if (isset($_POST['submit'])) {
    $comments = escapehtml($_POST['comments']);
    $var= $_POST['hid'];
 
+   if ($_SESSION['labor']) {
+      // Check if given time is in minutes or hours
+      $time = escapehtml($_POST['time']);
+      if ($_POST['timeUnit'] == "minutes") {
+         $hours = $time/60;
+      } else if ($_POST['timeUnit'] == "hours") {
+         $hours = $time;
+      }
+      // Check if num workers is filled in
+      $numW = escapehtml($_POST['numW']);
+      if ($numW != "") {
+         $totalHours = $hours * $numW;
+      } else {
+         $totalHours = $hours;
+      }
+   } else {
+      $totalHours = 0;
+   }
+
    include $_SERVER['DOCUMENT_ROOT'].'/Soil/imageUpload.php';
 
-   $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed,comments,filename) values ('".
-      $_POST['year']."-".$_POST['month']."-".$_POST['day']."', :fieldID, :species, :infest, :g2seed,'".
-      $comments."', ";
+   $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed,comments,hours,filename) ".
+      "values ('".  $_POST['year']."-".$_POST['month']."-".$_POST['day'].
+       "', :fieldID, :species, :infest, :g2seed,'". $comments."', ".$totalHours.", ";
    if ($fname == "null") {
       $sql .= "null";
    } else {
@@ -304,21 +299,6 @@ if (isset($_POST['submit'])) {
          $stmt->bindParam(':filename', $fname, PDO::PARAM_STR);
       }
       $stmt->execute();
-/*
-      while ($var>0) {
-         $fieldID = escapehtml($_POST['fieldID'.$var]);  
-         $infest = escapehtml($_POST['infest'.$var]);
-         $g2seed = escapehtml($_POST['g2seed'.$var]);
-         $species = escapehtml($_POST['species'.$var]);
-   //      $sql = "insert into weedScout(sDate, fieldID, weed, infestLevel, gonetoSeed, comments) values ('".$_POST['year']."-".$_POST['month']."-".$_POST['day']."','".$fieldID."','".$species."', ".$infest.", ".$g2seed.",'".$comments."')";
-         $stmt->bindParam(':fieldID', $fieldID, PDO::PARAM_STR);
-         $stmt->bindParam(':species', $species, PDO::PARAM_STR);
-         $stmt->bindParam(':infest', $infest, PDO::PARAM_INT);
-         $stmt->bindParam(':g2seed', $g2seed, PDO::PARAM_INT);
-         $stmt->execute();
-         $var--;
-      }
-*/
    } catch (PDOException $p) {
       phpAlert('', $p);
       die();

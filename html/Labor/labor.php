@@ -106,7 +106,6 @@ include $_SERVER['DOCUMENT_ROOT'].'/date.php';
 <div class = "pure-control-group">
 <label for="fieldID">Name of Field:</label>
 <select name="fieldID" id="fieldID" onChange="setAllCrops();" class="mobile-select">
-<option value=0 selected disabled>Field Name</option>
 <option value="N/A">N/A</option>
 <?php
    $sql = 'select fieldID from field_GH where active = 1';
@@ -146,7 +145,7 @@ function setCrop(ind) {
   var cell1 = row.cells[1];
   //var cropdiv = document.getElementById('cropDiv'+ind);
   var cell0inner = '<div class="styled-select" id="cropDiv'+ind+'"><select class="wide" name="crop'+ind+'" id = "crop'+ind+'"> ' +
-  '<option value = 0 disabled selected>' +
+//  '<option value = 0 disabled selected>' +
   'Crop</option> <option value="N/A">N/A</option>' + cropOps + '</select></div>';
   //'<label style="width:2ex"></label>' +
   var cell1inner = '<div class="styled-select" id="percDiv'+ind+'"><select class="wide" name="perc'+ind+'" id = "perc'+ind+'">';

@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+   <?php session_start(); ?>
 <?php
 include $_SERVER['DOCUMENT_ROOT'].'/authentication.php';
 include $_SERVER['DOCUMENT_ROOT'].'/design.php';
@@ -35,7 +35,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    $crop = escapehtml($_GET['crop']);
    $fieldID = escapehtml($_GET['fieldID']);
    $pest = escapehtml($_GET['pest']);
-   $sql="select id,sDate,crops,fieldID,pest,avgCount,comments,filename from pestScout ".
+   $sql="select id,sDate,crops,fieldID,pest,avgCount,comments,filename,hours from pestScout ".
       "where sDate between '".
       $year."-".$month."-".$day."' AND '".$tcurYear."-".$tcurMonth."-".
       $tcurDay."' and crops like '%".$crop."%' and fieldID like '".
@@ -60,7 +60,11 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
     $var2." for ".$var3."</h2></center>";
    echo "<table class='pure-table pure-table-bordered'>";
    echo "<thead><tr><th>Scout Date</th><th>Crops</th><th>Field ID</th><th>Insect</th>";
-   echo "<th>Average Count</th><th>Comments</th><th>Picture</th>";
+   echo "<th>Average Count</th>";
+   if ($_SESSION['labor']) {
+      echo "<th>Hours</th>";
+   }
+   echo "<th>Comments</th><th>Picture</th>";
    if ($_SESSION['admin']) {
       echo "<th>Edit</th><th>Delete</th>";
    }
@@ -77,6 +81,10 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
         echo "</td><td>";
         echo $row['avgCount'];
         echo "</td><td>";
+        if ($_SESSION['labor']) {
+           echo number_format((float) $row['hours'], 2, '.', '');
+           echo "</td><td>";
+        }
         echo $row['comments'];
         echo "</td><td>";
         $filename = $row['filename'];

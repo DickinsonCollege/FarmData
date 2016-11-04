@@ -17,7 +17,7 @@ $tcurDay = $_GET['tday'];
 $origField = $_GET['fieldID'];
 $origPest = $_GET['pest'];
 $sqlget = "SELECT id,year(sDate) as yr, month(sDate) as mth, day(sDate) as dy, crops, pest,".
-   "sDate,fieldID,avgCount,comments,filename FROM pestScout where id = ".$id;
+   "sDate,fieldID,avgCount,comments,filename,hours FROM pestScout where id = ".$id;
 $sqldata = $dbcon->query($sqlget);
 $row = $sqldata->fetch(PDO::FETCH_ASSOC);
 $pest = $row['pest'];
@@ -30,6 +30,7 @@ $curDay = $row['dy'];
 $curCrops = $row['crops'];
 $comments = $row['comments'];
 $filename = $row['filename'];
+$hours = $row['hours'];
 
 echo "<form class='pure-form pure-form-aligned' name='form' method='post' action=\"".$_SERVER['PHP_SELF'].
    "?tab=soil:soil_scout:soil_pest:pest_report&year=".$origYear.
@@ -128,6 +129,17 @@ if ($filename == "") {
 </div>
 
 <?php
+if ($_SESSION['labor']) {
+   echo '<div class="pure-control-group">';
+   echo "\n";
+   echo '<label>Hours:</label>';
+   echo "\n";
+   echo '<input type="text" class="textbox2" name="hours" id="hours" value="'.$hours.'">';
+   echo "\n";
+   echo '</div>';
+   echo "\n";
+}
+
 echo "<div class='pure-control-group'>";
 echo '<label>Comments:</label> ';
 echo "<textarea rows=\"5\" cols=\"30\" name = \"comments\" id = \"comments\">";
@@ -147,9 +159,16 @@ if ($_POST['submit']) {
    $month = escapehtml($_POST['month']);
    $day = escapehtml($_POST['day']);
    $pest = escapehtml($_POST['pest']);
+   $hours = 0;
+   if ($_SESSION['labor']) {
+      $hours = escapehtml($_POST['hours']);
+      if ($hours == "") {
+         $hours = 0;
+      }
+   }
    $sql = "update pestScout set pest='".$pest."', fieldID='".$fld."', sDate='".$year."-".
      $month."-".$day."', avgCount=".$avgCount.",comments='".
-     $comSanitized."',crops='".$crops."' where id=".$id;
+     $comSanitized."',crops='".$crops."', hours=".$hours." where id=".$id;
    try {
       $stmt = $dbcon->prepare($sql);
       $stmt->execute();

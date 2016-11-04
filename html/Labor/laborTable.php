@@ -39,7 +39,7 @@ include $_SERVER['DOCUMENT_ROOT'].'/Admin/Delete/warn.php';
    echo "</h2></center>";
    if ($_SESSION['admin']) {
       echo '<h3>Note for administrative users: use the reports for harvesting, direct seeding, ';
-      echo 'transplanting, dry and liquid fertilizing to edit/delete records for ';
+      echo 'transplanting, scouting, dry and liquid fertilizing to edit/delete records for ';
       echo 'those tasks</h3>';
       echo "<br clear='all'/>";
    }
