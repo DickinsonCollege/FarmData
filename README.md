@@ -5,8 +5,6 @@ FARMDATA is a web-based database system for entering and reporting crop producti
 For a demonstration of FARMDATA in action, visit: https://farmdata.dickinson.edu/guest.php
 This page gives you live access to data for the Dickinson College Farm, although you won't be able to enter or update any data.
 
-For FARMDATA discussion and support, send a request to join our Facebook group: https://www.facebook.com/groups/1408906732746605/
-
 Features
 Support for: seeding, transplanting, harvesting, cover crops, fertilization, scouting, irrigation, packing, distribution and invoicing.
 Full reporting of all data.
